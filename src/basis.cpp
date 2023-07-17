@@ -1,0 +1,77 @@
+#include <iostream>
+#include <vector>
+#include <string>
+#include <cmath>
+#include <complex>
+#include "basis.hpp"
+#include "additional_operators.hpp"
+#include "functions.hpp"
+
+namespace {
+    using E_LEVEL = int;
+    using vec_levels = std::vector<E_LEVEL>;
+
+    constexpr int START_INDEX = 1;
+
+    vec_levels index_to_state(size_t m, size_t state_in_num) {
+        vec_levels state(m);
+
+        for (int i = m - 1; i >= 0; i--) {
+            state[i] = state_in_num % 2;
+            state_in_num >>= 1;
+        }
+
+        return state;
+    }
+}
+
+Basis::Basis(size_t n, size_t m, size_t state): n_(n), state_(index_to_state(m, state)) {}
+
+Basis::Basis(const std::vector<E_LEVEL>& state) : n_(0), state_(state) {
+    auto size = this->size();
+    vector_of_atoms_state_ = vec_complex(std::pow(2, size), 0);
+    vector_of_atoms_state_[get_index_from_state(state_)] = 1;
+}
+
+Basis::Basis(const std::string& str_state) {
+    int i = START_INDEX;
+
+    size_t n = 0;
+    while(str_state.at(i) != '>') {
+        n *= 10;
+        n += str_state.at(i) - '0';
+        i++;
+    }
+
+    n_ = n;
+
+    if (i != str_state.length() - 1) {
+        i += 2;
+
+        while (str_state[i] != '>') {
+            state_.emplace_back(str_state[i] - '0');
+            i++;
+        }
+    }
+}
+
+size_t Basis::get_index() const {
+    auto max_num_atoms = std::pow(2, this->size());
+
+    return n_ * max_num_atoms + get_index_from_state(state_);
+}
+
+size_t Basis::hash() const {
+    std::hash<vec_levels> state_hash;
+    return n_ * state_hash(state_);
+}
+
+std::string Basis::to_string() const {
+    std::string str_state = "|" + std::to_string(n_) + ">|";
+    for (const auto& bit: state_) {
+        str_state += std::to_string(bit);
+    }
+
+    str_state += ">";
+    return str_state;
+}
