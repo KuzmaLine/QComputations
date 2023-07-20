@@ -1,40 +1,29 @@
 #include "dynamic.hpp"
+#include "additional_operators.hpp"
+#include "functions.hpp"
 
 namespace {
-    COMPLEX scalar_product(const std::vector<COMPLEX>& a, const std::vector<COMPLEX>& b) {
-        COMPLEX res(0);
-
-        for (size_t i = 0; i < a.size(); i++) {
-            res += std::conj(a[i]) * b[i];
-        }
-
-        return res;
-    }
-
-    size_t get_index_in_set(const std::set<Basis>& bases, const Basis& basis) {
-        return std::distance(bases.begin(), bases.find(basis));
+    size_t get_index_in_set(const std::set<State>& basis, const State& state) {
+        return std::distance(basis.begin(), basis.find(state));
     }
 }
 
 namespace Evolution {
-    Probs evolution(const Basis& init_basis, Hamiltonian* H, const std::vector<double>& time_vec) {
-        H->Reduce_H(init_basis);
-        auto p = H->reduced_eigen();
+    Probs evolution(const std::vector<COMPLEX>& init_state, Hamiltonian& H, const std::vector<double>& time_vec) {
+        auto p = H.eigen();
         auto eigen_values = p.first;
         auto eigen_vectors = p.second;
         size_t n = eigen_values.size();
-        std::vector<COMPLEX> tmp_init_state(n, 0);
-
-        tmp_init_state[get_index_in_set(H->get_bases(), init_basis)] = COMPLEX(1);
 
         std::vector<COMPLEX> lambda;
         for (size_t i = 0; i < eigen_values.size(); i++) {
-            lambda.emplace_back(scalar_product(eigen_vectors[i], tmp_init_state));
+            lambda.emplace_back(scalar_product(eigen_vectors.col(i), init_state)); // <KSI(0)|PHI_i> 
         }
 
-        Probs probs(eigen_values.size(), std::vector<double>(time_vec.size()));
+        Probs probs(eigen_values.size(), time_vec.size());
         size_t time_index = 0;
 
+        eigen_vectors = eigen_vectors.transpose();
         for (const auto& t: time_vec) {
             std::vector<COMPLEX> psi_t(eigen_values.size(), 0);
 

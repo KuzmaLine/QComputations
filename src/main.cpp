@@ -60,10 +60,10 @@ void check_eigenvectors(std::vector<double> eigenvalues, const Matrix<T>& eigenv
 namespace plt = matplotlibcpp;
 
 int main(void) {
-    int n = 1;
+    int n = 3;
     int m = 2;
 
-    State state("|1>|00>");
+    State state("|2>|01>");
     H_TC H(n, m, state);
     std::cout << state.to_string() << " n = " << n << " m = " << m <<" h = " << config::h << " w = " << config::w << " g = " << config::g << " LOSS_PHOTONS = " << config::LOSS_PHOTONS << std::endl;
 
@@ -81,7 +81,7 @@ int main(void) {
     H.show(config::WIDTH);
 
     n = 5;
-    Matrix<COMPLEX> A(n, n, 0);
+    //Matrix<COMPLEX> A(n, n, 0);
     /*
     A[0][1] = COMPLEX(2, 434);
     A[0][2] = COMPLEX(3, -3.1232);
@@ -97,6 +97,7 @@ int main(void) {
     A[3][4] = COMPLEX(3, 10);
     */
 
+    /*
     A[0][1] = COMPLEX(2);
     A[0][2] = COMPLEX(3);
     A[0][3] = COMPLEX(4);
@@ -133,13 +134,8 @@ int main(void) {
 
     check_eigenvectors(p.first, p.second, A);
 
-    Matrix<COMPLEX> a = matrix_testing::create_hermit_rand_matrix(256, 256, COMPLEX(0, 0), COMPLEX(10, 10));
-    
-    std::cout << std::endl;
-    a.show();
-
-    auto a_p = Hermit_Lanczos(a);
-
+    Matrix<COMPLEX> a = matrix_testing::create_hermit_rand_matrix(8, 8, COMPLEX(0, 0), COMPLEX(10, 10));
+    */
     //check_eigenvectors(a_p.first, a_p.second, a);
     /*
     std::cout << std::endl;

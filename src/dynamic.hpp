@@ -6,7 +6,7 @@
 
 namespace Evolution {
     using COMPLEX = std::complex<double>;
-    using Probs = std::vector<std::vector<double>>;
+    using Probs = Matrix<double>;
 
-    Probs evolution(const Basis& init_base, Hamiltonian* H, const std::vector<double>& time_vec);
+    Probs evolution(const State& init_state, const Hamiltonian& H, const std::vector<double>& time_vec);
 }

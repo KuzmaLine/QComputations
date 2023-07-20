@@ -18,5 +18,8 @@ void tridiagonal_QR(Matrix<double>& T);
 size_t get_index_from_state(vec_levels state);
 Matrix<double> MGS(const Matrix<COMPLEX>& A);
 std::pair<std::vector<double>, Matrix<COMPLEX>> Hermit_Lanczos(const Matrix<COMPLEX>& A);
+double scalar_product(const std::vector<double>& a, const std::vector<double>& b); // <b|a>, (a, b)
+COMPLEX scalar_product(const std::vector<COMPLEX>& a, const std::vector<COMPLEX>& b); // <b|a>, (a, b)
+double norm(const std::vector<COMPLEX>& v);
 //std::pair<std::vector<double>, Matrix<double>> Hermit_Lanczos(const Matrix<COMPLEX>& A);
 //std::vector<std::vector<double>> Hermit_Lanczos(const matrix& A);

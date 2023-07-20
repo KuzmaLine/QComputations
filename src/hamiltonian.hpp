@@ -20,6 +20,7 @@ class Hamiltonian {
         void show(const size_t width = 10) const;
         std::pair<std::vector<double>, Matrix<COMPLEX>> eigen();
     protected:
+        bool is_eigen_ = false;
         State init_state_;
         std::set<State> basis_;
         Matrix<COMPLEX> H_;

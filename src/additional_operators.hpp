@@ -24,6 +24,11 @@ std::vector<T> operator*(const std::vector<T>& v, T num) {
 }
 
 template<typename T>
+std::vector<T> operator*(T num, const std::vector<T>& v) {
+    return v * num;
+}
+
+template<typename T>
 std::vector<T> operator/(const std::vector<T>& v, T num) {
     std::vector<T> answer(v.size());
 
@@ -34,9 +39,7 @@ std::vector<T> operator/(const std::vector<T>& v, T num) {
     return answer;
 }
 
-double scalar_product(const std::vector<double>& a, const std::vector<double>& b); // <b|a>, (a, b)
-COMPLEX scalar_product(const std::vector<COMPLEX>& a, const std::vector<COMPLEX>& b); // <b|a>, (a, b)
-double norm(const std::vector<COMPLEX>& v);
+
 void show_vector(const std::vector<COMPLEX>& v);
 
 template<typename T, typename R>

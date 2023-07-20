@@ -138,16 +138,19 @@ void Hamiltonian::show(const size_t width) const {
     H_.show(width);
 }
 
-/*
-std::pair<std::vector<double>, Matrix<COMPLEX>> Hamiltonian::eigen() {
-    auto res = jacobi(H_);
 
+std::pair<std::vector<double>, Matrix<COMPLEX>> Hamiltonian::eigen() {
+    if (is_eigen_) {
+        return std::make_pair(eigenvalues_, eigenvectors_);
+    }
+
+    auto res = Hermit_Lanczos(H_);
     eigenvectors_ = res.second;
     eigenvalues_ = res.first;
+    is_eigen_ = true;
 
     return std::make_pair(eigenvalues_, eigenvectors_);
 }
-*/
 
 H_by_func::H_by_func(size_t n, std::function<COMPLEX(size_t, size_t)> func) : n_(n), func_(func) {
     auto size = std::pow(2, n);
