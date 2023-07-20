@@ -79,12 +79,12 @@ int main(void) {
 
     n = 5;
     Matrix<COMPLEX> A(n, n, 0);
-    A[0][1] = COMPLEX(2);
-    A[0][2] = COMPLEX(3);
+    A[0][1] = COMPLEX(2, 4324234);
+    A[0][2] = COMPLEX(3, -3.23231231232);
     A[0][3] = COMPLEX(4, -4);
-    A[0][4] = COMPLEX(2);
-    A[1][2] = COMPLEX(5);
-    A[1][3] = COMPLEX(7);
+    A[0][4] = COMPLEX(2.5345345345, 2.23123153324);
+    A[1][2] = COMPLEX(5.5345345345, -1.5345345345);
+    A[1][3] = COMPLEX(7.5345345345, 3.945345345);
     A[1][4] = COMPLEX(2);
     A[2][3] = COMPLEX(4, 2);
     A[2][4] = COMPLEX(2);
@@ -116,8 +116,9 @@ int main(void) {
 
     check_eigenvectors(p.first, p.second, A);
 
-    Matrix<COMPLEX> a = matrix_testing::create_hermit_rand_matrix(32, 32, COMPLEX(0, 0), COMPLEX(10, 10));
+    Matrix<COMPLEX> a = matrix_testing::create_hermit_rand_matrix(5, 5, COMPLEX(0, 0), COMPLEX(10, 10));
     
+    std::cout << std::endl;
     a.show();
 
     auto a_p = Hermit_Lanczos(a);

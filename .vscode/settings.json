@@ -72,5 +72,12 @@
         "typeinfo": "cpp",
         "valarray": "cpp",
         "variant": "cpp"
-    }
+    },
+    "makefile.launchConfigurations": [
+        {
+            "cwd": "/home/kuzmaline/Quantum/diploma",
+            "binaryPath": "/home/kuzmaline/Quantum/diploma/prog",
+            "binaryArgs": []
+        }
+    ]
 }
