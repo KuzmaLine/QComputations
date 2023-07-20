@@ -25,10 +25,13 @@ void check_eigenvectors(std::vector<double> eigenvalues, const Matrix<T>& eigenv
         std::vector<std::complex<double>> Av(n);
         for (int j = 0; j < n; j++) {
             std::complex<double> sum = 0;
-            for (int k = 0; k < n; k++) {
+            Av = matrix * eigenvectors.col(i);
+            
+            /*for (int k = 0; k < n; k++) {
                 sum += matrix[j][k] * eigenvectors[k][i];
             }
             Av[j] = sum;
+            */
             //norm += Av[j] * Av[j];
         }
 
@@ -79,17 +82,31 @@ int main(void) {
 
     n = 5;
     Matrix<COMPLEX> A(n, n, 0);
-    A[0][1] = COMPLEX(2, 4324234);
-    A[0][2] = COMPLEX(3, -3.23231231232);
+    /*
+    A[0][1] = COMPLEX(2, 434);
+    A[0][2] = COMPLEX(3, -3.1232);
     A[0][3] = COMPLEX(4, -4);
-    A[0][4] = COMPLEX(2.5345345345, 2.23123153324);
-    A[1][2] = COMPLEX(5.5345345345, -1.5345345345);
-    A[1][3] = COMPLEX(7.5345345345, 3.945345345);
+    //A[0][4] = COMPLEX(2.5345345345, 2.23123153324);
+    //A[1][2] = COMPLEX(5.5345345345, -1.5345345345);
+    A[0][4] = COMPLEX(2.5345345345, 2.23324);
+    A[1][2] = COMPLEX(5.5345345345, -1.345);
+    A[1][3] = COMPLEX(7.5345345345, 3.345);
     A[1][4] = COMPLEX(2);
     A[2][3] = COMPLEX(4, 2);
     A[2][4] = COMPLEX(2);
     A[3][4] = COMPLEX(3, 10);
+    */
 
+    A[0][1] = COMPLEX(2);
+    A[0][2] = COMPLEX(3);
+    A[0][3] = COMPLEX(4);
+    A[0][4] = COMPLEX(2.5345345345);
+    A[1][2] = COMPLEX(5.5345345345);
+    A[1][3] = COMPLEX(7.5345345345);
+    A[1][4] = COMPLEX(2);
+    A[2][3] = COMPLEX(4);
+    A[2][4] = COMPLEX(2);
+    A[3][4] = COMPLEX(3);
     for (size_t i = 1; i < n; i++) {
         for (size_t j = 0; j < i; j++) {
             A[i][j] = std::conj(A[j][i]);
@@ -116,7 +133,7 @@ int main(void) {
 
     check_eigenvectors(p.first, p.second, A);
 
-    Matrix<COMPLEX> a = matrix_testing::create_hermit_rand_matrix(5, 5, COMPLEX(0, 0), COMPLEX(10, 10));
+    Matrix<COMPLEX> a = matrix_testing::create_hermit_rand_matrix(128, 128, COMPLEX(0, 0), COMPLEX(10, 10));
     
     std::cout << std::endl;
     a.show();

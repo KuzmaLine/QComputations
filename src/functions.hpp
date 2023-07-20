@@ -12,6 +12,7 @@ namespace {
     using vec_levels = std::vector<E_LEVEL>;
 }
 
+double off(const Matrix<double>& A);
 std::pair<double, double> givens(double a, double b);
 void tridiagonal_QR(Matrix<double>& T);
 size_t get_index_from_state(vec_levels state);

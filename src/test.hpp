@@ -53,6 +53,8 @@ namespace matrix_testing {
                 T rand_b = random_imag(re);
                 A[i][j] = std::complex<T>(rand_a, rand_b);
                 A[j][i] = std::conj(A[i][j]);
+
+                if (i == j) A[i][i] = rand_a;
             }
         }
 

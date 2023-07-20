@@ -8,6 +8,21 @@
 
 namespace {
     using COMPLEX = std::complex<double>;
+    template<typename T>
+    T conj(T a) {
+        if (typeid(T) == typeid(std::complex<int>) or
+            typeid(T) == typeid(std::complex<short>) or
+            typeid(T) == typeid(std::complex<double>) or
+            typeid(T) == typeid(std::complex<long>) or
+            typeid(T) == typeid(std::complex<double>) or
+            typeid(T) == typeid(std::complex<long double>)) {
+                return std::conj(a);
+            } else {
+                return a;
+            }
+    }
+
+    double conj(double a) { return a;}
 }
 
 /*
@@ -127,6 +142,7 @@ Matrix<T> Matrix<T>::operator* (const Matrix<T>& A) const {
     for (size_t i = 0; i < n_; i++) {
         for (size_t j = 0; j < A.m_; j++) {
             for (size_t k = 0; k < m_; k++) {
+                //res.mass_[res.get_index(i, j)] += conj(mass_[this->get_index(i, k)]) * A.mass_[A.get_index(k, j)];
                 res.mass_[res.get_index(i, j)] += mass_[this->get_index(i, k)] * A.mass_[A.get_index(k, j)];
             }
         }
@@ -232,6 +248,7 @@ std::vector<T> Matrix<T>::operator*(const std::vector<T>& v) const {
 
     for (size_t i = 0; i < n; i++) {
         for (size_t k = 0; k < n; k++) {
+            //res[i] += conj(mass_[this->get_index(i, k)]) * v[k];
             res[i] += mass_[this->get_index(i, k)] * v[k];
         }
     }
@@ -248,6 +265,7 @@ std::vector<T> operator*(const std::vector<T>& v, const Matrix<T>& A) {
 
     for (size_t i = 0; i < n; i++) {
         for (size_t k = 0; k < n; k++) {
+            //res[i] += conj(v[k]) * A[k][i];
             res[i] += v[k] * A[k][i];
         }
     }

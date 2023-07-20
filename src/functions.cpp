@@ -3,10 +3,52 @@
 #include <numeric>
 #include <iostream>
 #include "config.hpp"
+#include <cassert>
 
 namespace {
-    constexpr double eps = 1e-9;
+    constexpr double eps = 1e-11;
+
+    void BP_Mult(Matrix<double>& B, size_t p, size_t q, double c, double s) {
+        size_t n = B.size();
+        for (size_t i = 0; i < n; i++) {
+            auto B_p = B[i][p] * c - B[i][q] * s;
+            auto B_q = B[i][p] * s + B[i][q] * c;
+
+            B[i][p] = B_p;
+            B[i][q] = B_q;
+        }
+    }
+
+    void PtransB_Mult(Matrix<double>& B, size_t p, size_t q, double c, double s) {
+        size_t n = B.size();
+        for (size_t i = 0; i < n; i++) {
+            auto B_p = B[p][i] * c - B[q][i] * s;
+            auto B_q = B[p][i] * s + B[q][i] * c;
+
+            B[p][i] = B_p;
+            B[q][i] = B_q;
+        }
+    }
 }
+
+double off(const Matrix<double>& A) {
+    double res = 0;
+
+    size_t n = A.n();
+    assert(A.n() == A.m());
+
+    for (size_t i = 0; i < n; i++) {
+        for (size_t j = 0; j < n; j++) {
+            if (i != j) {
+                res += A[i][j] * A[i][j];
+            }
+        }
+    }
+
+    res = std::sqrt(res);
+    return res;
+}
+
 size_t get_index_from_state(vec_levels state) {
     size_t index = 0;
     for (const auto qubit: state) {
@@ -43,7 +85,7 @@ matrix hermit(const matrix& A) {
 }
 
 */
-const double EPS = 1e-9;
+const double EPS = eps;
 
 // функция, проверяющая равенство двух комплексных чисел
 bool equals(std::complex<double> a, std::complex<double> b) {
@@ -173,7 +215,6 @@ Matrix<double> MGS (const Matrix<COMPLEX>& A) {
     return H;
 }
 
-
 // ONLY FOR REAL MATRIX. COMPLEX FOR Hermit_Lanczos
 std::pair<std::vector<double>, Matrix<double>> jacobi(const Matrix<double>& A) {
     using namespace std;
@@ -191,8 +232,14 @@ std::pair<std::vector<double>, Matrix<double>> jacobi(const Matrix<double>& A) {
     size_t iter = 0;
     // алгоритм Якоби для эрмитовых матриц
     while (true) {
-        if (iter == max_iter) break;
+        //std::cout << iter << std::endl;
+        //if (iter == max_iter) break;
         iter++;
+
+        if (iter == max_iter) break;
+        if (iter % 1000 == 0) {
+            if (off(B) < EPS) break;
+        }
         // находим максимальный недиагональный элемент
         double max_element = 0;
         int p = 0, q = 0;
@@ -213,18 +260,22 @@ std::pair<std::vector<double>, Matrix<double>> jacobi(const Matrix<double>& A) {
         double theta = atan2(2.0 * B[p][q], B[q][q] - B[p][p]) / 2.0;
 
         // создаем матрицу поворота
-        Matrix<double> P(n, n);
-        for (int i = 0; i < n; i++) {
-            P[i][i] = 1;
-        }
-        P[p][p] = P[q][q] = cos(theta);
-        P[q][p] = -sin(theta);
-        P[p][q] = sin(theta);
-
+        //Matrix<double> P(n, n);
+        //for (int i = 0; i < n; i++) {
+        //    P[i][i] = 1;
+        //}
+        //P[p][p] = P[q][q] = cos(theta);
+        //P[q][p] = -sin(theta);
+        //P[p][q] = sin(theta);
+        double c = cos(theta);
+        double s = sin(theta);
         // обновляем матрицу
         //B = multiply(multiply(P.transpose(), B), P);
-        B = P.transpose() * B * P;
-        eigenvectors = eigenvectors * P;
+        //B = P.transpose() * B * P;
+        PtransB_Mult(B, p, q, c, s);
+        BP_Mult(B, p, q, c, s);
+        BP_Mult(eigenvectors, p, q, c, s);
+        //eigenvectors = eigenvectors * P;
         //eigenvectors = multiply(eigenvectors, P);
     }
 
@@ -248,12 +299,14 @@ std::pair<std::vector<double>, Matrix<COMPLEX>> Hermit_Lanczos(const Matrix<COMP
     v[0][0] = COMPLEX(1);
 
     for (size_t j = 0; j < m; j++) {
+        std::cout << j << std::endl;
         std::vector<COMPLEX> w = A * v.col(j);
 
         if (j != 0) {
             w = w - (v.col(j - 1) * COMPLEX(betta[j]));
         }
 
+        std::cout << scalar_product(w, v.col(j)) << std::endl;
         alpha[j] = scalar_product(w, v.col(j)).real();
         w = w - (v.col(j) * COMPLEX(alpha[j]));
         if (j != m - 1) {
@@ -290,10 +343,14 @@ std::pair<std::vector<double>, Matrix<COMPLEX>> Hermit_Lanczos(const Matrix<COMP
     //return jacobi(H);
     auto p = jacobi(H);
 
+    std::cout << "Here\n";
     std::vector<double> eigenvalues = p.first;
     Matrix<double> T_eigenvectors = p.second;
 
     Matrix<COMPLEX> eigenvectors = v * T_eigenvectors;
+
+    auto check = v.transpose() * A * v;
+    check.show();
 
     return std::make_pair(eigenvalues, eigenvectors);
 }
