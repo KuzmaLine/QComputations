@@ -116,7 +116,13 @@ int main(void) {
 
     check_eigenvectors(p.first, p.second, A);
 
-    //Matrix<COMPLEX> a = matrix_testing::create_rand_matrix(32, 32, COMPLEX(0, 0), COMPLEX(10, 10));
+    Matrix<COMPLEX> a = matrix_testing::create_hermit_rand_matrix(32, 32, COMPLEX(0, 0), COMPLEX(10, 10));
+    
+    a.show();
+
+    auto a_p = Hermit_Lanczos(a);
+
+    check_eigenvectors(a_p.first, a_p.second, a);
     /*
     std::cout << std::endl;
     for (const auto& v : V) {
