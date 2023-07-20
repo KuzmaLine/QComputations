@@ -16,12 +16,12 @@ class Hamiltonian {
         Hamiltonian() {};
         Hamiltonian(const Hamiltonian& H) = default;
         size_t size() const { return H_.size(); }
-        std::set<Basis> get_basis() const { return basis_; }
+        std::set<State> get_basis() const { return basis_; }
         void show(const size_t width = 10) const;
         std::pair<std::vector<double>, Matrix<COMPLEX>> eigen();
     protected:
-        Basis init_state_;
-        std::set<Basis> basis_;
+        State init_state_;
+        std::set<State> basis_;
         Matrix<COMPLEX> H_;
         Matrix<COMPLEX> eigenvectors_;
         std::vector<double> eigenvalues_;
@@ -37,7 +37,7 @@ class H_by_func : public Hamiltonian {
 
 class H_TC : public Hamiltonian {
     public:
-        explicit H_TC(size_t n, size_t m, const Basis& init_state);
+        explicit H_TC(size_t n, size_t m, const State& init_state);
     private:
         size_t n_;
         size_t m_;

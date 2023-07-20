@@ -25,15 +25,15 @@ namespace {
     }
 }
 
-Basis::Basis(size_t n, size_t m, size_t state): n_(n), state_(index_to_state(m, state)) {}
+State::State(size_t n, size_t m, size_t state): n_(n), state_(index_to_state(m, state)) {}
 
-Basis::Basis(const std::vector<E_LEVEL>& state) : n_(0), state_(state) {
+State::State(const std::vector<E_LEVEL>& state) : n_(0), state_(state) {
     auto size = this->size();
     vector_of_atoms_state_ = vec_complex(std::pow(2, size), 0);
     vector_of_atoms_state_[get_index_from_state(state_)] = 1;
 }
 
-Basis::Basis(const std::string& str_state) {
+State::State(const std::string& str_state) {
     int i = START_INDEX;
 
     size_t n = 0;
@@ -55,18 +55,18 @@ Basis::Basis(const std::string& str_state) {
     }
 }
 
-size_t Basis::get_index() const {
+size_t State::get_index() const {
     auto max_num_atoms = std::pow(2, this->size());
 
     return n_ * max_num_atoms + get_index_from_state(state_);
 }
 
-size_t Basis::hash() const {
+size_t State::hash() const {
     std::hash<vec_levels> state_hash;
     return n_ * state_hash(state_);
 }
 
-std::string Basis::to_string() const {
+std::string State::to_string() const {
     std::string str_state = "|" + std::to_string(n_) + ">|";
     for (const auto& bit: state_) {
         str_state += std::to_string(bit);

@@ -60,11 +60,11 @@ int main(void) {
     int n = 1;
     int m = 2;
 
-    Basis basis("|1>|00>");
-    H_TC H(n, m, basis);
-    std::cout << basis.to_string() << " n = " << n << " m = " << m <<" h = " << config::h << " w = " << config::w << " g = " << config::g << " LOSS_PHOTONS = " << config::LOSS_PHOTONS << std::endl;
+    State state("|1>|00>");
+    H_TC H(n, m, state);
+    std::cout << state.to_string() << " n = " << n << " m = " << m <<" h = " << config::h << " w = " << config::w << " g = " << config::g << " LOSS_PHOTONS = " << config::LOSS_PHOTONS << std::endl;
 
-    //Basis_Graph graph(basis);
+    //State_Graph graph(state);
     //graph.show();
 
     //std::cout << std::endl;
@@ -132,7 +132,7 @@ int main(void) {
     */
     /*
     std::vector<double> time_vec = {10, 20, 30, 40, 50, 60, 70 ,80 ,90, 100, 110, 120, 130, 140, 150, 160, 170, 180, 190, 200};
-    auto probs = Evolution::evolution(basis, &H, time_vec);
+    auto probs = Evolution::evolution(state, &H, time_vec);
     size_t index = 0;
     for (const auto& b: bases) {
         std::cout << std::setw(config::WIDTH) << b.to_string() << " : ";
@@ -143,6 +143,6 @@ int main(void) {
         index++;
     }
     */
-    //Dynamic dynamic(basis, std::move(H), bases);
+    //Dynamic dynamic(state, std::move(H), bases);
     return 0;
 }

@@ -159,18 +159,18 @@ H_by_func::H_by_func(size_t n, std::function<COMPLEX(size_t, size_t)> func) : n_
     }
 }
 
-H_TC::H_TC(size_t n, size_t m, const Basis& init_state): n_(n), m_(m) {
+H_TC::H_TC(size_t n, size_t m, const State& init_state): n_(n), m_(m) {
     auto size_m_ = std::pow(2, m_);
-    Basis_Graph graph(init_state, config::LOSS_PHOTONS);
+    State_Graph graph(init_state, config::LOSS_PHOTONS);
     basis_ = graph.get_basis();
     auto size_H_ = basis_.size();
 
-    std::vector<size_t> basis_index;
+    std::vector<size_t> state_index;
     //std::unordered_map<size_t, size_t> state_to_index;
     //auto H_index = 0;
     for (const auto& state: basis_) {
         auto index = state.get_index();
-        basis_index.emplace_back(index);
+        state_index.emplace_back(index);
         //state_to_index[index] = H_index++;
     }
 
@@ -232,20 +232,20 @@ H_TC::H_TC(size_t n, size_t m, const Basis& init_state): n_(n), m_(m) {
 
     for (size_t i = 0; i < size_H_; i++) {
         for (size_t j = 0; j < size_H_; j++) {
-            H_[i][j] = tmp_H_[basis_index[i]][basis_index[j]];
+            H_[i][j] = tmp_H_[state_index[i]][state_index[j]];
         }
     }
 }
 
 /*
-matrix H_TC::Reduce_H(const Basis& init_state) {
+matrix H_TC::Reduce_H(const State& init_state) {
     if (init_state_ == init_state) {
         return Reduced_H_;
     }
     init_state_ = init_state;
     is_reduced_ = true;
     is_reduced_eigen_ = false;
-    Basis_Graph graph(init_state, config::LOSS_PHOTONS);
+    State_Graph graph(init_state, config::LOSS_PHOTONS);
 
     bases_ = graph.get_bases();
 

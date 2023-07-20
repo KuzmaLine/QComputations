@@ -8,15 +8,15 @@
 #include "additional_operators.hpp"
 
 
-class Basis_Graph {
+class State_Graph {
     public:
-        explicit Basis_Graph(const Basis& init_state, bool with_loss_photons = false);
+        explicit State_Graph(const State& init_state, bool with_loss_photons = false);
         void show() const;
 
-        std::set<Basis> get_basis() const { return basis_; }
+        std::set<State> get_basis() const { return basis_; }
     private:
-        std::set<Basis> basis_;
-        std::queue<Basis> basis_queue_;
-        std::unordered_map<Basis, std::unordered_set<Basis>> to_;
-        std::unordered_map<Basis, std::unordered_set<Basis>> from_;
+        std::set<State> basis_;
+        std::queue<State> state_queue_;
+        std::unordered_map<State, std::unordered_set<State>> to_;
+        std::unordered_map<State, std::unordered_set<State>> from_;
 };

@@ -105,17 +105,17 @@ struct std::hash<std::map<int, std::vector<int>>> {
 
 
 template<>
-struct std::hash<Basis> {
-    size_t operator()(const Basis& state) const {
+struct std::hash<State> {
+    size_t operator()(const State& state) const {
         return state.hash();
     }
 
 };
 
 template<>
-struct std::hash<std::pair<Basis, Basis>> {
-    size_t operator()(const std::pair<Basis, Basis>& p) const {
-        std::hash<Basis> state_hash;
+struct std::hash<std::pair<State, State>> {
+    size_t operator()(const std::pair<State, State>& p) const {
+        std::hash<State> state_hash;
         size_t h1 = state_hash(p.first);
         size_t h2 = state_hash(p.second);
         return h1 ^ (h2 << 1);

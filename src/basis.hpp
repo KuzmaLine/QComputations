@@ -7,7 +7,7 @@
 #include <map>
 #include <set>
 
-class Basis {
+class State {
     using COMPLEX = std::complex<double>;
     using vec_complex = std::vector<COMPLEX>;
     using E_LEVEL = int;
@@ -16,11 +16,11 @@ class Basis {
     using AtomId = size_t;
 
     public:
-        explicit Basis() {};
-        explicit Basis(size_t n, size_t m, size_t state);
-        explicit Basis(const std::vector<E_LEVEL>& state);
-        explicit Basis(const std::string&);
-        Basis(const Basis&) = default;
+        explicit State() {};
+        explicit State(size_t n, size_t m, size_t state);
+        explicit State(const std::vector<E_LEVEL>& state);
+        explicit State(const std::string&);
+        State(const State&) = default;
 
         size_t n() const { return n_; }
 
@@ -40,9 +40,9 @@ class Basis {
 
         size_t get_index() const;
 
-        bool operator==(const Basis& other) const { return state_ == other.state_ and n_ == other.n_; }
-        //bool operator<(const Basis& other) const { return n_ > other.n_ or get_index_from_state(state_) < get_index_from_state(other.state_); }
-        bool operator<(const Basis& other) const { return this->to_string() > other.to_string(); }
+        bool operator==(const State& other) const { return state_ == other.state_ and n_ == other.n_; }
+        //bool operator<(const State& other) const { return n_ > other.n_ or get_index_from_state(state_) < get_index_from_state(other.state_); }
+        bool operator<(const State& other) const { return this->to_string() > other.to_string(); }
         size_t hash() const;
     private:
         size_t n_;
