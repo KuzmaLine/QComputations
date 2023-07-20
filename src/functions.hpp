@@ -12,6 +12,7 @@ namespace {
     using vec_levels = std::vector<E_LEVEL>;
 }
 
+std::vector<double> make_timeline(double start, double end, double step);
 double off(const Matrix<double>& A);
 std::pair<double, double> givens(double a, double b);
 void tridiagonal_QR(Matrix<double>& T);

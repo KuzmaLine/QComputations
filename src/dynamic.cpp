@@ -8,8 +8,7 @@ namespace {
     }
 }
 
-namespace Evolution {
-    Probs evolution(const std::vector<COMPLEX>& init_state, Hamiltonian& H, const std::vector<double>& time_vec) {
+    Evolution::Probs Evolution::evol(const std::vector<COMPLEX>& init_state, Hamiltonian& H, const std::vector<double>& time_vec) {
         auto p = H.eigen();
         auto eigen_values = p.first;
         auto eigen_vectors = p.second;
@@ -17,9 +16,11 @@ namespace Evolution {
 
         std::vector<COMPLEX> lambda;
         for (size_t i = 0; i < eigen_values.size(); i++) {
+            std::cout << norm(eigen_vectors.col(i)) << std::endl;
             lambda.emplace_back(scalar_product(eigen_vectors.col(i), init_state)); // <KSI(0)|PHI_i> 
         }
 
+        std::cout << "L - " << norm(lambda) << std::endl;
         Probs probs(eigen_values.size(), time_vec.size());
         size_t time_index = 0;
 
@@ -33,6 +34,8 @@ namespace Evolution {
                 }
             }
 
+            std::cout << norm(psi_t) << std::endl;
+
             for (size_t i = 0; i < eigen_values.size(); i++) {
                 double tmp = std::abs(psi_t[i]);
                 probs[i][time_index] = tmp * tmp;
@@ -42,5 +45,4 @@ namespace Evolution {
 
         return probs;
     }
-}
 

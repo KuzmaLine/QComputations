@@ -31,6 +31,18 @@ namespace {
     }
 }
 
+std::vector<double> make_timeline(double start, double end, double step) {
+    size_t n = (end - start) / step;
+    std::vector<double> timeline(n + 1);
+
+    auto cur_time = start;
+    for (size_t i = 0; i <= n; i++) {
+        timeline[i] = start + step * i;
+    }
+
+    return timeline;
+}
+
 double scalar_product(const std::vector<double>& a, const std::vector<double>& b) {
     double res = 0;
 
@@ -333,14 +345,14 @@ std::pair<std::vector<double>, Matrix<COMPLEX>> Hermit_Lanczos(const Matrix<COMP
     v[0][0] = COMPLEX(1);
 
     for (size_t j = 0; j < m; j++) {
-        std::cout << j << std::endl;
+        //std::cout << j << std::endl;
         std::vector<COMPLEX> w = A * v.col(j);
 
         if (j != 0) {
             w = w - (v.col(j - 1) * COMPLEX(betta[j]));
         }
 
-        std::cout << scalar_product(w, v.col(j)) << std::endl;
+        //std::cout << scalar_product(w, v.col(j)) << std::endl;
         alpha[j] = scalar_product(w, v.col(j)).real();
         w = w - (v.col(j) * COMPLEX(alpha[j]));
         if (j != m - 1) {
@@ -370,20 +382,20 @@ std::pair<std::vector<double>, Matrix<COMPLEX>> Hermit_Lanczos(const Matrix<COMP
     }
 
     //std::cout << std::endl;
-    //H.show(config::WIDTH);
+    H.show(config::WIDTH);
     //tridiagonal_QR(H);
 
     //std::cout << std::endl;
     //return jacobi(H);
     auto p = jacobi(H);
 
-    std::cout << "Here\n";
+    //std::cout << "Here\n";
     std::vector<double> eigenvalues = p.first;
     Matrix<double> T_eigenvectors = p.second;
 
     Matrix<COMPLEX> eigenvectors = v * T_eigenvectors;
 
-    auto check = v.transpose() * A * v;
+    auto check = v.hermit() * A * v;
     check.show();
 
     return std::make_pair(eigenvalues, eigenvectors);

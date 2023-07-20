@@ -9,7 +9,7 @@
 #include "test.hpp"
 //#include "config.hpp"
 //#include "graph.hpp"
-//#include "dynamic.hpp"
+#include "dynamic.hpp"
 
 template<typename T>
 void check_eigenvectors(std::vector<double> eigenvalues, const Matrix<T>& eigenvectors, const Matrix<T>& matrix) {
@@ -80,7 +80,19 @@ int main(void) {
 
     H.show(config::WIDTH);
 
-    n = 5;
+    auto H_m = H.get_matrix();
+
+    auto p = H.eigen();
+
+    check_eigenvectors(p.first, p.second, H_m);
+
+    for (size_t i = 0; i < H.size(); i++) {
+        for (size_t j = 0; j < H.size(); j++) {
+            std::cout << scalar_product(p.second.col(i), p.second.col(j)) << std::endl;
+        }
+        std::cout << std::endl;
+    }
+    //n = 5;
     //Matrix<COMPLEX> A(n, n, 0);
     /*
     A[0][1] = COMPLEX(2, 434);
@@ -150,9 +162,12 @@ int main(void) {
         }
     }
     */
+
+    std::vector<double> time_vec = make_timeline(0, 10 * M_PI, M_PI / 5);
+    std::vector<COMPLEX> st(H.size(), 0);
+    st[0] = 1;
+    //auto probs = Evolution::evol(st, H, time_vec);
     /*
-    std::vector<double> time_vec = {10, 20, 30, 40, 50, 60, 70 ,80 ,90, 100, 110, 120, 130, 140, 150, 160, 170, 180, 190, 200};
-    auto probs = Evolution::evolution(state, &H, time_vec);
     size_t index = 0;
     for (const auto& b: bases) {
         std::cout << std::setw(config::WIDTH) << b.to_string() << " : ";
@@ -163,6 +178,5 @@ int main(void) {
         index++;
     }
     */
-    //Dynamic dynamic(state, std::move(H), bases);
     return 0;
 }
