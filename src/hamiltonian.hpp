@@ -3,7 +3,7 @@
 #include <functional>
 #include <complex>
 #include <iostream>
-#include "basis.hpp"
+#include "state.hpp"
 #include "config.hpp"
 #include "matrix.hpp"
 

@@ -3,7 +3,7 @@
 #include <vector>
 #include <string>
 #include <complex>
-#include "basis.hpp"
+#include "state.hpp"
 
 class Grid {
     using COMPLEX = std::complex<double>;

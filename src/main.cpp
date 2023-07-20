@@ -4,7 +4,7 @@
 #include "additional_operators.hpp"
 #include "matrix.hpp"
 #include "hamiltonian.hpp"
-#include "basis.hpp"
+#include "state.hpp"
 #include "matplotlibcpp.h"
 #include "test.hpp"
 //#include "config.hpp"
