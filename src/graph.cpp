@@ -69,8 +69,10 @@ State_Graph::State_Graph(const State& init_state, bool with_loss_photons) {
 void State_Graph::show() const {
     for (const auto& state: basis_) {
         std::cout << state.to_string() << " : ";
-        for (const auto& to_state: from_.at(state)) {
-            std::cout << to_state.to_string() << " ";
+        if (state.get_index() != 0) {
+            for (const auto& to_state: from_.at(state)) {
+                std::cout << to_state.to_string() << " ";
+            }
         }
         std::cout << std::endl;
     }

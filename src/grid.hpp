@@ -57,7 +57,7 @@ class Grid {
         size_t x_size_;
         size_t y_size_;
         size_t z_size_;
-        std::vector<Basis> grid_states_;
+        std::vector<State> grid_states_;
         std::set<PolId> pols_with_atoms_;
         std::vector<std::vector<COMPLEX>> gamma;
 };

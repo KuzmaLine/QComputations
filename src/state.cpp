@@ -63,7 +63,7 @@ size_t State::get_index() const {
 
 size_t State::hash() const {
     std::hash<vec_levels> state_hash;
-    return n_ * state_hash(state_);
+    return state_hash(state_) ^ n_;
 }
 
 std::string State::to_string() const {

@@ -1,4 +1,4 @@
-#define _USE_MATH_DEFINES
+//#define _USE_MATH_DEFINES
 #include <iostream>
 #include "functions.hpp"
 #include "additional_operators.hpp"
@@ -84,14 +84,16 @@ int main(void) {
 
     auto p = H.eigen();
 
-    check_eigenvectors(p.first, p.second, H_m);
+    //check_eigenvectors(p.first, p.second, H_m);
 
+    /*
     for (size_t i = 0; i < H.size(); i++) {
         for (size_t j = 0; j < H.size(); j++) {
             std::cout << scalar_product(p.second.col(i), p.second.col(j)) << std::endl;
         }
         std::cout << std::endl;
     }
+    */
     //n = 5;
     //Matrix<COMPLEX> A(n, n, 0);
     /*
@@ -147,9 +149,9 @@ int main(void) {
     check_eigenvectors(p.first, p.second, A);
 
     */
-    Matrix<COMPLEX> a = matrix_testing::create_hermit_rand_matrix(4, 4, COMPLEX(0, 0), COMPLEX(10, 10));
-    auto a_p = Hermit_Lanczos(a);
-    check_eigenvectors(a_p.first, a_p.second, a);
+    //Matrix<COMPLEX> a = matrix_testing::create_hermit_rand_matrix(1024, 1024, COMPLEX(0, 0), COMPLEX(10, 10));
+    //auto a_p = Hermit_Lanczos(a);
+    //check_eigenvectors(a_p.first, a_p.second, a);
     /*
     std::cout << std::endl;
     for (const auto& v : V) {
@@ -164,10 +166,11 @@ int main(void) {
     }
     */
 
-    std::vector<double> time_vec = make_timeline(0, 10 * M_PI, M_PI / 5);
+    std::vector<double> time_vec = make_timeline(0, 100 * M_PI, 5 * M_PI);
     std::vector<COMPLEX> st(H.size(), 0);
-    st[0] = 1;
-    //auto probs = Evolution::evol(st, H, time_vec);
+    st[1] = 1;
+    auto probs = Evolution::evol(st, H, time_vec);
+
     /*
     size_t index = 0;
     for (const auto& b: bases) {
@@ -179,5 +182,6 @@ int main(void) {
         index++;
     }
     */
+
     return 0;
 }

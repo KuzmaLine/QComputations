@@ -16,11 +16,11 @@ namespace {
 
         std::vector<COMPLEX> lambda;
         for (size_t i = 0; i < eigen_values.size(); i++) {
-            std::cout << norm(eigen_vectors.col(i)) << std::endl;
+            //std::cout << norm(eigen_vectors.col(i)) << std::endl;
             lambda.emplace_back(scalar_product(eigen_vectors.col(i), init_state)); // <KSI(0)|PHI_i> 
         }
 
-        std::cout << "L - " << norm(lambda) << std::endl;
+        //std::cout << "L - " << norm(lambda) << std::endl;
         Probs probs(eigen_values.size(), time_vec.size());
         size_t time_index = 0;
 
@@ -34,7 +34,7 @@ namespace {
                 }
             }
 
-            std::cout << norm(psi_t) << std::endl;
+            //std::cout << norm(psi_t) << std::endl;
 
             for (size_t i = 0; i < eigen_values.size(); i++) {
                 double tmp = std::abs(psi_t[i]);
