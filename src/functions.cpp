@@ -6,7 +6,8 @@
 #include <cassert>
 
 namespace {
-    constexpr double eps = 1e-11;
+    constexpr double eps = 1e-12;
+    const double EPS = eps;
 
     void BP_Mult(Matrix<double>& B, size_t p, size_t q, double c, double s) {
         size_t n = B.size();
@@ -131,7 +132,6 @@ matrix hermit(const matrix& A) {
 }
 
 */
-const double EPS = eps;
 
 // функция, проверяющая равенство двух комплексных чисел
 bool equals(std::complex<double> a, std::complex<double> b) {
@@ -344,21 +344,69 @@ std::pair<std::vector<double>, Matrix<COMPLEX>> Hermit_Lanczos(const Matrix<COMP
     Matrix<COMPLEX> v(m, m, 0);
     v[0][0] = COMPLEX(1);
 
+    /*
     for (size_t j = 0; j < m; j++) {
         //std::cout << j << std::endl;
         std::vector<COMPLEX> w = A * v.col(j);
-
-        if (j != 0) {
-            w = w - (v.col(j - 1) * COMPLEX(betta[j]));
-        }
-
-        //std::cout << scalar_product(w, v.col(j)) << std::endl;
         alpha[j] = scalar_product(w, v.col(j)).real();
         w = w - (v.col(j) * COMPLEX(alpha[j]));
-        if (j != m - 1) {
-            betta[j + 1] = norm(w);
-            v.modify_col(j + 1, w / COMPLEX(betta[j + 1]));
+        if (j != 0) {
+            //w = w - (v.col(j - 1) * COMPLEX(betta[j]));
+            w = w - (v.col(j - 1) * COMPLEX(betta[j - 1]));
         }
+
+        std::vector<COMPLEX> sum_w(m, 0);
+        for (size_t i = 0; i < j; i++) {
+            COMPLEX product = scalar_product(w, v.col(i));
+            auto v_tmp = v.col(i);
+            for (size_t k = 0; k < m; k++) {
+                sum_w[k] += v_tmp[k] * product;
+            }
+        }
+
+        w = w - sum_w;
+
+        betta[j] = norm(w);
+
+        if (betta[j] < EPS) {
+            std::cout << "EPS!\n";
+            break;
+        }
+        //std::cout << scalar_product(w, v.col(j)) << std::endl;    
+        if (j != m - 1) {
+            v.modify_col(j + 1, w / COMPLEX(betta[j]));
+        }
+    }
+    */
+
+    std::vector<COMPLEX> w = A * v.col(0);
+    alpha[0] = scalar_product(w, v.col(0)).real();
+    w = w - (v.col(0) * COMPLEX(alpha[0]));
+    for (size_t j = 1; j < m; j++) {
+        betta[j] = norm(w);
+
+        if (betta[j] >= EPS) {
+            v.modify_col(j, w / COMPLEX(betta[j]));
+        } else {
+            std::vector<COMPLEX> v_unit(m, 0);
+            v_unit[j] = 1;
+
+            std::cout << "HERE\n";
+            for (size_t i = 0; i < j; i++) {
+                COMPLEX a = scalar_product(v_unit, v.col(i));
+                v_unit = v_unit - v.col(i) * a;
+                show_vector(v_unit);
+            }
+
+            v_unit = v_unit / COMPLEX(norm(v_unit));
+
+
+            v.modify_col(j, v_unit);
+        }
+        
+        w = A * v.col(j);
+        alpha[j] = scalar_product(w, v.col(j)).real();
+        w = w - v.col(j) * COMPLEX(alpha[j]) - v.col(j - 1) * COMPLEX(betta[j]);
     }
 
     /*
