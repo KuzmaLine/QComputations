@@ -79,5 +79,6 @@
             "binaryPath": "/home/kuzmaline/Quantum/diploma/prog",
             "binaryArgs": []
         }
-    ]
+    ],
+    "C_Cpp.errorSquiggles": "disabled"
 }
