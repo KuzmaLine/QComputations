@@ -1,4 +1,5 @@
 #include <iostream>
+#include <mkl_lapack.h>
 class Shape {
 public:
   virtual double getArea() = 0; // pure virtual function

@@ -32,6 +32,31 @@ namespace {
     }
 }
 
+std::vector<double> FROM_double_TO_vector(double* A, lapack_int n) {
+    std::vector<double> res(n);
+
+    for (size_t i = 0; i < n; i++) {
+        res[i] = A[i];
+    }
+
+    delete [] A;
+    return res;
+}
+
+Matrix<COMPLEX> FROM_lapack_complex_double_TO_Matrix(lapack_complex_double* A, lapack_int n, lapack_int m) {
+    Matrix<COMPLEX> res(n, m);
+
+    for (size_t i = 0; i < n; i++) {
+        for (size_t j = 0; j < m; j++) {
+            COMPLEX tmp(A[i * m + j].real, A[i * m + j].imag);
+            res[i][j] = tmp;
+        }
+    }
+
+    delete [] A;
+    return res;
+}
+
 std::vector<double> make_timeline(double start, double end, double step) {
     size_t n = (end - start) / step;
     std::vector<double> timeline(n + 1);
@@ -379,6 +404,7 @@ std::pair<std::vector<double>, Matrix<COMPLEX>> Hermit_Lanczos(const Matrix<COMP
     }
     */
 
+    /*
     std::vector<COMPLEX> w = A * v.col(0);
     alpha[0] = scalar_product(w, v.col(0)).real();
     w = w - (v.col(0) * COMPLEX(alpha[0]));
@@ -408,7 +434,63 @@ std::pair<std::vector<double>, Matrix<COMPLEX>> Hermit_Lanczos(const Matrix<COMP
         alpha[j] = scalar_product(w, v.col(j)).real();
         w = w - v.col(j) * COMPLEX(alpha[j]) - v.col(j - 1) * COMPLEX(betta[j]);
     }
+    */
 
+    lapack_complex_double* lapack_A = A.to_upper_lapack();
+    lapack_int n = A.size();
+    lapack_int res;
+    double *d, *e;
+
+    auto B = A;
+    auto lapack_B = B.to_lapack();
+    d = new double [m];
+    e = new double [n - 1];
+    std::cout << "HERE\n";
+    res = LAPACKE_zhetrd(LAPACK_ROW_MAJOR, 'U', n, lapack_A, n, d, e, lapack_B);
+    std::cout << "RES = " << res << std::endl;
+    res = LAPACKE_zungtr(LAPACK_ROW_MAJOR, 'U', n, lapack_A, n, lapack_B);
+    std::cout << "RES = " << res << std::endl;
+    std::cout << "HERE\n";
+    for (size_t i = 0; i < n; i++) {
+        std::cout << d[i] << " ";
+        if (i != n - 1) {
+            std::cout << e[i];
+        }
+
+        std::cout << std::endl;
+    }
+
+    std::cout << "TAU: \n";
+    for (size_t i = 0; i < n - 1; i++) {
+        std::cout << std::setw(config::WIDTH) << "(" << lapack_B[i].real << ", " << lapack_B[i].imag << ") ";
+    }
+
+    std::cout << std::endl;
+    std::cout << "T: \n";
+
+    for (size_t i = 0; i < n; i++) {
+        for (size_t j = 0; j < n; j++) {
+            std::cout << std::setw(config::WIDTH) << "(" << lapack_A[i*n + j].real << ", " << lapack_A[i*n + j].imag << ") ";
+            COMPLEX tmp(lapack_B[i*n + j].real, lapack_B[i*n + j].imag);
+            v[i][j] = tmp;
+        }
+        std::cout << std::endl;
+    }
+
+    Matrix<double> H(m, m, 0);
+    H[0][0] = d[0];
+
+    for (size_t i = 1; i < m; i++) {
+        H[i][i] = d[i];
+        H[i - 1][i] = e[i - 1];
+        H[i][i - 1] = e[i - 1];
+    }
+    //std::cout << std::endl;
+    H.show(config::WIDTH);
+
+    std::cout << "zstedc\n";
+    //LAPACKE_dstedc(LAPACK_ROW_MAJOR, 'I', n, d, e, NULL, n);
+    res = LAPACKE_zstedc(LAPACK_ROW_MAJOR, 'V', n, d, e, lapack_A, n);    
     /*
     for (const auto& num: alpha) {
         std::cout << num << " ";
@@ -420,6 +502,7 @@ std::pair<std::vector<double>, Matrix<COMPLEX>> Hermit_Lanczos(const Matrix<COMP
     }
     */
 
+    /*
     Matrix<double> H(m, m, 0);
     H[0][0] = alpha[0];
 
@@ -428,9 +511,8 @@ std::pair<std::vector<double>, Matrix<COMPLEX>> Hermit_Lanczos(const Matrix<COMP
         H[i - 1][i] = betta[i];
         H[i][i - 1] = betta[i];
     }
+    */
 
-    //std::cout << std::endl;
-    H.show(config::WIDTH);
     //tridiagonal_QR(H);
 
     //std::cout << std::endl;
@@ -443,8 +525,26 @@ std::pair<std::vector<double>, Matrix<COMPLEX>> Hermit_Lanczos(const Matrix<COMP
 
     Matrix<COMPLEX> eigenvectors = v * T_eigenvectors;
 
-    auto check = v.hermit() * A * v;
-    check.show();
+    //auto check = v.hermit() * A * v;
+    //check.show();
+
+    std::cout << "RES = " << res << std::endl;
+
+    for (size_t i = 0; i < n; i++) {
+        std::cout << d[i] << " ";
+    }
+
+    std::cout << std::endl;
+    for (size_t i = 0; i < n; i++) {
+        for (size_t j = 0; j < n; j++) {
+            std::cout << std::setw(config::WIDTH) << "(" << lapack_B[i*n + j].real << ", " << lapack_B[i*n + j].imag << ") ";
+        }
+
+        std::cout << std::endl;
+    }
+
+    eigenvectors = FROM_lapack_complex_double_TO_Matrix(lapack_A, n, n);
+    eigenvalues = FROM_double_TO_vector(d, n);
 
     return std::make_pair(eigenvalues, eigenvectors);
 }

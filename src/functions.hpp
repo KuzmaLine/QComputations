@@ -4,6 +4,8 @@
 #include <vector>
 #include <complex>
 #include <set>
+#include <mkl_lapack.h>
+#include <mkl_lapacke.h>
 
 namespace {
     using E_LEVEL = int;
@@ -12,6 +14,8 @@ namespace {
     using vec_levels = std::vector<E_LEVEL>;
 }
 
+std::vector<double> FROM_double_TO_vector(double* A, lapack_int n);
+Matrix<COMPLEX> FROM_lapack_complex_double_TO_Matrix(lapack_complex_double* A, lapack_int n, lapack_int m);
 std::vector<double> make_timeline(double start, double end, double step);
 double off(const Matrix<double>& A);
 std::pair<double, double> givens(double a, double b);

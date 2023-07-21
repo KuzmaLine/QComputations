@@ -2,8 +2,8 @@ vpath %.cpp ./src
 vpath %.hpp ./src
 CC=g++
 
-LFLAGS = -std=c++11 -Werror -I/usr/include/python3.10 -lpython3.10
-CFLAGS = -std=c++11 -Werror -I/usr/include/python3.10 -lpython3.10
+LFLAGS = -std=c++11 -Werror -I/usr/include/python3.10 -I/usr/include/mkl -lpython3.10 -lmkl_intel_lp64 -lmkl_intel_thread -lmkl_core -liomp5 -lpthread -lm -ldl
+CFLAGS = -std=c++11 -Werror -I/usr/include/python3.10 -I/usr/include/mkl -lpython3.10 -lmkl_intel_lp64 -lmkl_intel_thread -lmkl_core -liomp5 -lpthread -lm -ldl
 OBJ = matrix.o state.o graph.o hamiltonian.o additional_operators.o functions.o dynamic.o main.o
 
 all: prog

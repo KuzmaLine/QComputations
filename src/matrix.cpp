@@ -56,3 +56,43 @@ std::vector<COMPLEX> Matrix<COMPLEX>::operator* <COMPLEX>(const std::vector<COMP
     return res;
 }
 */
+
+namespace {
+    lapack_complex_double make_complex(const double a, const double b) {
+        lapack_complex_double c;
+
+        c.real = a;
+        c.imag = b;
+
+        return c;
+    }
+}
+
+template<>
+lapack_complex_double* Matrix<COMPLEX>::to_upper_lapack() const {
+    lapack_complex_double* a;
+    size_t index = 0;
+    a = new lapack_complex_double [n_ * m_];
+    for (size_t i = 0; i < n_; i++) {
+        for (size_t j = i; j < m_; j++) {
+            a[get_index(i, j)] = make_complex(mass_[get_index(i, j)].real(), mass_[get_index(i, j)].imag());
+            //a[index++] = make_complex(mass_[get_index(i, j)].real(), mass_[get_index(i, j)].imag());
+        }
+    }
+
+    return a;
+}
+
+template<>
+lapack_complex_double* Matrix<COMPLEX>::to_lapack() const {
+    lapack_complex_double* a;
+
+    a = new lapack_complex_double [n_ * m_];
+    for (size_t i = 0; i < n_; i++) {
+        for (size_t j = 0; j < m_; j++) {
+            a[get_index(i, j)] = make_complex(mass_[get_index(i, j)].real(), mass_[get_index(i, j)].imag());
+        }
+    }
+
+    return a;
+}

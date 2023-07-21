@@ -5,6 +5,8 @@
 #include <iterator>
 #include <cassert>
 #include <iomanip>
+#include <mkl_lapack.h>
+#include <mkl_lapacke.h>
 
 namespace {
     using COMPLEX = std::complex<double>;
@@ -99,6 +101,8 @@ template<typename T> class Matrix {
         void show(size_t width = 10) const;
         T* operator[](size_t index_row) { return mass_.data() + index_row * m_; };
         const T* operator[](size_t index_row) const { return mass_.data() + index_row * m_; };
+        lapack_complex_double* to_upper_lapack() const;
+        lapack_complex_double* to_lapack() const;
     private:
         size_t get_index(size_t i, size_t j) const { return i * m_ + j; }
         size_t n_;
@@ -361,3 +365,9 @@ void Matrix<T>::show(size_t width) const {
 
     std::cout << std::endl;
 }
+
+template<>
+lapack_complex_double* Matrix<COMPLEX>::to_upper_lapack() const;
+
+template<>
+lapack_complex_double* Matrix<COMPLEX>::to_lapack() const;
