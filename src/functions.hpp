@@ -40,15 +40,15 @@ std::vector<T> Runge_Kutt_4(const std::vector<V>& x, const T& y0, std::function<
     y[0] = y0;
 
     for (size_t i = 0; i < len - 1; i++) {
-        std::cout << i << " " << y[i] << " ";
+        //std::cout << i << " " << y[i] << " ";
         V h = x[i + 1] - x[i];
 
         T k1 = f(x[i], y[i]);
         T k2 = f(x[i] + h / 2.0, y[i] + k1 * h / 2.0);
         T k3 = f(x[i] + h / 2.0, y[i] + k2 * h / 2.0);
         T k4 = f(x[i] + h, y[i] + h * k3);
-        y[i + 1] = y[i]  + h*(k1 + 2 * k2 + 2 * k3 + k4)/6.0;
-        std::cout << h << " " << y[i + 1] << std::endl;
+        y[i + 1] = y[i]  + h*(k1 + 2 * k2 + 2 * k3 + k4) / 6.0;
+        //std::cout << h << " " << y[i + 1] << " " << 2 * x[i + 1] << std::endl;
     }
 
     return y;

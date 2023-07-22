@@ -83,7 +83,7 @@ namespace functions_testing {
 
         size_t index = 0;
         for (const auto& x: X) {
-            //std::cout << std::setw(config::WIDTH) << x << " -> " << y[index++] << " | " << f_correct(x) << std::endl;
+            std::cout << std::setw(config::WIDTH) << x << " -> " << y[index++] << " | " << f_correct(x) << std::endl;
         }
     }
 

@@ -14,11 +14,11 @@
 namespace plt = matplotlibcpp;
 
 double func(double x, double y = 0) {
-    return x*x;
+    return x;
 }
 
 double func_correct(double x) {
-    return 2 * x;
+    return x * x / 2;
 }
 
 int main(void) {
@@ -65,12 +65,8 @@ int main(void) {
     st[0] = 1;
     auto probs = Evolution::schrodinger(st, H, time_vec);
 
-
-    std::vector<double> x = make_timeline(0, 100, 1);
-
-    functions_testing::check_runge_kutt<double, double>(x, double(0), &func, &func_correct);
-
-    return 0;
+    //std::vector<double> x = make_timeline(0, 100, 1);
+    //functions_testing::check_runge_kutt<double, double>(x, double(0), &func, &func_correct);
 
     std::array<std::string, 3> ls = {"-", "--", "-."};
     std::array<std::string, 9> c = {"b", "r", "g", "tab:orange", "m", "tab:brown", "tab:violet", "tab:olive", "tab:purple"};
