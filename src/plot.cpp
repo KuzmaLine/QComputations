@@ -18,3 +18,22 @@ void matplotlib::probs_to_plot(const Evolution::Probs& probs, std::vector<double
         plt::plot(time_vec, state_probs);
     }
 }
+
+void matplotlib::show(bool is_block) {
+    plt::show(is_block);
+}
+
+void matplotlib::make_figure(size_t x, size_t y, size_t dpi) {
+    if (x == 0 or y == 0) plt::figure();
+    else {
+        plt::figure_size(x, y, dpi);
+    }
+}
+
+void matplotlib::savefig(const std::string& filename, size_t dpi) {
+    plt::save(filename, dpi);
+}
+
+void matplotlib::grid(bool is_enable) {
+    plt::grid(is_enable);
+}

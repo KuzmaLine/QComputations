@@ -5,7 +5,6 @@
 #include "matrix.hpp"
 #include "hamiltonian.hpp"
 #include "state.hpp"
-#include "matplotlibcpp.hpp"
 #include "test.hpp"
 #include "plot.hpp"
 //#include "config.hpp"
@@ -172,9 +171,9 @@ int main(void) {
     st[1] = 1;
     auto probs = Evolution::evol(st, H, time_vec);
 
+    matplotlib::make_figure(640, 400);
     matplotlib::probs_to_plot(probs, time_vec, basis);
-
-    plt::show();
+    matplotlib::show();
     /*
     size_t index = 0;
     for (const auto& b: bases) {

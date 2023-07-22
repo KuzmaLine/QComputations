@@ -1946,11 +1946,11 @@ inline bool fignum_exists(long number)
     return ret;
 }
 
-inline void figure_size(size_t w, size_t h)
+inline void figure_size(size_t w, size_t h, const size_t dpi = 100)
 {
     detail::_interpreter::get();
 
-    const size_t dpi = 100;
+//  const size_t dpi = 100;
     PyObject* size = PyTuple_New(2);
     PyTuple_SetItem(size, 0, PyFloat_FromDouble((double)w / dpi));
     PyTuple_SetItem(size, 1, PyFloat_FromDouble((double)h / dpi));
@@ -2549,7 +2549,7 @@ inline void set_zlabel(const std::string &str, const std::map<std::string, std::
     if (res) Py_DECREF(res);
 }
 
-inline void grid(bool flag)
+inline void grid(bool flag = true)
 {
     detail::_interpreter::get();
 
@@ -2649,7 +2649,8 @@ inline void pause(Numeric interval)
     Py_DECREF(res);
 }
 
-inline void save(const std::string& filename, const int dpi=0)
+//inline void save(const std::string& filename, const int dpi=0)
+inline void save(const std::string& filename, const size_t dpi=0)
 {
     detail::_interpreter::get();
 
