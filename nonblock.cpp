@@ -41,7 +41,7 @@ int main()
     // Enable legend.
     plt::legend();
 
-    plt::show(false);
+    plt::show();
 
     cout << "matplotlibcpp::show() is working in an non-blocking mode" << endl;
     getchar();

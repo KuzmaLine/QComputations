@@ -63,6 +63,8 @@ int main(void) {
     int n = 3;
     int m = 2;
 
+    plt::plot({1, 3, 2, 4});
+    plt::show();
     State state("|2>|01>");
     H_TC H(n, m, state);
     std::cout << state.to_string() << " n = " << n << " m = " << m <<" h = " << config::h << " w = " << config::w << " g = " << config::g << " LOSS_PHOTONS = " << config::LOSS_PHOTONS << std::endl;
