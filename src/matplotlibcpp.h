@@ -470,6 +470,28 @@ bool plot(const std::vector<Numeric> &x, const std::vector<Numeric> &y, const st
     return res;
 }
 
+PyObject* init_3d_axis(PyObject *fig) {
+  PyObject *asp_kwargs = PyDict_New();
+  PyDict_SetItemString(asp_kwargs, "projection", PyString_FromString("3d"));
+  PyObject *asp = PyObject_GetAttrString(fig, "add_subplot");
+  Py_INCREF(asp);
+  PyObject *tmpax = PyObject_Call(asp, detail::_interpreter::get().s_python_empty_tuple, asp_kwargs);
+  Py_INCREF(tmpax);
+
+  PyObject *gca = PyObject_GetAttrString(fig, "gca");
+  if (!gca) throw std::runtime_error("No gca");
+  Py_INCREF(gca);
+  PyObject *axis = PyObject_Call(gca, detail::_interpreter::get().s_python_empty_tuple, detail::_interpreter::get().s_python_empty_tuple);
+
+  if (!axis) throw std::runtime_error("No axis");
+  Py_INCREF(axis);
+
+  Py_DECREF(gca);
+  Py_DECREF(tmpax);
+  Py_DECREF(asp);
+  return axis;
+}
+
 // TODO - it should be possible to make this work by implementing
 // a non-numpy alternative for `detail::get_2darray()`.
 #ifndef WITHOUT_NUMPY
@@ -561,8 +583,10 @@ void plot_surface(const std::vector<::std::vector<Numeric>> &x,
   PyObject *gca = PyObject_GetAttrString(fig, "gca");
   if (!gca) throw std::runtime_error("No gca");
   Py_INCREF(gca);
-  PyObject *axis = PyObject_Call(
-      gca, detail::_interpreter::get().s_python_empty_tuple, gca_kwargs);
+  PyObject *axis = init_3d_axis(fig);
+  //PyObject *axis = PyObject_Call(gca, detail::_interpreter::get().s_python_empty_tuple, detail::_interpreter::get().s_python_empty_tuple);
+  //PyObject *axis = PyObject_Call(
+  //   gca, detail::_interpreter::get().s_python_empty_tuple, gca_kwargs);
 
   if (!axis) throw std::runtime_error("No axis");
   Py_INCREF(axis);
@@ -729,8 +753,9 @@ void plot3(const std::vector<Numeric> &x,
   PyObject *gca = PyObject_GetAttrString(fig, "gca");
   if (!gca) throw std::runtime_error("No gca");
   Py_INCREF(gca);
-  PyObject *axis = PyObject_Call(
-      gca, detail::_interpreter::get().s_python_empty_tuple, gca_kwargs);
+  PyObject *axis = init_3d_axis(fig);
+  //PyObject *axis = PyObject_Call(
+      //gca, detail::_interpreter::get().s_python_empty_tuple, gca_kwargs);
 
   if (!axis) throw std::runtime_error("No axis");
   Py_INCREF(axis);
@@ -1132,8 +1157,9 @@ bool scatter(const std::vector<NumericX>& x,
   PyObject *gca = PyObject_GetAttrString(fig, "gca");
   if (!gca) throw std::runtime_error("No gca");
   Py_INCREF(gca);
-  PyObject *axis = PyObject_Call(
-      gca, detail::_interpreter::get().s_python_empty_tuple, gca_kwargs);
+  PyObject *axis = init_3d_axis(fig);
+  //PyObject *axis = PyObject_Call(
+  //    gca, detail::_interpreter::get().s_python_empty_tuple, gca_kwargs);
 
   if (!axis) throw std::runtime_error("No axis");
   Py_INCREF(axis);
@@ -1509,8 +1535,9 @@ bool quiver(const std::vector<NumericX>& x, const std::vector<NumericY>& y, cons
   PyObject *gca = PyObject_GetAttrString(fig, "gca");
   if (!gca) throw std::runtime_error("No gca");
   Py_INCREF(gca);
-  PyObject *axis = PyObject_Call(
-      gca, detail::_interpreter::get().s_python_empty_tuple, gca_kwargs);
+  PyObject *axis = init_3d_axis(fig);
+  //PyObject *axis = PyObject_Call(
+  //    gca, detail::_interpreter::get().s_python_empty_tuple, gca_kwargs);
 
   if (!axis) throw std::runtime_error("No axis");
   Py_INCREF(axis);
@@ -2255,11 +2282,6 @@ inline void subplot(long nrows, long ncols, long plot_number)
 
     // construct positional args
     PyObject* args = PyTuple_New(3);
-    /* Original
-    PyTuple_SetItem(args, 0, PyFloat_FromDouble(nrows));
-    PyTuple_SetItem(args, 1, PyFloat_FromDouble(ncols));
-    PyTuple_SetItem(args, 2, PyFloat_FromDouble(plot_number));
-    */
     PyTuple_SetItem(args, 0, PyLong_FromDouble(nrows));
     PyTuple_SetItem(args, 1, PyLong_FromDouble(ncols));
     PyTuple_SetItem(args, 2, PyLong_FromDouble(plot_number));
