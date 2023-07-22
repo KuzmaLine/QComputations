@@ -470,7 +470,7 @@ bool plot(const std::vector<Numeric> &x, const std::vector<Numeric> &y, const st
     return res;
 }
 
-PyObject* init_3d_axis(PyObject *fig) {
+inline PyObject* init_3d_axis(PyObject *fig) {
   PyObject *asp_kwargs = PyDict_New();
   PyDict_SetItemString(asp_kwargs, "projection", PyString_FromString("3d"));
   PyObject *asp = PyObject_GetAttrString(fig, "add_subplot");

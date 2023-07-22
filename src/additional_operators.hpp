@@ -40,7 +40,14 @@ std::vector<T> operator/(const std::vector<T>& v, T num) {
 }
 
 
-void show_vector(const std::vector<COMPLEX>& v);
+template<typename T>
+void show_vector(const std::vector<T>& v) {
+    for (const auto& num: v) {
+        std::cout << std::setw(15) << num << " ";
+    }
+
+    std::cout << std::endl;
+}
 
 template<typename T, typename R>
 std::vector<T> operator*(const std::vector<std::vector<T>>& A, const std::vector<R>& v) {

@@ -5,8 +5,9 @@
 #include "matrix.hpp"
 #include "hamiltonian.hpp"
 #include "state.hpp"
-#include "matplotlibcpp.h"
+#include "matplotlibcpp.hpp"
 #include "test.hpp"
+#include "plot.hpp"
 //#include "config.hpp"
 //#include "graph.hpp"
 #include "dynamic.hpp"
@@ -60,12 +61,10 @@ void check_eigenvectors(std::vector<double> eigenvalues, const Matrix<T>& eigenv
 namespace plt = matplotlibcpp;
 
 int main(void) {
-    int n = 3;
+    int n = 1;
     int m = 2;
 
-    plt::plot({1, 3, 2, 4});
-    plt::show();
-    State state("|2>|01>");
+    State state("|1>|00>");
     H_TC H(n, m, state);
     std::cout << state.to_string() << " n = " << n << " m = " << m <<" h = " << config::h << " w = " << config::w << " g = " << config::g << " LOSS_PHOTONS = " << config::LOSS_PHOTONS << std::endl;
 
@@ -73,9 +72,9 @@ int main(void) {
     //graph.show();
 
     //std::cout << std::endl;
-    auto bases = H.get_basis();
+    auto basis = H.get_basis();
 
-    for (const auto& b: bases) {
+    for (const auto& b: basis) {
         std::cout << std::setw(config::WIDTH) << b.to_string() << " ";
     }
     std::cout << std::endl;
@@ -173,6 +172,9 @@ int main(void) {
     st[1] = 1;
     auto probs = Evolution::evol(st, H, time_vec);
 
+    matplotlib::probs_to_plot(probs, time_vec, basis);
+
+    plt::show();
     /*
     size_t index = 0;
     for (const auto& b: bases) {

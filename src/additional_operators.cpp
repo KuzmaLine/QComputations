@@ -12,11 +12,3 @@ void show_matrix(const matrix& A) {
     }
 }
 */
-
-void show_vector (const std::vector<COMPLEX>& v) {
-    for (const auto& num: v) {
-        std::cout << std::setw(15) << num << " ";
-    }
-
-    std::cout << std::endl;
-}
