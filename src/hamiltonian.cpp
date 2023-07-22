@@ -152,6 +152,8 @@ std::pair<std::vector<double>, Matrix<COMPLEX>> Hamiltonian::eigen() {
     return std::make_pair(eigenvalues_, eigenvectors_);
 }
 
+// -------------------------------   H_by_func   -------------------------------
+
 H_by_func::H_by_func(size_t n, std::function<COMPLEX(size_t, size_t)> func) : n_(n), func_(func) {
     auto size = std::pow(2, n);
     H_ = Matrix<COMPLEX>(size, size);
@@ -161,6 +163,14 @@ H_by_func::H_by_func(size_t n, std::function<COMPLEX(size_t, size_t)> func) : n_
         }
     }
 }
+
+// ---------------------------- H_JC ----------------------------
+
+H_JC::H_JC(size_t n, size_t m, const State& init_state): n_(n), m_(m) {
+    
+}
+
+// ---------------------------- H_TC ----------------------------
 
 H_TC::H_TC(size_t n, size_t m, const State& init_state): n_(n), m_(m) {
     auto size_m_ = std::pow(2, m_);

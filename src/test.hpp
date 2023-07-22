@@ -77,7 +77,16 @@ namespace printing {
 }
 
 namespace functions_testing {
-    
+    template<typename T, typename V>
+    void check_runge_kutt(const std::vector<V>& X, const T& y0, std::function<T(V, T)> f, std::function<T(V)> f_correct) {
+        auto y = Runge_Kutt_4(X, y0, f);
+
+        size_t index = 0;
+        for (const auto& x: X) {
+            //std::cout << std::setw(config::WIDTH) << x << " -> " << y[index++] << " | " << f_correct(x) << std::endl;
+        }
+    }
+
     template<typename T>
     void check_eigenvectors(std::vector<double> eigenvalues, const Matrix<T>& eigenvectors, const Matrix<T>& matrix) {
         // Получаем размерность матрицы

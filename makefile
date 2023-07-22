@@ -14,7 +14,7 @@ prog: $(OBJ)
 .cpp.o:
 	${CC} -g ${CFLAGS} -c $< -o $@
 
-main.o: matrix.hpp state.hpp test.hpp graph.hpp hamiltonian.hpp additional_operators.hpp functions.hpp dynamic.hpp plot.hpp config.hpp matplotlibcpp.hpp
+main.o: matrix.hpp state.hpp graph.hpp hamiltonian.hpp additional_operators.hpp functions.hpp dynamic.hpp plot.hpp test.hpp config.hpp matplotlibcpp.hpp
 
 clean:
 	rm -rf *.o prog

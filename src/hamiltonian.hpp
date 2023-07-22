@@ -37,6 +37,14 @@ class H_by_func : public Hamiltonian {
         std::function<COMPLEX(size_t, size_t)> func_;
 };
 
+class H_JC : public Hamiltonian {
+    public:
+        explicit H_JC(size_t n, size_t m, const State& init_state);
+    private:
+        size_t n_;
+        size_t m_;
+};
+
 class H_TC : public Hamiltonian {
     public:
         explicit H_TC(size_t n, size_t m, const State& init_state);
