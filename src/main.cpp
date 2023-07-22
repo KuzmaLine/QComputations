@@ -14,10 +14,10 @@
 namespace plt = matplotlibcpp;
 
 int main(void) {
-    int n = 1;
+    int n = 2;
     int m = 2;
 
-    State state("|0>|10>");
+    State state("|2>|00>");
     H_TC H(n, m, state);
     std::cout << state.to_string() << " n = " << n << " m = " << m <<" h = " << config::h << " w = " << config::w << " g = " << config::g << " LOSS_PHOTONS = " << config::LOSS_PHOTONS << std::endl;
 
@@ -52,31 +52,24 @@ int main(void) {
     //auto a_p = Hermit_Lanczos(a);
     //functions_testing::check_eigenvectors(a_p.first, a_p.second, a);
 
-    std::vector<double> time_vec = make_timeline(0, 100 * M_PI, 5 * M_PI);
+    std::vector<double> time_vec = make_timeline(0, 500 * M_PI, M_PI);
     std::vector<COMPLEX> st(H.size(), 0);
-    st[1] = 1;
-    auto probs = Evolution::evol(st, H, time_vec);
+    st[0] = 1;
+    auto probs = Evolution::schrodinger(st, H, time_vec);
 
-    size_t index = 0;
-    for (const auto& b: basis) {
-        std::cout << std::setw(config::WIDTH) << b.to_string() << " : ";
-        for (size_t i = 0; i < time_vec.size(); i++) {
-            std::cout << std::setw(config::WIDTH) << probs[index][i] << " ";
-        }
-        std::cout << std::endl;
-        index++;
-    }
+
+
 
     std::array<std::string, 3> ls = {"-", "--", "-."};
     std::array<std::string, 9> c = {"b", "r", "g", "tab:orange", "m", "tab:brown", "tab:violet", "tab:olive", "tab:purple"};
     std::vector<std::map<std::string, std::string>> keywords(basis.size());
-    index = 0;
+    size_t index = 0;
     for (auto& item: keywords) {
         item["ls"] = ls[(index / ls.size()) % ls.size()];
         item["c"] = c[index % c.size()]; 
         index++;
     }
-    matplotlib::make_figure(640, 400);
+    matplotlib::make_figure(config::fig_width, config::fig_height, config::dpi);
     matplotlib::probs_to_plot(probs, time_vec, basis, keywords);
     matplotlib::grid();
     matplotlib::show();

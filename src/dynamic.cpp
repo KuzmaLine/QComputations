@@ -8,7 +8,7 @@ namespace {
     }
 }
 
-    Evolution::Probs Evolution::evol(const std::vector<COMPLEX>& init_state, Hamiltonian& H, const std::vector<double>& time_vec) {
+    Evolution::Probs Evolution::schrodinger(const std::vector<COMPLEX>& init_state, Hamiltonian& H, const std::vector<double>& time_vec) {
         auto p = H.eigen();
         auto eigen_values = p.first;
         auto eigen_vectors = p.second;

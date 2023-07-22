@@ -62,6 +62,20 @@ namespace matrix_testing {
     }
 }
 
+namespace printing {
+    void probs_print(const Matrix<double>& probs, const std::set<State>& basis, const std::vector<double>& time_vec) {
+        size_t index = 0;
+        for (const auto& b: basis) {
+            std::cout << std::setw(config::WIDTH) << b.to_string() << " : ";
+            for (size_t i = 0; i < time_vec.size(); i++) {
+                std::cout << std::setw(config::WIDTH) << probs[index][i] << " ";
+            }
+            std::cout << std::endl;
+            index++;
+        }
+    }
+}
+
 namespace functions_testing {
     
     template<typename T>

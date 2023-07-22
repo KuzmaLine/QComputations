@@ -27,34 +27,6 @@ namespace {
     double conj(double a) { return a;}
 }
 
-/*
-// --------------------------------- Class Vec ---------------------------
-
-template<typename T> class Vec {
-    public:
-        Vec(T* begin, T* end);
-        explicit Vec(size_t n): n_(n), vector_(n_) {}
-        Vec(size_t n, const T& init_val): n_(n), vector_(n_, init_val) {}
-        size_t size() const { return n_; };
-        void show() const;
-        double norm() const;
-        T& operator[](size_t index) { return vector_[index]; };
-    private:
-        size_t n_;
-        std::vector<T> vector_;
-};
-
-// --------------------------------- Vec Methods ---------------------------
-
-template<typename T>
-void Vec<T>::show() const {
-    for (const auto& item: vector_) {
-        std::cout << item << " ";
-    }
-
-    std::cout << std::endl;
-}
-*/
 // ---------------------------------- class Matrix ----------------------------
 
 template<typename T> class Matrix {

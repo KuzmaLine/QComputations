@@ -8,5 +8,5 @@ namespace Evolution {
     using COMPLEX = std::complex<double>;
     using Probs = Matrix<double>;
 
-    Probs evol(const std::vector<COMPLEX>& init_state, Hamiltonian& H, const std::vector<double>& time_vec);
+    Probs schrodinger(const std::vector<COMPLEX>& init_state, Hamiltonian& H, const std::vector<double>& time_vec);
 }
