@@ -5,18 +5,27 @@ namespace {
     namespace plt = matplotlibcpp;
 }
 
-void matplotlib::probs_to_plot(const Evolution::Probs& probs, std::vector<double> time_vec, std::set<State> basis) {
+void matplotlib::probs_to_plot(const Evolution::Probs& probs, 
+                               const std::vector<double>& time_vec,
+                               const std::set<State>& basis,
+                               std::vector<std::map<std::string, std::string>> keywords) {
     size_t index = 0;
     for (const auto& state: basis) {
-        std::vector<double> state_probs(time_vec.size());
-        //std::copy(probs[index * probs.m()], probs[(index + 1) * probs.m()], std::back_inserter(state_probs));
-        for (size_t i = 0; i < time_vec.size(); i++) {
-            state_probs[i] = probs[index][i];
+        if (keywords.size() <= index) {
+            std::map<std::string, std::string> tmp;
+            keywords.emplace_back(tmp);
         }
+        keywords[index]["label"] = state.to_string();
+        /*
+        for (const auto& p: keywords[index]) {
+            std::cout << p.first << " " << p.second << std::endl;
+        }
+        */
+        plt::plot(time_vec, probs.row(index), keywords[index]);
         index++;
-        //plt::named_plot(state.to_string(), state_probs, time_vec);
-        plt::plot(time_vec, state_probs);
+        //plt::plot(time_vec, state_probs);
     }
+    plt::legend();
 }
 
 void matplotlib::show(bool is_block) {

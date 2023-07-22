@@ -61,3 +61,52 @@ namespace matrix_testing {
         return A;
     }
 }
+
+namespace functions_testing {
+    
+    template<typename T>
+    void check_eigenvectors(std::vector<double> eigenvalues, const Matrix<T>& eigenvectors, const Matrix<T>& matrix) {
+        // Получаем размерность матрицы
+        int n = matrix.size();
+
+        // Проходим по всем собственным значениям
+        for (int i = 0; i < eigenvalues.size(); i++) {
+            // Получаем собственное значение и соответствующий ему собственный вектор
+            double lambda = eigenvalues[i];
+            //std::complex<double> norm = 0.0;
+            // Проверяем условие Av = lambda v для данного собственного вектора
+            std::vector<std::complex<double>> Av(n);
+            for (int j = 0; j < n; j++) {
+                std::complex<double> sum = 0;
+                Av = matrix * eigenvectors.col(i);
+                
+                /*for (int k = 0; k < n; k++) {
+                    sum += matrix[j][k] * eigenvectors[k][i];
+                }
+                Av[j] = sum;
+                */
+                //norm += Av[j] * Av[j];
+            }
+
+
+            //for (int j = 0; j < n; j++) {
+            //    Av[j] /= std::sqrt(norm);
+            //}
+
+            std::cout << "Собственное значение " << lambda << " и соответствующий ему собственный вектор: [ ";
+            for (int j = 0; j < n; j++) {
+                std::cout << eigenvectors[j][i] << " ";
+            }
+            std::cout << "]" << std::endl;
+            std::cout << std::endl;
+            for (int j = 0; j < n; j++) {
+                std::cout << Av[j] << " ";
+            }
+            std::cout << std::endl;
+            for (int j = 0; j < n; j++) {
+                std::cout << eigenvectors[j][i] * lambda << " ";
+            }
+            std::cout << std::endl;
+        }
+    }
+}
