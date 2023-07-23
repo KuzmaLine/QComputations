@@ -1,7 +1,6 @@
 //#define _USE_MATH_DEFINES
 #include <iostream>
 #include "functions.hpp"
-#include "additional_operators.hpp"
 #include "matrix.hpp"
 #include "hamiltonian.hpp"
 #include "state.hpp"
@@ -16,7 +15,7 @@ namespace plt = matplotlibcpp;
 int main(void) {
     int n = 2;
     int m = 1;
-    double gamma = 0.005;
+    double gamma = 0.000;
 
     State state("|1>|1>");
     //H_TC H(n, m, state, !is_zero(gamma));
@@ -49,8 +48,8 @@ int main(void) {
     std::vector<double> time_vec = make_timeline(0, 500 * M_PI, M_PI / 4);
     std::vector<COMPLEX> st(H.size(), 0);
     st[state.get_index(basis)] = 1;
-    //auto probs = Evolution::schrodinger(st, H, time_vec);
-    auto probs = Evolution::quantum_master_equation(st, H, time_vec, gamma, true);
+    auto probs = Evolution::schrodinger(st, H, time_vec);
+    //auto probs = Evolution::quantum_master_equation(st, H, time_vec, gamma, true);
     //std::vector<double> x = make_timeline(0, 100, 1);
     //functions_testing::check_runge_kutt<double, double>(x, double(0), &func, &func_correct);
 
@@ -63,6 +62,11 @@ int main(void) {
         item["c"] = c[index % c.size()];
         index++;
     }
+
+    matplotlib::make_figure(config::fig_width, config::fig_height, config::dpi);
+    matplotlib::probs_to_plot(probs, time_vec, basis, keywords);
+    matplotlib::grid();
+    matplotlib::show();
 
     /*
     matplotlib::make_figure(config::fig_width, config::fig_height, config::dpi);

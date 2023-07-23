@@ -93,10 +93,10 @@ std::vector<V> Runge_Kutt_4(const std::vector<T>& x, const V& y0, std::function<
         T h = x[i + 1] - x[i];
 
         V k1 = f(x[i], y[i]);
-        V k2 = f(x[i] + h / 2.0, y[i] + k1 * h / 2.0);
-        V k3 = f(x[i] + h / 2.0, y[i] + k2 * h / 2.0);
+        V k2 = f(x[i] + h / 2.0, y[i] + k1 * (h / 2.0));
+        V k3 = f(x[i] + h / 2.0, y[i] + k2 * (h / 2.0));
         V k4 = f(x[i] + h, y[i] + k3 * h);
-        y[i + 1] = y[i]  + (k1 + k2 * 2 + k3 * 2 + k4) * h / 6.0;
+        y[i + 1] = y[i]  + (k1 + k2 * 2 + k3 * 2 + k4) * (h / 6.0);
         //std::cout << h << " " << y[i + 1] << " " << 2 * x[i + 1] << std::endl;
     }
 
@@ -124,7 +124,7 @@ std::vector<T> Pro_Race_Algorithm(const Matrix<T>& B, const std::vector<T>& y) {
  
     // Up move
  
-    for (long i = k - 2; i > -1; i--) {
+    for (long long i = k - 2; i > -1; i--) {
         x[i] = a[i] * x[i + 1] + b[i];
     }
  

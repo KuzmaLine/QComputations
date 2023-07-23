@@ -1,11 +1,11 @@
 #pragma once
+#include "additional_operators.hpp"
 #include <iostream>
 #include <unordered_map>
 #include <queue>
 #include <unordered_set>
 #include <set>
 #include "state.hpp"
-#include "additional_operators.hpp"
 
 
 class State_Graph {

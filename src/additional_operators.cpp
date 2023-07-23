@@ -1,14 +1,11 @@
 #include "additional_operators.hpp"
 
+COMPLEX operator | (const std::vector<COMPLEX>& a, const std::vector<COMPLEX>& b) { 
+    COMPLEX res = 0;
 
-
-/*
-void show_matrix(const matrix& A) {
-    for (const auto& v: A) {
-        for (const auto& num: v) {
-            std::cout << std::setw(25) << num << " ";
-        }
-        std::cout << std::endl;
+    for (size_t i = 0; i < a.size(); i++) {
+        res += std::conj(a[i]) * b[i];
     }
+
+    return res;
 }
-*/

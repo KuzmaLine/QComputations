@@ -5,7 +5,6 @@
 #include <iomanip>
 #include "hamiltonian.hpp"
 #include "config.hpp"
-#include "additional_operators.hpp"
 #include "graph.hpp"
 #include "functions.hpp"
 

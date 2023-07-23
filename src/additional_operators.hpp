@@ -34,6 +34,9 @@ std::vector<T> operator*(const std::vector<T>& a, const std::vector<T>& b) {
     return answer;
 }
 
+// ---------------------- <a|b> ------------------------
+COMPLEX operator | (const std::vector<COMPLEX>& a, const std::vector<COMPLEX>& b);
+
 template<typename T>
 std::vector<T> operator*(T num, const std::vector<T>& v) {
     return v * num;
