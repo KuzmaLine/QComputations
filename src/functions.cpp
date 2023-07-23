@@ -1,4 +1,5 @@
 #include "functions.hpp"
+//#include "test.hpp"
 #include <algorithm>
 #include <numeric>
 #include <iostream>
@@ -30,6 +31,85 @@ namespace {
             B[q][i] = B_q;
         }
     }
+}
+
+bool is_zero(double a) {
+    return std::abs(a) < eps;
+}
+
+std::function<double(double)> Cubic_Spline_Interpolate(const std::vector<double>& x, const std::vector<double>& f) {
+    size_t n = x.size() - 1;
+
+    std::vector<double> h(n + 1);
+    h[0] = 0;
+    for (size_t i = 1; i <= n; i++) {
+        h[i] = x[i] - x[i - 1];
+    }
+
+    Matrix<double> C(n + 1, n + 1);
+    C[0][0] = 1;
+    C[0][1] = 0;
+    C[n][n] = 1;
+    C[n][n - 1] = 0;
+
+    for (size_t i = 1; i < n; i++) {
+        C[i][i - 1] = h[i] / 6.0;
+        C[i][i] = (h[i] + h[i + 1]) / 3.0;
+        C[i][i + 1] = h[i + 1] / 6.0;
+    }
+
+    std::vector<double> y(n + 1);
+    y[0] = y[n] = 0;
+
+    for (size_t i = 1; i < n; i++) {
+        y[i] =(f[i + 1] - f[i]) / h[i + 1] - (f[i] - f[i - 1]) / h[i];
+    }
+
+    auto c = Pro_Race_Algorithm(C, y);
+
+    std::vector<double> a(n + 1);
+    std::vector<double> b(n + 1);
+    std::vector<double> d(n + 1);
+    std::vector<std::function<double(double)>> S(n + 1);
+    a[0] = f[0];
+    for (size_t i = 1; i <= n; i++) {
+        a[i] = f[i];
+        d[i] = (c[i] - c[i - 1]) / h[i];
+        b[i] = (a[i] - a[i - 1]) / h[i] + h[i] / 2.0 * c[i] - h[i] * h[i] / 6.0 * d[i];
+    }
+
+    for (size_t i = 1; i <= n; i++) {
+        S[i] = std::function<double(double)> {
+            [a, b, c, d, x, i](double t) {
+                auto diff = t - x[i];
+                return a[i] + b[i] * diff + c[i] * diff * diff / 2.0 + d[i] * diff * diff * diff / 6.0; 
+            }
+        };
+    }
+
+    std::function<double(double)> res {
+        [S, f, x](double t) {
+            if (t < x[0] or t > x[x.size() - 1]) {
+                std::cerr << "Not between x[0] and x[n - 1]" << std::endl;
+                return -1.0;
+            }
+
+            if (is_zero(t - x[0])) { 
+                return f[0];
+            }
+            if (is_zero(t - x[x.size() - 1])) { 
+                return f[x.size() - 1];
+            }
+            for (size_t i = 1; i < x.size(); i++) {
+                if (x[i - 1] <= t and t <= x[i]) return S[i](t);
+            }
+
+            std::cerr << "Not between x[0] and x[n - 1]" << std::endl;
+            return -1.0;
+        }
+    };
+
+    return res;
 }
 
 std::vector<double> FROM_double_TO_vector(double* A, lapack_int n) {

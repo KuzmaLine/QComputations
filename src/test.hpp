@@ -1,7 +1,12 @@
 #pragma once
 #include "matrix.hpp"
+#include "config.hpp"
+#include "state.hpp"
+#include "functions.hpp"
+#include "additional_operators.hpp"
 #include <functional>
 #include <random>
+#include <set>
 #include <complex>
 namespace matrix_testing {
     template<typename T>
@@ -85,6 +90,12 @@ namespace functions_testing {
         for (const auto& x: X) {
             std::cout << std::setw(config::WIDTH) << x << " -> " << y[index++] << " | " << f_correct(x) << std::endl;
         }
+    }
+
+    template<typename T>
+    void check_pro_race(const Matrix<T>& A, const std::vector<T>& x, const std::vector<T>& b) {
+        show_vector(A * x);
+        show_vector(b);
     }
 
     template<typename T>

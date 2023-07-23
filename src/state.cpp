@@ -55,6 +55,10 @@ State::State(const std::string& str_state) {
     }
 }
 
+size_t State::get_atoms_index() const {
+    return get_index_from_state(state_);
+}
+
 size_t State::get_index() const {
     auto max_num_atoms = std::pow(2, this->size());
 

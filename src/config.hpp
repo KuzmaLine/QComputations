@@ -6,7 +6,7 @@ namespace config {
     constexpr double h = 1;
     constexpr double w = 1;
     constexpr double g = 0.01;
-    constexpr bool LOSS_PHOTONS = false;
+    constexpr bool LOSS_PHOTONS = true;
 
 // matplotlib figure() parametrs
     constexpr double fig_width = 960;
@@ -15,4 +15,7 @@ namespace config {
 
 // printing parametrs
     constexpr int WIDTH = 15;
+
+// is_zero
+    constexpr double eps = 10e-12;
 }

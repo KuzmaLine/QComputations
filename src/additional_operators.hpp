@@ -24,6 +24,17 @@ std::vector<T> operator*(const std::vector<T>& v, T num) {
 }
 
 template<typename T>
+std::vector<T> operator*(const std::vector<T>& a, const std::vector<T>& b) {
+    std::vector<T> answer(a.size());
+
+    for (size_t i = 0; i < a.size(); i++) {
+        answer[i] = a[i] * b[i];
+    }
+
+    return answer;
+}
+
+template<typename T>
 std::vector<T> operator*(T num, const std::vector<T>& v) {
     return v * num;
 }
