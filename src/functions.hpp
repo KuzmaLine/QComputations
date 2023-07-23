@@ -2,6 +2,7 @@
 #include "additional_operators.hpp"
 #include "matrix.hpp"
 #include "config.hpp"
+#include <chrono>
 #include <vector>
 #include <complex>
 #include <set>
@@ -20,6 +21,7 @@ std::vector<double> FROM_double_TO_vector(double* A, lapack_int n);
 Matrix<COMPLEX> FROM_lapack_complex_double_TO_Matrix(lapack_complex_double* A, lapack_int n, lapack_int m);
 
 std::vector<double> make_timeline(double start, double end, double step);
+std::vector<double> linspace(double start, double end, double npoints);
 size_t get_index_from_state(vec_levels state);
 bool is_zero(double a);
 
@@ -30,6 +32,7 @@ Matrix<double> MGS(const Matrix<COMPLEX>& A);
 std::pair<std::vector<double>, Matrix<COMPLEX>> Hermit_Lanczos(const Matrix<COMPLEX>& A);
 
 std::function<double(double)> Cubic_Spline_Interpolate(const std::vector<double>& x, const std::vector<double>& y);
+double fsolve(std::function<double(double)> f, double a, double b, double target = 0);
 
 double scalar_product(const std::vector<double>& a, const std::vector<double>& b); // <b|a>, (a, b)
 COMPLEX scalar_product(const std::vector<COMPLEX>& a, const std::vector<COMPLEX>& b); // <b|a>, (a, b)
@@ -129,6 +132,15 @@ std::vector<T> Pro_Race_Algorithm(const Matrix<T>& B, const std::vector<T>& y) {
     }
  
     return x;
+}
+
+template<typename T>
+void show_vector(const std::vector<T>& v) {
+    for (const auto& num: v) {
+        std::cout << std::setw(15) << num << " ";
+    }
+
+    std::cout << std::endl;
 }
 
 //std::pair<std::vector<double>, Matrix<double>> Hermit_Lanczos(const Matrix<COMPLEX>& A);

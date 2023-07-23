@@ -40,6 +40,7 @@ class State {
 
         size_t get_index() const;
         size_t get_index(const std::set<State>& basis) const;
+        bool is_in_basis(const std::set<State>& basis) const;
         size_t get_atoms_index() const;
 
         bool operator==(const State& other) const { return state_ == other.state_ and n_ == other.n_; }

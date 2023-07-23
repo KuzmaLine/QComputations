@@ -17,6 +17,7 @@ class Hamiltonian {
         Hamiltonian(const Hamiltonian& H) = default;
         size_t size() const { return H_.size(); }
         std::set<State> get_basis() const { return basis_; }
+        State get_init_state() const { return init_state_; }
         void show(const size_t width = 10) const;
         Matrix<COMPLEX> get_matrix() const { return H_; }
         std::pair<std::vector<double>, Matrix<COMPLEX>> eigen();

@@ -17,4 +17,9 @@ namespace Evolution {
                                 const std::vector<double>& time_vec,
                                 const double gamma,
                                 bool is_full_rho = false);
+    std::vector<double> scan_gamma(const std::vector<COMPLEX>& init_state,
+                                   Hamiltonian& H,
+                                   const std::vector<double>& time_vec,
+                                   const std::vector<double>& gamma_vec,
+                                   double target);
 }

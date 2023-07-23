@@ -3,6 +3,7 @@
 #include <vector>
 #include <string>
 #include <complex>
+#include <cassert>
 #include "state.hpp"
 
 class Grid {
@@ -14,7 +15,7 @@ class Grid {
 
     public:
         Grid(size_t x_size = 1, size_t y_size = 1, size_t z_size = 1);
-        explicit Grid(const std::vector<Basis>& state);
+        explicit Grid(const std::vector<State>& state);
         explicit Grid(const std::string&);
         Grid(const Grid&) = default;
 
@@ -23,10 +24,7 @@ class Grid {
         size_t z_size() const { return z_size_; }
 
         void set_size(size_t x_size, size_t y_size, size_t z_size) {
-            if (x_size * y_size * z_size != grid_states_.size()) {
-                std::cout << "SIZE ERROR\n";
-                exit(1);
-            }
+            assert(x_size * y_size * z_size == grid_states_.size());
 
             x_size_ = x_size;
             y_size_ = y_size;
@@ -46,7 +44,7 @@ class Grid {
 
         bool operator==(const Grid& other) const { return grid_states_ == other.grid_states_ and x_size_ == other.x_size_ and y_size_ == other.y_size_ and z_size_ == other.z_size_; }
 
-        Basis get_state_in_pol(PolId pol_id) { return grid_states_[pol_id]; }
+        State get_state_in_pol(PolId pol_id) { return grid_states_[pol_id]; }
         matrix get_full_matrix() const;
 
         std::set<PolId> pols_with_atoms() const { return pols_with_atoms_; }

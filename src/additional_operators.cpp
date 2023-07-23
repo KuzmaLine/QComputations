@@ -1,6 +1,6 @@
 #include "additional_operators.hpp"
 
-COMPLEX operator | (const std::vector<COMPLEX>& a, const std::vector<COMPLEX>& b) { 
+COMPLEX quantum::operator | (const std::vector<COMPLEX>& a, const std::vector<COMPLEX>& b) { 
     COMPLEX res = 0;
 
     for (size_t i = 0; i < a.size(); i++) {

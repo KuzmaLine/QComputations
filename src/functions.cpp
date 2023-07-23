@@ -38,6 +38,7 @@ bool is_zero(double a) {
 }
 
 std::function<double(double)> Cubic_Spline_Interpolate(const std::vector<double>& x, const std::vector<double>& f) {
+    auto begin = std::chrono::steady_clock::now();
     size_t n = x.size() - 1;
 
     std::vector<double> h(n + 1);
@@ -108,8 +109,26 @@ std::function<double(double)> Cubic_Spline_Interpolate(const std::vector<double>
             return -1.0;
         }
     };
-
+    auto end = std::chrono::steady_clock::now();
     return res;
+}
+
+double fsolve(std::function<double(double)> f, double a, double b, double target) {
+    double t = (a + b) / 2.0;
+
+    while(std::abs(f(t) - target) >= config::eps) {
+        if (f(t) - target > 0) {
+            b = t;
+        } else {
+            a = t;
+        }
+
+        t = (a + b) / 2.0;
+
+        if (std::abs(a - b) < config::eps) { std::cerr << "f without zero" << std::endl; return b; }
+    }
+
+    return t;
 }
 
 std::vector<double> FROM_double_TO_vector(double* A, lapack_int n) {
@@ -147,6 +166,10 @@ std::vector<double> make_timeline(double start, double end, double step) {
     }
 
     return timeline;
+}
+
+std::vector<double> linspace(double start, double end, double npoints) {
+    return make_timeline(start, end, (end - start) / (npoints - 1));
 }
 
 double scalar_product(const std::vector<double>& a, const std::vector<double>& b) {

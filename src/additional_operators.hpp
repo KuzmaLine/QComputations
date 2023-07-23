@@ -12,6 +12,8 @@ namespace {
     using vec_levels = std::vector<E_LEVEL>;
 }
 
+/// ################################ std::vector ###################################
+
 template<typename T>
 std::vector<T> operator*(const std::vector<T>& v, T num) {
     std::vector<T> answer(v.size());
@@ -24,6 +26,9 @@ std::vector<T> operator*(const std::vector<T>& v, T num) {
 }
 
 template<typename T>
+std::vector<T> operator*(T num, const std::vector<T>& v) { return v * num; }
+
+template<typename T>
 std::vector<T> operator*(const std::vector<T>& a, const std::vector<T>& b) {
     std::vector<T> answer(a.size());
 
@@ -34,12 +39,10 @@ std::vector<T> operator*(const std::vector<T>& a, const std::vector<T>& b) {
     return answer;
 }
 
-// ---------------------- <a|b> ------------------------
-COMPLEX operator | (const std::vector<COMPLEX>& a, const std::vector<COMPLEX>& b);
+namespace quantum {
+//   -------------------------------------- <a|b> ------------------------
+    COMPLEX operator | (const std::vector<COMPLEX>& a, const std::vector<COMPLEX>& b);
 
-template<typename T>
-std::vector<T> operator*(T num, const std::vector<T>& v) {
-    return v * num;
 }
 
 template<typename T>
@@ -53,29 +56,8 @@ std::vector<T> operator/(const std::vector<T>& v, T num) {
     return answer;
 }
 
-
 template<typename T>
-void show_vector(const std::vector<T>& v) {
-    for (const auto& num: v) {
-        std::cout << std::setw(15) << num << " ";
-    }
-
-    std::cout << std::endl;
-}
-
-template<typename T, typename R>
-std::vector<T> operator*(const std::vector<std::vector<T>>& A, const std::vector<R>& v) {
-    size_t m = A.size();
-    std::vector<T> res(m, T(0));
-
-    for (size_t i = 0; i < m; i++) {
-        for (size_t j = 0; j < m; j++) {
-            res[i] += A[i][j] * v[j];
-        }
-    }
-
-    return res;
-}
+std::vector<T> operator/(T num, const std::vector<T>& v) { return v * num; }
 
 template<typename T>
 std::vector<T> operator-(const std::vector<T>& a, const std::vector<T>& b) {
@@ -133,7 +115,6 @@ struct std::hash<State> {
     size_t operator()(const State& state) const {
         return state.hash();
     }
-
 };
 
 template<>

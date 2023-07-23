@@ -15,7 +15,7 @@ namespace plt = matplotlibcpp;
 int main(void) {
     int n = 2;
     int m = 1;
-    double gamma = 0.000;
+    double gamma = 0.005;
 
     State state("|1>|1>");
     //H_TC H(n, m, state, !is_zero(gamma));
@@ -31,6 +31,10 @@ int main(void) {
 
     H.show(config::WIDTH);
 
+    std::vector<double> time_vec = make_timeline(0, 300 * M_PI, M_PI / 4);
+    std::vector<COMPLEX> st(H.size(), 0);
+    st[state.get_index(basis)] = 1;
+
     //functions_testing::check_eigenvectors(p.first, p.second, H_m);
 
     /*
@@ -45,11 +49,8 @@ int main(void) {
     //auto a_p = Hermit_Lanczos(a);
     //functions_testing::check_eigenvectors(a_p.first, a_p.second, a);
 
-    std::vector<double> time_vec = make_timeline(0, 500 * M_PI, M_PI / 4);
-    std::vector<COMPLEX> st(H.size(), 0);
-    st[state.get_index(basis)] = 1;
-    auto probs = Evolution::schrodinger(st, H, time_vec);
-    //auto probs = Evolution::quantum_master_equation(st, H, time_vec, gamma, true);
+    //auto probs = Evolution::schrodinger(st, H, time_vec);
+    auto probs = Evolution::quantum_master_equation(st, H, time_vec, gamma, true);
     //std::vector<double> x = make_timeline(0, 100, 1);
     //functions_testing::check_runge_kutt<double, double>(x, double(0), &func, &func_correct);
 
@@ -63,11 +64,21 @@ int main(void) {
         index++;
     }
 
+
+    /*
     matplotlib::make_figure(config::fig_width, config::fig_height, config::dpi);
     matplotlib::probs_to_plot(probs, time_vec, basis, keywords);
     matplotlib::grid();
     matplotlib::show();
+    */
 
+    std::vector<double> gamma_vec = make_timeline(0.003, 0.1, 0.001);
+    auto tau_vec = Evolution::scan_gamma(st, H, time_vec, gamma_vec, 0.9);
+
+    matplotlib::make_figure(config::fig_width, config::fig_height, config::dpi);
+    plt::plot(gamma_vec, tau_vec);
+    matplotlib::grid();
+    matplotlib::show();
     /*
     matplotlib::make_figure(config::fig_width, config::fig_height, config::dpi);
     matplotlib::rho_probs_to_plot(probs, time_vec, basis, keywords);
@@ -82,9 +93,11 @@ int main(void) {
     auto answer = Pro_Race_Algorithm(a, y);
     show_vector(answer);
     functions_testing::check_pro_race(a, answer, y);
+    */
 
+    /*
     std::vector<double> x = {1, 2, 5, 10, 12, 15};
-    std::vector<double> f = {1, 4, 25, 100, 144, 225}; 
+    std::vector<double> f = {-10, -7, -13, 20, 10, 5}; 
     matplotlib::make_figure(config::fig_width, config::fig_height, config::dpi);
     plt::scatter(x, f, 50);
     auto x_time = make_timeline(1, 15, 0.01);
@@ -93,8 +106,8 @@ int main(void) {
     for (const auto& t: x_time) {
         y_time.emplace_back(func(t));
     }
+
     plt::plot(x_time, y_time);
-    plt::plot(x_time, x_time * x_time);
     plt::grid();
     plt::show();
     */

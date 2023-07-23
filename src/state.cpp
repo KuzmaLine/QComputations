@@ -75,6 +75,14 @@ size_t State::get_index(const std::set<State>& basis) const {
     return -1;
 }
 
+bool State::is_in_basis(const std::set<State>& basis) const {
+    for (const auto& state: basis) {
+        if (state == *this) return true;
+    }
+
+    return false;
+}
+
 size_t State::hash() const {
     std::hash<vec_levels> state_hash;
     return state_hash(state_) ^ n_;

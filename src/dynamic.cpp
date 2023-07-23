@@ -1,6 +1,9 @@
 #include "dynamic.hpp"
 #include "additional_operators.hpp"
 #include "functions.hpp"
+#include "quantum_operators.hpp"
+
+#include "plot.hpp"
 
 Matrix<COMPLEX> Evolution::create_A_destroy(const std::set<State>& basis) {
     size_t dim = basis.size();
@@ -35,7 +38,10 @@ Evolution::Rho Evolution::create_init_rho(const std::vector<COMPLEX>& init_state
     return rho;
 }
 
+// ON MPI NEEDED
 Evolution::Probs Evolution::schrodinger(const std::vector<COMPLEX>& init_state, Hamiltonian& H, const std::vector<double>& time_vec) {
+    using namespace quantum;
+
     auto p = H.eigen();
     auto eigen_values = p.first;
     auto eigen_vectors = p.second;
@@ -73,6 +79,7 @@ Evolution::Probs Evolution::schrodinger(const std::vector<COMPLEX>& init_state, 
     return probs;
 }
 
+// ON MPI NEEDED
 Evolution::Probs Evolution::quantum_master_equation(const std::vector<COMPLEX>& init_state,
                                          Hamiltonian& H,
                                          const std::vector<double>& time_vec,
@@ -83,22 +90,23 @@ Evolution::Probs Evolution::quantum_master_equation(const std::vector<COMPLEX>& 
 
     auto A = create_A_destroy(H.get_basis());
 
-    std::function<Evolution::Rho(Evolution::Rho rho)> lindblad {
-        [&A, gamma](Evolution::Rho rho) {
+    std::function<Evolution::Rho(const Evolution::Rho& rho)> lindblad {
+        [&A, gamma](const Evolution::Rho& rho) {
             auto Aconj = A.hermit();
             auto AconjA = Aconj * A;
             return (A * rho * Aconj - (AconjA * rho + rho * AconjA) * COMPLEX(0.5)) * gamma;
         }
     };
 
-    std::function<Evolution::Rho(double t, Evolution::Rho)> equation {[&H, &A, &lindblad, gamma](double t, Evolution::Rho rho) {
+    std::function<Evolution::Rho(double t, const Evolution::Rho&)> equation {[&H, &A, &lindblad, gamma](double t, const Evolution::Rho& rho) {
         return (H.get_matrix() * rho - rho * H.get_matrix()) * COMPLEX(0, -1) + lindblad(rho);
     }};
 
     auto rho_0 = Evolution::create_init_rho(init_state);
-
+    //auto begin_c = std::chrono::steady_clock::now();
     auto rho_vec = Runge_Kutt_4<double, Evolution::Rho>(time_vec, rho_0, equation);
-
+    //auto end_c = std::chrono::steady_clock::now();
+    //std::cout << " c " << std::chrono::duration_cast<std::chrono::milliseconds>(end_c - begin_c).count() << std::endl;
     if (!is_full_rho) {
         Evolution::Probs probs(dim, time_vec.size());
 
@@ -130,5 +138,47 @@ Evolution::Probs Evolution::quantum_master_equation(const std::vector<COMPLEX>& 
     }
 
     return probs;
+}
+
+
+// ON MPI NEEDED
+std::vector<double> Evolution::scan_gamma(const std::vector<COMPLEX>& init_state,
+                                          Hamiltonian& H,
+                                          const std::vector<double>& time_vec,
+                                          const std::vector<double>& gamma_vec,
+                                          double target) {
+    auto basis = H.get_basis();
+
+    bool zero_state_in_basis = false;
+    size_t index = 0;
+    for (const auto& state: basis) {
+        if (state.get_index() == 0) {
+            zero_state_in_basis = true;
+            break;
+        }
+        index++;
+    }
+
+    assert(zero_state_in_basis);
+    auto begin = std::chrono::steady_clock::now();
+    auto end = std::chrono::steady_clock::now();
+    std::vector<double> tau_vec;
+    for (size_t i = 0; i < gamma_vec.size(); i++) {
+        double gamma = gamma_vec[i];
+        //begin = std::chrono::steady_clock::now();
+        auto probs = quantum_master_equation(init_state, H, time_vec, gamma);
+        //end = std::chrono::steady_clock::now();
+        //std::cout << i << " " << gamma_vec.size() << " " << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count() << std::endl;
+        auto func = Cubic_Spline_Interpolate(time_vec, probs.row(index));
+        //begin = std::chrono::steady_clock::now();
+        //std::cout << " interp " << std::chrono::duration_cast<std::chrono::milliseconds>(begin - end).count() << std::endl;
+        double tau = fsolve(func, time_vec[0], time_vec[time_vec.size() - 1], target);
+        //end = std::chrono::steady_clock::now();
+        //std::cout << " fsolve " << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count() << std::endl;
+        //std::cout << tau << " " << target << std::endl;
+        tau_vec.emplace_back(tau);
+    }
+
+    return tau_vec;
 }
 
