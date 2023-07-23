@@ -35,6 +35,15 @@ template<typename T> class Matrix {
         Matrix(size_t n, size_t m): n_(n), m_(m), mass_(n_ * m_) {}
         Matrix(size_t n, size_t m, const T& init_val): n_(n), m_(m), mass_(n_ * m_, init_val) {}
         Matrix(const Matrix<T>& A): n_(A.n_), m_(A.m_), mass_(A.mass_) {}
+
+        template<typename V>
+        Matrix(const Matrix<V>& A): n_(A.n()), m_(A.m()) {
+            for (size_t i = 0; i < n_; i++) {
+                for (size_t j = 0; j < m_; j++) {
+                    mass_.emplace_back(static_cast<V>(A[i][j]));
+               }
+            }
+        }
         explicit Matrix(const std::vector<std::vector<T>>& A);
         //explicit Matrix(const T* A);
 
@@ -75,6 +84,7 @@ template<typename T> class Matrix {
         const T* operator[](size_t index_row) const { return mass_.data() + index_row * m_; };
         lapack_complex_double* to_upper_lapack() const;
         lapack_complex_double* to_lapack() const;
+
     private:
         size_t get_index(size_t i, size_t j) const { return i * m_ + j; }
         size_t n_;
@@ -108,23 +118,6 @@ void Matrix<T>::modify_col (size_t index, const std::vector<T>& v) {
     for(size_t i = 0; i < n_; i++) {
         mass_[this->get_index(i, index)] = v[i];
     }
-}
-
-template<typename T>
-Matrix<T> Matrix<T>::operator* (const Matrix<T>& A) const {
-    assert(m_ == A.n_);
-    Matrix<T> res(n_, A.m_, 0);
-
-    for (size_t i = 0; i < n_; i++) {
-        for (size_t j = 0; j < A.m_; j++) {
-            for (size_t k = 0; k < m_; k++) {
-                //res.mass_[res.get_index(i, j)] += conj(mass_[this->get_index(i, k)]) * A.mass_[A.get_index(k, j)];
-                res.mass_[res.get_index(i, j)] += mass_[this->get_index(i, k)] * A.mass_[A.get_index(k, j)];
-            }
-        }
-    }
-
-    return res;
 }
 
 template<>

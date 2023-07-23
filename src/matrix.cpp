@@ -1,8 +1,42 @@
 #include "matrix.hpp"
 #include <iostream>
+#include <mkl_cblas.h>
+#include <mkl_blas.h>
 
 namespace {
     using COMPLEX = std::complex<double>;
+}
+
+template<>
+Matrix<double> Matrix<double>::operator* <double>(const Matrix<double>& A) const {
+    assert(m_ == A.n_);
+    Matrix<double> res(n_, A.m_);
+
+    double alpha = 1.0;
+    double betta = 0.0;
+    cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, n_, A.m_, m_, alpha, mass_.data(), n_, A.mass_.data(), A.n_, betta, res.mass_.data(), n_);
+    return res;
+}
+
+template<>
+Matrix<int> Matrix<int>::operator* <int>(const Matrix<int>& A) const {
+    Matrix<double> tmp_A(A);
+    Matrix<double> tmp_this(*this);
+
+    Matrix<double> tmp_res = tmp_this * tmp_A;
+
+    return Matrix<int>(tmp_res);
+}
+
+template<>
+Matrix<COMPLEX> Matrix<COMPLEX>::operator* <COMPLEX>(const Matrix<COMPLEX>& A) const {
+    assert(m_ == A.n_);
+    Matrix<COMPLEX> res(n_, A.m_);
+
+    double alpha = 1.0;
+    double betta = 0.0;
+    cblas_zgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, n_, A.m_, m_, &alpha, mass_.data(), n_, A.mass_.data(), A.n_, &betta, res.mass_.data(), n_);
+    return res;
 }
 
 template<>

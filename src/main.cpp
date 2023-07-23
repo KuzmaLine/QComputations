@@ -13,26 +13,15 @@
 
 namespace plt = matplotlibcpp;
 
-double func(double x, double y = 0) {
-    return x;
-}
-
-double func_correct(double x) {
-    return x * x / 2;
-}
-
 int main(void) {
     int n = 2;
-    int m = 2;
+    int m = 1;
 
-    State state("|2>|00>");
-    H_TC H(n, m, state);
+    State state("|1>|1>");
+    //H_TC H(n, m, state);
+    H_JC H(n, state);
     std::cout << state.to_string() << " n = " << n << " m = " << m <<" h = " << config::h << " w = " << config::w << " g = " << config::g << " LOSS_PHOTONS = " << config::LOSS_PHOTONS << std::endl;
 
-    //State_Graph graph(state);
-    //graph.show();
-
-    //std::cout << std::endl;
     auto basis = H.get_basis();
 
     for (const auto& b: basis) {
@@ -41,10 +30,6 @@ int main(void) {
     std::cout << std::endl;
 
     H.show(config::WIDTH);
-
-    auto H_m = H.get_matrix();
-
-    auto p = H.eigen();
 
     //functions_testing::check_eigenvectors(p.first, p.second, H_m);
 
@@ -62,7 +47,7 @@ int main(void) {
 
     std::vector<double> time_vec = make_timeline(0, 500 * M_PI, M_PI);
     std::vector<COMPLEX> st(H.size(), 0);
-    st[0] = 1;
+    st[state.get_index(basis)] = 1;
     auto probs = Evolution::schrodinger(st, H, time_vec);
 
     //std::vector<double> x = make_timeline(0, 100, 1);

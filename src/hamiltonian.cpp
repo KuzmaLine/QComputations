@@ -12,48 +12,6 @@
 namespace {
     typedef std::complex<double> COMPLEX;
 
-    Matrix<COMPLEX> tensor_multiply(const Matrix<COMPLEX>& A, const Matrix<COMPLEX>& B) {
-        auto n = A.size() * B.size();
-        Matrix<COMPLEX> C(n, n, 0);
-
-        for (size_t i_a = 0; i_a < A.size(); i_a++) {
-            for (size_t j_a = 0; j_a < A.size(); j_a++) {
-                for (size_t i_b = 0; i_b < B.size(); i_b++) {
-                    for (size_t j_b = 0; j_b < B.size(); j_b++) {
-                        size_t i = i_a * B.size() + i_b;
-                        size_t j = j_a * B.size() + j_b;
-
-                        C[i][j] = A[i_a][j_a] * B[i_b][j_b];
-                    }
-                }
-            }
-        }
-
-        return C;
-    }
-
-    /*
-    matrix operator+=(Matrix<COMPLEX>& A, const Matrix<COMPLEX>& B) {
-        for (int i = 0; i < A.size(); i++) {
-            for (int j = 0; j < A.size(); j++) {
-                A[i][j] += B[i][j];
-            }
-        }
-
-        return A;
-    }
-
-    Matrix<COMPLEX> operator * (Matrix<COMPLEX>& A, const std::complex<double>& c) {
-        for (int i = 0; i < A.size(); i++) {
-            for (int j = 0; j < A.size(); j++) {
-                A[i][j] *= c;
-            }
-        }
-
-        return A;
-    }
-    */
-
     Matrix<COMPLEX> a_destroy(size_t n) {
         size_t size = n + 1;
 
@@ -118,20 +76,6 @@ namespace {
 
         return sum_sigma;
     }
-
-    /*
-    Matrix transpose(const matrix& A) {
-        matrix B(A.size(), vec_complex(A.size()));
-
-        for (int i = 0; i < A.size(); i++) {
-            for (int j = 0; j < A.size(); j++) {
-                B[i][j] = A[j][i];
-            }
-        }
-
-        return B;
-    }
-    */
 }
 
 void Hamiltonian::show(const size_t width) const {
@@ -164,17 +108,11 @@ H_by_func::H_by_func(size_t n, std::function<COMPLEX(size_t, size_t)> func) : n_
     }
 }
 
-// ---------------------------- H_JC ----------------------------
-
-H_JC::H_JC(size_t n, size_t m, const State& init_state): n_(n), m_(m) {
-    
-}
-
 // ---------------------------- H_TC ----------------------------
 
-H_TC::H_TC(size_t n, size_t m, const State& init_state): n_(n), m_(m) {
+H_TC::H_TC(size_t n, size_t m, const State& init_state, bool LOSS_PHOTONS): n_(n), m_(m) {
     auto size_m_ = std::pow(2, m_);
-    State_Graph graph(init_state, config::LOSS_PHOTONS);
+    State_Graph graph(init_state, LOSS_PHOTONS);
     basis_ = graph.get_basis();
     auto size_H_ = basis_.size();
 
@@ -211,12 +149,16 @@ H_TC::H_TC(size_t n, size_t m, const State& init_state): n_(n), m_(m) {
         auto size_left = std::pow(2, k);
         auto size_right = std::pow(2, m - k - 1);
 
+        Matrix<COMPLEX> eye_left = E_Matrix<COMPLEX>(size_left);
+        Matrix<COMPLEX> eye_right = E_Matrix<COMPLEX>(size_right);
+
+        /*
         Matrix<COMPLEX> eye_left(size_left, size_left, 0);
         Matrix<COMPLEX> eye_right(size_right, size_right, 0);
 
         for (int i = 0; i < size_left; i++) eye_left[i][i] = 1;
         for (int i = 0; i < size_right; i++) eye_right[i][i] = 1;
-
+        */
         Matrix<COMPLEX> H_sigma = tensor_multiply(eye_left, sigma_energy);
         //std::cout << "LEFT: " << std::endl;
         //show_matrix(H_sigma);
@@ -250,59 +192,14 @@ H_TC::H_TC(size_t n, size_t m, const State& init_state): n_(n), m_(m) {
     }
 }
 
-/*
-matrix H_TC::Reduce_H(const State& init_state) {
-    if (init_state_ == init_state) {
-        return Reduced_H_;
-    }
+// ---------------------------- H_JC ----------------------------
+
+H_JC::H_JC(size_t n, const State& init_state, bool LOSS_PHOTONS): n_(n){
+    H_TC tmp_H(n, 1, init_state, LOSS_PHOTONS);
+
+    H_ = tmp_H.get_matrix();
     init_state_ = init_state;
-    is_reduced_ = true;
-    is_reduced_eigen_ = false;
-    State_Graph graph(init_state, config::LOSS_PHOTONS);
-
-    bases_ = graph.get_bases();
-
-    Reduced_H_ = matrix(bases_.size(), vec_complex(bases_.size()));
-
-    size_t index_i = 0;
-    size_t index_j = 0;
-    for (const auto& basis_row: bases_) {
-        for (const auto& basis_col: bases_) {
-            size_t i = basis_row.get_index();
-            size_t j = basis_col.get_index();
-
-            Reduced_H_[index_i][index_j] = H_[i][j];
-            index_j++;
-        }
-
-        index_j = 0;
-        index_i++;
-    }
-
-    return Reduced_H_;
+    basis_ = tmp_H.get_basis();
 }
 
-std::pair<std::vector<double>, matrix> H_TC::reduced_eigen() {
-    if (is_reduced_eigen_) {
-        return std::make_pair(reduced_eigenvalues_, reduced_eigenvectors_);
-    }
-    auto res = jacobi(Reduced_H_);
-
-    is_reduced_eigen_ = true;
-    reduced_eigenvectors_ = res.second;
-    reduced_eigenvalues_ = res.first;
-
-    return std::make_pair(reduced_eigenvalues_, reduced_eigenvectors_);
-}
-
-void Hamiltonian::show_reduced() const {
-    for (size_t i = 0; i < bases_.size(); i++) {
-        for (size_t j = 0; j < bases_.size(); j++) {
-            std::cout << std::setw(config::WIDTH) << Reduced_H_[i][j] << " ";
-        }
-
-        std::cout << std::endl;
-    }
-}
-*/
 H_TCH::H_TCH(int n, int n_pol) {}

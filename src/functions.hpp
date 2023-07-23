@@ -1,6 +1,7 @@
 #pragma once
 #include "additional_operators.hpp"
 #include "matrix.hpp"
+#include "config.hpp"
 #include <vector>
 #include <complex>
 #include <set>
@@ -32,6 +33,51 @@ COMPLEX scalar_product(const std::vector<COMPLEX>& a, const std::vector<COMPLEX>
 double norm(const std::vector<COMPLEX>& v);
 
 // ------------------------------- template functions --------------------------------------
+
+template<typename T>
+Matrix<T> E_Matrix(size_t n) {
+    Matrix<T> E(n, n, 0);
+
+    for (size_t i = 0; i < n; i++) {
+        E[i][i] = T(1);
+    }
+
+    return E;
+}
+
+template<typename T>
+Matrix<T> tensor_multiply(const Matrix<T>& A, const Matrix<T>& B) {
+    auto n = A.size() * B.size();
+    Matrix<T> C(n, n, 0);
+
+    for (size_t i_a = 0; i_a < A.size(); i_a++) {
+        for (size_t j_a = 0; j_a < A.size(); j_a++) {
+            for (size_t i_b = 0; i_b < B.size(); i_b++) {
+                for (size_t j_b = 0; j_b < B.size(); j_b++) {
+                    size_t i = i_a * B.size() + i_b;
+                    size_t j = j_a * B.size() + j_b;
+
+                    C[i][j] = A[i_a][j_a] * B[i_b][j_b];
+                }
+            }
+        }
+    }
+
+    return C;
+}
+
+template<typename T>
+std::ostream& operator<<(std::ostream& out, const Matrix<T>& matrix) {
+    for (size_t i = 0; i < matrix.n(); i++) {
+        for (size_t j = 0; j < matrix.m(); j++) {
+            out << std::setw(config::WIDTH) << matrix[i][j] << " ";
+        }
+
+        out << std::endl;
+    }
+
+    return out;
+}
 
 template<typename T, typename V>
 std::vector<T> Runge_Kutt_4(const std::vector<V>& x, const T& y0, std::function<T(V, T)> f) {
