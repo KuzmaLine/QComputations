@@ -2,53 +2,97 @@
 #include <iostream>
 #include <vector>
 #include <string>
-#include <cmath>
 #include <complex>
-#include <map>
-#include <set>
+#include <cassert>
+#include "cavity_state.hpp"
+#include "matrix.hpp"
 
-class Cavity_State {
+class State {
     using COMPLEX = std::complex<double>;
-    using vec_complex = std::vector<COMPLEX>;
+    using matrix = std::vector<std::vector<COMPLEX>>;
     using E_LEVEL = int;
-    using vec_levels = std::vector<E_LEVEL>;
     using CavityId = size_t;
     using AtomId = size_t;
 
     public:
-        explicit Cavity_State() {};
-        Cavity_State(size_t n, size_t m = 0, size_t state = 0);
-        Cavity_State(size_t n, const std::vector<E_LEVEL>& state);
-        explicit Cavity_State(const std::string&);
-        Cavity_State(const Cavity_State&) = default;
+        State(size_t x_size = 1, size_t y_size = 1, size_t z_size = 1);
+        State(const Cavity_State& state);
+        State(const State& state) = default;
+        explicit State(const std::string&, const std::string& format = "|N;M>");
 
-        size_t n() const { return n_; }
+        size_t x_size() const { return x_size_; }
+        size_t y_size() const { return y_size_; }
+        size_t z_size() const { return z_size_; }
 
-        void set_n(size_t new_n) { n_ = new_n; }
+        size_t N() const { return N_; }
+        size_t n(CavityId id = 0) const { return grid_states_[id].n(); } // TMP
+        void set_n(size_t n, CavityId id = 0) { grid_states_[id].set_n(n); } // TMP
+        size_t m(CavityId id) const { return grid_states_[id].m(); }
 
-        size_t up_count() const;
-        E_LEVEL get_qubit(AtomId atom_index) const { return state_[atom_index]; }
+        void reshape(size_t x_size, size_t y_size, size_t z_size) {
+            assert(x_size * y_size * z_size == grid_states_.size());
 
-        void set_qubit(AtomId atom_index, E_LEVEL level) {
-            state_[atom_index] = level;
+            x_size_ = x_size;
+            y_size_ = y_size;
+            z_size_ = z_size;
+
+            gamma_ = Matrix<COMPLEX>(grid_states_.size(), grid_states_.size(), 0);
+            is_init_gamma_ = false;
+        }
+
+        void set_gamma(COMPLEX gamma) { gamma_ = Matrix<COMPLEX>(grid_states_.size(),
+                                                                 grid_states_.size(),
+                                                                 gamma);
+                                                                 is_init_gamma_ = true; }
+        void set_gamma(const Matrix<COMPLEX>& A) {gamma_ = A;
+                                                  is_init_gamma_ = true;}
+        void set_gamma(size_t from_id, size_t to_id, COMPLEX gamma);
+
+        E_LEVEL get_qubit(CavityId pol_id, AtomId atom_index) const { return grid_states_[pol_id].get_qubit(atom_index); }
+
+        void set_qubit(CavityId pol_id, AtomId atom_index, E_LEVEL level) {
+            grid_states_[pol_id].set_qubit(atom_index, level);
         }
 
         std::string to_string() const;
 
-        size_t m() const { return state_.size(); }
-        size_t variants_of_state_count(size_t n_max) const { return n_max * std::pow(2, this->m());}
-        std::vector<E_LEVEL> get_atoms_state() const { return state_; }
+        size_t cavities_count() const { return grid_states_.size(); }
+        size_t cavity_atoms_count(CavityId id) const { return grid_states_.at(id).m(); }
+        size_t cavity_max_size(CavityId id) const { return grid_states_[id].variants_of_state_count(N_); }
 
+        bool operator==(const State& other) const { return grid_states_ == other.grid_states_; }
+        bool operator<(const State& other) const { return this->to_string() > other.to_string(); }
+
+        Cavity_State get_state_in_pol(CavityId pol_id) const { return grid_states_[pol_id]; }
+        Cavity_State operator[](CavityId pol_id) const { return grid_states_[pol_id]; }
+        
         size_t get_index() const;
-        size_t get_index(const std::set<Cavity_State>& basis) const;
-        bool is_in_basis(const std::set<Cavity_State>& basis) const;
-        size_t get_atoms_index() const;
+        size_t get_index(const std::set<State>& basis) const;
+        size_t get_max_size() const;
 
-        bool operator==(const Cavity_State& other) const { return state_ == other.state_ and n_ == other.n_; }
-        //bool operator<(const Cavity_State& other) const { return n_ > other.n_ or get_index_from_state(state_) < get_index_from_state(other.state_); }
-        bool operator<(const Cavity_State& other) const { return this->to_string() > other.to_string(); }
+        Matrix<COMPLEX> get_gamma() const { return gamma_; };
+        std::set<CavityId> get_cavities_with_atoms() const { return cavities_with_atoms_; }
+
         size_t hash() const;
     private:
-        size_t n_;
-        std::vector<E_LEVEL> state_;
+        size_t N_;
+        size_t x_size_;
+        size_t y_size_;
+        size_t z_size_;
+
+        std::set<CavityId> cavities_with_atoms_;
+        std::vector<Cavity_State> grid_states_;
+        Matrix<COMPLEX> gamma_;
+        bool is_init_gamma_ = false;
 };
+
+/*
+|00;00>   |0>|0>|0>|0>
+|00;01>   |0>|0>|0>|1>
+|00;10>   |0>|0>|1>|0>
+|00;11>   |0>|0>|1>|1>
+|01;00>   |0>|1>|0>|0>
+|01;01>   |0>|1>|0>|1>
+...
+
+*/

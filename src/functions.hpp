@@ -2,7 +2,7 @@
 #include "additional_operators.hpp"
 #include "matrix.hpp"
 #include "config.hpp"
-#include "grid.hpp"
+#include "state.hpp"
 #include <chrono>
 #include <vector>
 #include <complex>

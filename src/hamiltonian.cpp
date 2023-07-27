@@ -109,10 +109,10 @@ H_by_func::H_by_func(size_t n, std::function<COMPLEX(size_t, size_t)> func) : n_
 
 // ---------------------------- H_TC ----------------------------
 
-H_TC::H_TC(size_t n, size_t m, const State& init_state, bool LOSS_PHOTONS): n_(n), m_(m) {
+H_TC::H_TC(size_t n, size_t m, const State& init_state, bool LOSS_PHOTONS, bool GAIN_PHOTONS): n_(n), m_(m) {
     auto size_m_ = std::pow(2, m_);
-    assert(init_state.amount_of_states() == 1);
-    State_Graph graph(init_state[0], LOSS_PHOTONS);
+    assert(init_state.cavities_count() == 1);
+    State_Graph graph(init_state[0], LOSS_PHOTONS, GAIN_PHOTONS, n);
     basis_ = Cavity_State_to_State(graph.get_basis());
     auto size_H_ = basis_.size();
 
@@ -202,4 +202,32 @@ H_JC::H_JC(size_t n, const State& init_state, bool LOSS_PHOTONS): n_(n){
     basis_ = tmp_H.get_basis();
 }
 
-H_TCH::H_TCH(int n, int n_pol) {}
+H_TCH::H_TCH(const State& grid) {
+    init_state_ = grid; // formal
+
+    auto x_size = grid.x_size();
+    auto y_size = grid.y_size();
+    auto z_size = grid.z_size();
+
+    size_t size = grid.get_max_size();
+
+    H_ = Matrix<COMPLEX>(size, size, 0);
+
+    for (size_t j = 0; j < grid.cavities_count(); j++) {
+        size_t size_left = 1, size_right = 1;
+
+        for (size_t i = 0; i < j; i++) {
+            size_left *= grid.cavity_max_size(i);
+        }
+
+        for (size_t i = j + 1; i < grid.cavities_count(); i++) {
+            size_right *= size_left *= grid.cavity_max_size(i);
+        }
+
+        H_TC Cavity_H(grid.N(), grid.m(j), grid[j], true, true);
+
+        H_ += tensor_multiply(tensor_multiply(E_Matrix<COMPLEX>(size_left), Cavity_H.get_matrix()), E_Matrix<COMPLEX>(size_right));
+    }
+
+    
+}

@@ -7,7 +7,6 @@
 #include "test.hpp"
 #include "plot.hpp"
 #include "config.hpp"
-#include "grid.hpp"
 #include "dynamic.hpp"
 
 namespace plt = matplotlibcpp;
@@ -19,7 +18,7 @@ int main(void) {
 
     //Cavity_State state("|1>|0>");
 
-    State state("|1;0000>");
+    State state("|0;0100>");
     //return 0;
 
     H_TC H(n, m, state, !is_zero(gamma));

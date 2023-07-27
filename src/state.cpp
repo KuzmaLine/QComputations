@@ -1,80 +1,68 @@
-#include <iostream>
-#include <vector>
-#include <string>
-#include <cmath>
-#include <complex>
 #include "state.hpp"
-#include "additional_operators.hpp"
 #include "functions.hpp"
 
-namespace {
-    using E_LEVEL = int;
-    using vec_levels = std::vector<E_LEVEL>;
+// REWRITE TO REGEXP
+State::State(const std::string& grid_state, const std::string& format) : gamma_(0, 0, 0) {
+    size_t format_index = 0;
+    size_t left_length = 0, middle_length = 0, right_length = 0;
+    while (format[format_index] != 'n' and
+           format[format_index] != 'N') {
+            left_length++;
+            format_index++;
+    }
 
-    constexpr int START_INDEX = 1;
+    N_ = 0;
 
-    vec_levels index_to_state(size_t m, size_t state_in_num) {
-        vec_levels state(m);
+    std::vector<CavityId> n;
+    std::vector<std::vector<E_LEVEL>> m;
+    if (format[format_index] == 'N') {
+        char sep = format[format_index + 1];
+        size_t Cavity_count = 0;
+        size_t& index = left_length;
 
-        for (int i = m - 1; i >= 0; i--) {
-            state[i] = state_in_num % 2;
-            state_in_num >>= 1;
+        while(grid_state[index] != sep) {
+            while(!is_digit(grid_state[index])) { index++; }
+            auto num = read_number<size_t>(grid_state, index);
+            n.emplace_back(num);
+            N_ += num;
+            Cavity_count++;
+            std::vector<E_LEVEL> tmp;
+            m.emplace_back(0);
         }
 
-        return state;
-    }
-}
+        format_index++;
+        middle_length = format_index;
 
-Cavity_State::Cavity_State(size_t n, size_t m, size_t state): n_(n), state_(index_to_state(m, state)) {}
+        while(format[++format_index] != 'M') {}
 
-Cavity_State::Cavity_State(size_t n, const std::vector<E_LEVEL>& state) : n_(n) {
-    if (state.size() != 0) {
-        state_ = state;
-    }
-}
+        middle_length = format_index - middle_length;
+        index += middle_length;
 
-Cavity_State::Cavity_State(const std::string& str_state) {
-    int i = START_INDEX;
+        char end = format[format_index + 1];
+        size_t Cavity_index = 0;
 
-    size_t n = 0;
-    while(str_state.at(i) != '>') {
-        n *= 10;
-        n += str_state.at(i) - '0';
-        i++;
-    }
+        while(Cavity_index != Cavity_count) {
+            if(!is_digit(grid_state[index])) {
+                if (m[Cavity_index].size() != 0) {
+                    cavities_with_atoms_.insert(Cavity_index);
+                }
 
-    n_ = n;
+                grid_states_.emplace_back(n[Cavity_index], m[Cavity_index]);
+                Cavity_index++;
+            } else {
+                if (grid_state[index] == '0') {
+                    N_++;
+                }
 
-    if (i != str_state.length() - 1) {
-        i += 2;
+                m[Cavity_index].emplace_back(grid_state[index] - '0');
+            }
 
-        while (str_state[i] != '>') {
-            state_.emplace_back(str_state[i] - '0');
-            i++;
+            index++;
         }
     }
 }
 
-size_t Cavity_State::up_count() const {
-    size_t res = 0;
-    for (const auto& st: state_) {
-        res += st;
-    }
-
-    return res;
-}
-
-size_t Cavity_State::get_atoms_index() const {
-    return get_index_from_state(state_);
-}
-
-size_t Cavity_State::get_index() const {
-    auto max_num_atoms = std::pow(2, this->m());
-
-    return n_ * max_num_atoms + get_index_from_state(state_);
-}
-
-size_t Cavity_State::get_index(const std::set<Cavity_State>& basis) const {
+size_t State::get_index(const std::set<State>& basis) const {
     size_t index = 0;
     for (const auto& state: basis) {
         if (state == *this) return index;
@@ -84,29 +72,69 @@ size_t Cavity_State::get_index(const std::set<Cavity_State>& basis) const {
     return -1;
 }
 
-bool Cavity_State::is_in_basis(const std::set<Cavity_State>& basis) const {
-    for (const auto& state: basis) {
-        if (state == *this) return true;
+size_t State::get_max_size() const {
+    size_t res = 0;
+
+    for (long i = grid_states_.size() - 1; i >= 0 ; i--) {
+        auto tmp = grid_states_[i].variants_of_state_count(N_);
+        res = res * tmp + tmp - 1;
     }
 
-    return false;
+    return res;
 }
 
-size_t Cavity_State::hash() const {
-    std::hash<vec_levels> state_hash;
-    return state_hash(state_) ^ n_;
+State::State(size_t x_size, size_t y_size, size_t z_size) {
+    grid_states_.reserve(x_size * y_size * z_size);
 }
 
-std::string Cavity_State::to_string() const {
-    std::string str_state = "|" + std::to_string(n_) + ">";
+State::State(const Cavity_State& state) {
+    grid_states_.emplace_back(state);
+    x_size_ = y_size_ = z_size_ = 1;
+    N_ = state.n() + state.up_count();
+    if (state.m() != 0) {
+        cavities_with_atoms_.insert(0);
+    }
 
-    if (state_.size() != 0) {
-        str_state += "|";
-        for (const auto& bit: state_) {
-            str_state += std::to_string(bit);
+    gamma_ = Matrix<COMPLEX>(1, 1, 0);
+}
+
+size_t State::get_index() const {
+    size_t index = 0;
+
+    for (long i = grid_states_.size() - 1; i >= 0 ; i--) {
+        index *= grid_states_[i].variants_of_state_count(N_);  
+        index += grid_states_[i].get_index(); 
+    }
+
+    return index;
+}
+
+std::string State::to_string() const {
+    std::string res = "|";
+
+    for (size_t i = 0; i < grid_states_.size(); i++) {
+        res += std::to_string(grid_states_[i].n());
+
+        if (i != grid_states_.size() - 1) res += ",";
+    }
+
+    res += ";";
+
+    for (size_t i = 0; i < grid_states_.size(); i++) {
+        auto state = grid_states_[i].get_atoms_state();
+
+        if (state.size() == 0) {
+            res += "_";
         }
 
-        str_state += ">";
+        for (const auto& st: state) {
+            res += std::to_string(st);
+        }
+
+        if (i != grid_states_.size() - 1) res += ",";
     }
-    return str_state;
+
+    res += ">";
+
+    return res;
 }

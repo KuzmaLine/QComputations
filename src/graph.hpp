@@ -5,12 +5,12 @@
 #include <queue>
 #include <unordered_set>
 #include <set>
-#include "state.hpp"
+#include "cavity_state.hpp"
 
 
 class State_Graph {
     public:
-        explicit State_Graph(const Cavity_State& init_state, bool with_loss_photons = false);
+        explicit State_Graph(const Cavity_State& init_state, bool with_loss_photons = false, bool GAIN_PHOTONS = false, size_t N = 1);
         void show() const;
 
         std::set<Cavity_State> get_basis() const { return basis_; }

@@ -3,7 +3,7 @@
 #include <functional>
 #include <complex>
 #include <iostream>
-#include "grid.hpp"
+#include "state.hpp"
 #include "config.hpp"
 #include "matrix.hpp"
 
@@ -47,7 +47,7 @@ class H_JC : public Hamiltonian {
 
 class H_TC : public Hamiltonian {
     public:
-        explicit H_TC(size_t n, size_t m, const State& init_state, bool LOSS_PHOTONS = config::LOSS_PHOTONS);
+        explicit H_TC(size_t n, size_t m, const State& init_state, bool LOSS_PHOTONS = config::LOSS_PHOTONS, bool GAIN_PHOTONS = false);
     private:
         size_t n_;
         size_t m_;
@@ -58,5 +58,5 @@ class H_TC : public Hamiltonian {
 
 class H_TCH : public Hamiltonian {
     public:
-        H_TCH(int n, int n_cavities);
+        H_TCH(const State& init_state);
 };
