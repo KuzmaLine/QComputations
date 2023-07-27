@@ -25,6 +25,10 @@ namespace {
         return a;
     }
 
+    Matrix<COMPLEX> a_create(size_t n) {
+        return a_destroy(n).transpose();
+    }
+
     Matrix<COMPLEX> E_photons(int n) {
         Matrix<COMPLEX> E(n, n, 0);
         for (int i = 0; i < n; i++) {
@@ -74,6 +78,33 @@ namespace {
         }
 
         return sum_sigma;
+    }
+
+    void add_a_operators(Matrix<COMPLEX>& H, size_t from_id, size_t to_id, const State& grid) {
+        size_t size_left = 1, size_middle = 1, size_right = 1;
+        size_t cavity_id = 0;
+
+        COMPLEX gamma = grid.get_gamma(from_id, to_id);
+
+        for (cavity_id = 0; cavity_id < from_id; cavity_id++) {
+            size_left *= grid.cavity_max_size(cavity_id);
+        }
+
+        for (cavity_id = from_id + 1; cavity_id < to_id; cavity_id++) {
+            size_middle *= grid.cavity_max_size(cavity_id);
+        }
+
+        for (cavity_id = to_id + 1; cavity_id < grid.cavities_count(); cavity_id++) {
+            size_right *= grid.cavity_max_size(cavity_id);
+        }
+
+        H += tensor_multiply(tensor_multiply(E_Matrix<COMPLEX>(size_left), a_destroy(grid.N())),
+             tensor_multiply(
+             tensor_multiply(E_Matrix<COMPLEX>(size_middle), a_create(grid.N())), E_Matrix<COMPLEX>(size_right))) * gamma;
+
+        H += tensor_multiply(tensor_multiply(E_Matrix<COMPLEX>(size_left), a_create(grid.N())),
+             tensor_multiply(
+             tensor_multiply(E_Matrix<COMPLEX>(size_middle), a_destroy(grid.N())), E_Matrix<COMPLEX>(size_right))) * std::conj(gamma);
     }
 }
 
@@ -224,10 +255,30 @@ H_TCH::H_TCH(const State& grid) {
             size_right *= size_left *= grid.cavity_max_size(i);
         }
 
+        std::cout << j << " " << size << " " << grid.N() << " " << grid.m(j) << " " << grid[j].to_string() << std::endl;
         H_TC Cavity_H(grid.N(), grid.m(j), grid[j], true, true);
 
+        auto basis = Cavity_H.get_basis();
+        for (const auto& b: basis) {
+            std::cout << std::setw(config::WIDTH) << b.to_string() << " ";
+        }
+        std::cout << std::endl;
+
+        Cavity_H.show(config::WIDTH);
+
+        auto tmp = tensor_multiply(E_Matrix<COMPLEX>(size_left), Cavity_H.get_matrix());
+        tmp.show();
+        tmp = tensor_multiply(tmp, E_Matrix<COMPLEX>(size_right));
+        tmp.show();
         H_ += tensor_multiply(tensor_multiply(E_Matrix<COMPLEX>(size_left), Cavity_H.get_matrix()), E_Matrix<COMPLEX>(size_right));
+        std::cout << size_left << " " << size_right << std::endl;
+
+        H_.show();
     }
 
-    
+    for (size_t i = 0; i < grid.cavities_count(); i++) {
+        if (i + 1 < grid.cavities_count()) add_a_operators(H_, i, i + 1, grid);
+        if ((i % z_size) + x_size < x_size * y_size) add_a_operators(H_, i, i + x_size, grid);
+        if (i + x_size * y_size < grid.cavities_count()) add_a_operators(H_, i, i + x_size * y_size, grid);
+    }    
 }

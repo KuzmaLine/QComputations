@@ -50,7 +50,7 @@ State::State(const std::string& grid_state, const std::string& format) : gamma_(
                 grid_states_.emplace_back(n[Cavity_index], m[Cavity_index]);
                 Cavity_index++;
             } else {
-                if (grid_state[index] == '0') {
+                if (grid_state[index] == '1') {
                     N_++;
                 }
 
@@ -81,6 +81,17 @@ size_t State::get_max_size() const {
     }
 
     return res;
+}
+
+void State::set_state(CavityId id, const Cavity_State& state) {
+    N_ -= grid_states_[id].get_energy();
+    grid_states_[id] = state;
+
+    cavities_with_atoms_.erase(id);
+
+    N_ += state.get_energy();
+
+    if (state.m() != 0) cavities_with_atoms_.insert(id);
 }
 
 State::State(size_t x_size, size_t y_size, size_t z_size) {

@@ -18,12 +18,15 @@ int main(void) {
 
     //Cavity_State state("|1>|0>");
 
-    State state("|0;0100>");
+    State state("|0;1>");
+    state.set_gamma(0.005);
+    state.set_state(0, Cavity_State("|2>"));
     //return 0;
 
-    H_TC H(n, m, state, !is_zero(gamma));
-    //H_JC H(n, state, !is_zero(gamma));
     std::cout << state.to_string() << " n = " << n << " m = " << m <<" h = " << config::h << " w = " << config::w << " g = " << config::g << " LOSS_PHOTONS = " << config::LOSS_PHOTONS << std::endl;
+    //H_TC H(n, m, state, !is_zero(gamma));
+    H_TCH H(state);
+    //H_JC H(n, state, !is_zero(gamma));
 
     auto basis = H.get_basis();
 
@@ -34,6 +37,7 @@ int main(void) {
 
     H.show(config::WIDTH);
 
+    return 0;
     std::vector<double> time_vec = make_timeline(0, 300 * M_PI, M_PI / 4);
     std::vector<COMPLEX> st(H.size(), 0);
     st[state.get_index(basis)] = 1;

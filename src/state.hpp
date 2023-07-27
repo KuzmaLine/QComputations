@@ -54,6 +54,8 @@ class State {
             grid_states_[pol_id].set_qubit(atom_index, level);
         }
 
+        void set_state(CavityId id, const Cavity_State& state);
+
         std::string to_string() const;
 
         size_t cavities_count() const { return grid_states_.size(); }
@@ -71,6 +73,7 @@ class State {
         size_t get_max_size() const;
 
         Matrix<COMPLEX> get_gamma() const { return gamma_; };
+        COMPLEX get_gamma(CavityId from_id, CavityId to_id) const { return gamma_[from_id][to_id]; };
         std::set<CavityId> get_cavities_with_atoms() const { return cavities_with_atoms_; }
 
         size_t hash() const;

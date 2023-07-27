@@ -68,6 +68,10 @@ size_t Cavity_State::get_atoms_index() const {
     return get_index_from_state(state_);
 }
 
+size_t Cavity_State::get_energy() const {
+    return n_ + this->up_count();
+}
+
 size_t Cavity_State::get_index() const {
     auto max_num_atoms = std::pow(2, this->m());
 

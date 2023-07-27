@@ -76,6 +76,8 @@ Matrix<T> tensor_multiply(const Matrix<T>& A, const Matrix<T>& B) {
     auto n = A.size() * B.size();
     Matrix<T> C(n, n, 0);
 
+    std::cout << "TENSOR: " << std::endl;
+    std::cout << n << std::endl;
     for (size_t i_a = 0; i_a < A.size(); i_a++) {
         for (size_t j_a = 0; j_a < A.size(); j_a++) {
             for (size_t i_b = 0; i_b < B.size(); i_b++) {

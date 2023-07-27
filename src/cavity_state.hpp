@@ -43,6 +43,7 @@ class Cavity_State {
         size_t get_index(const std::set<Cavity_State>& basis) const;
         bool is_in_basis(const std::set<Cavity_State>& basis) const;
         size_t get_atoms_index() const;
+        size_t get_energy() const;
 
         bool operator==(const Cavity_State& other) const { return state_ == other.state_ and n_ == other.n_; }
         //bool operator<(const Cavity_State& other) const { return n_ > other.n_ or get_index_from_state(state_) < get_index_from_state(other.state_); }

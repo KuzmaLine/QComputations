@@ -14,6 +14,7 @@ State_Graph::State_Graph(const Cavity_State& init_state, bool with_loss_photons,
 
     while(!state_queue_.empty()) {
         auto cur_state = state_queue_.front();
+        std::cout << cur_state.to_string() << std::endl;
         auto cur_n = cur_state.n();
         auto tmp_state = cur_state;
         state_queue_.pop();
@@ -29,7 +30,7 @@ State_Graph::State_Graph(const Cavity_State& init_state, bool with_loss_photons,
             tmp_state.set_n(cur_n);
         }
 
-        if (with_gain_photons and cur_n < N) {
+        if (with_gain_photons and cur_state.get_energy() < N) {
             tmp_state.set_n(cur_n + 1);
             if (std::find(basis_.begin(), basis_.end(), tmp_state) == basis_.end()) {
                 basis_.insert(tmp_state);
