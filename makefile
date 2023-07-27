@@ -4,7 +4,7 @@ CC=g++
 
 LFLAGS = -std=c++11 -Werror -I/usr/include/python3.10 -I/usr/include/mkl -lpython3.10 -lmkl_intel_lp64 -lmkl_intel_thread -lmkl_core -liomp5 -lpthread -lm -ldl
 CFLAGS = -std=c++11 -Werror -I/usr/include/python3.10 -I/usr/include/mkl -lpython3.10 -lmkl_intel_lp64 -lmkl_intel_thread -lmkl_core -liomp5 -lpthread -lm -ldl
-OBJ = matrix.o state.o graph.o hamiltonian.o additional_operators.o functions.o dynamic.o plot.o main.o
+OBJ = matrix.o state.o graph.o grid.o hamiltonian.o additional_operators.o functions.o dynamic.o plot.o main.o
 
 all: prog
 
@@ -14,7 +14,7 @@ prog: $(OBJ)
 .cpp.o:
 	${CC} -g ${CFLAGS} -c $< -o $@
 
-main.o: matrix.hpp state.hpp graph.hpp hamiltonian.hpp additional_operators.hpp functions.hpp dynamic.hpp plot.hpp test.hpp config.hpp matplotlibcpp.hpp
+main.o: matrix.hpp state.hpp graph.hpp grid.hpp hamiltonian.hpp additional_operators.hpp functions.hpp dynamic.hpp plot.hpp test.hpp config.hpp matplotlibcpp.hpp
 
 clean:
 	rm -rf *.o prog

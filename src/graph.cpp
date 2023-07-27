@@ -7,8 +7,9 @@ namespace {
     constexpr int UP = 1;
 }
 
-State_Graph::State_Graph(const State& init_state, bool with_loss_photons) {
+State_Graph::State_Graph(const Cavity_State& init_state, bool with_loss_photons) {
     basis_.insert(init_state);
+    std::queue<Cavity_State> state_queue_;
     state_queue_.push(init_state);
 
     while(!state_queue_.empty()) {
@@ -28,7 +29,7 @@ State_Graph::State_Graph(const State& init_state, bool with_loss_photons) {
             tmp_state.set_n(cur_n);
         }
 
-        for (size_t i = 0; i < cur_state.size(); i++) {
+        for (size_t i = 0; i < cur_state.m(); i++) {
             if (cur_state.get_qubit(i) == UP) {
                 tmp_state.set_qubit(i, DOWN);
                 tmp_state.set_n(cur_n + 1);
@@ -46,7 +47,7 @@ State_Graph::State_Graph(const State& init_state, bool with_loss_photons) {
         }
 
         if (cur_n != 0) {
-            for (size_t i = 0; i < cur_state.size(); i++) {
+            for (size_t i = 0; i < cur_state.m(); i++) {
                 if (cur_state.get_qubit(i) == DOWN) {
                     tmp_state.set_qubit(i, UP);
                     tmp_state.set_n(cur_n - 1);

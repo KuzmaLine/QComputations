@@ -3,7 +3,7 @@
 #include <functional>
 #include <complex>
 #include <iostream>
-#include "state.hpp"
+#include "grid.hpp"
 #include "config.hpp"
 #include "matrix.hpp"
 
@@ -58,5 +58,5 @@ class H_TC : public Hamiltonian {
 
 class H_TCH : public Hamiltonian {
     public:
-        H_TCH(int n, int n_pol);
+        H_TCH(int n, int n_cavities);
 };

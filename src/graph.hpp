@@ -10,13 +10,16 @@
 
 class State_Graph {
     public:
-        explicit State_Graph(const State& init_state, bool with_loss_photons = false);
+        explicit State_Graph(const Cavity_State& init_state, bool with_loss_photons = false);
         void show() const;
 
-        std::set<State> get_basis() const { return basis_; }
+        std::set<Cavity_State> get_basis() const { return basis_; }
     private:
-        std::set<State> basis_;
-        std::queue<State> state_queue_;
-        std::unordered_map<State, std::unordered_set<State>> to_;
-        std::unordered_map<State, std::unordered_set<State>> from_;
+        std::set<Cavity_State> basis_;
+        std::unordered_map<Cavity_State, std::unordered_set<Cavity_State>> to_;
+        std::unordered_map<Cavity_State, std::unordered_set<Cavity_State>> from_;
+};
+
+class Quantum_Neural_Network : public State_Graph {
+
 };

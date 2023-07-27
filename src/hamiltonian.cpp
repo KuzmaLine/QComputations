@@ -111,8 +111,9 @@ H_by_func::H_by_func(size_t n, std::function<COMPLEX(size_t, size_t)> func) : n_
 
 H_TC::H_TC(size_t n, size_t m, const State& init_state, bool LOSS_PHOTONS): n_(n), m_(m) {
     auto size_m_ = std::pow(2, m_);
-    State_Graph graph(init_state, LOSS_PHOTONS);
-    basis_ = graph.get_basis();
+    assert(init_state.amount_of_states() == 1);
+    State_Graph graph(init_state[0], LOSS_PHOTONS);
+    basis_ = Cavity_State_to_State(graph.get_basis());
     auto size_H_ = basis_.size();
 
     std::vector<size_t> state_index;

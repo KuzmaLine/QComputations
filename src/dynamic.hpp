@@ -1,7 +1,7 @@
 #pragma once
 #include <vector>
 #include <memory>
-#include "state.hpp"
+#include "grid.hpp"
 #include "hamiltonian.hpp"
 
 namespace Evolution {

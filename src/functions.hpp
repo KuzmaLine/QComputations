@@ -2,6 +2,7 @@
 #include "additional_operators.hpp"
 #include "matrix.hpp"
 #include "config.hpp"
+#include "grid.hpp"
 #include <chrono>
 #include <vector>
 #include <complex>
@@ -24,6 +25,9 @@ std::vector<double> make_timeline(double start, double end, double step);
 std::vector<double> linspace(double start, double end, double npoints);
 size_t get_index_from_state(vec_levels state);
 bool is_zero(double a);
+bool is_digit(char c);
+
+std::set<State> Cavity_State_to_State(const std::set<Cavity_State>& st);
 
 double off(const Matrix<double>& A);
 std::pair<double, double> givens(double a, double b);
@@ -32,13 +36,29 @@ Matrix<double> MGS(const Matrix<COMPLEX>& A);
 std::pair<std::vector<double>, Matrix<COMPLEX>> Hermit_Lanczos(const Matrix<COMPLEX>& A);
 
 std::function<double(double)> Cubic_Spline_Interpolate(const std::vector<double>& x, const std::vector<double>& y);
-double fsolve(std::function<double(double)> f, double a, double b, double target = 0);
+double fsolve(std::function<double(double)> f, double a, double b, double target = 0, double eps = config::eps);
+double fmin(std::function<double(double)> f, double a, double b, double eps = config::eps);
 
 double scalar_product(const std::vector<double>& a, const std::vector<double>& b); // <b|a>, (a, b)
 COMPLEX scalar_product(const std::vector<COMPLEX>& a, const std::vector<COMPLEX>& b); // <b|a>, (a, b)
 double norm(const std::vector<COMPLEX>& v);
 
 // ------------------------------- template functions --------------------------------------
+
+template<typename T>
+T read_number(const std::string& str, size_t& start_index = 0) {
+    T n = T(0);
+    size_t index = start_index;
+
+    while(is_digit(str[index])) {
+        n *= 10;
+        n += str.at(index) - '0';
+        index++;
+    }
+
+    start_index = index;
+    return n;
+}
 
 template<typename T>
 Matrix<T> E_Matrix(size_t n) {
@@ -141,6 +161,18 @@ void show_vector(const std::vector<T>& v) {
     }
 
     std::cout << std::endl;
+}
+
+template<typename T>
+std::vector<T> f_vector(std::function<T(T)> f, const std::vector<T>& x) {
+    size_t n = x.size();
+    std::vector<T> res(n);
+
+    for (size_t i = 0; i < n; i++) {
+        res[i] = f(x[i]);
+    }
+
+    return res;
 }
 
 //std::pair<std::vector<double>, Matrix<double>> Hermit_Lanczos(const Matrix<COMPLEX>& A);

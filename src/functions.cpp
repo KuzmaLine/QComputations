@@ -37,6 +37,20 @@ bool is_zero(double a) {
     return std::abs(a) < eps;
 }
 
+bool is_digit(char c) {
+    return '0' <= c and c <= '9';
+}
+
+std::set<State> Cavity_State_to_State(const std::set<Cavity_State>& st) {
+    std::set<State> res;
+
+    for (const auto& item: st) {
+        res.insert(State(item));
+    }
+
+    return res;
+}
+
 std::function<double(double)> Cubic_Spline_Interpolate(const std::vector<double>& x, const std::vector<double>& f) {
     auto begin = std::chrono::steady_clock::now();
     size_t n = x.size() - 1;
@@ -79,6 +93,7 @@ std::function<double(double)> Cubic_Spline_Interpolate(const std::vector<double>
         b[i] = (a[i] - a[i - 1]) / h[i] + h[i] / 2.0 * c[i] - h[i] * h[i] / 6.0 * d[i];
     }
 
+    /*
     for (size_t i = 1; i <= n; i++) {
         S[i] = std::function<double(double)> {
             [a, b, c, d, x, i](double t) {
@@ -87,10 +102,10 @@ std::function<double(double)> Cubic_Spline_Interpolate(const std::vector<double>
             }
         };
     }
-
+    */
     std::function<double(double)> res {
-        [S, f, x](double t) {
-            if (t < x[0] or t > x[x.size() - 1]) {
+        [f, x, a, b, c, d](double t) {
+            if (t + config::eps < x[0] or t - config::eps > x[x.size() - 1]) {
                 std::cerr << "Not between x[0] and x[n - 1]" << std::endl;
                 return -1.0;
             }
@@ -102,7 +117,10 @@ std::function<double(double)> Cubic_Spline_Interpolate(const std::vector<double>
                 return f[x.size() - 1];
             }
             for (size_t i = 1; i < x.size(); i++) {
-                if (x[i - 1] <= t and t <= x[i]) return S[i](t);
+                if (x[i - 1] <= t and t <= x[i]) {
+                    auto diff = t - x[i];
+                    return a[i] + b[i] * diff + c[i] * diff * diff / 2.0 + d[i] * diff * diff * diff / 6.0;
+                }
             }
 
             std::cerr << "Not between x[0] and x[n - 1]" << std::endl;
@@ -113,10 +131,10 @@ std::function<double(double)> Cubic_Spline_Interpolate(const std::vector<double>
     return res;
 }
 
-double fsolve(std::function<double(double)> f, double a, double b, double target) {
+double fsolve(std::function<double(double)> f, double a, double b, double target, double eps) {
     double t = (a + b) / 2.0;
 
-    while(std::abs(f(t) - target) >= config::eps) {
+    while(std::abs(f(t) - target) >= eps) {
         if (f(t) - target > 0) {
             b = t;
         } else {
@@ -125,10 +143,34 @@ double fsolve(std::function<double(double)> f, double a, double b, double target
 
         t = (a + b) / 2.0;
 
-        if (std::abs(a - b) < config::eps) { std::cerr << "f without zero" << std::endl; return b; }
+        if (std::abs(a - b) < eps) { std::cerr << "f without zero" << std::endl; return b; }
     }
 
     return t;
+}
+
+// https://group112.github.io/doc/sem2/2019/2019_sem2_lesson3.pdf page 1
+double fmin(std::function<double(double)> f, double a, double b, double eps) {
+    double a_n = a;
+    double b_n = b;
+    double l_n = b - a;
+    double x_n = (a + b) / 2.0;
+
+    while (l_n >= 2 * eps) {
+        x_n = (a_n + b_n) / 2.0;
+        double c_n = x_n - eps / 2.0;
+        double d_n = x_n + eps / 2.0;
+
+        if (f(c_n) < f(d_n)) {
+            b_n = d_n;
+        } else {
+            a_n = c_n;
+        }
+
+        l_n = b_n - a_n;
+    }
+
+    return x_n;
 }
 
 std::vector<double> FROM_double_TO_vector(double* A, lapack_int n) {
@@ -263,7 +305,7 @@ matrix hermit(const matrix& A) {
 
 // функция, проверяющая равенство двух комплексных чисел
 bool equals(std::complex<double> a, std::complex<double> b) {
-    return abs(a - b) < EPS;
+    return std::abs(a - b) < EPS;
 }
 /*
 matrix multiply(const matrix& A, const matrix& B) {
@@ -313,6 +355,7 @@ std::vector<double> divide_and_conquer(const std::vector<std::vector<double>>& A
 }
 */
 
+// working????
 void tridiagonal_QR(Matrix<double>& T) {
     size_t n = T.size();
     for (size_t k = 0; k < n - 1; k++) {
@@ -345,6 +388,7 @@ void tridiagonal_QR(Matrix<double>& T) {
     }
 }
 
+// Modified Gramm Schmidt
 Matrix<double> MGS (const Matrix<COMPLEX>& A) {
     auto m = A.size();
     //std::cout << "HERE 1\n";
@@ -389,12 +433,11 @@ Matrix<double> MGS (const Matrix<COMPLEX>& A) {
     return H;
 }
 
-// ONLY FOR REAL MATRIX. COMPLEX FOR Hermit_Lanczos
+// ONLY FOR REAL MATRIX. FOR COMPLEX - Hermit_Lanczos
 std::pair<std::vector<double>, Matrix<double>> jacobi(const Matrix<double>& A) {
-    using namespace std;
     int n = A.size();
     Matrix<double> eigenvectors(n, n);
-    vector<double> eigenvalues(n);
+    std::vector<double> eigenvalues(n);
 
     auto B = A;
     // начальное приближение для собственных векторов
@@ -516,10 +559,15 @@ std::pair<std::vector<double>, Matrix<COMPLEX>> Hermit_Lanczos(const Matrix<COMP
     auto lapack_B = B.to_lapack();
     d = new double [m];
     e = new double [n - 1];
+    // reduce to tridiagonal form -> lapack_A
     res = LAPACKE_zhetrd(LAPACK_ROW_MAJOR, 'U', n, lapack_A, n, d, e, lapack_B);
     if (res != 0) std::cout << "LAPACKE_zhetrd error = " << res << std::endl;
+
+    //find Q matrix for reducing matrix lapack_A -> lapack_A
     res = LAPACKE_zungtr(LAPACK_ROW_MAJOR, 'U', n, lapack_A, n, lapack_B);
     if (res != 0) std::cout << "LAPACKE_zungtr error = " << res << std::endl;
+
+    //find eigenvalues and eigenvectors with Q matrix of matrix lapack_A -> d, lapack_A
     res = LAPACKE_zstedc(LAPACK_ROW_MAJOR, 'V', n, d, e, lapack_A, n); 
     if (res != 0) std::cout << "LAPACKE_zstedc error = " << res << std::endl;
     /*
@@ -558,8 +606,6 @@ std::pair<std::vector<double>, Matrix<COMPLEX>> Hermit_Lanczos(const Matrix<COMP
         H[i][i - 1] = betta[i];
     }
     */
-
-    //tridiagonal_QR(H);
 
     //std::cout << std::endl;
     //return jacobi(H);

@@ -25,15 +25,15 @@ namespace {
     }
 }
 
-State::State(size_t n, size_t m, size_t state): n_(n), state_(index_to_state(m, state)) {}
+Cavity_State::Cavity_State(size_t n, size_t m, size_t state): n_(n), state_(index_to_state(m, state)) {}
 
-State::State(const std::vector<E_LEVEL>& state) : n_(0), state_(state) {
-    auto size = this->size();
-    vector_of_atoms_state_ = vec_complex(std::pow(2, size), 0);
-    vector_of_atoms_state_[get_index_from_state(state_)] = 1;
+Cavity_State::Cavity_State(size_t n, const std::vector<E_LEVEL>& state) : n_(n) {
+    if (state.size() != 0) {
+        state_ = state;
+    }
 }
 
-State::State(const std::string& str_state) {
+Cavity_State::Cavity_State(const std::string& str_state) {
     int i = START_INDEX;
 
     size_t n = 0;
@@ -55,17 +55,26 @@ State::State(const std::string& str_state) {
     }
 }
 
-size_t State::get_atoms_index() const {
+size_t Cavity_State::up_count() const {
+    size_t res = 0;
+    for (const auto& st: state_) {
+        res += st;
+    }
+
+    return res;
+}
+
+size_t Cavity_State::get_atoms_index() const {
     return get_index_from_state(state_);
 }
 
-size_t State::get_index() const {
-    auto max_num_atoms = std::pow(2, this->size());
+size_t Cavity_State::get_index() const {
+    auto max_num_atoms = std::pow(2, this->m());
 
     return n_ * max_num_atoms + get_index_from_state(state_);
 }
 
-size_t State::get_index(const std::set<State>& basis) const {
+size_t Cavity_State::get_index(const std::set<Cavity_State>& basis) const {
     size_t index = 0;
     for (const auto& state: basis) {
         if (state == *this) return index;
@@ -75,7 +84,7 @@ size_t State::get_index(const std::set<State>& basis) const {
     return -1;
 }
 
-bool State::is_in_basis(const std::set<State>& basis) const {
+bool Cavity_State::is_in_basis(const std::set<Cavity_State>& basis) const {
     for (const auto& state: basis) {
         if (state == *this) return true;
     }
@@ -83,17 +92,21 @@ bool State::is_in_basis(const std::set<State>& basis) const {
     return false;
 }
 
-size_t State::hash() const {
+size_t Cavity_State::hash() const {
     std::hash<vec_levels> state_hash;
     return state_hash(state_) ^ n_;
 }
 
-std::string State::to_string() const {
-    std::string str_state = "|" + std::to_string(n_) + ">|";
-    for (const auto& bit: state_) {
-        str_state += std::to_string(bit);
-    }
+std::string Cavity_State::to_string() const {
+    std::string str_state = "|" + std::to_string(n_) + ">";
 
-    str_state += ">";
+    if (state_.size() != 0) {
+        str_state += "|";
+        for (const auto& bit: state_) {
+            str_state += std::to_string(bit);
+        }
+
+        str_state += ">";
+    }
     return str_state;
 }

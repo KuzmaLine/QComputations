@@ -7,19 +7,23 @@
 #include "test.hpp"
 #include "plot.hpp"
 #include "config.hpp"
-//#include "graph.hpp"
+#include "grid.hpp"
 #include "dynamic.hpp"
 
 namespace plt = matplotlibcpp;
 
 int main(void) {
-    int n = 2;
-    int m = 1;
-    double gamma = 0.005;
+    int n = 1;
+    int m = 4;
+    double gamma = 0;
 
-    State state("|1>|1>");
-    //H_TC H(n, m, state, !is_zero(gamma));
-    H_JC H(n, state, !is_zero(gamma));
+    //Cavity_State state("|1>|0>");
+
+    State state("|1;0000>");
+    //return 0;
+
+    H_TC H(n, m, state, !is_zero(gamma));
+    //H_JC H(n, state, !is_zero(gamma));
     std::cout << state.to_string() << " n = " << n << " m = " << m <<" h = " << config::h << " w = " << config::w << " g = " << config::g << " LOSS_PHOTONS = " << config::LOSS_PHOTONS << std::endl;
 
     auto basis = H.get_basis();
@@ -34,7 +38,6 @@ int main(void) {
     std::vector<double> time_vec = make_timeline(0, 300 * M_PI, M_PI / 4);
     std::vector<COMPLEX> st(H.size(), 0);
     st[state.get_index(basis)] = 1;
-
     //functions_testing::check_eigenvectors(p.first, p.second, H_m);
 
     /*
@@ -50,10 +53,12 @@ int main(void) {
     //functions_testing::check_eigenvectors(a_p.first, a_p.second, a);
 
     //auto probs = Evolution::schrodinger(st, H, time_vec);
-    auto probs = Evolution::quantum_master_equation(st, H, time_vec, gamma, true);
+    
+    auto probs = Evolution::quantum_master_equation(st, H, time_vec, gamma, false);
     //std::vector<double> x = make_timeline(0, 100, 1);
     //functions_testing::check_runge_kutt<double, double>(x, double(0), &func, &func_correct);
 
+    /*
     std::array<std::string, 3> ls = {"-", "--", "-."};
     std::array<std::string, 9> c = {"b", "r", "g", "tab:orange", "m", "tab:brown", "tab:violet", "tab:olive", "tab:purple"};
     std::vector<std::map<std::string, std::string>> keywords(basis.size());
@@ -64,21 +69,34 @@ int main(void) {
         index++;
     }
 
-
-    /*
+    */
     matplotlib::make_figure(config::fig_width, config::fig_height, config::dpi);
-    matplotlib::probs_to_plot(probs, time_vec, basis, keywords);
+    matplotlib::probs_to_plot(probs, time_vec, basis);
+    matplotlib::grid();
+    matplotlib::show();
+    /*
+    std::vector<double> gamma_vec = make_timeline(0.01, 0.9, 0.01);
+    auto tau_vec = Evolution::scan_gamma(st, H, time_vec, gamma_vec, 0.9);
+
+    auto x = linspace(0.01, 0.9, 1000);
+    auto tau_spline = Cubic_Spline_Interpolate(gamma_vec, tau_vec);
+    auto tau_spline_vec = f_vector(tau_spline, x);
+
+    auto gamma_min = fmin(tau_spline, x[0], x[x.size() - 1]);
+    std::cout << "MIN = " << gamma_min << std::endl;
+
+    probs = Evolution::quantum_master_equation(st, H, time_vec, gamma_min);
+    matplotlib::make_figure(config::fig_width, config::fig_height, config::dpi);
+    matplotlib::probs_to_plot(probs, time_vec, basis);
+    matplotlib::grid();
+    matplotlib::show();
+
+    matplotlib::make_figure(config::fig_width, config::fig_height, config::dpi);
+    plt::scatter(gamma_vec, tau_vec, 40);
+    plt::plot(x, tau_spline_vec);
     matplotlib::grid();
     matplotlib::show();
     */
-
-    std::vector<double> gamma_vec = make_timeline(0.003, 0.1, 0.001);
-    auto tau_vec = Evolution::scan_gamma(st, H, time_vec, gamma_vec, 0.9);
-
-    matplotlib::make_figure(config::fig_width, config::fig_height, config::dpi);
-    plt::plot(gamma_vec, tau_vec);
-    matplotlib::grid();
-    matplotlib::show();
     /*
     matplotlib::make_figure(config::fig_width, config::fig_height, config::dpi);
     matplotlib::rho_probs_to_plot(probs, time_vec, basis, keywords);
