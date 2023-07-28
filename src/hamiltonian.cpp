@@ -369,6 +369,7 @@ H_TCH::H_TCH(const State& grid) {
             //std::cout << "excitation_atom PASSED\n";
             H_[i][j] += de_excitation_atom(state_from, state_to);
             //std::cout << "de_excitation_atom PASSED\n";
+            H_[i][j] += photon_exchange(state_from, state_to, grid);
             j++;
         }
         j = 0;
