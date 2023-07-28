@@ -21,30 +21,45 @@ namespace {
 std::vector<double> FROM_double_TO_vector(double* A, lapack_int n);
 Matrix<COMPLEX> FROM_lapack_complex_double_TO_Matrix(lapack_complex_double* A, lapack_int n, lapack_int m);
 
+// start = 0, end = 4, step = 2 -> {0, 2, 4}
 std::vector<double> make_timeline(double start, double end, double step);
+//Equal to Python
 std::vector<double> linspace(double start, double end, double npoints);
+
+// Convert state to 10 numerical system
 size_t get_index_from_state(vec_levels state);
+
 bool is_zero(double a);
 bool is_digit(char c);
 size_t Ck_n(size_t k, size_t n);
 
 std::set<State> Cavity_State_to_State(const std::set<Cavity_State>& st);
 
+// Eigen Problem
 double off(const Matrix<double>& A);
 std::pair<double, double> givens(double a, double b);
 void tridiagonal_QR(Matrix<double>& T);
 Matrix<double> MGS(const Matrix<COMPLEX>& A);
+
+// Using for Hamiltonians
 std::pair<std::vector<double>, Matrix<COMPLEX>> Hermit_Lanczos(const Matrix<COMPLEX>& A);
 
 std::function<double(double)> Cubic_Spline_Interpolate(const std::vector<double>& x, const std::vector<double>& y);
+
+// Solve f(x) = target
 double fsolve(std::function<double(double)> f, double a, double b, double target = 0, double eps = config::eps);
+
+// f must be unimodal on [a, b]
 double fmin(std::function<double(double)> f, double a, double b, double eps = config::eps);
 
 void show_basis(const std::set<Cavity_State>& basis);
 void show_basis(const std::set<State>& basis);
 
-double scalar_product(const std::vector<double>& a, const std::vector<double>& b); // <b|a>, (a, b)
-COMPLEX scalar_product(const std::vector<COMPLEX>& a, const std::vector<COMPLEX>& b); // <b|a>, (a, b)
+// <b|a>, (a, b)
+double scalar_product(const std::vector<double>& a, const std::vector<double>& b); 
+COMPLEX scalar_product(const std::vector<COMPLEX>& a, const std::vector<COMPLEX>& b);
+
+// Euclidean
 double norm(const std::vector<COMPLEX>& v);
 
 // ------------------------------- template functions --------------------------------------
@@ -109,6 +124,7 @@ std::ostream& operator<<(std::ostream& out, const Matrix<T>& matrix) {
     return out;
 }
 
+// Get elem from set by index
 template<typename T>
 T get_elem(const std::set<T>& st, size_t index) {
     auto it = st.begin();
@@ -116,6 +132,8 @@ T get_elem(const std::set<T>& st, size_t index) {
     return *it;
 }
 
+// На соплях работает, сука, не трогать
+// Need optimization
 template<typename T, typename V>
 std::vector<V> Runge_Kutt_4(const std::vector<T>& x, const V& y0, std::function<V(T, V)> f) {
     size_t len = x.size();
@@ -123,6 +141,7 @@ std::vector<V> Runge_Kutt_4(const std::vector<T>& x, const V& y0, std::function<
     y[0] = y0;
 
     for (size_t i = 0; i < len - 1; i++) {
+        if (i % (len / 100) == 0) std::cout << i << " " << len << std::endl;
         //std::cout << i << " " << y[i] << " ";
         T h = x[i + 1] - x[i];
 
@@ -137,6 +156,8 @@ std::vector<V> Runge_Kutt_4(const std::vector<T>& x, const V& y0, std::function<
     return y;
 }
 
+
+// Tridiagonal linear system solving
 template<typename T>
 std::vector<T> Pro_Race_Algorithm(const Matrix<T>& B, const std::vector<T>& y) {
     size_t k = B.size();
@@ -174,6 +195,7 @@ void show_vector(const std::vector<T>& v) {
     std::cout << std::endl;
 }
 
+// from {x1, x2, x3 ...} to {f(x1), f(x2), ...}
 template<typename T>
 std::vector<T> f_vector(std::function<T(T)> f, const std::vector<T>& x) {
     size_t n = x.size();
@@ -185,6 +207,3 @@ std::vector<T> f_vector(std::function<T(T)> f, const std::vector<T>& x) {
 
     return res;
 }
-
-//std::pair<std::vector<double>, Matrix<double>> Hermit_Lanczos(const Matrix<COMPLEX>& A);
-//std::vector<std::vector<double>> Hermit_Lanczos(const matrix& A);

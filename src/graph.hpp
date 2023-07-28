@@ -8,6 +8,8 @@
 #include "cavity_state.hpp"
 
 
+// DON'T TOUCH
+// NEED REWORK
 class State_Graph {
     public:
         explicit State_Graph(const Cavity_State& init_state, bool with_loss_photons = false, bool GAIN_PHOTONS = false, size_t N = 1);

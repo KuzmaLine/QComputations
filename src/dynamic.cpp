@@ -33,13 +33,11 @@ Matrix<COMPLEX> Evolution::create_A_create(const std::set<State>& basis, size_t 
     size_t index = 0;
     for (const auto& state: basis) {
         auto n = state.n(cavity_id);
-        if (n != 0) {
-            auto tmp_state = state;
-            tmp_state.set_n(n + 1, cavity_id);
+        auto tmp_state = state;
+        tmp_state.set_n(n + 1, cavity_id);
 
-            auto state_index = tmp_state.get_index(basis);
-            if (state_index != -1) A[state_index][index] = COMPLEX(std::sqrt(n + 1));
-        }
+        auto state_index = tmp_state.get_index(basis);
+        if (state_index != -1) A[state_index][index] = COMPLEX(std::sqrt(n + 1));
 
         index++;
     }
@@ -108,7 +106,7 @@ Evolution::Probs Evolution::quantum_master_equation(const std::vector<COMPLEX>& 
                                          bool is_full_rho) {
     size_t dim = H.size();
     //A.show(config::WIDTH);
-    auto grid = H.get_init_state();
+    auto grid = H.get_grid();
     std::vector<std::function<Evolution::Rho(const Evolution::Rho& rho)>> lindblads(2 * grid.cavities_count());
 
     auto cavities_with_leak = grid.get_cavities_with_leak();
@@ -117,7 +115,9 @@ Evolution::Probs Evolution::quantum_master_equation(const std::vector<COMPLEX>& 
     //for (const auto& cavity_id: cavities_with_leak) {
     for (size_t cavity_id = 0; cavity_id < grid.cavities_count(); cavity_id++) {
         auto A = create_A_destroy(H.get_basis(), cavity_id);
+        //A.show();
         auto gamma = grid.get_leak_gamma(cavity_id);
+        //std::cout << gamma << std::endl;
         lindblads[cavity_id] = std::function<Evolution::Rho(const Evolution::Rho& rho)> {
             [A, gamma](const Evolution::Rho& rho) {
                 auto Aconj = A.hermit();
@@ -130,7 +130,9 @@ Evolution::Probs Evolution::quantum_master_equation(const std::vector<COMPLEX>& 
     //for (const auto& cavity_id: cavities_with_gain) {
     for (size_t cavity_id = 0; cavity_id < grid.cavities_count(); cavity_id++) {
         auto A = create_A_create(H.get_basis(), cavity_id);
+        //A.show();
         auto gamma = grid.get_gain_gamma(cavity_id);
+        //std::cout << gamma << std::endl;
         lindblads[cavity_id + grid.cavities_count()] = std::function<Evolution::Rho(const Evolution::Rho& rho)> {
             [A, gamma](const Evolution::Rho& rho) {
                 auto Aconj = A.hermit();
@@ -151,6 +153,7 @@ Evolution::Probs Evolution::quantum_master_equation(const std::vector<COMPLEX>& 
     }};
 
     auto rho_0 = Evolution::create_init_rho(init_state);
+    //rho_0.show();
     //auto begin_c = std::chrono::steady_clock::now();
     auto rho_vec = Runge_Kutt_4<double, Evolution::Rho>(time_vec, rho_0, equation);
     //auto end_c = std::chrono::steady_clock::now();

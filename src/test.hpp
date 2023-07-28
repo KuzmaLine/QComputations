@@ -8,6 +8,8 @@
 #include <random>
 #include <set>
 #include <complex>
+
+// TESTING - Для отладки либы, для остального бесполезны
 namespace matrix_testing {
     template<typename T>
     Matrix<T> create_rand_matrix(size_t n, size_t m, T a, T b) {

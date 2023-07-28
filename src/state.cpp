@@ -74,6 +74,15 @@ State::State(const std::string& grid_state, const std::string& format) : gamma_(
     }
 }
 
+State::State(const std::vector<size_t>& grid_config) : gamma_(0, 0) {
+    for (size_t i = 0; i < grid_config.size(); i++) {
+        std::vector<int> m(grid_config[i], 0);
+        grid_states_.emplace_back(0, m);
+        gamma_leak_cavities_.emplace_back(0);
+        gamma_gain_cavities_.emplace_back(0);
+    }
+}
+
 size_t State::get_index(const std::set<State>& basis) const {
     size_t index = 0;
     for (const auto& state: basis) {

@@ -16,16 +16,16 @@ class Hamiltonian {
         Hamiltonian() {};
         Hamiltonian(const Hamiltonian& H) = default;
         size_t size() const { return H_.size(); }
-        std::set<State> get_basis() const { return basis_; }
-        State get_init_state() const { return init_state_; }
-        void show(const size_t width = 10) const;
+        std::set<State> get_basis() const { return basis_; }     // Return basis of Hamiltonian
+        State get_grid() const { return grid_; }                 // Return grid (if it included)
+        void show(const size_t width = config::WIDTH) const;
         Matrix<COMPLEX> get_matrix() const { return H_; }
-        std::pair<std::vector<double>, Matrix<COMPLEX>> eigen();
-        COMPLEX get_leak(size_t cavity_id) { return init_state_.get_leak_gamma(cavity_id); }
-        void set_leak(size_t cavity_id, COMPLEX gamma) { init_state_.set_leak_for_cavity(cavity_id, gamma); }
+        std::pair<std::vector<double>, Matrix<COMPLEX>> eigen(); // Find eigenvalues and eigenvectors (functions.hpp)
+        COMPLEX get_leak(size_t cavity_id) { return grid_.get_leak_gamma(cavity_id); } // (state.hpp)
+        void set_leak(size_t cavity_id, COMPLEX gamma) { grid_.set_leak_for_cavity(cavity_id, gamma); } // (state.hpp)
     protected:
         bool is_eigen_ = false;
-        State init_state_;
+        State grid_;
         std::set<State> basis_;
         Matrix<COMPLEX> H_;
         Matrix<COMPLEX> eigenvectors_;
@@ -35,19 +35,31 @@ class Hamiltonian {
 class H_by_func : public Hamiltonian {
     public:
         H_by_func(size_t n, std::function<COMPLEX(size_t, size_t)> func);
+        void set_basis(const std::set<State>& basis) { basis_ = basis; }
+        void set_grid(const State& grid) { grid_ = grid; }
     private:
-        size_t n_;
         std::function<COMPLEX(size_t, size_t)> func_;
 };
 
+class H_by_Matrix : public Hamiltonian {
+    public:
+        H_by_Matrix(const Matrix<COMPLEX>& H) { H_ = H; }
+        void set_basis(const std::set<State>& basis) { basis_ = basis; }
+        void set_grid(const State& grid) { grid_ = grid; }
+    private:
+        std::function<COMPLEX(size_t, size_t)> func_;
+};
+
+// NEED UPDATE
 class H_JC : public Hamiltonian {
     public:
-        explicit H_JC(const State& state);
-        void make_exact();
+        explicit H_JC(const State& state);  // Make H_JC_RWA
+        void make_exact();                  // Make H_JC 
     private:
         size_t n_;
 };
 
+// NEED UPDATE
 class H_TC : public Hamiltonian {
     public:
         explicit H_TC(const State& state);

@@ -9,22 +9,38 @@
 #include "config.hpp"
 #include "dynamic.hpp"
 
+#ifdef ENABLE_MPI
+#include "mpi.h"
+#endif
+
 namespace plt = matplotlibcpp;
 
-int main(void) {
+int main(int argc, char** argv) {
     int n = 2;
     int m = 3;
     double gamma = 0.0005;
 
+#ifdef ENABLE_MPI
+    int rank, world_size;
+    MPI_Init(&argc, &argv);
+    MPI_Comm_size(MPI_COMM_WORLD, &world_size);
+
+    std::cout << "WORLD SIZE - " << world_size << std::endl;
+#endif
     //Cavity_State state("|1>|0>");
 
-    State state("|2>");
-    //state.set_gamma(0.002);
-    //state.set_leak_for_cavity(0, 0.0005);
+    std::vector<size_t> grid_config = {2, 1};
+    //State state("|0;00>");
+    State state(grid_config);
+    state.set_gamma(0.002);
+    //state.set_leak_for_cavity(0, 0.005);
+    //state.set_gain_for_cavity(0, 0.002);
+    state.set_max_N(1);
+    state.set_min_N(1);
     //state.set_leak_for_cavity(1, 0.0002);
     //return 0;
 
-    std::cout << state.to_string() << " n = " << state.max_N() << " m = " << m <<" h = " << config::h << " w = " << config::w << " g = " << config::g << " LOSS_PHOTONS = " << config::LOSS_PHOTONS << std::endl;
+    std::cout << state.to_string() << " n = " << state.max_N() << " m = " << m <<" h = " << config::h << " w = " << config::w << " g = " << config::g << std::endl;
     //H_TC H_correct(state);
     H_TCH H(state);
     //H_JC H(state);
@@ -33,7 +49,7 @@ int main(void) {
     auto basis = H.get_basis();
     show_basis(basis);
 
-    H.show(config::WIDTH);
+    //H.show(config::WIDTH);
 
     //auto basis_correct = H_correct.get_basis();
     //show_basis(basis_correct);
@@ -41,9 +57,14 @@ int main(void) {
     //H_correct.show(config::WIDTH);
 
     std::vector<double> time_vec = make_timeline(0, 200 * M_PI, M_PI / 8);
-    time_vec = linspace(0, 1000, 500);
+    time_vec = linspace(0, 4000, 10000);
     std::vector<COMPLEX> st(H.size(), 0);
-    st[state.get_index(basis)] = 1;
+    //st[state.get_index(basis)] = 1;
+
+    st[State("|0,0;00,1>").get_index(basis)] = 1;
+    //st[State("|0;01>").get_index(basis)] = 1/sqrt(3);
+    //st[State("|0;10>").get_index(basis)] = -1/sqrt(3);
+    show_vector(st);
     //functions_testing::check_eigenvectors(p.first, p.second, H_m);
 
     /*
@@ -58,13 +79,13 @@ int main(void) {
     //auto a_p = Hermit_Lanczos(a);
     //functions_testing::check_eigenvectors(a_p.first, a_p.second, a);
 
-    //auto probs = Evolution::schrodinger(st, H, time_vec);
+    auto probs = Evolution::schrodinger(st, H, time_vec);
     
-    auto probs = Evolution::quantum_master_equation(st, H, time_vec, gamma, false);
+    //auto probs = Evolution::quantum_master_equation(st, H, time_vec, gamma, false);
     //std::vector<double> x = make_timeline(0, 100, 1);
     //functions_testing::check_runge_kutt<double, double>(x, double(0), &func, &func_correct);
 
-    /*
+
     std::array<std::string, 3> ls = {"-", "--", "-."};
     std::array<std::string, 9> c = {"b", "r", "g", "tab:orange", "m", "tab:brown", "tab:violet", "tab:olive", "tab:purple"};
     std::vector<std::map<std::string, std::string>> keywords(basis.size());
@@ -74,8 +95,6 @@ int main(void) {
         item["c"] = c[index % c.size()];
         index++;
     }
-
-    */
 
     
     matplotlib::make_figure(config::fig_width, config::fig_height, config::dpi);
@@ -151,5 +170,9 @@ int main(void) {
     matplotlib::grid();
     matplotlib::show();
     */
+
+#ifdef ENABLE_MPI
+    MPI_Finalize();
+#endif
     return 0;
 }

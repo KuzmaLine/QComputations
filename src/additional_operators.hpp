@@ -12,6 +12,8 @@ namespace {
     using vec_levels = std::vector<E_LEVEL>;
 }
 
+// Additional operators for vector, Matrix, States and so on
+
 /// ################################ std::vector ###################################
 
 template<typename T>

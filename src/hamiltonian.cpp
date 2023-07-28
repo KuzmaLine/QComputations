@@ -157,7 +157,7 @@ namespace {
 
     Cavity_State get_energy_state(size_t energy, size_t m) {
         std::vector<int> state_vec(m, 0);
-        for (size_t i = 0; i < energy; i++) {
+        for (size_t i = 0; i < std::min(m, energy); i++) {
             state_vec[i] = 1;
         }
 
@@ -188,12 +188,9 @@ namespace {
     std::set<State> define_basis(const State& grid) {
         std::set<State> basis;
 
-        size_t target_N = grid.max_N();
-        if (grid.get_cavities_with_leak().size() != 0) target_N = 0;
-
         long max_energy;
-        for (max_energy = grid.max_N(); max_energy >= long(target_N); max_energy--) {
-            std::cout << max_energy << " " << target_N << std::endl;
+        for (max_energy = grid.max_N(); max_energy >= long(grid.min_N()); max_energy--) {
+            //std::cout << max_energy << " " << target_N << std::endl;
             State state = grid; // copy base structure of grid
 
             std::vector<size_t> energy_map(grid.cavities_count(), 0);
@@ -206,6 +203,7 @@ namespace {
 
             while(true) {
                 for (size_t i = 0; i < grid.cavities_count(); i++) {
+                    //std::cout << energy_map[i] << " " << get_energy_state(energy_map[i], grid[i].m()).to_string() << std::endl;
                     cavity_bases[i] = State_Graph(get_energy_state(energy_map[i], grid[i].m()), false, false).get_basis();
                     //show_basis(cavity_bases[i]);
                 }
@@ -216,7 +214,6 @@ namespace {
                     }
             
                     basis.insert(state);
-                    //show_basis(basis);
                 } while(next_index(cavity_basis_index, cavity_bases));
 
                 cavity_basis_index = std::vector<size_t>(grid.cavities_count(), 0);
@@ -227,6 +224,7 @@ namespace {
                 //std::cout << "MAP: " << max_energy << std::endl;
                 //show_vector(energy_map);
             }
+            //show_basis(basis);
         }
 
         return basis;
@@ -253,7 +251,7 @@ std::pair<std::vector<double>, Matrix<COMPLEX>> Hamiltonian::eigen() {
 
 // -------------------------------   H_by_func   -------------------------------
 
-H_by_func::H_by_func(size_t n, std::function<COMPLEX(size_t, size_t)> func) : n_(n), func_(func) {
+H_by_func::H_by_func(size_t n, std::function<COMPLEX(size_t, size_t)> func) : func_(func) {
     auto size = std::pow(2, n);
     H_ = Matrix<COMPLEX>(size, size);
     for (size_t i = 0; i < this->size(); i++) {
@@ -270,7 +268,7 @@ H_TC::H_TC(const State& init_state) {
     H_TCH H(init_state);
 
     basis_ = H.get_basis();
-    init_state_ = init_state;
+    grid_ = init_state;
     H_ = H.get_matrix();
     /*
     auto size_m_ = std::pow(2, init_state.m(0));
@@ -364,7 +362,7 @@ H_JC::H_JC(const State& init_state) {
     H_TC tmp_H(init_state);
 
     H_ = tmp_H.get_matrix();
-    init_state_ = init_state;
+    grid_ = init_state;
     basis_ = tmp_H.get_basis();
 }
 
@@ -383,7 +381,7 @@ void H_JC::make_exact() {
 // --------------------------- H_TCH ------------------------------------
 
 H_TCH::H_TCH(const State& grid) {
-    init_state_ = grid; // formal
+    grid_ = grid; // formal
 
     auto x_size = grid.x_size();
     auto y_size = grid.y_size();

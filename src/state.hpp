@@ -18,6 +18,7 @@ class State {
         State(size_t x_size = 1, size_t y_size = 1, size_t z_size = 1);
         State(const Cavity_State& state);
         State(const State& state) = default;
+        State(const std::vector<size_t>& grid_config);
         explicit State(const std::string&, const std::string& format = "|N;M>");
 
         size_t x_size() const { return x_size_; }
@@ -26,6 +27,8 @@ class State {
 
         size_t max_N() const { return max_N_; }
         void set_max_N(size_t N) { max_N_ = N; }
+        size_t min_N() const { return min_N_; }
+        void set_min_N(size_t N) { min_N_ = N; }
         size_t n(CavityId id = 0) const { return grid_states_[id].n(); } // TMP
         void set_n(size_t n, CavityId id = 0) { grid_states_[id].set_n(n); } // TMP
         size_t m(CavityId id) const { return grid_states_[id].m(); }
@@ -92,6 +95,7 @@ class State {
         size_t hash() const;
     private:
         size_t max_N_;
+        size_t min_N_;
         size_t x_size_;
         size_t y_size_;
         size_t z_size_;

@@ -27,8 +27,8 @@ namespace {
     double conj(double a) { return a;}
 }
 
+// (!!!) NEED CRS_MATRIX for memory optimization
 // ---------------------------------- class Matrix ----------------------------
-
 template<typename T> class Matrix {
     public:
         Matrix() = default;
@@ -58,10 +58,12 @@ template<typename T> class Matrix {
         size_t size() const { return n_; }
         size_t m() const { return m_; }
 
+        // DON'T ADD TEMPLATE VERSION (C++11)
         Matrix<T> operator* (const Matrix<T>& A) const;
         Matrix<T> operator+ (const Matrix<T>& A) const;
         Matrix<T> operator- (const Matrix<T>& A) const;
 
+        // DON'T ADD TEMPLATE VERSION (C++11)
         template<typename V>
         Matrix<T> operator* (const Matrix<V>& A) const;
 

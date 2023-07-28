@@ -7,6 +7,7 @@ namespace {
     using COMPLEX = std::complex<double>;
 }
 
+// (!!!) ADD DESCRIPTION
 COMPLEX self_energy_photon(const State& state_from, const State& state_to, COMPLEX hw = config::h * config::w);
 COMPLEX self_energy_atom(const State& state_from, const State& state_to, COMPLEX hw = config::h * config::w);
 COMPLEX excitation_atom(const State& state_from, const State& state_to, COMPLEX g = config::g);
