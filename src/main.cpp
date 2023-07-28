@@ -14,20 +14,21 @@ namespace plt = matplotlibcpp;
 int main(void) {
     int n = 2;
     int m = 3;
-    double gamma = 0;
+    double gamma = 0.0005;
 
     //Cavity_State state("|1>|0>");
 
-    State state("|0,0;0,1>");
-    state.set_gamma(0.005);
-    auto gamma_ = state.get_gamma();
-    gamma_.show();
+    State state("|2>");
+    //state.set_gamma(0.002);
+    //state.set_leak_for_cavity(0, 0.0005);
+    //state.set_leak_for_cavity(1, 0.0002);
     //return 0;
 
     std::cout << state.to_string() << " n = " << state.max_N() << " m = " << m <<" h = " << config::h << " w = " << config::w << " g = " << config::g << " LOSS_PHOTONS = " << config::LOSS_PHOTONS << std::endl;
-    //H_TC H_correct(n, m, state, !is_zero(gamma));
+    //H_TC H_correct(state);
     H_TCH H(state);
-    //H_JC H(n, state, !is_zero(gamma));
+    //H_JC H(state);
+    //H.make_exact();
 
     auto basis = H.get_basis();
     show_basis(basis);
@@ -39,8 +40,8 @@ int main(void) {
 
     //H_correct.show(config::WIDTH);
 
-    return 0;
-    std::vector<double> time_vec = make_timeline(0, 300 * M_PI, M_PI / 4);
+    std::vector<double> time_vec = make_timeline(0, 200 * M_PI, M_PI / 8);
+    time_vec = linspace(0, 1000, 500);
     std::vector<COMPLEX> st(H.size(), 0);
     st[state.get_index(basis)] = 1;
     //functions_testing::check_eigenvectors(p.first, p.second, H_m);
@@ -75,22 +76,26 @@ int main(void) {
     }
 
     */
+
+    
     matplotlib::make_figure(config::fig_width, config::fig_height, config::dpi);
     matplotlib::probs_to_plot(probs, time_vec, basis);
     matplotlib::grid();
     matplotlib::show();
+    
     /*
-    std::vector<double> gamma_vec = make_timeline(0.01, 0.9, 0.01);
-    auto tau_vec = Evolution::scan_gamma(st, H, time_vec, gamma_vec, 0.9);
+    std::vector<double> gamma_vec = make_timeline(0.008, 0.1, 0.001);
+    auto tau_vec = Evolution::scan_gamma(st, H, 0, time_vec, gamma_vec, 0.9);
 
-    auto x = linspace(0.01, 0.9, 1000);
+    auto x = linspace(0.008, 0.1, 1000);
     auto tau_spline = Cubic_Spline_Interpolate(gamma_vec, tau_vec);
     auto tau_spline_vec = f_vector(tau_spline, x);
 
     auto gamma_min = fmin(tau_spline, x[0], x[x.size() - 1]);
     std::cout << "MIN = " << gamma_min << std::endl;
 
-    probs = Evolution::quantum_master_equation(st, H, time_vec, gamma_min);
+    H.set_leak(0, gamma_min);
+    auto probs = Evolution::quantum_master_equation(st, H, time_vec, gamma_min);
     matplotlib::make_figure(config::fig_width, config::fig_height, config::dpi);
     matplotlib::probs_to_plot(probs, time_vec, basis);
     matplotlib::grid();
@@ -134,14 +139,15 @@ int main(void) {
     plt::grid();
     plt::show();
     */
+
     /*
     matplotlib::make_figure(config::fig_width, config::fig_height, config::dpi);
-    matplotlib::rho_diag_to_plot(probs, time_vec, basis, keywords);
+    matplotlib::rho_diag_to_plot(probs, time_vec, basis);
     matplotlib::grid();
     matplotlib::show(false);
 
     matplotlib::make_figure(config::fig_width, config::fig_height, config::dpi);
-    matplotlib::rho_subdiag_to_plot(probs, time_vec, basis, keywords);
+    matplotlib::rho_subdiag_to_plot(probs, time_vec, basis);
     matplotlib::grid();
     matplotlib::show();
     */

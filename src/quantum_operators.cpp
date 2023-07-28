@@ -157,3 +157,13 @@ COMPLEX photon_exchange(const State& state_from, const State& state_to, const St
 
     return grid.get_gamma(photon_index_from, photon_index_to) * std::sqrt(state_from.n(photon_index_from)) * std::sqrt(state_from.n(photon_index_to) + 1);
 }
+
+COMPLEX JC_addition(const State& state_from, const State& state_to, COMPLEX g) {
+    if (state_from.n(0) - 1 == state_to.n(0) and state_from.get_qubit(0, 0) == 1 and state_to.get_qubit(0, 0) == 0) {
+        return g * sqrt(state_from.n(0));
+    } else if (state_from.n(0) + 1 == state_to.n(0) and state_from.get_qubit(0, 0) == 0 and state_to.get_qubit(0, 0) == 1) {
+        return g * sqrt(state_from.n(0) + 1);
+    } else {
+        return 0;
+    }
+}

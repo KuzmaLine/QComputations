@@ -130,8 +130,10 @@ namespace {
             for (size_t i = 0; i < v.size() - 1; i++) {
                 if (v[i] == max_num) {
                     is_next = true;
+                    v[i] = 0;
                     v[0] = max_num - 1;
                     v[i + 1] = 1;
+                    break;
                 }
             }
 
@@ -184,35 +186,47 @@ namespace {
 
     // N >= 1
     std::set<State> define_basis(const State& grid) {
-        auto max_energy = grid.max_N();
-
-        State state = grid; // copy base structure of grid
-
-        std::vector<size_t> energy_map(grid.cavities_count(), 0);
-        energy_map[0] = max_energy;
-
         std::set<State> basis;
-        std::vector<std::set<Cavity_State>> cavity_bases(grid.cavities_count());
-        std::vector<size_t> cavity_basis_index(grid.cavities_count(), 0);
 
-        while(true) {
-            for (size_t i = 0; i < grid.cavities_count(); i++) {
-                cavity_bases[i] = State_Graph(get_energy_state(energy_map[i], grid[i].m()), false, false).get_basis();
-            }
+        size_t target_N = grid.max_N();
+        if (grid.get_cavities_with_leak().size() != 0) target_N = 0;
 
-            do {
+        long max_energy;
+        for (max_energy = grid.max_N(); max_energy >= long(target_N); max_energy--) {
+            std::cout << max_energy << " " << target_N << std::endl;
+            State state = grid; // copy base structure of grid
+
+            std::vector<size_t> energy_map(grid.cavities_count(), 0);
+            energy_map[0] = max_energy;
+
+            //std::cout << "MAP: " << max_energy << std::endl;
+            //show_vector(energy_map);
+            std::vector<std::set<Cavity_State>> cavity_bases(grid.cavities_count());
+            std::vector<size_t> cavity_basis_index(grid.cavities_count(), 0);
+
+            while(true) {
                 for (size_t i = 0; i < grid.cavities_count(); i++) {
-                    state.set_state(i, get_elem(cavity_bases[i], cavity_basis_index[i]));
+                    cavity_bases[i] = State_Graph(get_energy_state(energy_map[i], grid[i].m()), false, false).get_basis();
+                    //show_basis(cavity_bases[i]);
                 }
 
-                basis.insert(state);
-            } while(next_index(cavity_basis_index, cavity_bases));
+                do {
+                    for (size_t i = 0; i < grid.cavities_count(); i++) {
+                        state.set_state(i, get_elem(cavity_bases[i], cavity_basis_index[i]));
+                    }
+            
+                    basis.insert(state);
+                    //show_basis(basis);
+                } while(next_index(cavity_basis_index, cavity_bases));
 
-            cavity_basis_index = std::vector<size_t>(grid.cavities_count(), 0);
+                cavity_basis_index = std::vector<size_t>(grid.cavities_count(), 0);
 
-            if (energy_map[energy_map.size() - 1] == max_energy) break;
+                if (energy_map[energy_map.size() - 1] == max_energy) break;
 
-            next_permutation(energy_map, max_energy);
+                next_permutation(energy_map, max_energy);
+                //std::cout << "MAP: " << max_energy << std::endl;
+                //show_vector(energy_map);
+            }
         }
 
         return basis;
@@ -251,12 +265,23 @@ H_by_func::H_by_func(size_t n, std::function<COMPLEX(size_t, size_t)> func) : n_
 
 // ---------------------------- H_TC ----------------------------
 
-H_TC::H_TC(size_t n, size_t m, const State& init_state, bool LOSS_PHOTONS, bool GAIN_PHOTONS): n_(n), m_(m) {
-    auto size_m_ = std::pow(2, m_);
+H_TC::H_TC(const State& init_state) {
     assert(init_state.cavities_count() == 1);
-    State_Graph graph(init_state[0], LOSS_PHOTONS, GAIN_PHOTONS, n);
+    H_TCH H(init_state);
+
+    basis_ = H.get_basis();
+    init_state_ = init_state;
+    H_ = H.get_matrix();
+    /*
+    auto size_m_ = std::pow(2, init_state.m(0));
+    assert(init_state.cavities_count() == 1);
+    State_Graph graph(init_state[0], (std::abs(init_state.get_leak_gamma(0)) >= config::eps) ? true : false, false);
     basis_ = Cavity_State_to_State(graph.get_basis());
     auto size_H_ = basis_.size();
+
+    auto n_ = init_state.n(0);
+    auto n = n_;
+    auto m = init_state.m(0);
 
     std::vector<size_t> state_index;
     //std::unordered_map<size_t, size_t> state_to_index;
@@ -293,14 +318,11 @@ H_TC::H_TC(size_t n, size_t m, const State& init_state, bool LOSS_PHOTONS, bool 
 
         Matrix<COMPLEX> eye_left = E_Matrix<COMPLEX>(size_left);
         Matrix<COMPLEX> eye_right = E_Matrix<COMPLEX>(size_right);
+        //Matrix<COMPLEX> eye_left(size_left, size_left, 0);
+        /Matrix<COMPLEX> eye_right(size_right, size_right, 0);
 
-        /*
-        Matrix<COMPLEX> eye_left(size_left, size_left, 0);
-        Matrix<COMPLEX> eye_right(size_right, size_right, 0);
-
-        for (int i = 0; i < size_left; i++) eye_left[i][i] = 1;
-        for (int i = 0; i < size_right; i++) eye_right[i][i] = 1;
-        */
+        //for (int i = 0; i < size_left; i++) eye_left[i][i] = 1;
+        //for (int i = 0; i < size_right; i++) eye_right[i][i] = 1;
         Matrix<COMPLEX> H_sigma = tensor_multiply(eye_left, sigma_energy);
         //std::cout << "LEFT: " << std::endl;
         //show_matrix(H_sigma);
@@ -332,17 +354,33 @@ H_TC::H_TC(size_t n, size_t m, const State& init_state, bool LOSS_PHOTONS, bool 
             H_[i][j] = tmp_H_[state_index[i]][state_index[j]];
         }
     }
+    */
 }
 
 // ---------------------------- H_JC ----------------------------
 
-H_JC::H_JC(size_t n, const State& init_state, bool LOSS_PHOTONS): n_(n){
-    H_TC tmp_H(n, 1, init_state, LOSS_PHOTONS);
+H_JC::H_JC(const State& init_state) {
+    assert(init_state.cavities_count() == 1 and init_state.m(0) == 1);
+    H_TC tmp_H(init_state);
 
     H_ = tmp_H.get_matrix();
     init_state_ = init_state;
     basis_ = tmp_H.get_basis();
 }
+
+void H_JC::make_exact() {
+    size_t i = 0, j = 0;
+    for (const auto& state_from: basis_) {
+        for (const auto& state_to: basis_) {
+            H_[i][j] += JC_addition(state_from, state_to);
+            j++;
+        }
+        j = 0;
+        i++;
+    }
+}
+
+// --------------------------- H_TCH ------------------------------------
 
 H_TCH::H_TCH(const State& grid) {
     init_state_ = grid; // formal

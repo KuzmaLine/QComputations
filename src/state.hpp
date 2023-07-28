@@ -74,9 +74,19 @@ class State {
         size_t get_index(const std::set<State>& basis) const;
         size_t get_max_size() const;
         size_t get_energy() const;
+    
+        std::set<CavityId> get_cavities_with_leak() const { return leak_cavities_; }
+        COMPLEX get_leak_gamma(CavityId id) const { return gamma_leak_cavities_[id]; }
+        std::set<CavityId> get_cavities_with_gain() const { return gain_cavities_; }
+        COMPLEX get_gain_gamma(CavityId id) const { return gamma_gain_cavities_[id]; }
 
-        Matrix<COMPLEX> get_gamma() const { return gamma_; };
-        COMPLEX get_gamma(CavityId from_id, CavityId to_id) const { return gamma_[from_id][to_id]; };
+        void set_leak_for_cavity(CavityId id, COMPLEX gamma) { leak_cavities_.insert(id);
+                                                               gamma_leak_cavities_[id] = gamma;}
+        void set_gain_for_cavity(CavityId id, COMPLEX gamma) { gain_cavities_.insert(id);
+                                                               gamma_gain_cavities_[id] = gamma;}
+
+        Matrix<COMPLEX> get_gamma() const { return gamma_; }
+        COMPLEX get_gamma(CavityId from_id, CavityId to_id) const { return gamma_[from_id][to_id]; }
         std::set<CavityId> get_cavities_with_atoms() const { return cavities_with_atoms_; }
 
         size_t hash() const;
@@ -89,6 +99,10 @@ class State {
         std::set<CavityId> cavities_with_atoms_;
         std::vector<Cavity_State> grid_states_;
         Matrix<COMPLEX> gamma_;
+        std::vector<COMPLEX> gamma_leak_cavities_;
+        std::vector<COMPLEX> gamma_gain_cavities_;
+        std::set<CavityId> leak_cavities_;
+        std::set<CavityId> gain_cavities_;
         bool is_init_gamma_ = false;
 };
 

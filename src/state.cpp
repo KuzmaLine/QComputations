@@ -28,6 +28,8 @@ State::State(const std::string& grid_state, const std::string& format) : gamma_(
             Cavity_count++;
             std::vector<E_LEVEL> tmp;
             m.emplace_back(0);
+            gamma_leak_cavities_.emplace_back(0);
+            gamma_gain_cavities_.emplace_back(0);
         }
 
         format_index++;

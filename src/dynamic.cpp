@@ -5,19 +5,40 @@
 
 #include "plot.hpp"
 
-Matrix<COMPLEX> Evolution::create_A_destroy(const std::set<State>& basis) {
+Matrix<COMPLEX> Evolution::create_A_destroy(const std::set<State>& basis, size_t cavity_id) {
     size_t dim = basis.size();
     Matrix<COMPLEX> A(dim, dim, 0);
 
     size_t index = 0;
     for (const auto& state: basis) {
-        auto n = state.n();
+        auto n = state.n(cavity_id);
         if (n != 0) {
             auto tmp_state = state;
-            tmp_state.set_n(n - 1);
+            tmp_state.set_n(n - 1, cavity_id);
 
             auto state_index = tmp_state.get_index(basis);
-            if (state_index != -1) A[state_index][index] = COMPLEX(1);
+            if (state_index != -1) A[state_index][index] = COMPLEX(std::sqrt(n));
+        }
+
+        index++;
+    }
+
+    return A;
+}
+
+Matrix<COMPLEX> Evolution::create_A_create(const std::set<State>& basis, size_t cavity_id) {
+    size_t dim = basis.size();
+    Matrix<COMPLEX> A(dim, dim, 0);
+
+    size_t index = 0;
+    for (const auto& state: basis) {
+        auto n = state.n(cavity_id);
+        if (n != 0) {
+            auto tmp_state = state;
+            tmp_state.set_n(n + 1, cavity_id);
+
+            auto state_index = tmp_state.get_index(basis);
+            if (state_index != -1) A[state_index][index] = COMPLEX(std::sqrt(n + 1));
         }
 
         index++;
@@ -86,20 +107,47 @@ Evolution::Probs Evolution::quantum_master_equation(const std::vector<COMPLEX>& 
                                          const double gamma,
                                          bool is_full_rho) {
     size_t dim = H.size();
-    Evolution::Rho rho(dim, dim, 0);
+    //A.show(config::WIDTH);
+    auto grid = H.get_init_state();
+    std::vector<std::function<Evolution::Rho(const Evolution::Rho& rho)>> lindblads(2 * grid.cavities_count());
 
-    auto A = create_A_destroy(H.get_basis());
+    auto cavities_with_leak = grid.get_cavities_with_leak();
+    auto cavities_with_gain = grid.get_cavities_with_gain();
 
-    std::function<Evolution::Rho(const Evolution::Rho& rho)> lindblad {
-        [&A, gamma](const Evolution::Rho& rho) {
-            auto Aconj = A.hermit();
-            auto AconjA = Aconj * A;
-            return (A * rho * Aconj - (AconjA * rho + rho * AconjA) * COMPLEX(0.5)) * gamma;
+    //for (const auto& cavity_id: cavities_with_leak) {
+    for (size_t cavity_id = 0; cavity_id < grid.cavities_count(); cavity_id++) {
+        auto A = create_A_destroy(H.get_basis(), cavity_id);
+        auto gamma = grid.get_leak_gamma(cavity_id);
+        lindblads[cavity_id] = std::function<Evolution::Rho(const Evolution::Rho& rho)> {
+            [A, gamma](const Evolution::Rho& rho) {
+                auto Aconj = A.hermit();
+                auto AconjA = Aconj * A;
+                return (A * rho * Aconj - (AconjA * rho + rho * AconjA) * COMPLEX(0.5)) * gamma;
+            }
+        };
+    }
+
+    //for (const auto& cavity_id: cavities_with_gain) {
+    for (size_t cavity_id = 0; cavity_id < grid.cavities_count(); cavity_id++) {
+        auto A = create_A_create(H.get_basis(), cavity_id);
+        auto gamma = grid.get_gain_gamma(cavity_id);
+        lindblads[cavity_id + grid.cavities_count()] = std::function<Evolution::Rho(const Evolution::Rho& rho)> {
+            [A, gamma](const Evolution::Rho& rho) {
+                auto Aconj = A.hermit();
+                auto AconjA = Aconj * A;
+                return (A * rho * Aconj - (AconjA * rho + rho * AconjA) * COMPLEX(0.5)) * gamma;
+            }
+        };
+    }
+
+    auto H_matrix = H.get_matrix();
+    std::function<Evolution::Rho(double t, const Evolution::Rho&)> equation {[&H_matrix, &lindblads, gamma](double t, const Evolution::Rho& rho) {
+        auto tmp = (H_matrix * rho - rho * H_matrix) * COMPLEX(0, -1);
+        for (const auto& lindblad: lindblads) {
+            tmp += lindblad(rho);
         }
-    };
 
-    std::function<Evolution::Rho(double t, const Evolution::Rho&)> equation {[&H, &A, &lindblad, gamma](double t, const Evolution::Rho& rho) {
-        return (H.get_matrix() * rho - rho * H.get_matrix()) * COMPLEX(0, -1) + lindblad(rho);
+        return tmp;
     }};
 
     auto rho_0 = Evolution::create_init_rho(init_state);
@@ -116,6 +164,18 @@ Evolution::Probs Evolution::quantum_master_equation(const std::vector<COMPLEX>& 
             }
         }
 
+        for (size_t t = 0; t < time_vec.size(); t++) {
+            double res = 0.0;
+            for (size_t i = 0; i < dim; i++) {
+                res += probs[i][t];
+            }
+
+            //std::cout << t << " " << res << std::endl;
+
+            if (std::abs(res - 1) >= config::eps) {
+                //std::cout << t << " " << res << std::endl;
+            }
+        }
         return probs;
     }
 
@@ -144,6 +204,7 @@ Evolution::Probs Evolution::quantum_master_equation(const std::vector<COMPLEX>& 
 // ON MPI NEEDED
 std::vector<double> Evolution::scan_gamma(const std::vector<COMPLEX>& init_state,
                                           Hamiltonian& H,
+                                          size_t cavity_id,
                                           const std::vector<double>& time_vec,
                                           const std::vector<double>& gamma_vec,
                                           double target) {
@@ -165,6 +226,7 @@ std::vector<double> Evolution::scan_gamma(const std::vector<COMPLEX>& init_state
     std::vector<double> tau_vec;
     for (size_t i = 0; i < gamma_vec.size(); i++) {
         double gamma = gamma_vec[i];
+        H.set_leak(cavity_id, gamma);
         //begin = std::chrono::steady_clock::now();
         auto probs = quantum_master_equation(init_state, H, time_vec, gamma);
         //end = std::chrono::steady_clock::now();

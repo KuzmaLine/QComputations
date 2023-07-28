@@ -21,6 +21,8 @@ class Hamiltonian {
         void show(const size_t width = 10) const;
         Matrix<COMPLEX> get_matrix() const { return H_; }
         std::pair<std::vector<double>, Matrix<COMPLEX>> eigen();
+        COMPLEX get_leak(size_t cavity_id) { return init_state_.get_leak_gamma(cavity_id); }
+        void set_leak(size_t cavity_id, COMPLEX gamma) { init_state_.set_leak_for_cavity(cavity_id, gamma); }
     protected:
         bool is_eigen_ = false;
         State init_state_;
@@ -40,14 +42,15 @@ class H_by_func : public Hamiltonian {
 
 class H_JC : public Hamiltonian {
     public:
-        explicit H_JC(size_t n, const State& init_state, bool LOSS_PHOTONS = config::LOSS_PHOTONS);
+        explicit H_JC(const State& state);
+        void make_exact();
     private:
         size_t n_;
 };
 
 class H_TC : public Hamiltonian {
     public:
-        explicit H_TC(size_t n, size_t m, const State& init_state, bool LOSS_PHOTONS = config::LOSS_PHOTONS, bool GAIN_PHOTONS = false);
+        explicit H_TC(const State& state);
     private:
         size_t n_;
         size_t m_;

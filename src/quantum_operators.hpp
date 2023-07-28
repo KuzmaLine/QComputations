@@ -12,3 +12,4 @@ COMPLEX self_energy_atom(const State& state_from, const State& state_to, COMPLEX
 COMPLEX excitation_atom(const State& state_from, const State& state_to, COMPLEX g = config::g);
 COMPLEX de_excitation_atom(const State& state_from, const State& state_to, COMPLEX g = config::g);
 COMPLEX photon_exchange(const State& state_from, const State& state_to, const State& grid);
+COMPLEX JC_addition(const State& state_from, const State& state_to, COMPLEX g = config::g);
