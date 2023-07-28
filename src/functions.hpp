@@ -26,6 +26,7 @@ std::vector<double> linspace(double start, double end, double npoints);
 size_t get_index_from_state(vec_levels state);
 bool is_zero(double a);
 bool is_digit(char c);
+size_t Ck_n(size_t k, size_t n);
 
 std::set<State> Cavity_State_to_State(const std::set<Cavity_State>& st);
 
@@ -38,6 +39,9 @@ std::pair<std::vector<double>, Matrix<COMPLEX>> Hermit_Lanczos(const Matrix<COMP
 std::function<double(double)> Cubic_Spline_Interpolate(const std::vector<double>& x, const std::vector<double>& y);
 double fsolve(std::function<double(double)> f, double a, double b, double target = 0, double eps = config::eps);
 double fmin(std::function<double(double)> f, double a, double b, double eps = config::eps);
+
+void show_basis(const std::set<Cavity_State>& basis);
+void show_basis(const std::set<State>& basis);
 
 double scalar_product(const std::vector<double>& a, const std::vector<double>& b); // <b|a>, (a, b)
 COMPLEX scalar_product(const std::vector<COMPLEX>& a, const std::vector<COMPLEX>& b); // <b|a>, (a, b)
@@ -76,8 +80,6 @@ Matrix<T> tensor_multiply(const Matrix<T>& A, const Matrix<T>& B) {
     auto n = A.size() * B.size();
     Matrix<T> C(n, n, 0);
 
-    std::cout << "TENSOR: " << std::endl;
-    std::cout << n << std::endl;
     for (size_t i_a = 0; i_a < A.size(); i_a++) {
         for (size_t j_a = 0; j_a < A.size(); j_a++) {
             for (size_t i_b = 0; i_b < B.size(); i_b++) {
@@ -105,6 +107,13 @@ std::ostream& operator<<(std::ostream& out, const Matrix<T>& matrix) {
     }
 
     return out;
+}
+
+template<typename T>
+T get_elem(const std::set<T>& st, size_t index) {
+    auto it = st.begin();
+    std::advance(it, index);
+    return *it;
 }
 
 template<typename T, typename V>

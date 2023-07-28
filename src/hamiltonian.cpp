@@ -7,6 +7,7 @@
 #include "config.hpp"
 #include "graph.hpp"
 #include "functions.hpp"
+#include "quantum_operators.hpp"
 
 namespace {
     typedef std::complex<double> COMPLEX;
@@ -98,13 +99,123 @@ namespace {
             size_right *= grid.cavity_max_size(cavity_id);
         }
 
-        H += tensor_multiply(tensor_multiply(E_Matrix<COMPLEX>(size_left), a_destroy(grid.N())),
+        H += tensor_multiply(tensor_multiply(E_Matrix<COMPLEX>(size_left), a_destroy(grid.max_N())),
              tensor_multiply(
-             tensor_multiply(E_Matrix<COMPLEX>(size_middle), a_create(grid.N())), E_Matrix<COMPLEX>(size_right))) * gamma;
+             tensor_multiply(E_Matrix<COMPLEX>(size_middle), a_create(grid.max_N())), E_Matrix<COMPLEX>(size_right))) * gamma;
 
-        H += tensor_multiply(tensor_multiply(E_Matrix<COMPLEX>(size_left), a_create(grid.N())),
+        H += tensor_multiply(tensor_multiply(E_Matrix<COMPLEX>(size_left), a_create(grid.max_N())),
              tensor_multiply(
-             tensor_multiply(E_Matrix<COMPLEX>(size_middle), a_destroy(grid.N())), E_Matrix<COMPLEX>(size_right))) * std::conj(gamma);
+             tensor_multiply(E_Matrix<COMPLEX>(size_middle), a_destroy(grid.max_N())), E_Matrix<COMPLEX>(size_right))) * std::conj(gamma);
+    }
+
+    std::set<State> update_basis(const std::set<State>& basis, const std::set<State>& addition) {
+        std::set<State> res;
+
+        for (const auto& basis_state: basis) {
+            for (const auto& state: addition) {
+                auto tmp = basis_state.add_state(state[0]);
+                res.insert(tmp);
+            }
+        }
+
+        return res;
+    }
+
+    void next_permutation(std::vector<size_t>& v, size_t max_num) {
+        if (v[v.size() - 1] == max_num) {
+            v[v.size() - 1] = 0;
+            v[0] = max_num;
+        } else {
+            bool is_next = false;
+            for (size_t i = 0; i < v.size() - 1; i++) {
+                if (v[i] == max_num) {
+                    is_next = true;
+                    v[0] = max_num - 1;
+                    v[i + 1] = 1;
+                }
+            }
+
+            if (!is_next) {
+                if (v[0] == 0) {
+                    for (size_t i = 1; i < v.size(); i++) {
+                        if (v[i] != 0) {
+                            v[0] = v[i] - 1;
+                            v[i + 1]++;
+                            v[i] = 0;
+                            break;
+                        }
+                    }
+                } else {
+                    v[0]--;
+                    v[1]++;
+                }
+            }
+        }
+    }
+
+    Cavity_State get_energy_state(size_t energy, size_t m) {
+        std::vector<int> state_vec(m, 0);
+        for (size_t i = 0; i < energy; i++) {
+            state_vec[i] = 1;
+        }
+
+        return Cavity_State(std::max(long(0), long(energy) - long(m)), state_vec);
+    }
+
+    bool next_index(std::vector<size_t>& index_vec, const std::vector<std::set<Cavity_State>>& cavity_bases) {
+        if (index_vec[0] + 1 == cavity_bases[0].size()) {
+            index_vec[0] = 0;
+
+            bool is_end = true;
+            for (size_t i = 1; i < index_vec.size(); i++) {
+                if (index_vec[i] + 1 < cavity_bases[i].size()) {
+                    index_vec[i]++;
+                    is_end = false;
+                    break;
+                }
+            }
+
+            return !is_end;
+        } else {
+            index_vec[0]++;
+            return true;
+        }
+    }
+
+    // N >= 1
+    std::set<State> define_basis(const State& grid) {
+        auto max_energy = grid.max_N();
+
+        State state = grid; // copy base structure of grid
+
+        std::vector<size_t> energy_map(grid.cavities_count(), 0);
+        energy_map[0] = max_energy;
+
+        std::set<State> basis;
+        std::vector<std::set<Cavity_State>> cavity_bases(grid.cavities_count());
+        std::vector<size_t> cavity_basis_index(grid.cavities_count(), 0);
+
+        while(true) {
+            for (size_t i = 0; i < grid.cavities_count(); i++) {
+                cavity_bases[i] = State_Graph(get_energy_state(energy_map[i], grid[i].m()), false, false).get_basis();
+            }
+
+            do {
+                for (size_t i = 0; i < grid.cavities_count(); i++) {
+                    state.set_state(i, get_elem(cavity_bases[i], cavity_basis_index[i]));
+                }
+
+                basis.insert(state);
+            } while(next_index(cavity_basis_index, cavity_bases));
+
+            cavity_basis_index = std::vector<size_t>(grid.cavities_count(), 0);
+
+            if (energy_map[energy_map.size() - 1] == max_energy) break;
+
+            next_permutation(energy_map, max_energy);
+        }
+
+        return basis;
     }
 }
 
@@ -240,45 +351,27 @@ H_TCH::H_TCH(const State& grid) {
     auto y_size = grid.y_size();
     auto z_size = grid.z_size();
 
-    size_t size = grid.get_max_size();
+    basis_ = define_basis(grid);
 
+    size_t size = basis_.size();
+    std::cout << "Size - " << size << std::endl;
     H_ = Matrix<COMPLEX>(size, size, 0);
 
-    for (size_t j = 0; j < grid.cavities_count(); j++) {
-        size_t size_left = 1, size_right = 1;
-
-        for (size_t i = 0; i < j; i++) {
-            size_left *= grid.cavity_max_size(i);
+    size_t i = 0, j = 0;
+    for (const auto& state_from: basis_) {
+        for (const auto& state_to: basis_) {
+            //std::cout << i << " " << j << ": " << state_from.to_string() << " -> " << state_to.to_string() << std::endl;
+            H_[i][j] += self_energy_atom(state_from, state_to);
+            //std::cout << "Energy_atom PASSED\n";
+            H_[i][j] += self_energy_photon(state_from, state_to);
+            //std::cout << "Energy_photon PASSED\n";
+            H_[i][j] += excitation_atom(state_from, state_to);
+            //std::cout << "excitation_atom PASSED\n";
+            H_[i][j] += de_excitation_atom(state_from, state_to);
+            //std::cout << "de_excitation_atom PASSED\n";
+            j++;
         }
-
-        for (size_t i = j + 1; i < grid.cavities_count(); i++) {
-            size_right *= size_left *= grid.cavity_max_size(i);
-        }
-
-        std::cout << j << " " << size << " " << grid.N() << " " << grid.m(j) << " " << grid[j].to_string() << std::endl;
-        H_TC Cavity_H(grid.N(), grid.m(j), grid[j], true, true);
-
-        auto basis = Cavity_H.get_basis();
-        for (const auto& b: basis) {
-            std::cout << std::setw(config::WIDTH) << b.to_string() << " ";
-        }
-        std::cout << std::endl;
-
-        Cavity_H.show(config::WIDTH);
-
-        auto tmp = tensor_multiply(E_Matrix<COMPLEX>(size_left), Cavity_H.get_matrix());
-        tmp.show();
-        tmp = tensor_multiply(tmp, E_Matrix<COMPLEX>(size_right));
-        tmp.show();
-        H_ += tensor_multiply(tensor_multiply(E_Matrix<COMPLEX>(size_left), Cavity_H.get_matrix()), E_Matrix<COMPLEX>(size_right));
-        std::cout << size_left << " " << size_right << std::endl;
-
-        H_.show();
+        j = 0;
+        i++;
     }
-
-    for (size_t i = 0; i < grid.cavities_count(); i++) {
-        if (i + 1 < grid.cavities_count()) add_a_operators(H_, i, i + 1, grid);
-        if ((i % z_size) + x_size < x_size * y_size) add_a_operators(H_, i, i + x_size, grid);
-        if (i + x_size * y_size < grid.cavities_count()) add_a_operators(H_, i, i + x_size * y_size, grid);
-    }    
 }

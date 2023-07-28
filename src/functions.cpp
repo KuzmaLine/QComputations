@@ -41,6 +41,22 @@ bool is_digit(char c) {
     return '0' <= c and c <= '9';
 }
 
+void show_basis(const std::set<Cavity_State>& basis) {
+    for (const auto& state: basis) {
+        std::cout << std::setw(config::WIDTH) << state.to_string() << " ";
+    }
+
+    std::cout << std::endl;
+}
+
+void show_basis(const std::set<State>& basis) {
+    for (const auto& state: basis) {
+        std::cout << std::setw(config::WIDTH) << state.to_string() << " ";
+    }
+
+    std::cout << std::endl;
+}
+
 std::set<State> Cavity_State_to_State(const std::set<Cavity_State>& st) {
     std::set<State> res;
 
@@ -129,6 +145,25 @@ std::function<double(double)> Cubic_Spline_Interpolate(const std::vector<double>
     };
     auto end = std::chrono::steady_clock::now();
     return res;
+}
+
+size_t Ck_n(size_t k, size_t n) {
+    std::vector<size_t> line(n + 1);
+    std::vector<size_t> buf(n + 1);
+    line[0] = 1;
+    for (size_t i = 1; i <= n; i++) {
+        for (size_t k = 0; k <= i; k++) {
+            if (k == 0 or k == i) {
+                buf[k] = 1;
+            } else {
+                buf[k] = line[k - 1] + line[k];
+            }
+        }
+
+        line = buf;
+    }
+
+    return line[k];
 }
 
 double fsolve(std::function<double(double)> f, double a, double b, double target, double eps) {

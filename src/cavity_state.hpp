@@ -36,7 +36,7 @@ class Cavity_State {
         std::string to_string() const;
 
         size_t m() const { return state_.size(); }
-        size_t variants_of_state_count(size_t n_max) const { return n_max * std::pow(2, this->m());}
+        size_t variants_of_state_count(size_t n_max) const;
         std::vector<E_LEVEL> get_atoms_state() const { return state_; }
 
         size_t get_index() const;
@@ -44,6 +44,7 @@ class Cavity_State {
         bool is_in_basis(const std::set<Cavity_State>& basis) const;
         size_t get_atoms_index() const;
         size_t get_energy() const;
+        size_t get_capacity() const;
 
         bool operator==(const Cavity_State& other) const { return state_ == other.state_ and n_ == other.n_; }
         //bool operator<(const Cavity_State& other) const { return n_ > other.n_ or get_index_from_state(state_) < get_index_from_state(other.state_); }

@@ -12,30 +12,30 @@
 namespace plt = matplotlibcpp;
 
 int main(void) {
-    int n = 1;
-    int m = 4;
+    int n = 2;
+    int m = 3;
     double gamma = 0;
 
     //Cavity_State state("|1>|0>");
 
-    State state("|0;1>");
-    state.set_gamma(0.005);
-    state.set_state(0, Cavity_State("|2>"));
+    State state("|0;101>");
+    state.set_gamma(0);
     //return 0;
 
-    std::cout << state.to_string() << " n = " << n << " m = " << m <<" h = " << config::h << " w = " << config::w << " g = " << config::g << " LOSS_PHOTONS = " << config::LOSS_PHOTONS << std::endl;
-    //H_TC H(n, m, state, !is_zero(gamma));
+    std::cout << state.to_string() << " n = " << state.max_N() << " m = " << m <<" h = " << config::h << " w = " << config::w << " g = " << config::g << " LOSS_PHOTONS = " << config::LOSS_PHOTONS << std::endl;
+    H_TC H_correct(n, m, state, !is_zero(gamma));
     H_TCH H(state);
     //H_JC H(n, state, !is_zero(gamma));
 
     auto basis = H.get_basis();
-
-    for (const auto& b: basis) {
-        std::cout << std::setw(config::WIDTH) << b.to_string() << " ";
-    }
-    std::cout << std::endl;
+    show_basis(basis);
 
     H.show(config::WIDTH);
+
+    auto basis_correct = H_correct.get_basis();
+    show_basis(basis_correct);
+
+    H_correct.show(config::WIDTH);
 
     return 0;
     std::vector<double> time_vec = make_timeline(0, 300 * M_PI, M_PI / 4);

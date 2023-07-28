@@ -24,7 +24,8 @@ class State {
         size_t y_size() const { return y_size_; }
         size_t z_size() const { return z_size_; }
 
-        size_t N() const { return N_; }
+        size_t max_N() const { return max_N_; }
+        void set_max_N(size_t N) { max_N_ = N; }
         size_t n(CavityId id = 0) const { return grid_states_[id].n(); } // TMP
         void set_n(size_t n, CavityId id = 0) { grid_states_[id].set_n(n); } // TMP
         size_t m(CavityId id) const { return grid_states_[id].m(); }
@@ -55,12 +56,13 @@ class State {
         }
 
         void set_state(CavityId id, const Cavity_State& state);
+        State add_state(const Cavity_State& state) const;
 
         std::string to_string() const;
 
         size_t cavities_count() const { return grid_states_.size(); }
         size_t cavity_atoms_count(CavityId id) const { return grid_states_.at(id).m(); }
-        size_t cavity_max_size(CavityId id) const { return grid_states_[id].variants_of_state_count(N_); }
+        size_t cavity_max_size(CavityId id) const { return grid_states_[id].variants_of_state_count(max_N_); }
 
         bool operator==(const State& other) const { return grid_states_ == other.grid_states_; }
         bool operator<(const State& other) const { return this->to_string() > other.to_string(); }
@@ -71,6 +73,7 @@ class State {
         size_t get_index() const;
         size_t get_index(const std::set<State>& basis) const;
         size_t get_max_size() const;
+        size_t get_energy() const;
 
         Matrix<COMPLEX> get_gamma() const { return gamma_; };
         COMPLEX get_gamma(CavityId from_id, CavityId to_id) const { return gamma_[from_id][to_id]; };
@@ -78,7 +81,7 @@ class State {
 
         size_t hash() const;
     private:
-        size_t N_;
+        size_t max_N_;
         size_t x_size_;
         size_t y_size_;
         size_t z_size_;

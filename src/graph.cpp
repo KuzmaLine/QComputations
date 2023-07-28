@@ -14,7 +14,6 @@ State_Graph::State_Graph(const Cavity_State& init_state, bool with_loss_photons,
 
     while(!state_queue_.empty()) {
         auto cur_state = state_queue_.front();
-        std::cout << cur_state.to_string() << std::endl;
         auto cur_n = cur_state.n();
         auto tmp_state = cur_state;
         state_queue_.pop();

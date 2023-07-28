@@ -64,6 +64,19 @@ size_t Cavity_State::up_count() const {
     return res;
 }
 
+size_t Cavity_State::variants_of_state_count(size_t N) const {
+    size_t m = this->m();
+    size_t res = 0;
+
+    for (long i = 0; i <= N; i++) {
+        for (long k = std::max(long(0), i - long(m)); k <= i; k++) {
+            res += Ck_n(i - k, m);
+        }
+    }
+
+    return res;
+}
+
 size_t Cavity_State::get_atoms_index() const {
     return get_index_from_state(state_);
 }
