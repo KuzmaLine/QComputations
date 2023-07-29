@@ -1,7 +1,7 @@
 default:
-	${MAKE} -C ./single
 	${MAKE} -C ./mpi
+	${MAKE} -C ./single
 
 clean:
-	${MAKE} clean -C ./single
 	${MAKE} clean -C ./mpi
+	${MAKE} clean -C ./single

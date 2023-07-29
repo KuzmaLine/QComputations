@@ -9,6 +9,10 @@
 #include "functions.hpp"
 #include "quantum_operators.hpp"
 
+#ifdef ENABLE_MPI
+#include "mpi_functions.hpp"
+#endif
+
 namespace {
     typedef std::complex<double> COMPLEX;
 
@@ -381,7 +385,17 @@ void H_JC::make_exact() {
 // --------------------------- H_TCH ------------------------------------
 
 H_TCH::H_TCH(const State& grid) {
-    grid_ = grid; // formal
+#ifdef ENABLE_MPI
+    int rank, world_size;
+    MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+    MPI_Comm_size(MPI_COMM_WORLD, &world_size);
+    if (rank == mpi::ROOT_ID) {
+        mpi::make_command(COMMAND::GENERATE_H);
+        mpi::bcast_state(grid);
+    }
+    MPI_Barrier(MPI_COMM_WORLD);
+#endif
+    grid_ = grid;
 
     auto x_size = grid.x_size();
     auto y_size = grid.y_size();
@@ -393,6 +407,76 @@ H_TCH::H_TCH(const State& grid) {
     std::cout << "Size - " << size << std::endl;
     H_ = Matrix<COMPLEX>(size, size, 0);
 
+#ifdef ENABLE_MPI
+    size_t size_per_proc = size / world_size;
+    std::vector<size_t> rank_map(world_size, size_per_proc);
+
+    size_t rest = size - size_per_proc * world_size;
+    size_t start_col = 0;
+    for (size_t i = 0; i < world_size; i++) {
+        if (i < rest) {
+            rank_map[i]++;
+        }
+
+        if (i < rank) {
+            start_col += rank_map[i];
+        }
+    }
+
+    //if (rank == 0) {
+    //    std::cout << "rank_map: ";
+    //    show_vector(rank_map);
+    //}
+    //std::cout << "RANGE: " << rank << " -> " << start_col << " " << start_col + rank_map[rank] - 1 << std::endl;
+    for (size_t j = start_col; j < start_col + rank_map[rank]; j++) {
+        auto state_from = get_elem(basis_, j);
+        size_t i = 0;
+    //for (const auto& state_from: basis_) {
+        for (const auto& state_to: basis_) {
+            //std::vector<COMPLEX> col(size, 0);
+            H_[i][j] += self_energy_atom(state_from, state_to);
+            //std::cout << "Energy_atom PASSED\n";
+            H_[i][j] += self_energy_photon(state_from, state_to);
+            //std::cout << "Energy_photon PASSED\n";
+            H_[i][j] += excitation_atom(state_from, state_to);
+            //std::cout << "excitation_atom PASSED\n";
+            H_[i][j] += de_excitation_atom(state_from, state_to);
+            //std::cout << "de_excitation_atom PASSED\n";
+            H_[i][j] += photon_exchange(state_from, state_to, grid);
+
+            //if (rank == 0)
+            //std::cout << rank << " " << i << " " << j << " " << H_[i][j] << ": " << state_from.to_string() << " -> " << state_to.to_string() << std::endl;
+            i++;
+        }
+
+        //if (rank == 0) {
+        //    std::cout << "COL: " << rank << " " << i << std::endl;
+        //    H_.show(config::WIDTH);
+        //}
+    }
+
+    //std::cout << "END: " << rank << " " << size << std::endl;
+    if (rank == mpi::ROOT_ID) {
+        size_t col_index = rank_map[mpi::ROOT_ID];
+        for (size_t i = mpi::ROOT_ID + 1; i < world_size; i++) {
+            for (size_t j = rank_map[i]; j != 0; j--) {
+                std::vector<COMPLEX> col(size);
+                //std::cout << i << " " << j << " " << col_index << std::endl;
+
+                MPI_Recv(col.data(), size, MPI_DOUBLE_COMPLEX, i, MPI_ANY_TAG, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+                //show_vector(col);
+                H_.modify_col(col_index, col);
+                col_index++;
+            }
+        }
+    } else {
+        for (size_t i = start_col; i < start_col + rank_map[rank]; i++) {
+            std::vector<COMPLEX> col = H_.col(i);
+
+            MPI_Send(col.data(), size, MPI_DOUBLE_COMPLEX, mpi::ROOT_ID, 0, MPI_COMM_WORLD);
+        }
+    }
+#else
     size_t i = 0, j = 0;
     for (const auto& state_from: basis_) {
         for (const auto& state_to: basis_) {
@@ -411,4 +495,5 @@ H_TCH::H_TCH(const State& grid) {
         j = 0;
         i++;
     }
+#endif
 }

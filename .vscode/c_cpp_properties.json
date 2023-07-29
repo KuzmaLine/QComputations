@@ -4,7 +4,11 @@
             "name": "Linux",
             "includePath": [
                 "${workspaceFolder}/**",
-                "/usr/include/mkl/**"
+                "/usr/include/mkl/**",
+                "/usr/lib/x86_64-linux-gnu/openmpi/include/**",
+                "/usr/lib/x86_64-linux-gnu/openmpi/include/",
+                "/usr/include/python3.10/",
+                "/usr/include/mkl"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/g++",

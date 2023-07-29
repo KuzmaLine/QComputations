@@ -35,6 +35,7 @@ template<typename T> class Matrix {
         Matrix(size_t n, size_t m): n_(n), m_(m), mass_(n_ * m_) {}
         Matrix(size_t n, size_t m, const T& init_val): n_(n), m_(m), mass_(n_ * m_, init_val) {}
         Matrix(const Matrix<T>& A): n_(A.n_), m_(A.m_), mass_(A.mass_) {}
+        Matrix(const std::vector<T>& mass, size_t n, size_t m): n_(n), m_(m), mass_(mass) {}
 
         template<typename V>
         Matrix(const Matrix<V>& A): n_(A.n()), m_(A.m()) {
@@ -78,12 +79,15 @@ template<typename T> class Matrix {
 
         bool operator==(const Matrix<T>& A) const;
 
+        std::vector<T> get_mass() const { return mass_; }
         Matrix<T> transpose() const;
         Matrix<T> hermit() const;
         double determinant() const; // not ready
         void show(size_t width = 10) const;
         T* operator[](size_t index_row) { return mass_.data() + index_row * m_; };
         const T* operator[](size_t index_row) const { return mass_.data() + index_row * m_; };
+
+        T& operator()(size_t i, size_t j) { return mass_[get_index(i, j)];}
         lapack_complex_double* to_upper_lapack() const;
         lapack_complex_double* to_lapack() const;
 

@@ -8,9 +8,10 @@
 #include "plot.hpp"
 #include "config.hpp"
 #include "dynamic.hpp"
+#include <chrono>
 
 #ifdef ENABLE_MPI
-#include "mpi.h"
+#include "mpi_functions.hpp"
 #endif
 
 namespace plt = matplotlibcpp;
@@ -24,33 +25,53 @@ int main(int argc, char** argv) {
     int rank, world_size;
     MPI_Init(&argc, &argv);
     MPI_Comm_size(MPI_COMM_WORLD, &world_size);
+    //std::cout << "WORLD SIZE - " << world_size << std::endl;
+    if (world_size == 1) {
+        std::cerr << "Should have at least 2 processes\n";
+        MPI_Finalize();
+        return 1;
+    }
 
-    std::cout << "WORLD SIZE - " << world_size << std::endl;
+    MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+
+    if (rank != 0) {
+        mpi::run_mpi_slaves();
+        MPI_Finalize();
+        return 0;
+    }
 #endif
     //Cavity_State state("|1>|0>");
 
-    std::vector<size_t> grid_config = {2, 1};
+    std::vector<size_t> grid_config = {5, 5};
     //State state("|0;00>");
     State state(grid_config);
     state.set_gamma(0.002);
     //state.set_leak_for_cavity(0, 0.005);
     //state.set_gain_for_cavity(0, 0.002);
-    state.set_max_N(1);
-    state.set_min_N(1);
+    state.set_max_N(10);
+    state.set_min_N(0);
     //state.set_leak_for_cavity(1, 0.0002);
     //return 0;
 
     std::cout << state.to_string() << " n = " << state.max_N() << " m = " << m <<" h = " << config::h << " w = " << config::w << " g = " << config::g << std::endl;
     //H_TC H_correct(state);
+    auto begin = std::chrono::steady_clock::now();
     H_TCH H(state);
+    auto end = std::chrono::steady_clock::now();
+    std::cout << "H_TCH: " << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count() << std::endl;
     //H_JC H(state);
     //H.make_exact();
 
     auto basis = H.get_basis();
-    show_basis(basis);
+    //show_basis(basis);
+
+#ifdef ENABLE_MPI
+    mpi::stop_mpi_slaves();
+#endif
 
     //H.show(config::WIDTH);
 
+    return 0;
     //auto basis_correct = H_correct.get_basis();
     //show_basis(basis_correct);
 
@@ -172,7 +193,7 @@ int main(int argc, char** argv) {
     */
 
 #ifdef ENABLE_MPI
-    MPI_Finalize();
+    mpi::stop_mpi_slaves();
 #endif
     return 0;
 }
