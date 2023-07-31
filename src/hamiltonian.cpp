@@ -256,13 +256,52 @@ std::pair<std::vector<double>, Matrix<COMPLEX>> Hamiltonian::eigen() {
 // -------------------------------   H_by_func   -------------------------------
 
 H_by_func::H_by_func(size_t n, std::function<COMPLEX(size_t, size_t)> func) : func_(func) {
-    auto size = std::pow(2, n);
+    auto size = n;
     H_ = Matrix<COMPLEX>(size, size);
+
+#ifdef ENABLE_MPI
+    int rank, world_size;
+    MPI_Comm_size(MPI_COMM_WORLD, &world_size);
+    MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+    if (rank == mpi::ROOT_ID) {
+        mpi::make_command(COMMAND::GENERATE_H_FUNC);
+    }
+    MPI_Barrier(MPI_COMM_WORLD);
+    size_t start_col;
+    auto rank_map = make_rank_map(size, rank, world_size, start_col);
+    for (size_t j = start_col; j < start_col + rank_map[rank]; j++) {
+        for (size_t i = 0; i < this->size(); i++) {
+            H_[i][j] = func(i, j);
+        }
+    }
+
+    if (rank == mpi::ROOT_ID) {
+        size_t col_index = rank_map[mpi::ROOT_ID];
+        for (size_t i = mpi::ROOT_ID + 1; i < world_size; i++) {
+            for (size_t j = rank_map[i]; j != 0; j--) {
+                std::vector<COMPLEX> col(size);
+                //std::cout << i << " " << j << " " << col_index << std::endl;
+
+                MPI_Recv(col.data(), size, MPI_DOUBLE_COMPLEX, i, MPI_ANY_TAG, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+                //show_vector(col);
+                H_.modify_col(col_index, col);
+                col_index++;
+            }
+        }
+    } else {
+        for (size_t i = start_col; i < start_col + rank_map[rank]; i++) {
+            std::vector<COMPLEX> col = H_.col(i);
+
+            MPI_Send(col.data(), size, MPI_DOUBLE_COMPLEX, mpi::ROOT_ID, 0, MPI_COMM_WORLD);
+        }
+    }
+#else
     for (size_t i = 0; i < this->size(); i++) {
         for (size_t j = 0; j < this->size(); j++) {
             H_[i][j] = func(i, j);
         }
     }
+#endif // ENABLE_MPI
 }
 
 // ---------------------------- H_TC ----------------------------
@@ -408,20 +447,8 @@ H_TCH::H_TCH(const State& grid) {
     H_ = Matrix<COMPLEX>(size, size, 0);
 
 #ifdef ENABLE_MPI
-    size_t size_per_proc = size / world_size;
-    std::vector<size_t> rank_map(world_size, size_per_proc);
-
-    size_t rest = size - size_per_proc * world_size;
-    size_t start_col = 0;
-    for (size_t i = 0; i < world_size; i++) {
-        if (i < rest) {
-            rank_map[i]++;
-        }
-
-        if (i < rank) {
-            start_col += rank_map[i];
-        }
-    }
+    size_t start_col;
+    auto rank_map = make_rank_map(size, rank, world_size, start_col);
 
     //if (rank == 0) {
     //    std::cout << "rank_map: ";

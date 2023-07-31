@@ -3,9 +3,41 @@
 #include "mpi_functions.hpp"
 #include "functions.hpp"
 #include "hamiltonian.hpp"
+#include "dynamic.hpp"
 
 void mpi::make_command(int command) {
     MPI_Bcast(&command, 1, MPI_INT, ROOT_ID, MPI_COMM_WORLD);
+}
+
+std::vector<COMPLEX> mpi::bcast_vector_complex(const std::vector<COMPLEX>& v) {
+    int rank;
+    MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+
+    size_t n = v.size();
+    MPI_Bcast(&n, 1, MPI_UNSIGNED_LONG, ROOT_ID, MPI_COMM_WORLD);
+
+    std::vector<COMPLEX> res(n);
+    if (rank == ROOT_ID) res = v;
+
+
+    MPI_Bcast(res.data(), n, MPI_DOUBLE_COMPLEX, ROOT_ID, MPI_COMM_WORLD);
+
+    return res;
+}
+
+std::vector<double> mpi::bcast_vector_double(const std::vector<double>& v) {
+    int rank;
+    MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+
+    size_t n = v.size();
+    MPI_Bcast(&n, 1, MPI_UNSIGNED_LONG, ROOT_ID, MPI_COMM_WORLD);
+    
+    std::vector<double> res(n);
+    if (rank == ROOT_ID) res = v;
+
+    MPI_Bcast(res.data(), n, MPI_DOUBLE, ROOT_ID, MPI_COMM_WORLD);
+
+    return res;
 }
 
 State mpi::bcast_state(const State& state) {
@@ -53,23 +85,40 @@ State mpi::bcast_state(const State& state) {
     return res;
 }
 
-void mpi::run_mpi_slaves() {
+// ------------------------------------ RUN_MPI_SLAVES --------------------------
+
+void mpi::run_mpi_slaves(const std::map<int, std::vector<MPI_Data>>& data) {
+    std::vector<int> commands_count(COMMAND::COMMANDS_COUNT, 0);
     while(true) {
         int command;
         MPI_Bcast(&command, 1, MPI_INT, ROOT_ID, MPI_COMM_WORLD);
+        int command_id = commands_count[command];
 
         if (command == COMMAND::STOP) {
             break;
         }
 
         if (command == COMMAND::GENERATE_H) {
-            State tmp = bcast_state(State());
+            State tmp = bcast_state();
             //std::cout << tmp.to_string() << std::endl;
             H_TCH H(tmp);
-        } else if (command = COMMAND::SCHRODINGER) {
+        } else if (command == COMMAND::GENERATE_H_FUNC) {
+            H_by_func H(data.at(command)[command_id].n, data.at(command)[command_id].func);
+        } else if (command == COMMAND::SCHRODINGER) {
+            auto init_state = bcast_vector_complex();
+            //show_vector(init_state);
+            auto time_vec = bcast_vector_double();
+            auto H = Hamiltonian();
+            Evolution::schrodinger(init_state, H, time_vec);
+        } else if (command == COMMAND::QME) {
+            auto init_state = bcast_vector_complex();
+            auto time_vec = bcast_vector_double();
+            
         } else {
             std::cerr << "UNKNOWN/UNAVAILABLE COMMAND - " << command << std::endl;
         }
+
+        commands_count[command]++;
     }
 }
 

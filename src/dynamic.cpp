@@ -2,6 +2,7 @@
 #include "additional_operators.hpp"
 #include "functions.hpp"
 #include "quantum_operators.hpp"
+#include "mpi_functions.hpp"
 
 #include "plot.hpp"
 
@@ -61,11 +62,34 @@ Evolution::Rho Evolution::create_init_rho(const std::vector<COMPLEX>& init_state
 Evolution::Probs Evolution::schrodinger(const std::vector<COMPLEX>& init_state, Hamiltonian& H, const std::vector<double>& time_vec) {
     using namespace quantum;
 
-    auto p = H.eigen();
-    auto eigen_values = p.first;
-    auto eigen_vectors = p.second;
-    size_t n = eigen_values.size();
+    std::vector<double> eigen_values;
+    Matrix<COMPLEX> eigen_vectors;
+#ifdef ENABLE_MPI
+    int rank, world_size;
+    MPI_Comm_size(MPI_COMM_WORLD, &world_size);
+    MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 
+    if (rank == mpi::ROOT_ID) {
+        mpi::make_command(COMMAND::SCHRODINGER);
+        mpi::bcast_vector_complex(init_state);
+        mpi::bcast_vector_double(time_vec);
+#endif
+    auto p = H.eigen();
+    eigen_values = p.first;
+    eigen_vectors = p.second;
+
+#ifdef ENABLE_MPI
+    }
+
+    MPI_Barrier(MPI_COMM_WORLD);
+    if (rank == mpi::ROOT_ID) {
+        mpi::bcast_vector_double(eigen_values);
+        mpi::bcast_vector_complex(eigen_vectors.get_mass());
+    } else {
+        eigen_values = mpi::bcast_vector_double();
+        eigen_vectors = Matrix<COMPLEX>(mpi::bcast_vector_complex(), eigen_values.size(), eigen_values.size());
+    }
+#endif
     std::vector<COMPLEX> lambda;
     for (size_t i = 0; i < eigen_values.size(); i++) {
         //std::cout << norm(eigen_vectors.col(i)) << std::endl;
@@ -75,8 +99,50 @@ Evolution::Probs Evolution::schrodinger(const std::vector<COMPLEX>& init_state, 
     //std::cout << "L - " << norm(lambda) << std::endl;
     Probs probs(eigen_values.size(), time_vec.size());
     size_t time_index = 0;
-
     eigen_vectors = eigen_vectors.transpose();
+#ifdef ENABLE_MPI
+    size_t start_col;
+    auto rank_map = make_rank_map(time_vec.size(), rank, world_size, start_col);
+
+    for (size_t time_index = start_col; time_index < start_col + rank_map[rank]; time_index++) {
+        auto t = time_vec[time_index];
+        std::vector<COMPLEX> psi_t(eigen_values.size(), 0);
+
+        for (size_t i = 0; i < eigen_values.size(); i++) {
+            for (size_t j = 0; j < psi_t.size(); j++) {
+                psi_t[j] += lambda[i] * std::exp(COMPLEX(0, 1 / config::h * eigen_values[i] * t)) * eigen_vectors[i][j];
+            }
+        }
+
+        //std::cout << norm(psi_t) << std::endl;
+        for (size_t i = 0; i < eigen_values.size(); i++) {
+            double tmp = std::abs(psi_t[i]);
+            probs[i][time_index] = tmp * tmp;
+        }
+    }
+
+    size_t size = eigen_values.size();
+    if (rank == mpi::ROOT_ID) {
+        size_t col_index = rank_map[mpi::ROOT_ID];
+        for (size_t i = mpi::ROOT_ID + 1; i < world_size; i++) {
+            for (size_t j = rank_map[i]; j != 0; j--) {
+                std::vector<double> col(size);
+                //std::cout << i << " " << j << " " << col_index << std::endl;
+
+                MPI_Recv(col.data(), size, MPI_DOUBLE, i, MPI_ANY_TAG, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+                //show_vector(col);
+                probs.modify_col(col_index, col);
+                col_index++;
+            }
+        }
+    } else {
+        for (size_t i = start_col; i < start_col + rank_map[rank]; i++) {
+            std::vector<double> col = probs.col(i);
+
+            MPI_Send(col.data(), size, MPI_DOUBLE, mpi::ROOT_ID, 0, MPI_COMM_WORLD);
+        }
+    }
+#else
     for (const auto& t: time_vec) {
         std::vector<COMPLEX> psi_t(eigen_values.size(), 0);
 
@@ -94,16 +160,15 @@ Evolution::Probs Evolution::schrodinger(const std::vector<COMPLEX>& init_state, 
         }
         time_index++;
     }
-
+#endif
     return probs;
 }
 
 // ON MPI NEEDED
 Evolution::Probs Evolution::quantum_master_equation(const std::vector<COMPLEX>& init_state,
-                                         Hamiltonian& H,
-                                         const std::vector<double>& time_vec,
-                                         const double gamma,
-                                         bool is_full_rho) {
+                                                    Hamiltonian& H,
+                                                    const std::vector<double>& time_vec,
+                                                    bool is_full_rho) {
     size_t dim = H.size();
     //A.show(config::WIDTH);
     auto grid = H.get_grid();
@@ -143,7 +208,7 @@ Evolution::Probs Evolution::quantum_master_equation(const std::vector<COMPLEX>& 
     }
 
     auto H_matrix = H.get_matrix();
-    std::function<Evolution::Rho(double t, const Evolution::Rho&)> equation {[&H_matrix, &lindblads, gamma](double t, const Evolution::Rho& rho) {
+    std::function<Evolution::Rho(double t, const Evolution::Rho&)> equation {[&H_matrix, &lindblads](double t, const Evolution::Rho& rho) {
         auto tmp = (H_matrix * rho - rho * H_matrix) * COMPLEX(0, -1);
         for (const auto& lindblad: lindblads) {
             tmp += lindblad(rho);
@@ -231,7 +296,7 @@ std::vector<double> Evolution::scan_gamma(const std::vector<COMPLEX>& init_state
         double gamma = gamma_vec[i];
         H.set_leak(cavity_id, gamma);
         //begin = std::chrono::steady_clock::now();
-        auto probs = quantum_master_equation(init_state, H, time_vec, gamma);
+        auto probs = quantum_master_equation(init_state, H, time_vec);
         //end = std::chrono::steady_clock::now();
         //std::cout << i << " " << gamma_vec.size() << " " << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count() << std::endl;
         auto func = Cubic_Spline_Interpolate(time_vec, probs.row(index));

@@ -11,6 +11,10 @@
 #include <mkl_lapack.h>
 #include <mkl_lapacke.h>
 
+#ifdef ENABLE_MPI
+#include "mpi.h"
+#endif
+
 namespace {
     using E_LEVEL = int;
     using COMPLEX = std::complex<double>;
@@ -61,6 +65,8 @@ COMPLEX scalar_product(const std::vector<COMPLEX>& a, const std::vector<COMPLEX>
 
 // Euclidean
 double norm(const std::vector<COMPLEX>& v);
+
+std::vector<size_t> make_rank_map(size_t size, int rank, int world_size, size_t& start_col);
 
 // ------------------------------- template functions --------------------------------------
 
@@ -149,7 +155,7 @@ std::vector<V> Runge_Kutt_4(const std::vector<T>& x, const V& y0, std::function<
         V k2 = f(x[i] + h / 2.0, y[i] + k1 * (h / 2.0));
         V k3 = f(x[i] + h / 2.0, y[i] + k2 * (h / 2.0));
         V k4 = f(x[i] + h, y[i] + k3 * h);
-        y[i + 1] = y[i]  + (k1 + k2 * 2 + k3 * 2 + k4) * (h / 6.0);
+        y[i + 1] = y[i]  + (k1 + (k2 + k3) * 2 + k4) * (h / 6.0);
         //std::cout << h << " " << y[i + 1] << " " << 2 * x[i + 1] << std::endl;
     }
 
@@ -207,3 +213,21 @@ std::vector<T> f_vector(std::function<T(T)> f, const std::vector<T>& x) {
 
     return res;
 }
+
+ #ifdef ENABLE_MPI
+// https://www.mathnet.ru/links/bce693621d2d1e728cc9308687f4d4b3/mm18.pdf
+// !!! step in x must be const !!!
+
+template<typename T, typename V>
+std::vector<V> Block_Koshi(const std::vector<T>& x, const V& y0, std::function<V(T, V)> f) {
+    int rank, world_size;
+    MPI_Comm_size(MPI_COMM_WORLD, &world_size);
+    MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+
+    size_t len = x.size();
+    std::vector<V> y(len);
+
+    return y;
+}
+
+ #endif

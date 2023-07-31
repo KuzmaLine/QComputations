@@ -26,9 +26,8 @@ namespace Evolution {
     // !!!!!! If you get incorrect probs - decrease step in time_vec !!!!!!!!
     Probs quantum_master_equation(const std::vector<COMPLEX>& init_state,
                                   Hamiltonian& H,
-                                const std::vector<double>& time_vec,
-                                const double gamma,
-                                bool is_full_rho = false);
+                                  const std::vector<double>& time_vec,
+                                  bool is_full_rho = false);
 
     // Solve quantum master equation with different leaks of photons from cavity and return vector of time, when probability
     // zero state equal target
