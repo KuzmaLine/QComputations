@@ -10,6 +10,8 @@
 #include <functional>
 #include <mkl_lapack.h>
 #include <mkl_lapacke.h>
+#include <mkl_blas.h>
+#include <mkl_cblas.h>
 
 #ifdef ENABLE_MPI
 #include "mpi.h"
@@ -214,20 +216,12 @@ std::vector<T> f_vector(std::function<T(T)> f, const std::vector<T>& x) {
     return res;
 }
 
+void cblas_MM_double_complex(COMPLEX* A, COMPLEX* B, COMPLEX* C, int n, int k, int m, double alpha, double betta);
+
+void cblas_MM_double(double* A, double* B, double* C, int n, int k, int m, double alpha, double betta);
+
+void cblas_MM_int(int* A, int* B, int* C, int n, int k, int m, double alpha, double betta);
+
  #ifdef ENABLE_MPI
-// https://www.mathnet.ru/links/bce693621d2d1e728cc9308687f4d4b3/mm18.pdf
-// !!! step in x must be const !!!
 
-template<typename T, typename V>
-std::vector<V> Block_Koshi(const std::vector<T>& x, const V& y0, std::function<V(T, V)> f) {
-    int rank, world_size;
-    MPI_Comm_size(MPI_COMM_WORLD, &world_size);
-    MPI_Comm_rank(MPI_COMM_WORLD, &rank);
-
-    size_t len = x.size();
-    std::vector<V> y(len);
-
-    return y;
-}
-
- #endif
+#endif

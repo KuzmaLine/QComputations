@@ -15,23 +15,38 @@ namespace {
 
 // COMMAND LIST
 namespace COMMAND {
-    constexpr int COMMANDS_COUNT = 5;
+    constexpr int COMMANDS_COUNT = 10;
 
     constexpr int STOP = 0;
     constexpr int GENERATE_H = 1;
     constexpr int GENERATE_H_FUNC = 2;
     constexpr int SCHRODINGER = 3;
     constexpr int QME = 4;
+    constexpr int CANNON_MULTIPLY = 5;
+    constexpr int MATVEC = 6;
+    constexpr int MATNUM = 7;
+    constexpr int EXIT_FROM_FUNC = 8;
+    constexpr int DIM_MULTIPLY = 9;
+
+    namespace DIM {
+        constexpr int ROW = 0;
+        constexpr int COL = 1;
+    }
 }
 
 namespace mpi {
-
     struct MPI_Data {
         size_t n;
         std::function<COMPLEX(size_t, size_t)> func;
         State state;
         std::vector<double> timeline;
     };
+
+    namespace MPI_Datatype_ID {
+        constexpr int INT = 1;
+        constexpr int DOUBLE = 2;
+        constexpr int DOUBLE_COMPLEX = 3;
+    }
 
     constexpr int ROOT_ID = 0;
 
@@ -47,6 +62,28 @@ namespace mpi {
 
     // Stop MPI. MPI_Finalize() included
     void stop_mpi_slaves();
+
+    /*
+    void Cannon_Multiply(const Matrix<COMPLEX>& A, const Matrix<COMPLEX>& B, Matrix<COMPLEX>& C, int grid_size, int block_size, int n);
+    void Cannon_Multiply(const Matrix<double>& A, const Matrix<double>& B, Matrix<double>& C, int grid_size, int block_size, int n);
+    void Cannon_Multiply(const Matrix<int>& A, const Matrix<int>& B, Matrix<int>& C, int grid_size, int block_size, int n);
+    */
+
+   template<typename T>
+   void Cannon_Multiply(const Matrix<T>& A, const Matrix<T>& B, Matrix<T>& C, int grid_size, int block_size, int n);
+
+   template<>
+   void Cannon_Multiply<COMPLEX>(const Matrix<COMPLEX>& A, const Matrix<COMPLEX>& B, Matrix<COMPLEX>& C, int grid_size, int block_size, int n);
+   template<>
+   void Cannon_Multiply<int>(const Matrix<int>& A, const Matrix<int>& B, Matrix<int>& C, int grid_size, int block_size, int n);
+   template<>
+   void Cannon_Multiply<double>(const Matrix<double>& A, const Matrix<double>& B, Matrix<double>& C, int grid_size, int block_size, int n);
+
+   template<typename T>
+   void Dim_Multiply(const Matrix<T>& A, const Matrix<T>& B, Matrix<T>& C);
+
+   template<>
+   void Dim_Multiply<COMPLEX>(const Matrix<COMPLEX>& A, const Matrix<COMPLEX>& B, Matrix<COMPLEX>& C);
 }
 
 #endif // ENABLE_MPI

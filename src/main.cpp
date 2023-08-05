@@ -23,16 +23,16 @@ COMPLEX func(size_t i, size_t j) {
 }
 
 int main(int argc, char** argv) {
-    int n = 128;
+    int n = 2048;
 
-    std::vector<size_t> grid_config = {3, 3};
+    std::vector<size_t> grid_config = {1, 1};
     //State state("|0;00>");
     State state(grid_config);
     state.set_gamma(0.002);
-    //state.set_leak_for_cavity(0, 0.005);
+    state.set_leak_for_cavity(0, 0.005);
     //state.set_gain_for_cavity(0, 0.002);
-    state.set_max_N(3);
-    state.set_min_N(3);
+    state.set_max_N(1);
+    state.set_min_N(1);
     //state.set_leak_for_cavity(1, 0.0002);
 
 #ifdef ENABLE_MPI
@@ -63,9 +63,26 @@ int main(int argc, char** argv) {
     }
 #endif
 
+    Matrix<COMPLEX> a (n, n, 1);
+    Matrix<COMPLEX> b (n, n, 2);
+
+    //a.show();
+    //b.show();
     auto begin = std::chrono::steady_clock::now();
-    H_by_func H(n, func);
+    auto c = a * b;
     auto end = std::chrono::steady_clock::now();
+    std::cout << "MULTIPLY: " << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count() << std::endl;
+    //c.show();
+
+#ifdef ENABLE_MPI
+    mpi::stop_mpi_slaves();
+#endif
+    return 0;
+
+    begin = std::chrono::steady_clock::now();
+    H_TCH H(state);
+    end = std::chrono::steady_clock::now();
+
     std::cout << "H_TCH: " << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count() << std::endl;
 
     auto basis = H.get_basis();
@@ -78,11 +95,11 @@ int main(int argc, char** argv) {
     //H_correct.show(config::WIDTH);
 
     std::vector<double> time_vec = make_timeline(0, 200 * M_PI, M_PI / 8);
-    time_vec = linspace(0, 4000, 10000);
+    time_vec = linspace(0, 4000, 4000);
     std::vector<COMPLEX> st(H.size(), 0);
     //st[state.get_index(basis)] = 1;
 
-    //st[State("|0,0;111,000>").get_index(basis)] = 1;
+    st[State("|0,0;0,1>").get_index(basis)] = 1;
     //st[State("|0;01>").get_index(basis)] = 1/sqrt(3);
     //st[State("|0;10>").get_index(basis)] = -1/sqrt(3);
     //functions_testing::check_eigenvectors(p.first, p.second, H_m);
@@ -100,9 +117,11 @@ int main(int argc, char** argv) {
     //functions_testing::check_eigenvectors(a_p.first, a_p.second, a);
 
     begin = std::chrono::steady_clock::now();
-    auto probs = Evolution::schrodinger(st, H, time_vec);
+    //auto probs = Evolution::schrodinger(st, H, time_vec);
+    auto probs = Evolution::quantum_master_equation(st, H, time_vec, false);
     end = std::chrono::steady_clock::now();
-    std::cout << "SCHRODINGER: " << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count() << std::endl;
+    //std::cout << "SCHRODINGER: " << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count() << std::endl;
+    std::cout << "QME: " << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count() << std::endl;
     //auto probs = Evolution::quantum_master_equation(st, H, time_vec, gamma, false);
     //std::vector<double> x = make_timeline(0, 100, 1);
     //functions_testing::check_runge_kutt<double, double>(x, double(0), &func, &func_correct);
@@ -120,12 +139,12 @@ int main(int argc, char** argv) {
 
     */
 
-    /*
+
     matplotlib::make_figure(config::fig_width, config::fig_height, config::dpi);
     matplotlib::probs_to_plot(probs, time_vec, basis);
     matplotlib::grid();
     matplotlib::show();
-    */
+
     /*
     std::vector<double> gamma_vec = make_timeline(0.008, 0.1, 0.001);
     auto tau_vec = Evolution::scan_gamma(st, H, 0, time_vec, gamma_vec, 0.9);

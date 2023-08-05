@@ -17,4 +17,10 @@ namespace config {
 
 // is_zero
     constexpr double eps = 10e-12;
+
+    constexpr int COMMON_MODE = 0;
+    constexpr int CANNON_MODE = 1;
+    constexpr int DIM_MODE = 2;
+
+    constexpr int MULTIPLY_MODE = DIM_MODE;
 }

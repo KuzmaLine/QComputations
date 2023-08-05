@@ -681,3 +681,24 @@ std::pair<std::vector<double>, Matrix<COMPLEX>> Hermit_Lanczos(const Matrix<COMP
     delete [] lapack_B;
     return std::make_pair(eigenvalues, eigenvectors);
 }
+
+void cblas_MM_double_complex(COMPLEX* A, COMPLEX* B, COMPLEX* C, int n, int k, int m, double alpha, double betta) {
+    cblas_zgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans,
+                n, m, k, &alpha, A,
+                k, B, m, &betta,
+                C, m);
+}
+
+void cblas_MM_double(double* A, double* B, double* C, int n, int k, int m, double alpha, double betta) {
+    cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans,
+                n, m, k, alpha, A,
+                k, B, m, betta,
+                C, m);
+}
+
+void cblas_MM_int(int* A, int* B, int* C, int n, int k, int m, double alpha, double betta) {
+}
+
+#ifdef ENABLE_MPI
+
+#endif

@@ -7,6 +7,7 @@
 #include <iomanip>
 #include <mkl_lapack.h>
 #include <mkl_lapacke.h>
+#include "config.hpp"
 
 namespace {
     using COMPLEX = std::complex<double>;
@@ -59,6 +60,13 @@ template<typename T> class Matrix {
         size_t size() const { return n_; }
         size_t m() const { return m_; }
 
+        void add_rows(size_t n);
+        void add_cols(size_t m);
+        void remove_rows(size_t n);
+        void remove_cols(size_t m);
+        void expand(size_t n);
+        void reduce(size_t n);
+
         // DON'T ADD TEMPLATE VERSION (C++11)
         Matrix<T> operator* (const Matrix<T>& A) const;
         Matrix<T> operator+ (const Matrix<T>& A) const;
@@ -80,6 +88,8 @@ template<typename T> class Matrix {
         bool operator==(const Matrix<T>& A) const;
 
         std::vector<T> get_mass() const { return mass_; }
+        T* mass_data() { return mass_.data(); }
+        const T* mass_data() const { return mass_.data(); }
         Matrix<T> transpose() const;
         Matrix<T> hermit() const;
         double determinant() const; // not ready
@@ -96,9 +106,52 @@ template<typename T> class Matrix {
         size_t n_;
         size_t m_;
         std::vector<T> mass_;
+
+        int MULTIPLY_MODE = config::MULTIPLY_MODE;
 };
 
 // -------------------------------- Matrix Methods ----------------------------------
+
+template<typename T>
+void Matrix<T>::add_rows(size_t n) {
+    n_ += n;
+    mass_.resize(n_ * m_, T(0));
+}
+
+template<typename T>
+void Matrix<T>::add_cols(size_t m) {
+    for (size_t i = 0; i < n_; i++) {
+        mass_.insert(std::next(mass_.begin(), (i + 1) * m_ + i * m), m, T(0));
+    }
+
+    m_ += m;
+}
+
+template<typename T>
+void Matrix<T>::expand(size_t n) {
+    this->add_rows(n);
+    this->add_cols(n);
+}
+
+template<typename T>
+void Matrix<T>::remove_rows(size_t n) {
+    n_ -= n;
+    mass_.resize(n_ * m_);
+}
+
+template<typename T>
+void Matrix<T>::remove_cols(size_t m) {
+    m_ -= m;
+    for (size_t i = 0; i < n_; i++) {
+        mass_.erase(std::next(mass_.begin(), (i + 1) * m_), std::next(mass_.begin(), (i + 1) * m_ + m));
+    }
+}
+
+template<typename T>
+void Matrix<T>::reduce(size_t n) {
+    this->remove_rows(n);
+    this->remove_cols(n);
+}
 
 template<typename T>
 Matrix<T>::Matrix(const std::vector<std::vector<T>>& A) {
