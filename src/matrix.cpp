@@ -11,7 +11,7 @@ namespace {
 
 #ifndef ENABLE_MPI
 template<>
-Matrix<double> Matrix<double>::operator* <double>(const Matrix<double>& A) const {
+Matrix<double> Matrix<double>::operator* (const Matrix<double>& A) const {
     assert(m_ == A.n_);
     Matrix<double> res(n_, A.m_);
 
@@ -24,7 +24,7 @@ Matrix<double> Matrix<double>::operator* <double>(const Matrix<double>& A) const
 }
 
 template<>
-Matrix<int> Matrix<int>::operator* <int>(const Matrix<int>& A) const {
+Matrix<int> Matrix<int>::operator* (const Matrix<int>& A) const {
     Matrix<double> tmp_A(A);
     Matrix<double> tmp_this(*this);
 
@@ -34,7 +34,7 @@ Matrix<int> Matrix<int>::operator* <int>(const Matrix<int>& A) const {
 }
 
 template<>
-Matrix<COMPLEX> Matrix<COMPLEX>::operator* <COMPLEX>(const Matrix<COMPLEX>& A) const {
+Matrix<COMPLEX> Matrix<COMPLEX>::operator* (const Matrix<COMPLEX>& A) const {
     assert(m_ == A.n_);
     Matrix<COMPLEX> res(n_, A.m_);
 
@@ -47,27 +47,10 @@ Matrix<COMPLEX> Matrix<COMPLEX>::operator* <COMPLEX>(const Matrix<COMPLEX>& A) c
     return res;
 }
 
-template<>
-template<>
-Matrix<COMPLEX> Matrix<COMPLEX>::operator* <double>(const Matrix<double>& A) const {
-    assert(m_ == A.n());
-    Matrix<COMPLEX> res(n_, A.m(), 0);
-
-    for (size_t i = 0; i < n_; i++) {
-        for (size_t j = 0; j < A.m(); j++) {
-            for (size_t k = 0; k < m_; k++) {
-                //res.mass_[res.get_index(i, j)] += std::conj(mass_[this->get_index(i, k)]) * A[k][j];
-                res.mass_[res.get_index(i, j)] += mass_[this->get_index(i, k)] * A[k][j];
-            }
-        }
-    }
-
-    return res;
-}
 #else
 
 template<>
-Matrix<double> Matrix<double>::operator* <double>(const Matrix<double>& A) const {
+Matrix<double> Matrix<double>::operator* (const Matrix<double>& A) const {
     assert(m_ == A.n_);
     Matrix<double> res(n_, A.m_);
 
@@ -154,7 +137,7 @@ Matrix<double> Matrix<double>::operator* <double>(const Matrix<double>& A) const
 
 
 template<>
-Matrix<COMPLEX> Matrix<COMPLEX>::operator* <COMPLEX>(const Matrix<COMPLEX>& A) const {
+Matrix<COMPLEX> Matrix<COMPLEX>::operator* (const Matrix<COMPLEX>& A) const {
     assert(m_ == A.n_);
     Matrix<COMPLEX> res(n_, A.m_);
 

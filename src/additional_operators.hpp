@@ -14,6 +14,8 @@ namespace {
 
 // Additional operators for vector, Matrix, States and so on
 
+Matrix<COMPLEX> operator* (const Matrix<COMPLEX>& A, const Matrix<double>& B);
+
 /// ################################ std::vector ###################################
 
 template<typename T>

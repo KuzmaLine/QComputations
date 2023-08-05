@@ -1,4 +1,5 @@
 #pragma once
+#include <typeinfo>
 #include <complex>
 #include <vector>
 #include <iostream>
@@ -73,8 +74,8 @@ template<typename T> class Matrix {
         Matrix<T> operator- (const Matrix<T>& A) const;
 
         // DON'T ADD TEMPLATE VERSION (C++11)
-        template<typename V>
-        Matrix<T> operator* (const Matrix<V>& A) const;
+        //template<typename V>
+        //Matrix<T> operator* (const Matrix<V>& A) const;
 
         std::vector<T> operator* (const std::vector<T>& v) const;
 
@@ -179,9 +180,6 @@ void Matrix<T>::modify_col (size_t index, const std::vector<T>& v) {
     }
 }
 
-template<>
-template<>
-Matrix<COMPLEX> Matrix<COMPLEX>::operator* <double>(const Matrix<double>& A) const;
 
 template<typename T>
 Matrix<T> Matrix<T>::operator+ (const Matrix<T>& A) const {
