@@ -223,11 +223,15 @@ void mpi::Cannon_Multiply <COMPLEX>(const Matrix<COMPLEX>& A, const Matrix<COMPL
     for (size_t i = 0; i < grid_size; i++) {
         COMPLEX alpha(1, 0);
         COMPLEX betta(1, 0);
+        begin = std::chrono::steady_clock::now();
         //Matrix<COMPLEX> tmp(block_size, block_size);
             cblas_zgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans,
                 block_size, block_size, block_size, &alpha, localA.mass_data(),
                 block_size, localB.mass_data(), block_size, &betta,
                 localC.mass_data(), block_size);
+        //Multiply_Matrix(localA, localB, localC);
+        end = std::chrono::steady_clock::now();
+        std::cout << "cblas: " << rank2d << " " << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count() << std::endl;
 
         //std::cout << coords[0] << " " << coords[1] << ": \n";
         //localC.show();

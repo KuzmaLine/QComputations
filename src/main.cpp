@@ -24,7 +24,7 @@ COMPLEX func(size_t i, size_t j) {
 }
 
 int main(int argc, char** argv) {
-    int n = 2048;
+    int n = 8000;
 
     std::vector<size_t> grid_config = {1, 1};
     //State state("|0;00>");

@@ -4,6 +4,7 @@
 #include <mkl_blas.h>
 #include "mpi_functions.hpp"
 #include <chrono>
+#include "functions.hpp"
 
 namespace {
     using COMPLEX = std::complex<double>;
@@ -158,7 +159,10 @@ Matrix<COMPLEX> Matrix<COMPLEX>::operator* (const Matrix<COMPLEX>& A) const {
             bcast_data[3] = mpi::MPI_Datatype_ID::DOUBLE_COMPLEX;
 
             MPI_Bcast(&bcast_data, 4, MPI_INT, mpi::ROOT_ID, MPI_COMM_WORLD);
+            auto begin = std::chrono::steady_clock::now();
             mpi::Cannon_Multiply<COMPLEX>(*this, A, res, grid_size, block_size, n);
+            auto end = std::chrono::steady_clock::now();
+            std::cout << "CANNON: " << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count() << std::endl;
             return res;
         }
         auto begin = std::chrono::steady_clock::now();
