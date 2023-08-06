@@ -9,6 +9,7 @@
 #include "config.hpp"
 #include "dynamic.hpp"
 #include <chrono>
+#include <omp.h>
 
 #ifdef ENABLE_MPI
 #include "mpi_functions.hpp"
@@ -35,6 +36,8 @@ int main(int argc, char** argv) {
     state.set_min_N(1);
     //state.set_leak_for_cavity(1, 0.0002);
 
+    std::cout << omp_get_max_threads() << std::endl;
+
 #ifdef ENABLE_MPI
     int rank, world_size;
     MPI_Init(&argc, &argv);
@@ -42,7 +45,8 @@ int main(int argc, char** argv) {
     //std::cout << "WORLD SIZE - " << world_size << std::endl;
     if (world_size == 1) {
         std::cerr << "Should have at least 2 processes\n";
-        MPI_Finalize();
+ 
+       MPI_Finalize();
         return 1;
     }
 
