@@ -24,7 +24,7 @@ COMPLEX func(size_t i, size_t j) {
 }
 
 int main(int argc, char** argv) {
-    int n = 8000;
+    int n = 4;
 
     std::vector<size_t> grid_config = {1, 1};
     //State state("|0;00>");
@@ -45,7 +45,7 @@ int main(int argc, char** argv) {
     //std::cout << "WORLD SIZE - " << world_size << std::endl;
     if (world_size == 1) {
         std::cerr << "Should have at least 2 processes\n";
- 
+
        MPI_Finalize();
         return 1;
     }
@@ -67,8 +67,11 @@ int main(int argc, char** argv) {
     }
 #endif
 
-    Matrix<COMPLEX> a (n, n, 1);
-    Matrix<COMPLEX> b (n, n, 2);
+    Matrix<double> a (n, n, 1);
+    Matrix<double> b (n, n, 2);
+
+    //Matrix<COMPLEX> a({{1, 9, 1}, {2, 8, 1}, {3, 7, 1}, {4, 4, 1}, {5, 5, 1}, {6, 3, 1}});
+    //Matrix<COMPLEX> b({{1, 2}, {4, 6}, {6, 4}});
 
     //a.show();
     //b.show();
@@ -76,7 +79,19 @@ int main(int argc, char** argv) {
     auto c = a * b;
     auto end = std::chrono::steady_clock::now();
     std::cout << "MULTIPLY: " << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count() << std::endl;
-    //c.show();
+    c.show();
+
+    Matrix<COMPLEX> check(a.n(), b.m(), 0);
+    for (size_t i = 0; i < a.n(); i++) {
+        for (size_t j = 0; j < b.m(); j++) {
+            for (size_t k = 0; k < a.m(); k++) {
+                check[i][j] += a[i][k] * b[k][j];
+            }
+        }
+    }
+
+    std::cout << std::endl;
+    check.show();
 
 #ifdef ENABLE_MPI
     mpi::stop_mpi_slaves();
@@ -191,7 +206,7 @@ int main(int argc, char** argv) {
 
     /*
     std::vector<double> x = {1, 2, 5, 10, 12, 15};
-    std::vector<double> f = {-10, -7, -13, 20, 10, 5}; 
+    std::vector<double> f = {-10, -7, -13, 20, 10, 5};
     matplotlib::make_figure(config::fig_width, config::fig_height, config::dpi);
     plt::scatter(x, f, 50);
     auto x_time = make_timeline(1, 15, 0.01);
@@ -223,3 +238,4 @@ int main(int argc, char** argv) {
 #endif
     return 0;
 }
+

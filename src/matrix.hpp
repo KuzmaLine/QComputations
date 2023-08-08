@@ -37,6 +37,7 @@ template<typename T> class Matrix {
         Matrix(size_t n, size_t m): n_(n), m_(m), mass_(n_ * m_) {}
         Matrix(size_t n, size_t m, const T& init_val): n_(n), m_(m), mass_(n_ * m_, init_val) {}
         Matrix(const Matrix<T>& A): n_(A.n_), m_(A.m_), mass_(A.mass_) {}
+        Matrix(const Matrix<T>&& A): n_(A.n_), m_(A.m_), mass_(A.mass_) {}
         Matrix(const std::vector<T>& mass, size_t n, size_t m): n_(n), m_(m), mass_(mass) {}
 
         template<typename V>
@@ -102,6 +103,8 @@ template<typename T> class Matrix {
         lapack_complex_double* to_upper_lapack() const;
         lapack_complex_double* to_lapack() const;
 
+        void set_multiply_mode(int multiply_mode) { MULTIPLY_MODE = multiply_mode; }
+        Matrix<T> submatrix(size_t n, size_t m, size_t row_index, size_t col_index) const;
     private:
         size_t get_index(size_t i, size_t j) const { return i * m_ + j; }
         size_t n_;
@@ -112,6 +115,19 @@ template<typename T> class Matrix {
 };
 
 // -------------------------------- Matrix Methods ----------------------------------
+
+template<typename T>
+Matrix<T> Matrix<T>::submatrix(size_t n, size_t m, size_t row_index, size_t col_index) const {
+    Matrix<T> res(n, m);
+
+    for (size_t i = 0; i < n; i++) {
+        for (size_t j = 0; j < m; j++) {
+            res[i][j] = this->mass_[get_index(row_index + i, col_index + j)];
+        }
+    }
+
+    return res;
+}
 
 template<typename T>
 void Matrix<T>::add_rows(size_t n) {

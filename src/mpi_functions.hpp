@@ -2,7 +2,9 @@
 
 #ifdef ENABLE_MPI
 
-#include <mpi.h>
+//#include <mpi.h>
+//#include </home/kuzmaline/.local/include/mpi.h>
+#include </usr/lib/x86_64-linux-gnu/openmpi/include/mpi.h>
 #include <iostream>
 #include <complex>
 #include "state.hpp"
@@ -15,7 +17,7 @@ namespace {
 
 // COMMAND LIST
 namespace COMMAND {
-    constexpr int COMMANDS_COUNT = 10;
+    constexpr int COMMANDS_COUNT = 11;
 
     constexpr int STOP = 0;
     constexpr int GENERATE_H = 1;
@@ -27,6 +29,7 @@ namespace COMMAND {
     constexpr int MATNUM = 7;
     constexpr int EXIT_FROM_FUNC = 8;
     constexpr int DIM_MULTIPLY = 9;
+    constexpr int P_GEMM_MULTIPLY = 10;
 
     namespace DIM {
         constexpr int ROW = 0;
@@ -56,6 +59,7 @@ namespace mpi {
     std::vector<COMPLEX> bcast_vector_complex(const std::vector<COMPLEX>& v = {});
     std::vector<double> bcast_vector_double(const std::vector<double>& v = {});
     State bcast_state(const State& state = State());
+    void RING_Bcast(double *buf, int count, MPI_Datatype type, int root, MPI_Comm comm);
 
     // Stay to wait all MPI process until root process give commands. MPI_Init included
     void run_mpi_slaves(const std::map<int, std::vector<MPI_Data>>& data); 
@@ -84,6 +88,9 @@ namespace mpi {
 
    template<>
    void Dim_Multiply<COMPLEX>(const Matrix<COMPLEX>& A, const Matrix<COMPLEX>& B, Matrix<COMPLEX>& C);
+
+   void parallel_dgemm(const Matrix<double>& A, const Matrix<double>& B, Matrix<double>& C);
+   void parallel_zgemm(const Matrix<COMPLEX>& A, const Matrix<COMPLEX>& B, Matrix<COMPLEX>& C);
 }
 
 #endif // ENABLE_MPI

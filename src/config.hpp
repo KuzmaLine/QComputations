@@ -21,6 +21,8 @@ namespace config {
     constexpr int COMMON_MODE = 0;
     constexpr int CANNON_MODE = 1;
     constexpr int DIM_MODE = 2;
+    constexpr int P_GEMM_MODE = 3;
 
-    constexpr int MULTIPLY_MODE = CANNON_MODE;
+    constexpr int MULTIPLY_MODE = P_GEMM_MODE;
 }
+
