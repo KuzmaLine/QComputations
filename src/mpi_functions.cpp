@@ -6,9 +6,14 @@
 #include "functions.hpp"
 #include "hamiltonian.hpp"
 #include "dynamic.hpp"
+
+#ifdef ENABLE_CLUSTER
+
 #include <mkl_pblas.h>
 #include <mkl_scalapack.h>
 #include <mkl_blacs.h>
+
+#endif
 
 void mpi::make_command(int command) {
     MPI_Bcast(&command, 1, MPI_INT, ROOT_ID, MPI_COMM_WORLD);
@@ -155,6 +160,7 @@ void mpi::run_mpi_slaves(const std::map<int, std::vector<MPI_Data>>& data) {
             } else {
                 MPI_Abort(MPI_COMM_WORLD, 5);
             }
+#ifdef ENABLE_CLUSTER 
         } else if (command == COMMAND::P_GEMM_MULTIPLY) {
             int datatype;
             MPI_Bcast(&datatype, 1, MPI_INT, mpi::ROOT_ID, MPI_COMM_WORLD);
@@ -168,6 +174,7 @@ void mpi::run_mpi_slaves(const std::map<int, std::vector<MPI_Data>>& data) {
             } else {
                 MPI_Abort(MPI_COMM_WORLD, 6);
             }
+#endif
         } else {
             std::cerr << "UNKNOWN/UNAVAILABLE COMMAND - " << command << std::endl;
         }
@@ -495,6 +502,8 @@ void mpi::Dim_Multiply<COMPLEX>(const Matrix<COMPLEX>& A, const Matrix<COMPLEX>&
 
     }
 }
+
+#ifdef ENABLE_CLUSTER
 
 namespace {
     void my_dgesd2d(int M, int N, int row_index, int col_index, const Matrix<double>& A, int LDA, int send_id) {
@@ -1040,5 +1049,7 @@ void mpi::parallel_zgemm(const Matrix<COMPLEX>& A, const Matrix<COMPLEX>& B, Mat
     blacs_gridexit(&ctxt);
     //blacs_exit(&iZERO);
 }
+
+#endif // ENABLE_CLUSTER
 
 #endif // ENABLE_MPI

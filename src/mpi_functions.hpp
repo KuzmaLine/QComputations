@@ -2,9 +2,9 @@
 
 #ifdef ENABLE_MPI
 
-//#include <mpi.h>
+#include <mpi.h>
 //#include </home/kuzmaline/.local/include/mpi.h>
-#include </usr/lib/x86_64-linux-gnu/openmpi/include/mpi.h>
+//#include </usr/lib/x86_64-linux-gnu/openmpi/include/mpi.h>
 #include <iostream>
 #include <complex>
 #include "state.hpp"
@@ -89,8 +89,10 @@ namespace mpi {
    template<>
    void Dim_Multiply<COMPLEX>(const Matrix<COMPLEX>& A, const Matrix<COMPLEX>& B, Matrix<COMPLEX>& C);
 
+#ifdef ENABLE_CLUSTER 
    void parallel_dgemm(const Matrix<double>& A, const Matrix<double>& B, Matrix<double>& C);
    void parallel_zgemm(const Matrix<COMPLEX>& A, const Matrix<COMPLEX>& B, Matrix<COMPLEX>& C);
+#endif
 }
 
 #endif // ENABLE_MPI

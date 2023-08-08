@@ -216,7 +216,9 @@ Matrix<double> Matrix<double>::operator* (const Matrix<double>& A) const {
         Matrix<double> R(A);
         MPI_Bcast(R.mass_data(), k * n, MPI_DOUBLE_COMPLEX, mpi::ROOT_ID, MPI_COMM_WORLD);
         //mpi::Dim_Multiply(*this, A, res);
-    } else if (this->MULTIPLY_MODE == config::P_GEMM_MODE) {
+    }
+#ifdef ENABLE_CLUSTER 
+    else if (this->MULTIPLY_MODE == config::P_GEMM_MODE) {
         size_t n = n_, k = m_, m = A.m_;
         mpi::make_command(COMMAND::P_GEMM_MULTIPLY);
 
@@ -224,7 +226,7 @@ Matrix<double> Matrix<double>::operator* (const Matrix<double>& A) const {
         MPI_Bcast(&datatype, 1, MPI_INT, mpi::ROOT_ID, MPI_COMM_WORLD);
         mpi::parallel_dgemm(*this, A, res);
     }
-
+#endif
     return res;
 }
 
@@ -395,7 +397,9 @@ Matrix<COMPLEX> Matrix<COMPLEX>::operator* (const Matrix<COMPLEX>& A) const {
         Matrix<COMPLEX> R(A);
         MPI_Bcast(R.mass_data(), k * n, MPI_DOUBLE_COMPLEX, mpi::ROOT_ID, MPI_COMM_WORLD);
         mpi::Dim_Multiply(*this, A, res);
-    } else if (this->MULTIPLY_MODE == config::P_GEMM_MODE) {
+    }
+#ifdef ENABLE_CLUSTER 
+    else if (this->MULTIPLY_MODE == config::P_GEMM_MODE) {
         size_t n = n_, k = m_, m = A.m_;
         mpi::make_command(COMMAND::P_GEMM_MULTIPLY);
 
@@ -403,7 +407,7 @@ Matrix<COMPLEX> Matrix<COMPLEX>::operator* (const Matrix<COMPLEX>& A) const {
         MPI_Bcast(&datatype, 1, MPI_INT, mpi::ROOT_ID, MPI_COMM_WORLD);
         mpi::parallel_zgemm(*this, A, res);
     }
-
+#endif
     return res;
 }
 

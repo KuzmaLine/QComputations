@@ -42,7 +42,7 @@ int main(int argc, char** argv) {
     int rank, world_size;
     MPI_Init(&argc, &argv);
     MPI_Comm_size(MPI_COMM_WORLD, &world_size);
-    //std::cout << "WORLD SIZE - " << world_size << std::endl;
+    std::cout << "WORLD SIZE - " << world_size << std::endl;
     if (world_size == 1) {
         std::cerr << "Should have at least 2 processes\n";
 
