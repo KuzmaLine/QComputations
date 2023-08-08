@@ -132,6 +132,8 @@ void mpi::run_mpi_slaves(const std::map<int, std::vector<MPI_Data>>& data) {
             auto time_vec = bcast_vector_double();
             auto H = Hamiltonian();
             Evolution::schrodinger(init_state, H, time_vec);
+        } else if (command == COMMAND::QME) {
+            auto init_state = bcast_vector_complex();
         } else if (command == COMMAND::CANNON_MULTIPLY) {
             int bcastdata[4];
             MPI_Bcast(&bcastdata, 4, MPI_INT, mpi::ROOT_ID, MPI_COMM_WORLD);
@@ -667,7 +669,7 @@ void mpi::parallel_dgemm(const Matrix<double>& A, const Matrix<double>& B, Matri
 
     Matrix<double> localA(nrows_A, ncols_A);
     Matrix<double> localB(nrows_B, ncols_B);
-    Matrix<double> localC(nrows_C, ncols_C, 0);
+    Matrix<double> localC(nrows_C, ncols_C, 0.5);
     int desca[9];
     int descb[9];
     int descc[9];
@@ -767,8 +769,8 @@ void mpi::parallel_dgemm(const Matrix<double>& A, const Matrix<double>& B, Matri
     char N = 'N';
     int iONE = 1;
     double alpha = 1;
-    double betta = 0;
-    pdgemm_(&N, &N, &NA, &MB, &MA, &alpha, localA.mass_data(), &iONE, &iONE, desca,
+    double betta = 2;
+    pdgemm(&N, &N, &NA, &MB, &MA, &alpha, localA.mass_data(), &iONE, &iONE, desca,
                                     localB.mass_data(), &iONE, &iONE, descb,
                                     &betta, localC.mass_data(), &iONE, &iONE, descc);
     //pzgemm(&N, &N, &NA, &MB, &MA, &alpha, reinterpret_cast<_MKL_Complex16*>(localA.mass_data()), &iONE, &iONE, desca,

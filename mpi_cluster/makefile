@@ -1,14 +1,13 @@
 vpath %.cpp ../src
 vpath %.hpp ../src
-CC=mpicxx
+CC=mpiicpc
 
-CFLAGS = -std=c++11 -m64 -Werror -fopenmp \
+CFLAGS = -std=c++11 -m64 -Werror -fopenmp -diag-disable=10441 \
 		 -I/usr/include/python3.10 \
-		 -I/usr/include/mkl -DENABLE_MPI -DENABLE_CLUSTER
-LFLAGS = -std=c++11 -Werror -fopenmp -lpython3.10 -L/usr/lib/x86_64-linux-gnu/openmpi/lib -lmpi \
-		 -L/usr/lib/x86_64-linux-gnu \
+		 -I/opt/intel/oneapi/mkl -DENABLE_MPI -DENABLE_CLUSTER
+LFLAGS = -std=c++11 -Werror -fopenmp -lpython3.10 \
 		 -lmkl_intel_lp64 \
-		 -lmkl_scalapack_lp64 -lmkl_intel_thread -lmkl_core -lmkl_blacs_openmpi_lp64 \
+		 -lmkl_scalapack_lp64 -lmkl_intel_thread -lmkl_core -lmkl_blacs_intelmpi_lp64 \
 		 -lm -ldl \
 		 -liomp5 -lpthread -DENABLE_MPI -DENABLE_CLUSTER
 OBJ = matrix.o cavity_state.o graph.o state.o quantum_operators.o hamiltonian.o additional_operators.o mpi_functions.o functions.o dynamic.o plot.o main.o

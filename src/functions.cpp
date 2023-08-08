@@ -37,6 +37,10 @@ bool is_zero(double a) {
     return std::abs(a) < eps;
 }
 
+bool is_zero(COMPLEX a) {
+    return std::abs(a) < eps;
+}
+
 bool is_digit(char c) {
     return '0' <= c and c <= '9';
 }

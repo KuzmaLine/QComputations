@@ -193,7 +193,6 @@ Matrix<double> Matrix<double>::operator* (const Matrix<double>& A) const {
         end = std::chrono::steady_clock::now();
         std::cout << "AFTER: " << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count() << std::endl;
     } else if (this->MULTIPLY_MODE == config::COMMON_MODE) {
-        std::cout << "HERE\n";
         double alpha = 1;
         double betta = 0;
         cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans,
@@ -374,7 +373,6 @@ Matrix<COMPLEX> Matrix<COMPLEX>::operator* (const Matrix<COMPLEX>& A) const {
         end = std::chrono::steady_clock::now();
         std::cout << "AFTER: " << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count() << std::endl;
     } else if (this->MULTIPLY_MODE == config::COMMON_MODE) {
-        std::cout << "HERE\n";
         COMPLEX alpha(1, 0);
         COMPLEX betta(0, 0);
         cblas_zgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans,

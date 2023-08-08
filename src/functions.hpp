@@ -36,6 +36,7 @@ std::vector<double> linspace(double start, double end, double npoints);
 size_t get_index_from_state(vec_levels state);
 
 bool is_zero(double a);
+bool is_zero(COMPLEX a);
 bool is_digit(char c);
 size_t Ck_n(size_t k, size_t n);
 

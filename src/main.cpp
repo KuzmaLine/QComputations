@@ -33,16 +33,14 @@ int main(int argc, char** argv) {
     state.set_leak_for_cavity(0, 0.005);
     //state.set_gain_for_cavity(0, 0.002);
     state.set_max_N(1);
-    state.set_min_N(1);
+    state.set_min_N(0);
     //state.set_leak_for_cavity(1, 0.0002);
-
-    std::cout << omp_get_max_threads() << std::endl;
 
 #ifdef ENABLE_MPI
     int rank, world_size;
     MPI_Init(&argc, &argv);
     MPI_Comm_size(MPI_COMM_WORLD, &world_size);
-    std::cout << "WORLD SIZE - " << world_size << std::endl;
+    //std::cout << "WORLD SIZE - " << world_size << std::endl;
     if (world_size == 1) {
         std::cerr << "Should have at least 2 processes\n";
 
@@ -67,11 +65,13 @@ int main(int argc, char** argv) {
     }
 #endif
 
-    Matrix<double> a (n, n, 1);
-    Matrix<double> b (n, n, 2);
+    //Matrix<double> a (n, n, 1);
+    //Matrix<double> b (n, n, 2);
 
-    //Matrix<COMPLEX> a({{1, 9, 1}, {2, 8, 1}, {3, 7, 1}, {4, 4, 1}, {5, 5, 1}, {6, 3, 1}});
-    //Matrix<COMPLEX> b({{1, 2}, {4, 6}, {6, 4}});
+    //Matrix<double> a = matrix_testing::create_rand_matrix<double>(n, n, 0.0, 10.0);
+    //Matrix<double> b = matrix_testing::create_rand_matrix<double>(n, n, 0.0, 10.0);
+    Matrix<double> a({{1, 9, 1}, {2, 8, 1}, {3, 7, 1}, {4, 4, 1}, {5, 5, 1}, {6, 3, 1}});
+    Matrix<double> b({{1, 2}, {4, 6}, {6, 4}});
 
     //a.show();
     //b.show();
@@ -79,7 +79,7 @@ int main(int argc, char** argv) {
     auto c = a * b;
     auto end = std::chrono::steady_clock::now();
     std::cout << "MULTIPLY: " << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count() << std::endl;
-    c.show();
+    //c.show();
 
     Matrix<COMPLEX> check(a.n(), b.m(), 0);
     for (size_t i = 0; i < a.n(); i++) {
@@ -90,17 +90,17 @@ int main(int argc, char** argv) {
         }
     }
 
-    std::cout << std::endl;
+    //std::cout << std::endl;
     check.show();
+
 
 #ifdef ENABLE_MPI
     mpi::stop_mpi_slaves();
 #endif
     return 0;
-
-    begin = std::chrono::steady_clock::now();
+    //auto begin = std::chrono::steady_clock::now();
     H_TCH H(state);
-    end = std::chrono::steady_clock::now();
+    //auto end = std::chrono::steady_clock::now();
 
     std::cout << "H_TCH: " << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count() << std::endl;
 

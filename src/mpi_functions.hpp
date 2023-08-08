@@ -89,6 +89,37 @@ namespace mpi {
    template<>
    void Dim_Multiply<COMPLEX>(const Matrix<COMPLEX>& A, const Matrix<COMPLEX>& B, Matrix<COMPLEX>& C);
 
+    /*
+    template<typename T, typename V>
+    std::vector<V> MPI_Runge_Kutt_4(const std::vector<T>& x, const V& y0,
+                                    std::function<V(T, V)> f, int* proc_group,
+                                    MPI_Comm comm) {
+        int rank, numproc;
+        MPI_Comm_rank(comm, &rank);
+        MPI_Comm_size(comm, &numproc);
+        size_t len = x.size();
+        std::vector<V> y(len);
+        y[0] = y0;
+
+        for (size_t i = 0; i < len - 1; i++) {
+            if (i % (len / 100) == 0) std::cout << i << " " << len << std::endl;
+            //std::cout << i << " " << y[i] << " ";
+            T h = x[i + 1] - x[i];
+
+            if (rank <= proc_group[0]) V k1 = f(x[i], y[i]);
+            if (proc_group[0] < rank and rank <= proc_group[1]) V k2 = f(x[i] + h / 2.0, y[i] + k1 * (h / 2.0));
+            if (proc_group[1] < rank and rank <= proc_group[2]) V k3 = f(x[i] + h / 2.0, y[i] + k2 * (h / 2.0));
+            if (proc_group[2] < rank and rank <= proc_group[3]) V k4 = f(x[i] + h, y[i] + k3 * h);
+            
+            y[i + 1] = y[i]  + (k1 + (k2 + k3) * 2 + k4) * (h / 6.0);
+            //std::cout << h << " " << y[i + 1] << " " << 2 * x[i + 1] << std::endl;
+            MPI_Barrier(MPI_COMM_WORLD);
+        }
+
+        return y;
+    }
+    */
+
 #ifdef ENABLE_CLUSTER 
    void parallel_dgemm(const Matrix<double>& A, const Matrix<double>& B, Matrix<double>& C);
    void parallel_zgemm(const Matrix<COMPLEX>& A, const Matrix<COMPLEX>& B, Matrix<COMPLEX>& C);

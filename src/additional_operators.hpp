@@ -60,8 +60,10 @@ std::vector<T> operator/(const std::vector<T>& v, T num) {
     return answer;
 }
 
+/*
 template<typename T>
 std::vector<T> operator/(T num, const std::vector<T>& v) { return v * num; }
+*/
 
 template<typename T>
 std::vector<T> operator-(const std::vector<T>& a, const std::vector<T>& b) {

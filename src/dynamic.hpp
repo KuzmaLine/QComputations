@@ -38,5 +38,11 @@ namespace Evolution {
                                    const std::vector<double>& gamma_vec,
                                    double target);
 
+#ifdef ENABLE_MPI
+    Probs Parallel_QME(const std::vector<COMPLEX>& init_state,
+                       Hamiltonian& H,
+                       const std::vector<double>& time_vec,
+                       bool is_full_rho = false);
+#endif
     // TO BE CONTINUED...
 }

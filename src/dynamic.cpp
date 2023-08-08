@@ -172,7 +172,7 @@ Evolution::Probs Evolution::quantum_master_equation(const std::vector<COMPLEX>& 
     size_t dim = H.size();
     //A.show(config::WIDTH);
     auto grid = H.get_grid();
-    std::vector<std::function<Evolution::Rho(const Evolution::Rho& rho)>> lindblads(2 * grid.cavities_count());
+    std::vector<std::function<Evolution::Rho(const Evolution::Rho& rho)>> lindblads;
 
     auto cavities_with_leak = grid.get_cavities_with_leak();
     auto cavities_with_gain = grid.get_cavities_with_gain();
@@ -182,14 +182,17 @@ Evolution::Probs Evolution::quantum_master_equation(const std::vector<COMPLEX>& 
         auto A = create_A_destroy(H.get_basis(), cavity_id);
         //A.show();
         auto gamma = grid.get_leak_gamma(cavity_id);
-        //std::cout << gamma << std::endl;
-        lindblads[cavity_id] = std::function<Evolution::Rho(const Evolution::Rho& rho)> {
-            [A, gamma](const Evolution::Rho& rho) {
-                auto Aconj = A.hermit();
-                auto AconjA = Aconj * A;
-                return (A * rho * Aconj - (AconjA * rho + rho * AconjA) * COMPLEX(0.5)) * gamma;
+        if (!is_zero(gamma)) {
+            //std::cout << gamma << std::endl;
+            lindblads.push_back(std::function<Evolution::Rho(const Evolution::Rho& rho)> {
+                [A, gamma](const Evolution::Rho& rho) {
+                    auto Aconj = A.hermit();
+                    auto AconjA = Aconj * A;
+                    return (A * rho * Aconj - (AconjA * rho + rho * AconjA) * COMPLEX(0.5)) * gamma;
+                }
             }
-        };
+            );
+        }
     }
 
     //for (const auto& cavity_id: cavities_with_gain) {
@@ -197,14 +200,17 @@ Evolution::Probs Evolution::quantum_master_equation(const std::vector<COMPLEX>& 
         auto A = create_A_create(H.get_basis(), cavity_id);
         //A.show();
         auto gamma = grid.get_gain_gamma(cavity_id);
-        //std::cout << gamma << std::endl;
-        lindblads[cavity_id + grid.cavities_count()] = std::function<Evolution::Rho(const Evolution::Rho& rho)> {
-            [A, gamma](const Evolution::Rho& rho) {
-                auto Aconj = A.hermit();
-                auto AconjA = Aconj * A;
-                return (A * rho * Aconj - (AconjA * rho + rho * AconjA) * COMPLEX(0.5)) * gamma;
+        if (!is_zero(gamma)) {
+            //std::cout << gamma << std::endl;
+            lindblads.push_back(std::function<Evolution::Rho(const Evolution::Rho& rho)> {
+                [A, gamma](const Evolution::Rho& rho) {
+                    auto Aconj = A.hermit();
+                    auto AconjA = Aconj * A;
+                    return (A * rho * Aconj - (AconjA * rho + rho * AconjA) * COMPLEX(0.5)) * gamma;
+                }
             }
-        };
+            );
+        }
     }
 
     auto H_matrix = H.get_matrix();
@@ -312,3 +318,128 @@ std::vector<double> Evolution::scan_gamma(const std::vector<COMPLEX>& init_state
     return tau_vec;
 }
 
+#ifdef ENABLE_MPI
+
+Evolution::Probs Evolution::Parallel_QME(const std::vector<COMPLEX>& init_state,
+                                         Hamiltonian& H,
+                                         const std::vector<double>& time_vec,
+                                         bool is_full_rho) {
+    int rank, world_size;
+    MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+    MPI_Comm_size(MPI_COMM_WORLD, &world_size);
+    std::vector<int> tasks;
+
+    if (rank == mpi::ROOT_ID) {
+        mpi::make_command(COMMAND::QME);
+
+        int bcast_data[5];
+        bcast_data[0] = init_state.size();
+        bcast_data[1] = H.size(); 
+    }
+
+    size_t dim = H.size();
+    //A.show(config::WIDTH);
+    auto grid = H.get_grid();
+    std::vector<std::function<Evolution::Rho(const Evolution::Rho& rho)>> lindblads;
+
+    auto cavities_with_leak = grid.get_cavities_with_leak();
+    auto cavities_with_gain = grid.get_cavities_with_gain();
+
+    //for (const auto& cavity_id: cavities_with_leak) {
+    for (size_t cavity_id = 0; cavity_id < grid.cavities_count(); cavity_id++) {
+        auto A = create_A_destroy(H.get_basis(), cavity_id);
+        //A.show();
+        auto gamma = grid.get_leak_gamma(cavity_id);
+        if (!is_zero(gamma)) {
+            //std::cout << gamma << std::endl;
+            lindblads.push_back(std::function<Evolution::Rho(const Evolution::Rho& rho)> {
+                [A, gamma](const Evolution::Rho& rho) {
+                    auto Aconj = A.hermit();
+                    auto AconjA = Aconj * A;
+                    return (A * rho * Aconj - (AconjA * rho + rho * AconjA) * COMPLEX(0.5)) * gamma;
+                }
+            }
+            );
+        }
+    }
+
+    //for (const auto& cavity_id: cavities_with_gain) {
+    for (size_t cavity_id = 0; cavity_id < grid.cavities_count(); cavity_id++) {
+        auto A = create_A_create(H.get_basis(), cavity_id);
+        //A.show();
+        auto gamma = grid.get_gain_gamma(cavity_id);
+        if (!is_zero(gamma)) {
+            //std::cout << gamma << std::endl;
+            lindblads.push_back(std::function<Evolution::Rho(const Evolution::Rho& rho)> {
+                [A, gamma](const Evolution::Rho& rho) {
+                    auto Aconj = A.hermit();
+                    auto AconjA = Aconj * A;
+                    return (A * rho * Aconj - (AconjA * rho + rho * AconjA) * COMPLEX(0.5)) * gamma;
+                }
+            }
+            );
+        }
+    }
+
+    auto H_matrix = H.get_matrix();
+    std::function<Evolution::Rho(double t, const Evolution::Rho&)> equation {[&H_matrix, &lindblads](double t, const Evolution::Rho& rho) {
+        auto tmp = (H_matrix * rho - rho * H_matrix) * COMPLEX(0, -1);
+        for (const auto& lindblad: lindblads) {
+            tmp += lindblad(rho);
+        }
+
+        return tmp;
+    }};
+
+    auto rho_0 = Evolution::create_init_rho(init_state);
+    //rho_0.show();
+    //auto begin_c = std::chrono::steady_clock::now();
+    auto rho_vec = Runge_Kutt_4<double, Evolution::Rho>(time_vec, rho_0, equation);
+    //auto end_c = std::chrono::steady_clock::now();
+    //std::cout << " c " << std::chrono::duration_cast<std::chrono::milliseconds>(end_c - begin_c).count() << std::endl;
+    if (!is_full_rho) {
+        Evolution::Probs probs(dim, time_vec.size());
+
+        for (size_t i = 0; i < dim; i++) {
+            for (size_t t = 0; t < time_vec.size(); t++) {
+                probs[i][t] = std::abs(rho_vec[t][i][i]);
+            }
+        }
+
+        for (size_t t = 0; t < time_vec.size(); t++) {
+            double res = 0.0;
+            for (size_t i = 0; i < dim; i++) {
+                res += probs[i][t];
+            }
+
+            //std::cout << t << " " << res << std::endl;
+
+            if (std::abs(res - 1) >= config::eps) {
+                //std::cout << t << " " << res << std::endl;
+            }
+        }
+        return probs;
+    }
+
+    Evolution::Probs probs(dim * dim, time_vec.size());
+
+    bool is_null = true;
+
+    for (size_t i = 0; i < dim; i++) {
+        for (size_t j = 0; j < dim; j++) {
+            for (size_t t = 0; t < time_vec.size(); t++) {
+                probs[i * dim + j][t] = std::abs(rho_vec[t][i][j]);
+                if (probs[i * dim + j][t] >= config::eps) {
+                    is_null = false;
+                }
+            }
+
+            if (is_null) probs[i * dim + j][0] = -1;
+            is_null = true;
+        }
+    }
+
+    return probs;
+}
+
+#endif
