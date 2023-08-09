@@ -15,7 +15,9 @@
 #include "mpi_functions.hpp"
 #endif
 
+#ifdef ENABLE_MATPLOTLIB
 namespace plt = matplotlibcpp;
+#endif
 
 using COMPLEX = std::complex<double>;
 
@@ -24,7 +26,7 @@ COMPLEX func(size_t i, size_t j) {
 }
 
 int main(int argc, char** argv) {
-    int n = 4;
+    int n = 8000;
 
     std::vector<size_t> grid_config = {1, 1};
     //State state("|0;00>");
@@ -65,14 +67,40 @@ int main(int argc, char** argv) {
     }
 #endif
 
-    //Matrix<double> a (n, n, 1);
-    //Matrix<double> b (n, n, 2);
+    Matrix<double> a (n, n, 1);
+    Matrix<double> b (n, n, 1);
 
     //Matrix<double> a = matrix_testing::create_rand_matrix<double>(n, n, 0.0, 10.0);
     //Matrix<double> b = matrix_testing::create_rand_matrix<double>(n, n, 0.0, 10.0);
-    Matrix<double> a({{1, 9, 1}, {2, 8, 1}, {3, 7, 1}, {4, 4, 1}, {5, 5, 1}, {6, 3, 1}});
-    Matrix<double> b({{1, 2}, {4, 6}, {6, 4}});
+    //Matrix<COMPLEX> a({{1, 9, 1}, {2, 8, 1}, {3, 7, 1}, {4, 4, 1}, {5, 5, 1}, {6, 3, 1}});
+    //Matrix<COMPLEX> b({{1, 2}, {4, 6}, {6, 4}});
 
+
+    /*
+    Matrix<double> a({{1, 2, -1, -1, 4},
+                      {2, 0, 1, 1, -1},
+                      {1, -1, -1, 1, 2},
+                      {-3, 2, 2, 2, 0},
+                      {4, 0, -2, 1, -1},
+                      {-1, -1, 1, -3, 2}});
+    Matrix<double> b({{1, -1, 0, 2},
+                      {2, 2, -1, -2},
+                      {1, 0, -1, 1},
+                      {-3, -1, 1, -1},
+                      {4, 2, -1, 1}});
+    */
+    /*
+    Matrix<double> a({{0, 1, 2, 3, 4},
+                      {1, 2, 3, 4, 5},
+                      {2, 3, 4, 5, 6},
+                      {3, 4, 5, 6, 7},
+                      {4, 5, 6, 7, 8}});
+    Matrix<double> b({{0, 1, 2, 3, 4},
+                      {1, 2, 3, 4, 5},
+                      {2, 3, 4, 5, 6},
+                      {3, 4, 5, 6, 7},
+                      {4, 5, 6, 7, 8}});
+    */
     //a.show();
     //b.show();
     auto begin = std::chrono::steady_clock::now();
@@ -81,7 +109,13 @@ int main(int argc, char** argv) {
     std::cout << "MULTIPLY: " << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count() << std::endl;
     //c.show();
 
-    Matrix<COMPLEX> check(a.n(), b.m(), 0);
+    a.set_multiply_mode(config::COMMON_MODE);
+    begin = std::chrono::steady_clock::now();
+    c = a * b;
+    end = std::chrono::steady_clock::now();
+    std::cout << "COMMON: " << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count() << std::endl;
+    /*
+    Matrix<double> check(a.n(), b.m(), 0);
     for (size_t i = 0; i < a.n(); i++) {
         for (size_t j = 0; j < b.m(); j++) {
             for (size_t k = 0; k < a.m(); k++) {
@@ -92,7 +126,7 @@ int main(int argc, char** argv) {
 
     //std::cout << std::endl;
     check.show();
-
+    */
 
 #ifdef ENABLE_MPI
     mpi::stop_mpi_slaves();
@@ -158,6 +192,7 @@ int main(int argc, char** argv) {
 
     */
 
+#ifdef ENABLE_MATPLOTLIB
 
     matplotlib::make_figure(config::fig_width, config::fig_height, config::dpi);
     matplotlib::probs_to_plot(probs, time_vec, basis);
@@ -232,6 +267,8 @@ int main(int argc, char** argv) {
     matplotlib::grid();
     matplotlib::show();
     */
+
+#endif // ENABLE_MATPLOTLIB
 
 #ifdef ENABLE_MPI
     mpi::stop_mpi_slaves();

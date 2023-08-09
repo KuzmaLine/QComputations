@@ -1,3 +1,5 @@
+#ifdef ENABLE_MATPLOTLIB
+
 #pragma once
 #include "dynamic.hpp"
 #include "state.hpp"
@@ -29,6 +31,8 @@ namespace matplotlib {
     void savefig(const std::string& filename, size_t dpi = config::dpi);
     void grid(bool is_enable = true);
 }
+
+#endif
 
 namespace plotly {
 

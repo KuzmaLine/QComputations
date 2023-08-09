@@ -105,6 +105,9 @@ template<typename T> class Matrix {
 
         void set_multiply_mode(int multiply_mode) { MULTIPLY_MODE = multiply_mode; }
         Matrix<T> submatrix(size_t n, size_t m, size_t row_index, size_t col_index) const;
+        
+        void to_fortran();
+        void from_fortran();
     private:
         size_t get_index(size_t i, size_t j) const { return i * m_ + j; }
         size_t n_;
@@ -115,6 +118,28 @@ template<typename T> class Matrix {
 };
 
 // -------------------------------- Matrix Methods ----------------------------------
+
+template<typename T>
+void Matrix<T>::to_fortran() {
+    auto c_mass = mass_;
+    size_t index = 0;
+    for (size_t j = 0; j < m_; j++) {
+        for (size_t i = 0; i < n_; i++) {
+            mass_[index++] = c_mass[get_index(i, j)];
+        }
+    }
+}
+
+template<typename T>
+void Matrix<T>::from_fortran() {
+    auto fort_mass = mass_;
+    size_t index = 0;
+    for (size_t i = 0; i < n_; i++) {
+        for (size_t j = 0; j < m_; j++) {
+            mass_[index++] = fort_mass[j * n_ + i];
+        }
+    }
+}
 
 template<typename T>
 Matrix<T> Matrix<T>::submatrix(size_t n, size_t m, size_t row_index, size_t col_index) const {

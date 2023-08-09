@@ -2,8 +2,12 @@
 #include "functions.hpp"
 
 namespace {
+#ifdef ENABLE_MATPLOTLIB
     namespace plt = matplotlibcpp;
+#endif
 }
+
+#ifdef ENABLE_MATPLOTLIB
 
 void matplotlib::probs_to_plot(const Evolution::Probs& probs, 
                                const std::vector<double>& time_vec,
@@ -154,3 +158,5 @@ void matplotlib::savefig(const std::string& filename, size_t dpi) {
 void matplotlib::grid(bool is_enable) {
     plt::grid(is_enable);
 }
+
+#endif

@@ -9,9 +9,21 @@
 
 #ifdef ENABLE_CLUSTER
 
-#include <mkl_pblas.h>
-#include <mkl_scalapack.h>
+//#include <mkl_pblas.h>
+//#include <mkl_scalapack.h>
 #include <mkl_blacs.h>
+#include <mkl.h>
+
+extern "C" {
+    int numroc_( int *n, int *nb, int *iproc, int *isrcproc, int *nprocs);
+    int indxl2g_(int*, int*, int*, int*, int*);
+    void descinit_(int *desc, int *m, int *n, int *mb, int *nb, int *irsrc, int *icsrc, int *ictxt, int
+*lld, int *info);
+    void pdgemm_( char *TRANSA,char *TRANSB,int *M,int *N,int *K,double
+*ALPHA,double *A,int *IA,int *JA,int *DESCA,
+ double * B, int * IB, int * JB, int * DESCB,double * BETA,double * C, int * IC, int *
+JC, int * DESCC );
+}
 
 #endif
 
@@ -508,55 +520,71 @@ void mpi::Dim_Multiply<COMPLEX>(const Matrix<COMPLEX>& A, const Matrix<COMPLEX>&
 #ifdef ENABLE_CLUSTER
 
 namespace {
-    void my_dgesd2d(int M, int N, int row_index, int col_index, const Matrix<double>& A, int LDA, int send_id) {
+
+#ifdef MKL_ILP64
+    using LP_TYPE = long long;
+#else
+    using LP_TYPE = int;
+#endif
+
+    void my_dgesd2d(LP_TYPE M, LP_TYPE N, LP_TYPE row_index, LP_TYPE col_index, const Matrix<double>& A, LP_TYPE LDA, LP_TYPE send_id) {
         auto sub = A.submatrix(M, N, row_index, col_index);
         //sub.show();
         MPI_Send(sub.mass_data(), M * N, MPI_DOUBLE, send_id, 0, MPI_COMM_WORLD);
     }
 
-    void my_dgerv2d(int M, int N, int offset, Matrix<double>& A, int LDA, int source_id) {
-        MPI_Recv(A.mass_data() + offset, M * N, MPI_DOUBLE, source_id, MPI_ANY_TAG, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+    void my_dgerv2d(LP_TYPE M, LP_TYPE N, LP_TYPE offset, Matrix<double>& A, LP_TYPE LDA, LP_TYPE source_id) {
+        Matrix<double> tmp(M, N);
+        MPI_Recv(tmp.mass_data(), M * N, MPI_DOUBLE, source_id, MPI_ANY_TAG, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+        for (size_t i = 0; i < M; i++) {
+            for (size_t j = 0; j < N; j++) {
+                A[offset / LDA + i][offset % LDA + j] = tmp[i][j];
+            }
+        }
     }
 
-    void my_zgesd2d(int M, int N, int row_index, int col_index, const Matrix<COMPLEX>& A, int LDA, int send_id) {
+    void my_zgesd2d(LP_TYPE M, LP_TYPE N, LP_TYPE row_index, LP_TYPE col_index, const Matrix<COMPLEX>& A, LP_TYPE LDA, LP_TYPE send_id) {
         auto sub = A.submatrix(M, N, row_index, col_index);
         //sub.show();
         MPI_Send(sub.mass_data(), M * N, MPI_DOUBLE_COMPLEX, send_id, 0, MPI_COMM_WORLD);
     }
 
-    void my_zgerv2d(int M, int N, int offset, Matrix<COMPLEX>& A, int LDA, int source_id) {
+    void my_zgerv2d(LP_TYPE M, LP_TYPE N, LP_TYPE offset, Matrix<COMPLEX>& A, LP_TYPE LDA, LP_TYPE source_id) {
         MPI_Recv(A.mass_data() + offset, M * N, MPI_DOUBLE_COMPLEX, source_id, MPI_ANY_TAG, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
     }
 
-    void ScatterBLACSMatrix_double(const Matrix<double>& A, int NA,
-                                    int MA, Matrix<double>& localA,
-                                    int NB_A, int MB_A, int nrows_A,
-                                    int ncols_A, int myrow, int mycol,
-                                    int proc_rows, int proc_cols,
-                                    int rank, int* p_ctxt) {
+    void ScatterBLACSMatrix_double(const Matrix<double>& A, LP_TYPE NA,
+                                    LP_TYPE MA, Matrix<double>& localA,
+                                    LP_TYPE NB_A, LP_TYPE MB_A, LP_TYPE nrows_A,
+                                    LP_TYPE ncols_A, LP_TYPE myrow, LP_TYPE mycol,
+                                    LP_TYPE proc_rows, LP_TYPE proc_cols,
+                                    LP_TYPE rank, LP_TYPE* p_ctxt) {
 
-        int sendr = 0, sendc = 0, recvr = 0, recvc = 0;
-        for (int r = 0; r < NA; r += NB_A, sendr = (sendr + 1) % proc_rows) {
+        auto A_tmp = A;
+        LP_TYPE iZERO = 0;
+        LP_TYPE sendr = 0, sendc = 0, recvr = 0, recvc = 0;
+        for (LP_TYPE r = 0; r < NA; r += NB_A, sendr = (sendr + 1) % proc_rows) {
             sendc = 0;
             // Number of rows to be sent
             // Is this the last row block?
-            int nr = NB_A;
+            LP_TYPE nr = NB_A;
             if (NA - r < NB_A)
                 nr = NA - r;
     
-            for (int c = 0; c < MA; c += MB_A, sendc = (sendc + 1) % proc_cols) {
+            for (LP_TYPE c = 0; c < MA; c += MB_A, sendc = (sendc + 1) % proc_cols) {
                 // Number of cols to be sent
                 // Is this the last col block?
-                int nc = MB_A;
+                LP_TYPE nc = MB_A;
                 if (MA - c < MB_A)
                     nc = MA - c;
     
                 if (rank == mpi::ROOT_ID) {
                     // Send a nr-by-nc submatrix to process (sendr, sendc)
-                    int send_id = blacs_pnum(p_ctxt, &sendr, &sendc);
+                    LP_TYPE send_id = blacs_pnum(p_ctxt, &sendr, &sendc);
                     //std::cout << "Send to " << send_id << " : " << sendr << " " << sendc << std::endl;
+                    //std::cout << nr << " " << nc << " " << r << " " << c << std::endl;
                     my_dgesd2d(nr, nc, r, c, A, NA, send_id);
-                    //zgesd2d(&ctxt, &nr, &nc, A.mass_data() + NA * c + r, NA, sendr, sendc);
+                    //dgesd2d(p_ctxt, &nr, &nc, A_tmp.mass_data() + NA * c + r, &NA, &sendr, &sendc);
                 }
     
                 if (myrow == sendr && mycol == sendc) {
@@ -564,9 +592,11 @@ namespace {
                     // Receive the same data
                     // The leading dimension of the local matrix is nrows!
                     my_dgerv2d(nr, nc, ncols_A * recvr + recvc, localA, ncols_A, mpi::ROOT_ID);
-                    //zgerv2d(&ctxt, &nr, &nc, localA.mass_data() + nrows_A * recvc + recvr, nrows_A, 0, 0);
+                    //dgerv2d(p_ctxt, &nr, &nc, localA.mass_data() + nrows_A * recvc + recvr, &nrows_A, &iZERO, &iZERO);
                     recvc = (recvc + nc) % ncols_A;
                 }
+
+                MPI_Barrier(MPI_COMM_WORLD);
             }
 
             if (myrow == sendr)
@@ -574,32 +604,32 @@ namespace {
         }
     }
 
-    void ScatterBLACSMatrix_COMPLEX(const Matrix<COMPLEX>& A, int NA,
-                                    int MA, Matrix<COMPLEX>& localA,
-                                    int NB_A, int MB_A, int nrows_A,
-                                    int ncols_A, int myrow, int mycol,
-                                    int proc_rows, int proc_cols,
-                                    int rank, int* p_ctxt) {
+    void ScatterBLACSMatrix_COMPLEX(const Matrix<COMPLEX>& A, LP_TYPE NA,
+                                    LP_TYPE MA, Matrix<COMPLEX>& localA,
+                                    LP_TYPE NB_A, LP_TYPE MB_A, LP_TYPE nrows_A,
+                                    LP_TYPE ncols_A, LP_TYPE myrow, LP_TYPE mycol,
+                                    LP_TYPE proc_rows, LP_TYPE proc_cols,
+                                    LP_TYPE rank, LP_TYPE* p_ctxt) {
 
-        int sendr = 0, sendc = 0, recvr = 0, recvc = 0;
-        for (int r = 0; r < NA; r += NB_A, sendr = (sendr + 1) % proc_rows) {
+        LP_TYPE sendr = 0, sendc = 0, recvr = 0, recvc = 0;
+        for (LP_TYPE r = 0; r < NA; r += NB_A, sendr = (sendr + 1) % proc_rows) {
             sendc = 0;
             // Number of rows to be sent
             // Is this the last row block?
-            int nr = NB_A;
+            LP_TYPE nr = NB_A;
             if (NA - r < NB_A)
                 nr = NA - r;
     
-            for (int c = 0; c < MA; c += MB_A, sendc = (sendc + 1) % proc_cols) {
+            for (LP_TYPE c = 0; c < MA; c += MB_A, sendc = (sendc + 1) % proc_cols) {
                 // Number of cols to be sent
                 // Is this the last col block?
-                int nc = MB_A;
+                LP_TYPE nc = MB_A;
                 if (MA - c < MB_A)
                     nc = MA - c;
     
                 if (rank == mpi::ROOT_ID) {
                     // Send a nr-by-nc submatrix to process (sendr, sendc)
-                    int send_id = blacs_pnum(p_ctxt, &sendr, &sendc);
+                    LP_TYPE send_id = blacs_pnum(p_ctxt, &sendr, &sendc);
                     //std::cout << "Send to " << send_id << " : " << sendr << " " << sendc << std::endl;
                     my_zgesd2d(nr, nc, r, c, A, NA, send_id);
                     //zgesd2d(&ctxt, &nr, &nc, A.mass_data() + NA * c + r, NA, sendr, sendc);
@@ -622,18 +652,19 @@ namespace {
 }
 
 void mpi::parallel_dgemm(const Matrix<double>& A, const Matrix<double>& B, Matrix<double>& C) {
-    int iZERO = 0;
+    LP_TYPE iZERO = 0;
     int rank, world_size;
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
     MPI_Comm_size(MPI_COMM_WORLD, &world_size);
 
-    std::cout << world_size << std::endl;
-    int myid, numproc, ctxt, myrow, mycol;
+    //std::cout << world_size << std::endl;
+    LP_TYPE myid, numproc, ctxt, myrow, mycol;
     char order = 'R';
-    int proc_rows = std::sqrt(world_size), proc_cols = std::sqrt(world_size);
+    LP_TYPE proc_rows = std::sqrt(world_size), proc_cols = world_size / proc_rows;
     //std::cout << rank << " Here1\n";
     blacs_pinfo(&myid, &numproc);
-    blacs_get(&iZERO, &iZERO, &ctxt);
+    LP_TYPE iMINUS = -1;
+    blacs_get(&iMINUS, &iZERO, &ctxt);
     //std::cout << rank << " Here3\n";
     blacs_gridinit(&ctxt, &order, &proc_rows, &proc_cols);
     //std::cout << rank << " Here4\n";
@@ -649,32 +680,32 @@ void mpi::parallel_dgemm(const Matrix<double>& A, const Matrix<double>& B, Matri
 
     MPI_Bcast(&bcast_data, 4, MPI_INT, mpi::ROOT_ID, MPI_COMM_WORLD);
 
-    int NA = bcast_data[0], MA = bcast_data[1], NB = bcast_data[2], MB = bcast_data[3];
-    int NB_A = NA / proc_rows, MB_A = MA / proc_cols, NB_B = NB / proc_rows, MB_B = MB / proc_cols;
+    LP_TYPE NA = bcast_data[0], MA = bcast_data[1], NB = bcast_data[2], MB = bcast_data[3];
+    LP_TYPE NB_A = NA / proc_rows, MB_A = MA / proc_cols, NB_B = NB / proc_rows, MB_B = MB / proc_cols;
 
-    NB_A = 2;
-    MB_A = 2;
-    NB_B = 2;
-    MB_B = 2;
-    int nrows_A = numroc(&NA, &NB_A, &myrow, &iZERO, &proc_rows);
-    int ncols_A = numroc(&MA, &MB_A, &mycol, &iZERO, &proc_cols);
-    int nrows_B = numroc(&NB, &NB_B, &myrow, &iZERO, &proc_rows);
-    int ncols_B = numroc(&MB, &MB_B, &mycol, &iZERO, &proc_cols);
-    int nrows_C = numroc(&NA, &NB_A, &myrow, &iZERO, &proc_rows);
-    int ncols_C = numroc(&MB, &MB_B, &mycol, &iZERO, &proc_cols);
+    NB_A = 4000;
+    MB_A = 2000;
+    NB_B = 4000;
+    MB_B = 2000;
+    LP_TYPE nrows_A = numroc_(&NA, &NB_A, &myrow, &iZERO, &proc_rows);
+    LP_TYPE ncols_A = numroc_(&MA, &MB_A, &mycol, &iZERO, &proc_cols);
+    LP_TYPE nrows_B = numroc_(&NB, &NB_B, &myrow, &iZERO, &proc_rows);
+    LP_TYPE ncols_B = numroc_(&MB, &MB_B, &mycol, &iZERO, &proc_cols);
+    LP_TYPE nrows_C = numroc_(&NA, &NB_A, &myrow, &iZERO, &proc_rows);
+    LP_TYPE ncols_C = numroc_(&MB, &MB_B, &mycol, &iZERO, &proc_cols);
 
-    int LLD_A = std::max(1, nrows_A);
-    int LLD_B = std::max(1, nrows_B);
-    int LLD_C = std::max(1, nrows_C);
+    LP_TYPE LLD_A = std::max<LP_TYPE>(1, nrows_A);
+    LP_TYPE LLD_B = std::max<LP_TYPE>(1, nrows_B);
+    LP_TYPE LLD_C = std::max<LP_TYPE>(1, nrows_C);
 
     Matrix<double> localA(nrows_A, ncols_A);
     Matrix<double> localB(nrows_B, ncols_B);
-    Matrix<double> localC(nrows_C, ncols_C, 0.5);
-    int desca[9];
-    int descb[9];
-    int descc[9];
+    Matrix<double> localC(nrows_C, ncols_C);
+    LP_TYPE desca[9];
+    LP_TYPE descb[9];
+    LP_TYPE descc[9];
 
-    for (int id = 0; id < numproc; ++id) {
+    for (LP_TYPE id = 0; id < numproc; ++id) {
         if (id == myid) {
             std::cout << "data on node " << myid << std::endl;
             std::cout << myrow << " " << mycol << std::endl;
@@ -686,14 +717,6 @@ void mpi::parallel_dgemm(const Matrix<double>& A, const Matrix<double>& B, Matri
         MPI_Barrier(MPI_COMM_WORLD);
     }
 
-    int rsrc = 0, csrc = 0, info;
-    descinit(desca, &NA, &MA, &NB_A, &MB_A, &rsrc, &csrc, &ctxt, &LLD_A, &info);
-    if (info != 0) std::cout << "ERROR OF DESCINIT_A: " << rank << " " << info << std::endl;
-    descinit(descb, &NB, &MB, &NB_B, &MB_B, &rsrc, &csrc, &ctxt, &LLD_B, &info);
-    if (info != 0) std::cout << "ERROR OF DESCINIT_B: " << rank << " " << info << std::endl;
-    descinit(descc, &NA, &MB, &NB_A, &MB_B, &rsrc, &csrc, &ctxt, &LLD_C, &info);
-    if (info != 0) std::cout << "ERROR OF DESCINIT_C: " << rank << " " << info << std::endl;
-
     ScatterBLACSMatrix_double(A, NA, MA, localA, NB_A, MB_A,
                                nrows_A, ncols_A, myrow, mycol,
                                proc_rows, proc_cols, myid, &ctxt);
@@ -702,6 +725,111 @@ void mpi::parallel_dgemm(const Matrix<double>& A, const Matrix<double>& B, Matri
                                nrows_B, ncols_B, myrow, mycol,
                                proc_rows, proc_cols, myid, &ctxt);
 
+    LP_TYPE rsrc = 0, csrc = 0, info;
+    descinit_(desca, &NA, &MA, &NB_A, &MB_A, &rsrc, &csrc, &ctxt, &LLD_A, &info);
+    if (info != 0) std::cout << "ERROR OF descinit__A: " << rank << " " << info << std::endl;
+    descinit_(descb, &NB, &MB, &NB_B, &MB_B, &rsrc, &csrc, &ctxt, &LLD_B, &info);
+    if (info != 0) std::cout << "ERROR OF descinit__B: " << rank << " " << info << std::endl;
+    descinit_(descc, &NA, &MB, &NB_A, &MB_B, &rsrc, &csrc, &ctxt, &LLD_C, &info);
+    if (info != 0) std::cout << "ERROR OF descinit__C: " << rank << " " << info << std::endl;
+
+    for (size_t id = 0; id < numproc; id++) {
+        if (id == myid) {
+            std::cout << "NODE - " << id << std::endl;
+            for (size_t i = 0; i < 9; i++) {
+                std::cout << desca[i] << " ";
+            }
+
+            std::cout << std::endl;
+            for (size_t i = 0; i < 9; i++) {
+                std::cout << descb[i] << " ";
+            }
+            std::cout << std::endl;
+            for (size_t i = 0; i < 9; i++) {
+                std::cout << descc[i] << " ";
+            }
+            std::cout << std::endl;
+            std::flush(std::cout);
+        }
+        MPI_Barrier(MPI_COMM_WORLD);
+    }
+
+    /*
+    Matrix<double> TA(NA, MA);
+    Matrix<double> TB(NB, MB);
+
+    if (rank == mpi::ROOT_ID) { TA = A; TB = B;}
+
+    MPI_Bcast(TA.mass_data(), NA * MA, MPI_DOUBLE, mpi::ROOT_ID, MPI_COMM_WORLD);
+    MPI_Bcast(TB.mass_data(), NB * MB, MPI_DOUBLE, mpi::ROOT_ID, MPI_COMM_WORLD);
+
+    for (LP_TYPE iloc = 0; iloc < nrows_A; iloc++) {
+        for (LP_TYPE jloc = 0; jloc < ncols_A; jloc++) {
+            LP_TYPE fortidl = iloc + 1;
+            LP_TYPE fortjdl = jloc + 1;
+            LP_TYPE i = indxl2g_(&fortidl, &NB_A, &myrow, &iZERO, &proc_rows)-1;
+            LP_TYPE j = indxl2g_(&fortjdl, &MB_A, &mycol, &iZERO, &proc_cols)-1;
+            localA[iloc][jloc]=TA[i][j];
+        }
+    }
+
+    for (LP_TYPE iloc = 0; iloc < nrows_A; iloc++) {
+        for (LP_TYPE jloc = 0; jloc < ncols_A; jloc++) {
+            LP_TYPE fortidl = iloc + 1;
+            LP_TYPE fortjdl = jloc + 1;
+            LP_TYPE i = indxl2g_(&fortidl, &NB_B, &myrow, &iZERO, &proc_rows)-1;
+            LP_TYPE j = indxl2g_(&fortjdl, &MB_B, &mycol, &iZERO, &proc_cols)-1;
+            localB[iloc][jloc]=TB[i][j];
+        }
+    }
+    */
+
+    /*
+    for (LP_TYPE id = 0; id < numproc; ++id) {
+       if (id == myid) {
+       std::cout << "A_loc on node " << myid << std::endl;
+           for (LP_TYPE r = 0; r < nrows_A; ++r) {
+               for (LP_TYPE c = 0; c < ncols_A; ++c)
+                   std::cout << std::setw(config::WIDTH) << localA[r][c] << " ";
+           std::cout << std::endl;
+           std::flush(std::cout);
+            }
+           std::cout << std::endl;
+       }
+
+    //blacs_barrier(&ctxt, "All");
+        MPI_Barrier(MPI_COMM_WORLD);
+    }
+
+    MPI_Barrier(MPI_COMM_WORLD);
+
+    for (LP_TYPE id = 0; id < numproc; ++id) {
+        if (id == myid) {
+        std::cout << "B_loc on node " << myid << std::endl;
+        for (LP_TYPE r = 0; r < nrows_B; ++r) {
+           for (LP_TYPE c = 0; c < ncols_B; ++c)
+            std::cout << std::setw(config::WIDTH) << localB[r][c] << " ";
+            std::cout << std::endl;
+            std::flush(std::cout);
+       }
+       std::cout << std::endl;
+       }
+
+    //blacs_barrier(&ctxt, "All");
+    MPI_Barrier(MPI_COMM_WORLD);
+    }
+    */
+    localA.to_fortran();
+    localB.to_fortran();
+
+/*
+    1 2 3 4
+    5 6 7 8
+    9 10 11 12
+
+    1 2 3 4 5 6 7 8 9 10 11 12
+    1 5 9 2 6 10 3 7 11 4 8 12
+*/
     /*
     if (rank == 0) {
     localA.set_multiply_mode(config::COMMON_MODE);
@@ -725,12 +853,13 @@ void mpi::parallel_dgemm(const Matrix<double>& A, const Matrix<double>& B, Matri
     MPI_Barrier(MPI_COMM_WORLD);
     */
 
-    for (int id = 0; id < numproc; ++id) {
+    /*
+    for (LP_TYPE id = 0; id < numproc; ++id) {
        if (id == myid) {
        std::cout << "A_loc on node " << myid << std::endl;
-           for (int r = 0; r < nrows_A; ++r) {
-               for (int c = 0; c < ncols_A; ++c)
-                   std::cout << std::setw(config::WIDTH) << localA[r][c] << " ";
+           for (LP_TYPE r = 0; r < nrows_A; ++r) {
+               for (LP_TYPE c = 0; c < ncols_A; ++c)
+                   std::cout << std::setw(config::WIDTH) << localA.mass_data()[c * nrows_A + r] << " ";
            std::cout << std::endl;
            std::flush(std::cout);
             }
@@ -743,12 +872,12 @@ void mpi::parallel_dgemm(const Matrix<double>& A, const Matrix<double>& B, Matri
 
     MPI_Barrier(MPI_COMM_WORLD);
 
-    for (int id = 0; id < numproc; ++id) {
+    for (LP_TYPE id = 0; id < numproc; ++id) {
         if (id == myid) {
         std::cout << "B_loc on node " << myid << std::endl;
-        for (int r = 0; r < nrows_B; ++r) {
-           for (int c = 0; c < ncols_B; ++c)
-            std::cout << std::setw(config::WIDTH) << localB[r][c] << " ";
+        for (LP_TYPE r = 0; r < nrows_B; ++r) {
+           for (LP_TYPE c = 0; c < ncols_B; ++c)
+            std::cout << std::setw(config::WIDTH) << localB.mass_data()[c * nrows_B + r] << " ";
             std::cout << std::endl;
             std::flush(std::cout);
        }
@@ -758,7 +887,7 @@ void mpi::parallel_dgemm(const Matrix<double>& A, const Matrix<double>& B, Matri
     //blacs_barrier(&ctxt, "All");
     MPI_Barrier(MPI_COMM_WORLD);
     }
-
+    */
     //_MKL_Complex16 alpha;
     //alpha.real = 1;
     //alpha.imag = 0;
@@ -767,12 +896,17 @@ void mpi::parallel_dgemm(const Matrix<double>& A, const Matrix<double>& B, Matri
     //betta.imag = 0;
 
     char N = 'N';
-    int iONE = 1;
-    double alpha = 1;
-    double betta = 2;
-    pdgemm(&N, &N, &NA, &MB, &MA, &alpha, localA.mass_data(), &iONE, &iONE, desca,
+    LP_TYPE iONE = 1;
+    double alpha = 1.0;
+    double betta = 0;
+
+    auto begin = std::chrono::steady_clock::now();
+    pdgemm_(&N, &N, &NA, &MB, &MA, &alpha, localA.mass_data(), &iONE, &iONE, desca,
                                     localB.mass_data(), &iONE, &iONE, descb,
                                     &betta, localC.mass_data(), &iONE, &iONE, descc);
+    auto end = std::chrono::steady_clock::now();
+    if (rank == mpi::ROOT_ID) std::cout << "PDGEMM: " << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count() << std::endl;
+    localC.from_fortran();
     //pzgemm(&N, &N, &NA, &MB, &MA, &alpha, reinterpret_cast<_MKL_Complex16*>(localA.mass_data()), &iONE, &iONE, desca,
     //                                reinterpret_cast<_MKL_Complex16*>(localB.mass_data()), &iONE, &iONE, descb,
     //                                &betta, reinterpret_cast<_MKL_Complex16*>(localC.mass_data()), &iONE, &iONE, descc);
@@ -816,12 +950,13 @@ void mpi::parallel_dgemm(const Matrix<double>& A, const Matrix<double>& B, Matri
     }
     */
 
+    /*
     MPI_Barrier(MPI_COMM_WORLD);
-    for (int id = 0; id < numproc; ++id) {
+    for (LP_TYPE id = 0; id < numproc; ++id) {
         if (id == myid) {
             std::cout << "C_loc on node " << myid << std::endl;
-            for (int r = 0; r < nrows_C; ++r) {
-                for (int c = 0; c < ncols_C; ++c)
+            for (LP_TYPE r = 0; r < nrows_C; ++r) {
+                for (LP_TYPE c = 0; c < ncols_C; ++c)
                     std::cout << std::setw(config::WIDTH) << localC[r][c] << " ";
                 std::cout << std::endl;
             }
@@ -831,22 +966,22 @@ void mpi::parallel_dgemm(const Matrix<double>& A, const Matrix<double>& B, Matri
         blacs_barrier(&ctxt, "All");
         //MPI_Barrier(MPI_COMM_WORLD);
     }
-
+    */
     blacs_gridexit(&ctxt);
     //blacs_exit(&iZERO);
 }
 
 void mpi::parallel_zgemm(const Matrix<COMPLEX>& A, const Matrix<COMPLEX>& B, Matrix<COMPLEX>& C) {
     using M_COMPLEX = MKL_Complex16;
-    int iZERO = 0;
+    LP_TYPE iZERO = 0;
     int rank, world_size;
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
     MPI_Comm_size(MPI_COMM_WORLD, &world_size);
 
     //std::cout << world_size << std::endl;
-    int myid, numproc, ctxt, myrow, mycol;
+    LP_TYPE myid, numproc, ctxt, myrow, mycol;
     char order = 'R';
-    int proc_rows = sqrt(world_size), proc_cols = sqrt(world_size);
+    LP_TYPE proc_rows = sqrt(world_size), proc_cols = sqrt(world_size);
     //std::cout << rank << " Here1\n";
     blacs_pinfo(&myid, &numproc);
     blacs_get(&iZERO, &iZERO, &ctxt);
@@ -866,32 +1001,32 @@ void mpi::parallel_zgemm(const Matrix<COMPLEX>& A, const Matrix<COMPLEX>& B, Mat
 
     MPI_Bcast(&bcast_data, 4, MPI_INT, mpi::ROOT_ID, MPI_COMM_WORLD);
 
-    int NA = bcast_data[0], MA = bcast_data[1], NB = bcast_data[2], MB = bcast_data[3];
-    int NB_A = NA / proc_rows, MB_A = MA / proc_cols, NB_B = NB / proc_rows, MB_B = MB / proc_cols;
+    LP_TYPE NA = bcast_data[0], MA = bcast_data[1], NB = bcast_data[2], MB = bcast_data[3];
+    LP_TYPE NB_A = NA / proc_rows, MB_A = MA / proc_cols, NB_B = NB / proc_rows, MB_B = MB / proc_cols;
 
     NB_A = 2;
     MB_A = 2;
     NB_B = 2;
     MB_B = 2;
-    int nrows_A = numroc(&NA, &NB_A, &myrow, &iZERO, &proc_rows);
-    int ncols_A = numroc(&MA, &MB_A, &mycol, &iZERO, &proc_cols);
-    int nrows_B = numroc(&NB, &NB_B, &myrow, &iZERO, &proc_rows);
-    int ncols_B = numroc(&MB, &MB_B, &mycol, &iZERO, &proc_cols);
-    int nrows_C = numroc(&NA, &NB_A, &myrow, &iZERO, &proc_rows);
-    int ncols_C = numroc(&MB, &MB_B, &mycol, &iZERO, &proc_cols);
+    LP_TYPE nrows_A = numroc_(&NA, &NB_A, &myrow, &iZERO, &proc_rows);
+    LP_TYPE ncols_A = numroc_(&MA, &MB_A, &mycol, &iZERO, &proc_cols);
+    LP_TYPE nrows_B = numroc_(&NB, &NB_B, &myrow, &iZERO, &proc_rows);
+    LP_TYPE ncols_B = numroc_(&MB, &MB_B, &mycol, &iZERO, &proc_cols);
+    LP_TYPE nrows_C = numroc_(&NA, &NB_A, &myrow, &iZERO, &proc_rows);
+    LP_TYPE ncols_C = numroc_(&MB, &MB_B, &mycol, &iZERO, &proc_cols);
 
-    int LLD_A = std::max(1, nrows_A);
-    int LLD_B = std::max(1, nrows_B);
-    int LLD_C = std::max(1, nrows_C);
+    LP_TYPE LLD_A = std::max<LP_TYPE>(1, nrows_A);
+    LP_TYPE LLD_B = std::max<LP_TYPE>(1, nrows_B);
+    LP_TYPE LLD_C = std::max<LP_TYPE>(1, nrows_C);
 
     Matrix<COMPLEX> localA(nrows_A, ncols_A);
     Matrix<COMPLEX> localB(nrows_B, ncols_B);
     Matrix<COMPLEX> localC(nrows_C, ncols_C);
-    int desca[9];
-    int descb[9];
-    int descc[9];
+    LP_TYPE desca[9];
+    LP_TYPE descb[9];
+    LP_TYPE descc[9];
 
-    for (int id = 0; id < numproc; ++id) {
+    for (LP_TYPE id = 0; id < numproc; ++id) {
         if (id == myid) {
             std::cout << "data on node " << myid << std::endl;
             std::cout << myrow << " " << mycol << std::endl;
@@ -902,13 +1037,13 @@ void mpi::parallel_zgemm(const Matrix<COMPLEX>& A, const Matrix<COMPLEX>& B, Mat
         MPI_Barrier(MPI_COMM_WORLD);
     }
 
-    int rsrc = 0, csrc = 0, info;
-    descinit(desca, &NA, &MA, &NB_A, &MB_A, &rsrc, &csrc, &ctxt, &LLD_A, &info);
-    if (info != 0) std::cout << "ERROR OF DESCINIT_A: " << rank << " " << info << std::endl;
-    descinit(descb, &NB, &MB, &NB_B, &MB_B, &rsrc, &csrc, &ctxt, &LLD_B, &info);
-    if (info != 0) std::cout << "ERROR OF DESCINIT_B: " << rank << " " << info << std::endl;
-    descinit(descc, &NA, &MB, &NB_A, &MB_B, &rsrc, &csrc, &ctxt, &LLD_C, &info);
-    if (info != 0) std::cout << "ERROR OF DESCINIT_C: " << rank << " " << info << std::endl;
+    LP_TYPE rsrc = 0, csrc = 0, info;
+    descinit_(desca, &NA, &MA, &NB_A, &MB_A, &rsrc, &csrc, &ctxt, &LLD_A, &info);
+    if (info != 0) std::cout << "ERROR OF descinit__A: " << rank << " " << info << std::endl;
+    descinit_(descb, &NB, &MB, &NB_B, &MB_B, &rsrc, &csrc, &ctxt, &LLD_B, &info);
+    if (info != 0) std::cout << "ERROR OF descinit__B: " << rank << " " << info << std::endl;
+    descinit_(descc, &NA, &MB, &NB_A, &MB_B, &rsrc, &csrc, &ctxt, &LLD_C, &info);
+    if (info != 0) std::cout << "ERROR OF descinit__C: " << rank << " " << info << std::endl;
 
     ScatterBLACSMatrix_COMPLEX(A, NA, MA, localA, NB_A, MB_A,
                                nrows_A, ncols_A, myrow, mycol,
@@ -941,11 +1076,11 @@ void mpi::parallel_zgemm(const Matrix<COMPLEX>& A, const Matrix<COMPLEX>& B, Mat
     MPI_Barrier(MPI_COMM_WORLD);
     */
 
-    for (int id = 0; id < numproc; ++id) {
+    for (LP_TYPE id = 0; id < numproc; ++id) {
        if (id == myid) {
        std::cout << "A_loc on node " << myid << std::endl;
-           for (int r = 0; r < nrows_A; ++r) {
-               for (int c = 0; c < ncols_A; ++c)
+           for (LP_TYPE r = 0; r < nrows_A; ++r) {
+               for (LP_TYPE c = 0; c < ncols_A; ++c)
                    std::cout << std::setw(config::WIDTH) << localA[r][c] << " ";
            std::cout << std::endl;
            std::flush(std::cout);
@@ -959,11 +1094,11 @@ void mpi::parallel_zgemm(const Matrix<COMPLEX>& A, const Matrix<COMPLEX>& B, Mat
 
     MPI_Barrier(MPI_COMM_WORLD);
 
-    for (int id = 0; id < numproc; ++id) {
+    for (LP_TYPE id = 0; id < numproc; ++id) {
         if (id == myid) {
         std::cout << "B_loc on node " << myid << std::endl;
-        for (int r = 0; r < nrows_B; ++r) {
-           for (int c = 0; c < ncols_B; ++c)
+        for (LP_TYPE r = 0; r < nrows_B; ++r) {
+           for (LP_TYPE c = 0; c < ncols_B; ++c)
             std::cout << std::setw(config::WIDTH) << localB[r][c] << " ";
             std::cout << std::endl;
             std::flush(std::cout);
@@ -983,12 +1118,12 @@ void mpi::parallel_zgemm(const Matrix<COMPLEX>& A, const Matrix<COMPLEX>& B, Mat
     //betta.imag = 0;
 
     char N = 'N';
-    int iONE = 1;
+    LP_TYPE iONE = 1;
     COMPLEX alpha(1, 0);
     COMPLEX betta(0, 0);
-    pzgemm(&N, &N, &NA, &MB, &MA, &alpha, localA.mass_data(), &iONE, &iONE, desca,
-                                    localB.mass_data(), &iONE, &iONE, descb,
-                                    &betta, localC.mass_data(), &iONE, &iONE, descc);
+    //pzgemm(&N, &N, &NA, &MB, &MA, &alpha, localA.mass_data(), &iONE, &iONE, desca,
+    //                                localB.mass_data(), &iONE, &iONE, descb,
+    //                                &betta, localC.mass_data(), &iONE, &iONE, descc);
     //pzgemm(&N, &N, &NA, &MB, &MA, &alpha, reinterpret_cast<_MKL_Complex16*>(localA.mass_data()), &iONE, &iONE, desca,
     //                                reinterpret_cast<_MKL_Complex16*>(localB.mass_data()), &iONE, &iONE, descb,
     //                                &betta, reinterpret_cast<_MKL_Complex16*>(localC.mass_data()), &iONE, &iONE, descc);
@@ -1033,11 +1168,11 @@ void mpi::parallel_zgemm(const Matrix<COMPLEX>& A, const Matrix<COMPLEX>& B, Mat
     */
 
     MPI_Barrier(MPI_COMM_WORLD);
-    for (int id = 0; id < numproc; ++id) {
+    for (LP_TYPE id = 0; id < numproc; ++id) {
         if (id == myid) {
             std::cout << "C_loc on node " << myid << std::endl;
-            for (int r = 0; r < nrows_C; ++r) {
-                for (int c = 0; c < ncols_C; ++c)
+            for (LP_TYPE r = 0; r < nrows_C; ++r) {
+                for (LP_TYPE c = 0; c < ncols_C; ++c)
                     std::cout << std::setw(config::WIDTH) << localC[r][c] << " ";
                 std::cout << std::endl;
             }
