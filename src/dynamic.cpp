@@ -87,7 +87,7 @@ Evolution::Probs Evolution::schrodinger(const std::vector<COMPLEX>& init_state, 
         mpi::bcast_vector_complex(eigen_vectors.get_mass());
     } else {
         eigen_values = mpi::bcast_vector_double();
-        eigen_vectors = Matrix<COMPLEX>(mpi::bcast_vector_complex(), eigen_values.size(), eigen_values.size());
+        eigen_vectors = Matrix<COMPLEX>(mpi::bcast_vector_complex(), eigen_values.size(), eigen_values.size(), true); // c_style
     }
 #endif
     std::vector<COMPLEX> lambda;

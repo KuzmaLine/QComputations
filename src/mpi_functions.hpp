@@ -12,6 +12,14 @@
 #include <functional>
 
 namespace {
+    #ifdef MKL_ILP64
+        using LP_TYPE = long long;
+        constexpr MPI_Datatype MPI_BCAST_DATATYPE = MPI_LONG_LONG;
+    #else
+        using LP_TYPE = int;
+        constexpr MPI_Datatype MPI_BCAST_DATATYPE = MPI_INT;
+    #endif
+
     using COMPLEX = std::complex<double>;
 }
 
@@ -19,18 +27,11 @@ namespace {
 namespace COMMAND {
     constexpr int COMMANDS_COUNT = 11;
 
-    constexpr int STOP = 0;
-    constexpr int GENERATE_H = 1;
-    constexpr int GENERATE_H_FUNC = 2;
-    constexpr int SCHRODINGER = 3;
-    constexpr int QME = 4;
-    constexpr int CANNON_MULTIPLY = 5;
-    constexpr int MATVEC = 6;
-    constexpr int MATNUM = 7;
-    constexpr int EXIT_FROM_FUNC = 8;
-    constexpr int DIM_MULTIPLY = 9;
-    constexpr int P_GEMM_MULTIPLY = 10;
-
+    enum COMMANDS { STOP = 100, GENERATE_H = 101, GENERATE_H_FUNC = 102,
+                    SCHRODINGER = 103, QME = 104, CANNON_MULTIPLY = 105,
+                    MATVEC = 106, MATNUM = 107, EXIT_FROM_FUNC = 108,
+                    DIM_MULTIPLY = 109, P_GEMM_MULTIPLY = 110};
+    // UNUSED, DELETE
     namespace DIM {
         constexpr int ROW = 0;
         constexpr int COL = 1;
@@ -54,11 +55,58 @@ namespace mpi {
     constexpr int ROOT_ID = 0;
 
     // Send command to other process
-    void make_command(int command);
+    void make_command(COMMAND::COMMANDS command);
 
     std::vector<COMPLEX> bcast_vector_complex(const std::vector<COMPLEX>& v = {});
     std::vector<double> bcast_vector_double(const std::vector<double>& v = {});
     State bcast_state(const State& state = State());
+
+
+#ifdef ENABLE_CLUSTER
+    // ON BLACS GRID
+
+    void init_grid(LP_TYPE& ctxt);
+
+    template<typename T>
+    Matrix<T> scatter_blacs_matrix(const Matrix<T>& A, LP_TYPE& N, LP_TYPE& M,
+                             LP_TYPE& NB, LP_TYPE& MB, LP_TYPE& nrows,
+                             LP_TYPE& ncols, LP_TYPE& ctxt, LP_TYPE root_id,
+                             LP_TYPE NB_FORCE = LP_TYPE(0), LP_TYPE MB_FORCE = LP_TYPE(0));
+
+    template<>
+    Matrix<double> scatter_blacs_matrix<double>(const Matrix<double>& A, LP_TYPE& N, LP_TYPE& M,
+                                      LP_TYPE& NB, LP_TYPE& MB, LP_TYPE& nrows,
+                                      LP_TYPE& ncols, LP_TYPE& ctxt, LP_TYPE root_id,
+                                      LP_TYPE NB_FORCE, LP_TYPE MB_FORCE);
+    template<>
+    Matrix<COMPLEX> scatter_blacs_matrix<COMPLEX>(const Matrix<COMPLEX>& A, LP_TYPE& N, LP_TYPE& M,
+                                       LP_TYPE& NB, LP_TYPE& MB, LP_TYPE& nrows,
+                                       LP_TYPE& ncols, LP_TYPE& ctxt, LP_TYPE root_id,
+                                       LP_TYPE NB_FORCE, LP_TYPE MB_FORCE);
+    
+    template<typename T>
+    void gather_blacs_matrix(Matrix<T>& A, LP_TYPE& N, LP_TYPE& M,
+                             LP_TYPE& NB, LP_TYPE& MB, LP_TYPE& nrows,
+                             LP_TYPE& ncols, LP_TYPE root_id,
+                             LP_TYPE NB_FORCE = 0, LP_TYPE MB_FORCE = 0);
+
+    template<>
+    void gather_blacs_matrix<double>(Matrix<double>& A, LP_TYPE& N, LP_TYPE& M,
+                                     LP_TYPE& NB, LP_TYPE& MB, LP_TYPE& nrows,
+                                     LP_TYPE& ncols, LP_TYPE root_id,
+                                     LP_TYPE NB_FORCE, LP_TYPE MB_FORCE);
+    template<>
+    void gather_blacs_matrix<COMPLEX>(Matrix<COMPLEX>& A, LP_TYPE& N, LP_TYPE& M,
+                                      LP_TYPE& NB, LP_TYPE& MB, LP_TYPE& nrows,
+                                      LP_TYPE& ncols, LP_TYPE root_id,
+                                      LP_TYPE NB_FORCE, LP_TYPE MB_FORCE);
+
+#endif
+
+    MPI_Datatype Create_Block_Type_double (LP_TYPE N, LP_TYPE M, LP_TYPE NB, LP_TYPE MB);
+    MPI_Datatype Create_Block_Type_complex (LP_TYPE N, LP_TYPE M, LP_TYPE NB, LP_TYPE MB);
+
+    // DELETE
     void RING_Bcast(double *buf, int count, MPI_Datatype type, int root, MPI_Comm comm);
 
     // Stay to wait all MPI process until root process give commands. MPI_Init included
@@ -121,8 +169,11 @@ namespace mpi {
     */
 
 #ifdef ENABLE_CLUSTER 
-   void parallel_dgemm(const Matrix<double>& A, const Matrix<double>& B, Matrix<double>& C);
+   void parallel_dgemm(const Matrix<double>& A, const Matrix<double>& B, Matrix<double>& C,
+                       bool is_distributed = false, LP_TYPE* desca = NULL, LP_TYPE* descb = NULL, LP_TYPE* descc = NULL);
    void parallel_zgemm(const Matrix<COMPLEX>& A, const Matrix<COMPLEX>& B, Matrix<COMPLEX>& C);
+
+   void print_distributed_matrix(const Matrix<double>& A, const std::string& matrix_name, MPI_Comm comm = MPI_COMM_WORLD);
 #endif
 }
 

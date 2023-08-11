@@ -10,7 +10,6 @@
 #include <functional>
 #include <mkl_lapack.h>
 #include <mkl_lapacke.h>
-#include <mkl_blas.h>
 #include <mkl_cblas.h>
 
 #ifdef ENABLE_MPI
@@ -29,6 +28,7 @@ Matrix<COMPLEX> FROM_lapack_complex_double_TO_Matrix(lapack_complex_double* A, l
 
 // start = 0, end = 4, step = 2 -> {0, 2, 4}
 std::vector<double> make_timeline(double start, double end, double step);
+
 //Equal to Python
 std::vector<double> linspace(double start, double end, double npoints);
 

@@ -14,13 +14,16 @@ namespace {
 template<>
 Matrix<double> Matrix<double>::operator* (const Matrix<double>& A) const {
     assert(m_ == A.n_);
-    Matrix<double> res(n_, A.m_);
+    Matrix<double> res(n_, A.m_, this->is_c_style());
 
     double alpha = 1.0;
     double betta = 0.0;
-    cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans,
+
+    auto type = CblasRowMajor;
+    if (!(this->is_c_style())) type = CblasColMajor;
+    cblas_dgemm(type, CblasNoTrans, CblasNoTrans,
                 n_, A.m_, m_, alpha, mass_.data(),
-                m_, A.mass_.data(), A.m_, betta, res.mass_.data(), A.m_);
+                this->LD(), A.mass_.data(), A.LD(), betta, res.mass_.data(), res.LD());
     return res;
 }
 
@@ -37,14 +40,17 @@ Matrix<int> Matrix<int>::operator* (const Matrix<int>& A) const {
 template<>
 Matrix<COMPLEX> Matrix<COMPLEX>::operator* (const Matrix<COMPLEX>& A) const {
     assert(m_ == A.n_);
-    Matrix<COMPLEX> res(n_, A.m_);
+    Matrix<COMPLEX> res(n_, A.m_, this->is_c_style());
 
     COMPLEX alpha(1, 0);
     COMPLEX betta(0, 0);
-    cblas_zgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans,
+
+    auto type = CblasRowMajor;
+    if (!(this->is_c_style())) type = CblasColMajor;
+    cblas_zgemm(type, CblasNoTrans, CblasNoTrans,
                 n_, A.m_, m_, &alpha, mass_.data(),
-                m_, A.mass_.data(), A.m_, &betta,
-                res.mass_.data(), A.m_);
+                this->LD(), A.mass_.data(), A.LD(), &betta,
+                res.mass_.data(), res.LD());
     return res;
 }
 
@@ -53,7 +59,7 @@ Matrix<COMPLEX> Matrix<COMPLEX>::operator* (const Matrix<COMPLEX>& A) const {
 template<>
 Matrix<double> Matrix<double>::operator* (const Matrix<double>& A) const {
     assert(m_ == A.n_);
-    Matrix<double> res(n_, A.m_);
+    Matrix<double> res(this->is_c_style(), n_, A.m_);
 
     if (this->MULTIPLY_MODE == config::CANNON_MODE) {
         size_t n = n_, k = m_, m = A.m_;
@@ -195,10 +201,13 @@ Matrix<double> Matrix<double>::operator* (const Matrix<double>& A) const {
     } else if (this->MULTIPLY_MODE == config::COMMON_MODE) {
         double alpha = 1;
         double betta = 0;
-        cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans,
+
+        auto type = CblasRowMajor;
+        if (!(res.is_c_style())) type = CblasColMajor;
+        cblas_dgemm(type, CblasNoTrans, CblasNoTrans,
                     n_, A.m_, m_, alpha, mass_.data(),
-                    m_, A.mass_.data(), A.m_, betta,
-                    res.mass_.data(), A.m_);
+                    this->LD(), A.mass_.data(), A.LD(), betta,
+                    res.mass_.data(), res.LD());
 
     } else if (this->MULTIPLY_MODE == config::DIM_MODE) {
         size_t n = n_, k = m_, m = A.m_;
@@ -213,7 +222,7 @@ Matrix<double> Matrix<double>::operator* (const Matrix<double>& A) const {
         MPI_Bcast(&bcast_data, 3, MPI_INT, mpi::ROOT_ID, MPI_COMM_WORLD);
 
         Matrix<double> R(A);
-        MPI_Bcast(R.mass_data(), k * n, MPI_DOUBLE_COMPLEX, mpi::ROOT_ID, MPI_COMM_WORLD);
+        MPI_Bcast(R.data(), k * n, MPI_DOUBLE_COMPLEX, mpi::ROOT_ID, MPI_COMM_WORLD);
         //mpi::Dim_Multiply(*this, A, res);
     }
 #ifdef ENABLE_CLUSTER 
@@ -233,7 +242,7 @@ Matrix<double> Matrix<double>::operator* (const Matrix<double>& A) const {
 template<>
 Matrix<COMPLEX> Matrix<COMPLEX>::operator* (const Matrix<COMPLEX>& A) const {
     assert(m_ == A.n_);
-    Matrix<COMPLEX> res(n_, A.m_);
+    Matrix<COMPLEX> res(this->is_c_style(), n_, A.m_);
 
     if (this->MULTIPLY_MODE == config::CANNON_MODE) {
         size_t n = n_, k = m_, m = A.m_;
@@ -375,10 +384,13 @@ Matrix<COMPLEX> Matrix<COMPLEX>::operator* (const Matrix<COMPLEX>& A) const {
     } else if (this->MULTIPLY_MODE == config::COMMON_MODE) {
         COMPLEX alpha(1, 0);
         COMPLEX betta(0, 0);
-        cblas_zgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans,
+
+        auto type = CblasRowMajor;
+        if (!(res.is_c_style())) type = CblasColMajor;
+        cblas_zgemm(type, CblasNoTrans, CblasNoTrans,
                     n_, A.m_, m_, &alpha, mass_.data(),
-                    m_, A.mass_.data(), A.m_, &betta,
-                    res.mass_.data(), A.m_);
+                    this->LD(), A.mass_.data(), A.LD(), &betta,
+                    res.mass_.data(), res.LD());
 
     } else if (this->MULTIPLY_MODE == config::DIM_MODE) {
         size_t n = n_, k = m_, m = A.m_;
@@ -393,7 +405,7 @@ Matrix<COMPLEX> Matrix<COMPLEX>::operator* (const Matrix<COMPLEX>& A) const {
         MPI_Bcast(&bcast_data, 3, MPI_INT, mpi::ROOT_ID, MPI_COMM_WORLD);
 
         Matrix<COMPLEX> R(A);
-        MPI_Bcast(R.mass_data(), k * n, MPI_DOUBLE_COMPLEX, mpi::ROOT_ID, MPI_COMM_WORLD);
+        MPI_Bcast(R.data(), k * n, MPI_DOUBLE_COMPLEX, mpi::ROOT_ID, MPI_COMM_WORLD);
         mpi::Dim_Multiply(*this, A, res);
     }
 #ifdef ENABLE_CLUSTER 

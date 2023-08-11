@@ -1,11 +1,15 @@
 #include "additional_operators.hpp"
 
-COMPLEX quantum::operator | (const std::vector<COMPLEX>& a, const std::vector<COMPLEX>& b) { 
-    COMPLEX res = 0;
+extern "C"
+{
+    void zdotc(COMPLEX*, int*, const COMPLEX*, int*, const COMPLEX*, int*);
+}
 
-    for (size_t i = 0; i < a.size(); i++) {
-        res += std::conj(a[i]) * b[i];
-    }
+COMPLEX quantum::operator | (const std::vector<COMPLEX>& a, const std::vector<COMPLEX>& b) { 
+    int size = a.size();
+    int iONE = 1;
+    COMPLEX res;
+    zdotc(&res, &size, a.data(), &iONE, b.data(), &iONE);
 
     return res;
 }

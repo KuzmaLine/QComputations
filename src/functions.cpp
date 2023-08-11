@@ -6,6 +6,11 @@
 #include "config.hpp"
 #include <cassert>
 
+extern "C"
+{
+    void zdotc(COMPLEX*, int*, const COMPLEX*, int*, const COMPLEX*, int*);
+}
+
 namespace {
     constexpr double eps = 1e-12;
     const double EPS = eps;
@@ -273,6 +278,9 @@ std::vector<double> linspace(double start, double end, double npoints) {
 }
 
 double scalar_product(const std::vector<double>& a, const std::vector<double>& b) {
+    return cblas_ddot(a.size(), a.data(), 1, b.data(), 1);
+    
+    /*
     double res = 0;
 
     for (size_t i = 0; i < a.size(); i++) {
@@ -280,9 +288,17 @@ double scalar_product(const std::vector<double>& a, const std::vector<double>& b
     }
 
     return res;
+    */
 }
 
 COMPLEX scalar_product(const std::vector<COMPLEX>& a, const std::vector<COMPLEX>& b) {
+    int size = a.size();
+    int iONE = 1;
+    COMPLEX res;
+    zdotc(&res, &size, b.data(), &iONE, a.data(), &iONE);
+
+    return res;
+    /*
     COMPLEX res = 0;
 
     for (size_t i = 0; i < a.size(); i++) {
@@ -292,6 +308,7 @@ COMPLEX scalar_product(const std::vector<COMPLEX>& a, const std::vector<COMPLEX>
     }
 
     return res;
+    */
 }
 
 
@@ -306,6 +323,7 @@ double norm(const std::vector<COMPLEX>& v) {
     return std::sqrt(res);
 }
 
+// For jacobi
 double off(const Matrix<double>& A) {
     double res = 0;
 
@@ -361,10 +379,6 @@ matrix hermit(const matrix& A) {
 
 */
 
-// функция, проверяющая равенство двух комплексных чисел
-bool equals(std::complex<double> a, std::complex<double> b) {
-    return std::abs(a - b) < EPS;
-}
 /*
 matrix multiply(const matrix& A, const matrix& B) {
     int n1 = A.size();
@@ -385,6 +399,8 @@ matrix multiply(const matrix& A, const matrix& B) {
     return C;
 }
 */
+
+
 std::pair<double, double> givens(double a, double b) {
     if (std::abs(b) < eps) return std::make_pair(1, 0);
 
@@ -422,7 +438,7 @@ void tridiagonal_QR(Matrix<double>& T) {
         double s = p.second;
 
         double m = std::min(k + 2, n - 1);
-        Matrix<double> tmp(2, 3, 0);
+        Matrix<double> tmp(2, 3, double(0));
         for (size_t i = k; i <= m; i++) {
             tmp[0][i - k] = T[k][i] * c - s * T[k + 1][i];
             tmp[1][i - k] = T[k][i] * s + c * T[k + 1][i];
@@ -453,7 +469,7 @@ Matrix<double> MGS (const Matrix<COMPLEX>& A) {
     Matrix<COMPLEX> v(m, m, 0);
     v[0][0] = COMPLEX(1);
 
-    Matrix<double> H(m, m, 0);
+    Matrix<double> H(m, m, double(0));
 
     //std::cout << "HERE 2\n";
     for (size_t j = 0; j < m; j++) {
@@ -492,6 +508,7 @@ Matrix<double> MGS (const Matrix<COMPLEX>& A) {
 }
 
 // ONLY FOR REAL MATRIX. FOR COMPLEX - Hermit_Lanczos
+// Not effective - replace
 std::pair<std::vector<double>, Matrix<double>> jacobi(const Matrix<double>& A) {
     int n = A.size();
     Matrix<double> eigenvectors(n, n);
@@ -561,10 +578,7 @@ std::pair<std::vector<double>, Matrix<double>> jacobi(const Matrix<double>& A) {
     return make_pair(eigenvalues, eigenvectors);
 }
 
-//std::vector<double> make_timeline(double start, double end, double step, double multiplyer) {
-    //double
-//}
-//std::pair<std::vector<double>, Matrix<double>> Hermit_Lanczos(const Matrix<COMPLEX>& A) {
+// ADD FORTRAN SUPPORT
 std::pair<std::vector<double>, Matrix<COMPLEX>> Hermit_Lanczos(const Matrix<COMPLEX>& A) {
     auto m = A.size();
     /*

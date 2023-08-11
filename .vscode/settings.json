@@ -73,7 +73,9 @@
         "valarray": "cpp",
         "variant": "cpp",
         "mpi": "hpp",
-        "*.ipp": "cpp"
+        "*.ipp": "cpp",
+        "regex": "cpp",
+        "shared_mutex": "cpp"
     },
     "makefile.launchConfigurations": [
         {

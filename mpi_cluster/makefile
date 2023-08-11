@@ -2,10 +2,9 @@ vpath %.cpp ../src
 vpath %.hpp ../src
 CC=mpiicpc
 
-CFLAGS = -std=c++11 -m64 -Werror -fopenmp -diag-disable=10441 \
-		 -I/usr/include/python3.10 \
+CFLAGS = -Werror -fopenmp -diag-disable=10441 \
 		 -I/opt/intel/oneapi/mkl -DENABLE_MPI -DENABLE_CLUSTER
-LFLAGS = -std=c++11 -Werror -fopenmp -lpython3.10 \
+LFLAGS = -Werror \
 		 -lmkl_intel_lp64 \
 		 -lmkl_scalapack_lp64 -lmkl_intel_thread -lmkl_core -lmkl_blacs_intelmpi_lp64 \
 		 -lm -ldl \

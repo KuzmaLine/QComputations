@@ -23,6 +23,8 @@ namespace config {
     constexpr int DIM_MODE = 2;
     constexpr int P_GEMM_MODE = 3;
 
+    constexpr bool IS_C_MATRIX_STYLE = true;
+
 #ifdef ENABLE_CLUSTER
     constexpr int MULTIPLY_MODE = P_GEMM_MODE;
 #else
