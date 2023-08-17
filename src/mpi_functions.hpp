@@ -63,8 +63,26 @@ namespace mpi {
 
 
 #ifdef ENABLE_CLUSTER
-    // ON BLACS GRID
+    template<typename T>
+    void print_distributed_matrix(const Matrix<T>& A, const std::string& matrix_name, MPI_Comm comm) {
+        int myid, numproc;
+        MPI_Comm_rank(comm, &myid);
+        MPI_Comm_size(comm, &numproc);
 
+        for (LP_TYPE id = 0; id < numproc; ++id) {
+            if (id == myid) {
+                std::cout << matrix_name << " on proc " << myid << std::endl;
+                A.show();
+                std::flush(std::cout);
+                std::cout << std::endl;
+            }
+
+            //blacs_barrier(&ctxt, "All");
+            MPI_Barrier(MPI_COMM_WORLD);
+        }
+    }
+
+    // ON BLACS GRID
     void init_grid(LP_TYPE& ctxt);
 
     template<typename T>
@@ -85,20 +103,20 @@ namespace mpi {
                                        LP_TYPE NB_FORCE, LP_TYPE MB_FORCE);
     
     template<typename T>
-    void gather_blacs_matrix(Matrix<T>& A, LP_TYPE& N, LP_TYPE& M,
+    void gather_blacs_matrix(const Matrix<T>& localC, Matrix<T>& C, LP_TYPE& N, LP_TYPE& M,
                              LP_TYPE& NB, LP_TYPE& MB, LP_TYPE& nrows,
-                             LP_TYPE& ncols, LP_TYPE root_id,
-                             LP_TYPE NB_FORCE = 0, LP_TYPE MB_FORCE = 0);
+                             LP_TYPE& ncols, LP_TYPE ctxt, LP_TYPE root_id,
+                             LP_TYPE NB_FORCE = LP_TYPE(0), LP_TYPE MB_FORCE = LP_TYPE(0));
 
     template<>
-    void gather_blacs_matrix<double>(Matrix<double>& A, LP_TYPE& N, LP_TYPE& M,
+    void gather_blacs_matrix<double>(const Matrix<double>& localC, Matrix<double>& C, LP_TYPE& N, LP_TYPE& M,
                                      LP_TYPE& NB, LP_TYPE& MB, LP_TYPE& nrows,
-                                     LP_TYPE& ncols, LP_TYPE root_id,
+                                     LP_TYPE& ncols, LP_TYPE ctxt, LP_TYPE root_id,
                                      LP_TYPE NB_FORCE, LP_TYPE MB_FORCE);
     template<>
-    void gather_blacs_matrix<COMPLEX>(Matrix<COMPLEX>& A, LP_TYPE& N, LP_TYPE& M,
+    void gather_blacs_matrix<COMPLEX>(const Matrix<COMPLEX>& localC, Matrix<COMPLEX>& C, LP_TYPE& N, LP_TYPE& M,
                                       LP_TYPE& NB, LP_TYPE& MB, LP_TYPE& nrows,
-                                      LP_TYPE& ncols, LP_TYPE root_id,
+                                      LP_TYPE& ncols, LP_TYPE ctxt, LP_TYPE root_id,
                                       LP_TYPE NB_FORCE, LP_TYPE MB_FORCE);
 
 #endif
@@ -168,10 +186,12 @@ namespace mpi {
     }
     */
 
-#ifdef ENABLE_CLUSTER 
+#ifdef ENABLE_CLUSTER
    void parallel_dgemm(const Matrix<double>& A, const Matrix<double>& B, Matrix<double>& C,
                        bool is_distributed = false, LP_TYPE* desca = NULL, LP_TYPE* descb = NULL, LP_TYPE* descc = NULL);
-   void parallel_zgemm(const Matrix<COMPLEX>& A, const Matrix<COMPLEX>& B, Matrix<COMPLEX>& C);
+
+   void parallel_zgemm(const Matrix<COMPLEX>& A, const Matrix<COMPLEX>& B, Matrix<COMPLEX>& C,
+                       bool is_distributed = false, LP_TYPE* desca = NULL, LP_TYPE* descb = NULL, LP_TYPE* descc = NULL);
 
    void print_distributed_matrix(const Matrix<double>& A, const std::string& matrix_name, MPI_Comm comm = MPI_COMM_WORLD);
 #endif

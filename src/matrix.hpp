@@ -26,20 +26,20 @@ namespace {
             }
     }
 
-    double conj(double a) { return a;}
+    double conj(double a) { return a; }
 }
 
-// (!!!) NEED CRS_MATRIX for memory optimization
+// (!!!) NEED CRS_MATRIX for memory optimization. sparseBLAS before working
 // ---------------------------------- class Matrix ----------------------------
 template<typename T> class Matrix {
     public:
         Matrix() = default;
-        Matrix(bool is_c_style, size_t n, size_t m) : is_c_style_(is_c_style), n_(n), m_(m), mass_(n_ * m_) {}
-        Matrix(bool is_c_style, size_t n, size_t m, const T& init_val) : is_c_style_(is_c_style), n_(n), m_(m), mass_(n_ * m_, init_val) {}
-        Matrix(size_t n, size_t m): n_(n), m_(m), mass_(n_ * m_), is_c_style_(config::IS_C_MATRIX_STYLE) {}
-        Matrix(size_t n, size_t m, const T& init_val): n_(n), m_(m), mass_(n_ * m_, init_val), is_c_style_(config::IS_C_MATRIX_STYLE) {}
-        Matrix(const Matrix<T>& A): n_(A.n_), m_(A.m_), mass_(A.mass_), is_c_style_(A.is_c_style_) {}
-        Matrix(const std::vector<T>& mass, size_t n, size_t m, bool is_c_style): n_(n), m_(m), mass_(mass), is_c_style_(is_c_style) {}
+        explicit Matrix(bool is_c_style, size_t n, size_t m) : is_c_style_(is_c_style), n_(n), m_(m), mass_(n_ * m_) {}
+        explicit Matrix(bool is_c_style, size_t n, size_t m, const T& init_val) : is_c_style_(is_c_style), n_(n), m_(m), mass_(n_ * m_, init_val) {}
+        explicit Matrix(size_t n, size_t m): n_(n), m_(m), mass_(n_ * m_), is_c_style_(config::IS_C_MATRIX_STYLE) {}
+        explicit Matrix(size_t n, size_t m, const T& init_val): n_(n), m_(m), mass_(n_ * m_, init_val), is_c_style_(config::IS_C_MATRIX_STYLE) {}
+        explicit Matrix(const Matrix<T>& A): n_(A.n_), m_(A.m_), mass_(A.mass_), is_c_style_(A.is_c_style_) {}
+        explicit Matrix(const std::vector<T>& mass, size_t n, size_t m, bool is_c_style): n_(n), m_(m), mass_(mass), is_c_style_(is_c_style) {}
 
         template<typename V>
         Matrix(const Matrix<V>& A): n_(A.n()), m_(A.m()) {
@@ -48,7 +48,10 @@ template<typename T> class Matrix {
                     mass_.emplace_back(static_cast<V>(A[i][j]));
                }
             }
+
+            is_c_style_ = A.is_c_style();
         }
+
         explicit Matrix(const std::vector<std::vector<T>>& A, bool is_c_style = config::IS_C_MATRIX_STYLE);
         //explicit Matrix(const T* A);
 
@@ -76,10 +79,6 @@ template<typename T> class Matrix {
         Matrix<T> operator+ (const Matrix<T>& A) const;
         Matrix<T> operator- (const Matrix<T>& A) const;
 
-        // DON'T ADD TEMPLATE VERSION
-        //template<typename V>
-        //Matrix<T> operator* (const Matrix<V>& A) const;
-
         std::vector<T> operator* (const std::vector<T>& v) const;
 
         Matrix<T> operator* (const T& num) const;
@@ -100,14 +99,18 @@ template<typename T> class Matrix {
         double determinant() const; // not ready
         void show(size_t width = 10) const;
     
-        T* operator[](size_t index_row) { return mass_.data() + index_row * m_; }; // work only with C style
+        // (!!!) work only with C style
+        T* operator[](size_t index_row) { return mass_.data() + index_row * m_; }; 
         const T* operator[](size_t index_row) const { return mass_.data() + index_row * m_; };
     
-        T& operator()(size_t index_row, size_t index_col) { return mass_.data()[index_col * n_ + index_row]; } // work only with FORTRAN style
+        // (!!!) work only with FORTRAN style
+        T& operator()(size_t index_row, size_t index_col) { return mass_.data()[index_col * n_ + index_row]; }
         const T operator()(size_t index_row, size_t index_col) const { return mass_.data()[index_col * n_ + index_row]; }
     
         size_t LD() const { return (is_c_style_ ? m_ : n_); }
         bool is_c_style() const { return is_c_style_; }
+        void to_fortran_style();
+        void to_c_style();
 
         lapack_complex_double* to_upper_lapack() const;
         lapack_complex_double* to_lapack() const;
@@ -115,8 +118,6 @@ template<typename T> class Matrix {
         void set_multiply_mode(int multiply_mode) { MULTIPLY_MODE = multiply_mode; }
         Matrix<T> submatrix(size_t n, size_t m, size_t row_index, size_t col_index) const;
         
-        void to_fortran_style();
-        void to_c_style();
 
         size_t index(size_t i, size_t j) const { if (is_c_style_) return i * m_ + j;
                                                  else return j * n_ + i; }
@@ -162,11 +163,11 @@ void Matrix<T>::to_c_style() {
 
 template<typename T>
 Matrix<T> Matrix<T>::submatrix(size_t n, size_t m, size_t row_index, size_t col_index) const {
-    Matrix<T> res(n, m);
+    Matrix<T> res(this->is_c_style(), n, m);
 
     for (size_t i = 0; i < n; i++) {
         for (size_t j = 0; j < m; j++) {
-            res[i][j] = this->mass_[get_index(row_index + i, col_index + j)];
+            res.mass_[res.get_index(i, j)] = this->mass_[get_index(row_index + i, col_index + j)];
         }
     }
 
