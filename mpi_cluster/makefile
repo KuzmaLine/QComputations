@@ -3,12 +3,17 @@ vpath %.hpp ../src
 CC=mpiicpc
 
 CFLAGS = -Werror -fopenmp -diag-disable=10441 \
-		 -I/opt/intel/oneapi/mkl -DENABLE_MPI -DENABLE_CLUSTER
+		 -I/opt/intel/oneapi/mkl -I/opt/intel/oneapi/intelpython/python3.9/include/python3.9 \
+		 -I/opt/intel/oneapi/intelpython/python3.9/lib/python3.9/site-packages/numpy/core/include \
+		 -DENABLE_MPI -DENABLE_CLUSTER -DENABLE_MATPLOTLIB
 LFLAGS = -Werror \
 		 -lmkl_intel_lp64 \
 		 -lmkl_scalapack_lp64 -lmkl_intel_thread -lmkl_core -lmkl_blacs_intelmpi_lp64 \
 		 -lm -ldl \
-		 -liomp5 -lpthread -DENABLE_MPI -DENABLE_CLUSTER
+		 -liomp5 -lpthread \
+		 -L/opt/intel/oneapi/intelpython/python3.9/lib \
+		 -lpython3.9 \
+		 -DENABLE_MPI -DENABLE_CLUSTER -DENABLE_MATPLOTLIB
 OBJ = matrix.o cavity_state.o graph.o state.o quantum_operators.o hamiltonian.o additional_operators.o mpi_functions.o functions.o dynamic.o plot.o main.o
 
 all: prog

@@ -33,8 +33,8 @@ int main(int argc, char** argv) {
     State state(grid_config);
     state.set_gamma(0.002);
     state.set_leak_for_cavity(0, 0.005);
-    //state.set_gain_for_cavity(0, 0.002);
-    state.set_max_N(1);
+    state.set_gain_for_cavity(0, 0.002);
+    state.set_max_N(2);
     state.set_min_N(0);
     //state.set_leak_for_cavity(1, 0.0002);
 
@@ -46,7 +46,7 @@ int main(int argc, char** argv) {
     if (world_size == 1) {
         std::cerr << "Should have at least 2 processes\n";
 
-       MPI_Finalize();
+        MPI_Finalize();
         return 1;
     }
 
@@ -76,6 +76,7 @@ int main(int argc, char** argv) {
     //Matrix<COMPLEX> a({{1, 9, 1}, {2, 8, 1}, {3, 7, 1}, {4, 4, 1}, {5, 5, 1}, {6, 3, 1}});
     //Matrix<COMPLEX> b({{1, 2}, {4, 6}, {6, 4}});
 
+    /*
     Matrix<type> a({{1, 2, -1, -1, 4},
                       {2, 0, 1, 1, -1},
                       {1, -1, -1, 1, 2},
@@ -87,6 +88,7 @@ int main(int argc, char** argv) {
                       {1, 0, -1, 1},
                       {-3, -1, 1, -1},
                       {4, 2, -1, 1}});
+    */
 
     /*
     Matrix<double> a({{0, 1, 2, 3, 4},
@@ -108,6 +110,7 @@ int main(int argc, char** argv) {
     //a.show();
     //b.show();
 
+    /*
     auto begin = std::chrono::steady_clock::now();
     auto c = a * b;
     auto end = std::chrono::steady_clock::now();
@@ -145,16 +148,19 @@ int main(int argc, char** argv) {
 
         check.show();
     }
+    */
     //std::cout << std::endl;
 
+/*
 #ifdef ENABLE_MPI
     mpi::stop_mpi_slaves();
 #endif
     return 0;
+*/
 
-    //auto begin = std::chrono::steady_clock::now();
+    auto begin = std::chrono::steady_clock::now();
     H_TCH H(state);
-    //auto end = std::chrono::steady_clock::now();
+    auto end = std::chrono::steady_clock::now();
 
     std::cout << "H_TCH: " << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count() << std::endl;
 
@@ -195,6 +201,7 @@ int main(int argc, char** argv) {
     end = std::chrono::steady_clock::now();
     //std::cout << "SCHRODINGER: " << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count() << std::endl;
     std::cout << "QME: " << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count() << std::endl;
+
     //auto probs = Evolution::quantum_master_equation(st, H, time_vec, gamma, false);
     //std::vector<double> x = make_timeline(0, 100, 1);
     //functions_testing::check_runge_kutt<double, double>(x, double(0), &func, &func_correct);
@@ -214,7 +221,24 @@ int main(int argc, char** argv) {
 
 #ifdef ENABLE_MATPLOTLIB
 
+    //std::cout << "P HERE\n";
     matplotlib::make_figure(config::fig_width, config::fig_height, config::dpi);
+    //std::cout << "P HERE\n";
+    matplotlib::probs_to_plot(probs, time_vec, basis);
+    matplotlib::grid();
+    matplotlib::show(false);
+
+    begin = std::chrono::steady_clock::now();
+    //auto probs = Evolution::schrodinger(st, H, time_vec);
+    probs = Evolution::Parallel_QME(st, H, time_vec, false);
+    end = std::chrono::steady_clock::now();
+    //std::cout << "SCHRODINGER: " << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count() << std::endl;
+    std::cout << "QME: " << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count() << std::endl;
+
+    //std::cout << config::fig_width << " " << config::fig_height << " " << config::dpi << std::endl;
+    matplotlib::make_figure(config::fig_width, config::fig_height, config::dpi);
+    //matplotlib::make_figure();
+    //std::cout << "P HERE\n";
     matplotlib::probs_to_plot(probs, time_vec, basis);
     matplotlib::grid();
     matplotlib::show();

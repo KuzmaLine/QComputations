@@ -1,14 +1,19 @@
-#ifdef ENABLE_MATPLOTLIB
-
 #pragma once
 #include "dynamic.hpp"
 #include "state.hpp"
-#include "matplotlibcpp.hpp"
 #include <string>
 #include <map>
 #include <algorithm>
 
+#ifdef ENABLE_MATPLOTLIB
+
+#include "matplotlibcpp.hpp"
+
 // NEED REWORK
+
+// !!!!!!!!!!!!!! ЕСТЬ ОДНА ЗАЛУПА. ПРИ ИСПОЛЬЗОВАНИИ Parallel_QME команду make_figure 
+// !!!!!!!!!!!!!! использовать только ДО ВЫЗОВА Parallel_QME, иначе free invalid pointer по причине - хз,
+// !!!!!!!!!!!!!! что-то интерпретатор питона шлёт нахер
 namespace matplotlib {
     void make_figure(size_t x = 0, size_t y = 0, size_t dpi = config::dpi);
     void probs_to_plot(const Evolution::Probs& probs,

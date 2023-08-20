@@ -90,7 +90,7 @@ T read_number(const std::string& str, size_t& start_index = 0) {
 
 template<typename T>
 Matrix<T> E_Matrix(size_t n) {
-    Matrix<T> E(n, n, 0);
+    Matrix<T> E(C_STYLE, n, n, 0);
 
     for (size_t i = 0; i < n; i++) {
         E[i][i] = T(1);
@@ -102,7 +102,7 @@ Matrix<T> E_Matrix(size_t n) {
 template<typename T>
 Matrix<T> tensor_multiply(const Matrix<T>& A, const Matrix<T>& B) {
     auto n = A.size() * B.size();
-    Matrix<T> C(n, n, 0);
+    Matrix<T> C(C_STYLE, n, n, 0);
 
     for (size_t i_a = 0; i_a < A.size(); i_a++) {
         for (size_t j_a = 0; j_a < A.size(); j_a++) {
@@ -150,7 +150,7 @@ std::vector<V> Runge_Kutt_4(const std::vector<T>& x, const V& y0, std::function<
     y[0] = y0;
 
     for (size_t i = 0; i < len - 1; i++) {
-        if (i % (len / 100) == 0) std::cout << i << " " << len << std::endl;
+        //if (i % (len / 100) == 0) std::cout << i << " " << len << std::endl;
         //std::cout << i << " " << y[i] << " ";
         T h = x[i + 1] - x[i];
 

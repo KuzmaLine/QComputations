@@ -29,17 +29,28 @@ namespace {
     double conj(double a) { return a; }
 }
 
+enum MATRIX_STYLE { C_STYLE = 120, FORTRAN_STYLE = 121 };
+
+
+// (NEED TO MOVE TO CONFIG)
+// ########################### DEFAULT MATRIX STYLE #######################################
+
+constexpr MATRIX_STYLE DEFAULT_MATRIX_STYLE = C_STYLE;
+
+// ######################################################################################
+
+
 // (!!!) NEED CRS_MATRIX for memory optimization. sparseBLAS before working
 // ---------------------------------- class Matrix ----------------------------
 template<typename T> class Matrix {
     public:
         Matrix() = default;
-        explicit Matrix(bool is_c_style, size_t n, size_t m) : is_c_style_(is_c_style), n_(n), m_(m), mass_(n_ * m_) {}
-        explicit Matrix(bool is_c_style, size_t n, size_t m, const T& init_val) : is_c_style_(is_c_style), n_(n), m_(m), mass_(n_ * m_, init_val) {}
-        explicit Matrix(size_t n, size_t m): n_(n), m_(m), mass_(n_ * m_), is_c_style_(config::IS_C_MATRIX_STYLE) {}
-        explicit Matrix(size_t n, size_t m, const T& init_val): n_(n), m_(m), mass_(n_ * m_, init_val), is_c_style_(config::IS_C_MATRIX_STYLE) {}
-        explicit Matrix(const Matrix<T>& A): n_(A.n_), m_(A.m_), mass_(A.mass_), is_c_style_(A.is_c_style_) {}
-        explicit Matrix(const std::vector<T>& mass, size_t n, size_t m, bool is_c_style): n_(n), m_(m), mass_(mass), is_c_style_(is_c_style) {}
+        explicit Matrix(MATRIX_STYLE matrix_style, size_t n, size_t m) : matrix_style_(matrix_style), n_(n), m_(m), mass_(n_ * m_) {}
+        explicit Matrix(MATRIX_STYLE matrix_style, size_t n, size_t m, const T& init_val) : matrix_style_(matrix_style), n_(n), m_(m), mass_(n_ * m_, init_val) {}
+        //explicit Matrix(size_t n, size_t m): n_(n), m_(m), mass_(n_ * m_), matrix_style_(config::IS_C_MATRIX_STYLE) {}
+        //explicit Matrix(size_t n, size_t m, const T& init_val): n_(n), m_(m), mass_(n_ * m_, init_val), matrix_style_(config::IS_C_MATRIX_STYLE) {}
+        explicit Matrix(const Matrix<T>& A): n_(A.n_), m_(A.m_), mass_(A.mass_), matrix_style_(A.matrix_style_) {}
+        explicit Matrix(const std::vector<T>& mass, size_t n, size_t m, MATRIX_STYLE matrix_style): n_(n), m_(m), mass_(mass), matrix_style_(matrix_style) {}
 
         template<typename V>
         Matrix(const Matrix<V>& A): n_(A.n()), m_(A.m()) {
@@ -49,10 +60,10 @@ template<typename T> class Matrix {
                }
             }
 
-            is_c_style_ = A.is_c_style();
+            matrix_style_ = A.get_matrix_style();
         }
 
-        explicit Matrix(const std::vector<std::vector<T>>& A, bool is_c_style = config::IS_C_MATRIX_STYLE);
+        explicit Matrix(const std::vector<std::vector<T>>& A, MATRIX_STYLE matrix_style = DEFAULT_MATRIX_STYLE);
         //explicit Matrix(const T* A);
 
         Matrix<T>& operator=(const Matrix<T>& A);
@@ -81,6 +92,8 @@ template<typename T> class Matrix {
 
         std::vector<T> operator* (const std::vector<T>& v) const;
 
+        void operator*= (const T& num);
+
         Matrix<T> operator* (const T& num) const;
         Matrix<T> operator+ (const T& num) const;
         Matrix<T> operator- (const T& num) const;
@@ -88,6 +101,7 @@ template<typename T> class Matrix {
 
         Matrix<T>& operator+=(const Matrix<T>& A);
         Matrix<T>& operator-=(const Matrix<T>& A);
+        //Matrix<T>& operator*=(const Matrix<T>& A);
 
         bool operator==(const Matrix<T>& A) const;
 
@@ -107,35 +121,36 @@ template<typename T> class Matrix {
         T& operator()(size_t index_row, size_t index_col) { return mass_.data()[index_col * n_ + index_row]; }
         const T operator()(size_t index_row, size_t index_col) const { return mass_.data()[index_col * n_ + index_row]; }
     
-        size_t LD() const { return (is_c_style_ ? m_ : n_); }
-        bool is_c_style() const { return is_c_style_; }
+        size_t LD() const { return (matrix_style_ == C_STYLE ? m_ : n_); }
+        bool is_c_style() const { return matrix_style_ == C_STYLE; }
+        MATRIX_STYLE get_matrix_style() const { return matrix_style_; }
         void to_fortran_style();
         void to_c_style();
 
         lapack_complex_double* to_upper_lapack() const;
         lapack_complex_double* to_lapack() const;
 
-        void set_multiply_mode(int multiply_mode) { MULTIPLY_MODE = multiply_mode; }
+        //void set_multiply_mode(int multiply_mode) { MULTIPLY_MODE = multiply_mode; }
         Matrix<T> submatrix(size_t n, size_t m, size_t row_index, size_t col_index) const;
         
 
-        size_t index(size_t i, size_t j) const { if (is_c_style_) return i * m_ + j;
+        size_t index(size_t i, size_t j) const { if (matrix_style_ == C_STYLE) return i * m_ + j;
                                                  else return j * n_ + i; }
     private:
-        size_t get_index(size_t i, size_t j) const { if (is_c_style_) return i * m_ + j;
+        size_t get_index(size_t i, size_t j) const { if (matrix_style_ == C_STYLE) return i * m_ + j;
                                                      else return j * n_ + i; }
         size_t n_;
         size_t m_;
         std::vector<T> mass_;
-        bool is_c_style_;
-        int MULTIPLY_MODE = config::MULTIPLY_MODE;
+        MATRIX_STYLE matrix_style_ = DEFAULT_MATRIX_STYLE;
+        //int MULTIPLY_MODE = config::MULTIPLY_MODE;
 };
 
 // -------------------------------- Matrix Methods ----------------------------------
 
 template<typename T>
 void Matrix<T>::to_fortran_style() {
-    assert(this->is_c_style_ == true);
+    assert(this->matrix_style_ == C_STYLE);
     auto c_mass = mass_;
     size_t index = 0;
     for (size_t j = 0; j < m_; j++) {
@@ -144,12 +159,12 @@ void Matrix<T>::to_fortran_style() {
         }
     }
 
-    this->is_c_style_ = false;
+    this->matrix_style_ = FORTRAN_STYLE;
 }
 
 template<typename T>
 void Matrix<T>::to_c_style() {
-    assert(this->is_c_style_ == false);
+    assert(this->matrix_style_ == FORTRAN_STYLE);
     auto fort_mass = mass_;
     size_t index = 0;
     for (size_t i = 0; i < n_; i++) {
@@ -158,12 +173,12 @@ void Matrix<T>::to_c_style() {
         }
     }
 
-    this->is_c_style_ = true;
+    this->matrix_style_ = C_STYLE;
 }
 
 template<typename T>
 Matrix<T> Matrix<T>::submatrix(size_t n, size_t m, size_t row_index, size_t col_index) const {
-    Matrix<T> res(this->is_c_style(), n, m);
+    Matrix<T> res(this->get_matrix_style(), n, m);
 
     for (size_t i = 0; i < n; i++) {
         for (size_t j = 0; j < m; j++) {
@@ -176,7 +191,7 @@ Matrix<T> Matrix<T>::submatrix(size_t n, size_t m, size_t row_index, size_t col_
 
 template<typename T>
 void Matrix<T>::add_rows(size_t n) {
-    if (is_c_style_) {
+    if (matrix_style_) {
         n_ += n;
         mass_.resize(n_ * m_, T(0));
     } else {
@@ -190,7 +205,7 @@ void Matrix<T>::add_rows(size_t n) {
 
 template<typename T>
 void Matrix<T>::add_cols(size_t m) {
-    if (is_c_style_) {
+    if (matrix_style_) {
         for (size_t i = 0; i < n_; i++) {
             mass_.insert(std::next(mass_.begin(), (i + 1) * m_ + i * m), m, T(0));
         }
@@ -231,8 +246,8 @@ void Matrix<T>::reduce(size_t n) {
 }
 
 template<typename T>
-Matrix<T>::Matrix(const std::vector<std::vector<T>>& A, bool is_c_style) {
-    is_c_style_ = is_c_style;
+Matrix<T>::Matrix(const std::vector<std::vector<T>>& A, MATRIX_STYLE matrix_style) {
+    matrix_style_ = matrix_style;
     n_ = A.size();
     m_ = A[0].size();
 
@@ -263,9 +278,9 @@ template<typename T>
 Matrix<T> Matrix<T>::operator+ (const Matrix<T>& A) const {
     assert(m_ == A.m_);
     assert(n_ == A.n_);
-    assert(is_c_style_ == A.is_c_style_);
+    assert(matrix_style_ == A.matrix_style_);
 
-    Matrix<T> res(is_c_style_, n_, A.m_);
+    Matrix<T> res(matrix_style_, n_, A.m_);
 
     for (size_t i = 0; i < n_; i++) {
         for (size_t j = 0; j < A.m_; j++) {
@@ -280,9 +295,9 @@ template<typename T>
 Matrix<T> Matrix<T>::operator- (const Matrix<T>& A) const {
     assert(m_ == A.m_);
     assert(n_ == A.n_);
-    assert(is_c_style_ == A.is_c_style_);
+    assert(matrix_style_ == A.matrix_style_);
 
-    Matrix<T> res(is_c_style_, n_, A.m_);
+    Matrix<T> res(matrix_style_, n_, A.m_);
 
     for (size_t i = 0; i < n_; i++) {
         for (size_t j = 0; j < A.m_; j++) {
@@ -294,8 +309,17 @@ Matrix<T> Matrix<T>::operator- (const Matrix<T>& A) const {
 }
 
 template<typename T>
+void Matrix<T>::operator*= (const T& num) {
+    for (size_t i = 0; i < n_; i++) {
+        for (size_t j = 0; j < m_; j++) {
+            this->mass_[this->get_index(i, j)] *= num;
+        }
+    }
+}
+
+template<typename T>
 Matrix<T> Matrix<T>::operator- (const T& num) const {
-    Matrix<T> res(is_c_style_, n_, m_);
+    Matrix<T> res(matrix_style_, n_, m_);
 
     for (size_t i = 0; i < n_; i++) {
         for (size_t j = 0; j < m_; j++) {
@@ -308,7 +332,7 @@ Matrix<T> Matrix<T>::operator- (const T& num) const {
 
 template<typename T>
 Matrix<T> Matrix<T>::operator/ (const T& num) const {
-    Matrix<T> res(is_c_style_, n_, m_);
+    Matrix<T> res(matrix_style_, n_, m_);
 
     for (size_t i = 0; i < n_; i++) {
         for (size_t j = 0; j < m_; j++) {
@@ -321,7 +345,7 @@ Matrix<T> Matrix<T>::operator/ (const T& num) const {
 
 template<typename T>
 Matrix<T> Matrix<T>::operator* (const T& num) const {
-    Matrix<T> res(is_c_style_, n_, m_);
+    Matrix<T> res(matrix_style_, n_, m_);
 
     for (size_t i = 0; i < n_; i++) {
         for (size_t j = 0; j < m_; j++) {
@@ -334,7 +358,7 @@ Matrix<T> Matrix<T>::operator* (const T& num) const {
 
 template<typename T>
 Matrix<T> Matrix<T>::operator+ (const T& num) const {
-    Matrix<T> res(is_c_style_, n_, m_);
+    Matrix<T> res(matrix_style_, n_, m_);
 
     for (size_t i = 0; i < n_; i++) {
         for (size_t j = 0; j < m_; j++) {
@@ -383,7 +407,7 @@ template<typename T>
 Matrix<T>& Matrix<T>::operator+=(const Matrix<T>& A) {
     assert(m_ == A.m_);
     assert(n_ == A.n_);
-    assert(is_c_style_ == A.is_c_style_);
+    assert(matrix_style_ == A.matrix_style_);
 
     for (size_t i = 0; i < n_; i++) {
         for (size_t j = 0; j < m_; j++) {
@@ -398,7 +422,7 @@ template<typename T>
 Matrix<T>& Matrix<T>::operator-=(const Matrix<T>& A) {
     assert(m_ == A.m_);
     assert(n_ == A.n_);
-    assert(is_c_style_ == A.is_c_style_);
+    assert(matrix_style_ == A.matrix_style_);
 
     for (size_t i = 0; i < n_; i++) {
         for (size_t j = 0; j < m_; j++) {
@@ -411,7 +435,7 @@ Matrix<T>& Matrix<T>::operator-=(const Matrix<T>& A) {
 
 template<typename T>
 bool Matrix<T>::operator==(const Matrix<T>& A) const {
-    if (n_ == A.n_ and m_ == A.m_ and mass_ == A.mass_ and is_c_style_ == A.is_c_style_) {
+    if (n_ == A.n_ and m_ == A.m_ and mass_ == A.mass_ and matrix_style_ == A.matrix_style_) {
         return true;
     }
 
@@ -440,7 +464,7 @@ std::vector<T> Matrix<T>::col(size_t index) const {
 
 template<typename T>
 Matrix<T> Matrix<T>::transpose() const {
-    Matrix<T> res(m_, n_);
+    Matrix<T> res(matrix_style_, m_, n_);
 
     for (size_t i = 0; i < m_; i++) {
         for (size_t j = 0; j < n_; j++) {
@@ -458,7 +482,7 @@ Matrix<T> Matrix<T>::hermit() const {
            typeid(T) == typeid(std::complex<short>) or
            typeid(T) == typeid(std::complex<long double>) or
            typeid(T) == typeid(std::complex<long>));
-    Matrix<T> res(m_, n_);
+    Matrix<T> res(matrix_style_, m_, n_);
 
     for (size_t i = 0; i < m_; i++) {
         for (size_t j = 0; j < n_; j++) {
@@ -474,7 +498,7 @@ Matrix<T>& Matrix<T>::operator=(const Matrix<T>& A) {
     n_ = A.n_;
     m_ = A.m_;
     mass_ = A.mass_;
-    is_c_style_ = A.is_c_style_;
+    matrix_style_ = A.matrix_style_;
     return *this;
 }
 

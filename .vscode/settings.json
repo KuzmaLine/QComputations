@@ -82,7 +82,13 @@
             "cwd": "/home/kuzmaline/Quantum/diploma",
             "binaryPath": "/home/kuzmaline/Quantum/diploma/prog",
             "binaryArgs": []
+        },
+        {
+            "cwd": "/home/kuzmaline/Quantum/diploma/single",
+            "binaryPath": "/home/kuzmaline/Quantum/diploma/single/prog",
+            "binaryArgs": []
         }
     ],
-    "C_Cpp.errorSquiggles": "enabled"
+    "C_Cpp.errorSquiggles": "enabled",
+    "C_Cpp.dimInactiveRegions": false
 }

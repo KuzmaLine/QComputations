@@ -11,15 +11,23 @@
 #include <map>
 #include <functional>
 
-namespace {
-    #ifdef MKL_ILP64
-        using LP_TYPE = long long;
-        constexpr MPI_Datatype MPI_BCAST_DATATYPE = MPI_LONG_LONG;
-    #else
-        using LP_TYPE = int;
-        constexpr MPI_Datatype MPI_BCAST_DATATYPE = MPI_INT;
-    #endif
+#ifdef ENABLE_CLUSTER
 
+#include <mkl_pblas.h>
+#include <mkl_scalapack.h>
+#include <mkl_blacs.h>
+
+#endif
+
+#ifdef MKL_ILP64
+    using ILP_TYPE = long long;
+    constexpr MPI_Datatype MPI_BCAST_DATATYPE = MPI_LONG_LONG;
+#else
+    using ILP_TYPE = int;
+    constexpr MPI_Datatype MPI_BCAST_DATATYPE = MPI_INT;
+#endif
+
+namespace {
     using COMPLEX = std::complex<double>;
 }
 
@@ -69,7 +77,7 @@ namespace mpi {
         MPI_Comm_rank(comm, &myid);
         MPI_Comm_size(comm, &numproc);
 
-        for (LP_TYPE id = 0; id < numproc; ++id) {
+        for (ILP_TYPE id = 0; id < numproc; ++id) {
             if (id == myid) {
                 std::cout << matrix_name << " on proc " << myid << std::endl;
                 A.show();
@@ -83,46 +91,46 @@ namespace mpi {
     }
 
     // ON BLACS GRID
-    void init_grid(LP_TYPE& ctxt);
+    void init_grid(ILP_TYPE& ctxt);
 
     template<typename T>
-    Matrix<T> scatter_blacs_matrix(const Matrix<T>& A, LP_TYPE& N, LP_TYPE& M,
-                             LP_TYPE& NB, LP_TYPE& MB, LP_TYPE& nrows,
-                             LP_TYPE& ncols, LP_TYPE& ctxt, LP_TYPE root_id,
-                             LP_TYPE NB_FORCE = LP_TYPE(0), LP_TYPE MB_FORCE = LP_TYPE(0));
+    Matrix<T> scatter_blacs_matrix(const Matrix<T>& A, ILP_TYPE& N, ILP_TYPE& M,
+                             ILP_TYPE& NB, ILP_TYPE& MB, ILP_TYPE& nrows,
+                             ILP_TYPE& ncols, ILP_TYPE& ctxt, ILP_TYPE root_id,
+                             ILP_TYPE NB_FORCE = ILP_TYPE(0), ILP_TYPE MB_FORCE = ILP_TYPE(0));
 
     template<>
-    Matrix<double> scatter_blacs_matrix<double>(const Matrix<double>& A, LP_TYPE& N, LP_TYPE& M,
-                                      LP_TYPE& NB, LP_TYPE& MB, LP_TYPE& nrows,
-                                      LP_TYPE& ncols, LP_TYPE& ctxt, LP_TYPE root_id,
-                                      LP_TYPE NB_FORCE, LP_TYPE MB_FORCE);
+    Matrix<double> scatter_blacs_matrix<double>(const Matrix<double>& A, ILP_TYPE& N, ILP_TYPE& M,
+                                      ILP_TYPE& NB, ILP_TYPE& MB, ILP_TYPE& nrows,
+                                      ILP_TYPE& ncols, ILP_TYPE& ctxt, ILP_TYPE root_id,
+                                      ILP_TYPE NB_FORCE, ILP_TYPE MB_FORCE);
     template<>
-    Matrix<COMPLEX> scatter_blacs_matrix<COMPLEX>(const Matrix<COMPLEX>& A, LP_TYPE& N, LP_TYPE& M,
-                                       LP_TYPE& NB, LP_TYPE& MB, LP_TYPE& nrows,
-                                       LP_TYPE& ncols, LP_TYPE& ctxt, LP_TYPE root_id,
-                                       LP_TYPE NB_FORCE, LP_TYPE MB_FORCE);
+    Matrix<COMPLEX> scatter_blacs_matrix<COMPLEX>(const Matrix<COMPLEX>& A, ILP_TYPE& N, ILP_TYPE& M,
+                                       ILP_TYPE& NB, ILP_TYPE& MB, ILP_TYPE& nrows,
+                                       ILP_TYPE& ncols, ILP_TYPE& ctxt, ILP_TYPE root_id,
+                                       ILP_TYPE NB_FORCE, ILP_TYPE MB_FORCE);
     
     template<typename T>
-    void gather_blacs_matrix(const Matrix<T>& localC, Matrix<T>& C, LP_TYPE& N, LP_TYPE& M,
-                             LP_TYPE& NB, LP_TYPE& MB, LP_TYPE& nrows,
-                             LP_TYPE& ncols, LP_TYPE ctxt, LP_TYPE root_id,
-                             LP_TYPE NB_FORCE = LP_TYPE(0), LP_TYPE MB_FORCE = LP_TYPE(0));
+    void gather_blacs_matrix(const Matrix<T>& localC, Matrix<T>& C, ILP_TYPE& N, ILP_TYPE& M,
+                             ILP_TYPE& NB, ILP_TYPE& MB, ILP_TYPE& nrows,
+                             ILP_TYPE& ncols, ILP_TYPE ctxt, ILP_TYPE root_id,
+                             ILP_TYPE NB_FORCE = ILP_TYPE(0), ILP_TYPE MB_FORCE = ILP_TYPE(0));
 
     template<>
-    void gather_blacs_matrix<double>(const Matrix<double>& localC, Matrix<double>& C, LP_TYPE& N, LP_TYPE& M,
-                                     LP_TYPE& NB, LP_TYPE& MB, LP_TYPE& nrows,
-                                     LP_TYPE& ncols, LP_TYPE ctxt, LP_TYPE root_id,
-                                     LP_TYPE NB_FORCE, LP_TYPE MB_FORCE);
+    void gather_blacs_matrix<double>(const Matrix<double>& localC, Matrix<double>& C, ILP_TYPE& N, ILP_TYPE& M,
+                                     ILP_TYPE& NB, ILP_TYPE& MB, ILP_TYPE& nrows,
+                                     ILP_TYPE& ncols, ILP_TYPE ctxt, ILP_TYPE root_id,
+                                     ILP_TYPE NB_FORCE, ILP_TYPE MB_FORCE);
     template<>
-    void gather_blacs_matrix<COMPLEX>(const Matrix<COMPLEX>& localC, Matrix<COMPLEX>& C, LP_TYPE& N, LP_TYPE& M,
-                                      LP_TYPE& NB, LP_TYPE& MB, LP_TYPE& nrows,
-                                      LP_TYPE& ncols, LP_TYPE ctxt, LP_TYPE root_id,
-                                      LP_TYPE NB_FORCE, LP_TYPE MB_FORCE);
+    void gather_blacs_matrix<COMPLEX>(const Matrix<COMPLEX>& localC, Matrix<COMPLEX>& C, ILP_TYPE& N, ILP_TYPE& M,
+                                      ILP_TYPE& NB, ILP_TYPE& MB, ILP_TYPE& nrows,
+                                      ILP_TYPE& ncols, ILP_TYPE ctxt, ILP_TYPE root_id,
+                                      ILP_TYPE NB_FORCE, ILP_TYPE MB_FORCE);
 
 #endif
 
-    MPI_Datatype Create_Block_Type_double (LP_TYPE N, LP_TYPE M, LP_TYPE NB, LP_TYPE MB);
-    MPI_Datatype Create_Block_Type_complex (LP_TYPE N, LP_TYPE M, LP_TYPE NB, LP_TYPE MB);
+    MPI_Datatype Create_Block_Type_double (ILP_TYPE N, ILP_TYPE M, ILP_TYPE NB, ILP_TYPE MB);
+    MPI_Datatype Create_Block_Type_complex (ILP_TYPE N, ILP_TYPE M, ILP_TYPE NB, ILP_TYPE MB);
 
     // DELETE
     void RING_Bcast(double *buf, int count, MPI_Datatype type, int root, MPI_Comm comm);
@@ -188,10 +196,12 @@ namespace mpi {
 
 #ifdef ENABLE_CLUSTER
    void parallel_dgemm(const Matrix<double>& A, const Matrix<double>& B, Matrix<double>& C,
-                       bool is_distributed = false, LP_TYPE* desca = NULL, LP_TYPE* descb = NULL, LP_TYPE* descc = NULL);
+                       bool is_distributed = false, ILP_TYPE* desca = NULL, ILP_TYPE* descb = NULL, ILP_TYPE* descc = NULL,
+                       char op_A = 'N', char op_B = 'N');
 
    void parallel_zgemm(const Matrix<COMPLEX>& A, const Matrix<COMPLEX>& B, Matrix<COMPLEX>& C,
-                       bool is_distributed = false, LP_TYPE* desca = NULL, LP_TYPE* descb = NULL, LP_TYPE* descc = NULL);
+                       bool is_distributed = false, ILP_TYPE* desca = NULL, ILP_TYPE* descb = NULL, ILP_TYPE* descc = NULL,
+                       char op_A = 'N', char op_B = 'N');
 
    void print_distributed_matrix(const Matrix<double>& A, const std::string& matrix_name, MPI_Comm comm = MPI_COMM_WORLD);
 #endif

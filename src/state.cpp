@@ -2,7 +2,7 @@
 #include "functions.hpp"
 
 // REWRITE TO REGEXP
-State::State(const std::string& grid_state, const std::string& format) : gamma_(0, 0, 0) {
+State::State(const std::string& grid_state, const std::string& format) : gamma_(C_STYLE, 0, 0, 0) {
     size_t format_index = 0;
     size_t left_length = 0, middle_length = 0, right_length = 0;
     while (format[format_index] != 'N') {
@@ -74,7 +74,7 @@ State::State(const std::string& grid_state, const std::string& format) : gamma_(
     }
 }
 
-State::State(const std::vector<size_t>& grid_config) : gamma_(0, 0) {
+State::State(const std::vector<size_t>& grid_config) : gamma_(C_STYLE, 0, 0, 0) {
     for (size_t i = 0; i < grid_config.size(); i++) {
         std::vector<int> m(grid_config[i], 0);
         grid_states_.emplace_back(0, m);
@@ -150,7 +150,7 @@ State::State(const Cavity_State& state) {
         cavities_with_atoms_.insert(0);
     }
 
-    gamma_ = Matrix<COMPLEX>(1, 1, 0);
+    gamma_ = Matrix<COMPLEX>(C_STYLE, 1, 1, 0);
 }
 
 size_t State::get_index() const {

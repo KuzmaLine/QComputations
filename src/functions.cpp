@@ -105,7 +105,7 @@ std::function<double(double)> Cubic_Spline_Interpolate(const std::vector<double>
         h[i] = x[i] - x[i - 1];
     }
 
-    Matrix<double> C(n + 1, n + 1);
+    Matrix<double> C(C_STYLE, n + 1, n + 1);
     C[0][0] = 1;
     C[0][1] = 0;
     C[n][n] = 1;
@@ -248,7 +248,7 @@ std::vector<double> FROM_double_TO_vector(double* A, lapack_int n) {
 }
 
 Matrix<COMPLEX> FROM_lapack_complex_double_TO_Matrix(lapack_complex_double* A, lapack_int n, lapack_int m) {
-    Matrix<COMPLEX> res(n, m);
+    Matrix<COMPLEX> res(C_STYLE, n, m);
 
     for (size_t i = 0; i < n; i++) {
         for (size_t j = 0; j < m; j++) {
@@ -438,7 +438,7 @@ void tridiagonal_QR(Matrix<double>& T) {
         double s = p.second;
 
         double m = std::min(k + 2, n - 1);
-        Matrix<double> tmp(2, 3, double(0));
+        Matrix<double> tmp(C_STYLE, 2, 3, double(0));
         for (size_t i = k; i <= m; i++) {
             tmp[0][i - k] = T[k][i] * c - s * T[k + 1][i];
             tmp[1][i - k] = T[k][i] * s + c * T[k + 1][i];
@@ -466,10 +466,10 @@ void tridiagonal_QR(Matrix<double>& T) {
 Matrix<double> MGS (const Matrix<COMPLEX>& A) {
     auto m = A.size();
     //std::cout << "HERE 1\n";
-    Matrix<COMPLEX> v(m, m, 0);
+    Matrix<COMPLEX> v(C_STYLE, m, m, 0);
     v[0][0] = COMPLEX(1);
 
-    Matrix<double> H(m, m, double(0));
+    Matrix<double> H(C_STYLE, m, m, double(0));
 
     //std::cout << "HERE 2\n";
     for (size_t j = 0; j < m; j++) {
@@ -511,7 +511,7 @@ Matrix<double> MGS (const Matrix<COMPLEX>& A) {
 // Not effective - replace
 std::pair<std::vector<double>, Matrix<double>> jacobi(const Matrix<double>& A) {
     int n = A.size();
-    Matrix<double> eigenvectors(n, n);
+    Matrix<double> eigenvectors(C_STYLE, n, n);
     std::vector<double> eigenvalues(n);
 
     auto B = A;

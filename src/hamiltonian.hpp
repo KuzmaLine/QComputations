@@ -27,7 +27,7 @@ class Hamiltonian {
         bool is_eigen_ = false;
         State grid_;
         std::set<State> basis_;
-        Matrix<COMPLEX> H_;
+        Matrix<COMPLEX> H_ = Matrix<COMPLEX>(DEFAULT_MATRIX_STYLE, 0, 0);
         Matrix<COMPLEX> eigenvectors_;
         std::vector<double> eigenvalues_;
 };

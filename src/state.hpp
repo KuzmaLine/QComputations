@@ -40,11 +40,11 @@ class State {
             y_size_ = y_size;
             z_size_ = z_size;
 
-            gamma_ = Matrix<COMPLEX>(grid_states_.size(), grid_states_.size(), 0);
+            gamma_ = Matrix<COMPLEX>(C_STYLE, grid_states_.size(), grid_states_.size(), 0);
             is_init_gamma_ = false;
         }
 
-        void set_gamma(COMPLEX gamma) { gamma_ = Matrix<COMPLEX>(grid_states_.size(),
+        void set_gamma(COMPLEX gamma) { gamma_ = Matrix<COMPLEX>(C_STYLE, grid_states_.size(),
                                                                  grid_states_.size(),
                                                                  gamma);
                                                                  is_init_gamma_ = true; }

@@ -13,6 +13,7 @@ void matplotlib::probs_to_plot(const Evolution::Probs& probs,
                                const std::vector<double>& time_vec,
                                const std::set<State>& basis,
                                std::vector<std::map<std::string, std::string>> keywords) {
+    //std::cout << "HERE\n";
     size_t index = 0;
     for (const auto& state: basis) {
         if (keywords.size() <= index) {
@@ -147,7 +148,9 @@ void matplotlib::show(bool is_block) {
 void matplotlib::make_figure(size_t x, size_t y, size_t dpi) {
     if (x == 0 or y == 0) plt::figure();
     else {
+        std::cout << "START_MAKE_FIGURE\n";
         plt::figure_size(x, y, dpi);
+        std::cout << "END_MAKE_FIGURE\n";
     }
 }
 

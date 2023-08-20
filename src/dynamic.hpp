@@ -39,10 +39,12 @@ namespace Evolution {
                                    double target);
 
 #ifdef ENABLE_MPI
+#ifdef ENABLE_CLUSTER
     Probs Parallel_QME(const std::vector<COMPLEX>& init_state,
                        Hamiltonian& H,
                        const std::vector<double>& time_vec,
                        bool is_full_rho = false);
+#endif
 #endif
     // TO BE CONTINUED...
 }

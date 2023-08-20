@@ -9,10 +9,6 @@
 
 #ifdef ENABLE_CLUSTER
 
-#include <mkl_pblas.h>
-#include <mkl_scalapack.h>
-#include <mkl_blacs.h>
-
 /*
 extern "C" {
     int numroc_( int *n, int *nb, int *iproc, int *isrcproc, int *nprocs);
@@ -88,7 +84,7 @@ State mpi::bcast_state(const State& state) {
         data[0] = state.max_N();
         data[1] = state.min_N();
         data[2] = state.cavities_count();
-        std::cout << data[2] << std::endl;
+        //std::cout << data[2] << std::endl;
         gamma = state.get_gamma().get_mass();
 
         for (size_t i = 0; i < data[2]; i++) {
@@ -114,31 +110,65 @@ State mpi::bcast_state(const State& state) {
     State res(grid_config);
     res.set_max_N(data[0]);
     res.set_min_N(data[1]);
-    res.set_gamma(Matrix<COMPLEX>(gamma, cavities_count, cavities_count, true)); // true - c_style
+    res.set_gamma(Matrix<COMPLEX>(gamma, cavities_count, cavities_count, C_STYLE)); // true - c_style
+
+    std::vector<COMPLEX> leak_from_cavity(cavities_count, 0);
+    std::vector<COMPLEX> gain_to_cavity(cavities_count, 0);
+
+    if (rank == ROOT_ID) {
+        auto leak_cavities_id = state.get_cavities_with_leak();
+        auto gain_cavities_id = state.get_cavities_with_gain();
+        for (auto id: leak_cavities_id) {
+            leak_from_cavity[id] = state.get_leak_gamma(id);
+        }
+        for (auto id: gain_cavities_id) {
+            gain_to_cavity[id] = state.get_gain_gamma(id);
+        }
+    }
+
+    MPI_Bcast(leak_from_cavity.data(), cavities_count, MPI_DOUBLE_COMPLEX, ROOT_ID, MPI_COMM_WORLD);
+    MPI_Bcast(gain_to_cavity.data(), cavities_count, MPI_DOUBLE_COMPLEX, ROOT_ID, MPI_COMM_WORLD);
+
+    for (size_t i = 0; i < cavities_count; i++) {
+        if (!is_zero(leak_from_cavity[i])) {
+            res.set_leak_for_cavity(i, leak_from_cavity[i]);
+        }
+
+        if (!is_zero(gain_to_cavity[i])) {
+            res.set_gain_for_cavity(i, gain_to_cavity[i]);
+        }
+    }
 
     //std::cout << rank << " " << res.to_string() << std::endl;
     return res;
 }
 
-// ------------------------------------ RUN_MPI_SLAVES --------------------------
+// ################################ RUN_MPI_SLAVES #######################################
 
 void mpi::run_mpi_slaves(const std::map<int, std::vector<MPI_Data>>& data) {
     std::vector<int> commands_count(COMMAND::COMMANDS_COUNT, 0);
     while(true) {
+        //std::cout << "NEW_COMMAND\n";
         COMMAND::COMMANDS command;
         MPI_Bcast(&command, 1, MPI_INT, ROOT_ID, MPI_COMM_WORLD);
+        //std::cout << "START_COMMAND\n";
         int command_id = commands_count[command];
 
         if (command == COMMAND::STOP) {
             break;
         }
 
+// ----------------------------------- GENERATE_H --------------------------------------
         if (command == COMMAND::GENERATE_H) {
             State tmp = bcast_state();
             //std::cout << tmp.to_string() << std::endl;
             H_TCH H(tmp);
+
+// --------------------------------- GENERATE_H_FUNC -----------------------------------
         } else if (command == COMMAND::GENERATE_H_FUNC) {
             H_by_func H(data.at(command)[command_id].n, data.at(command)[command_id].func);
+
+// ---------------------------------- SCHRODINGER --------------------------------------
         } else if (command == COMMAND::SCHRODINGER) {
             auto init_state = bcast_vector_complex();
             //show_vector(init_state);
@@ -146,10 +176,19 @@ void mpi::run_mpi_slaves(const std::map<int, std::vector<MPI_Data>>& data) {
             auto H = Hamiltonian();
             Evolution::schrodinger(init_state, H, time_vec);
 
-        // not ready, hard realization
+// ------------------------------------- QME -------------------------------------------
         } else if (command == COMMAND::QME) {
             auto init_state = bcast_vector_complex();
+            auto time_vec = bcast_vector_double();
 
+            bool is_full_rho;
+            MPI_Bcast(&is_full_rho, 1, MPI_C_BOOL, mpi::ROOT_ID, MPI_COMM_WORLD);
+
+            auto H_tmp = Hamiltonian();
+            Evolution::Parallel_QME(init_state, H_tmp, time_vec, is_full_rho);
+
+// ---------------------------------- DELETE --------------------------------------
+// --------------------------------------------------------------------------------
         // NOT EFFECTIVE, DELETE
         } else if (command == COMMAND::CANNON_MULTIPLY) {
             int bcastdata[4];
@@ -172,7 +211,7 @@ void mpi::run_mpi_slaves(const std::map<int, std::vector<MPI_Data>>& data) {
             int bcast_data[3];
             MPI_Bcast(&bcast_data, 3, MPI_INT, mpi::ROOT_ID, MPI_COMM_WORLD);
             int n = bcast_data[0], m = bcast_data[1];
-            Matrix<COMPLEX> B(n, m);
+            Matrix<COMPLEX> B(C_STYLE, n, m);
 
             if (bcast_data[2] == MPI_Datatype_ID::DOUBLE_COMPLEX) {
                 MPI_Bcast(B.data(), n * m, MPI_DOUBLE_COMPLEX, mpi::ROOT_ID, MPI_COMM_WORLD);
@@ -181,7 +220,12 @@ void mpi::run_mpi_slaves(const std::map<int, std::vector<MPI_Data>>& data) {
             } else {
                 MPI_Abort(MPI_COMM_WORLD, 5);
             }
+
+// ---------------------------------------------------------------------------------
+// --------------------------------- DELETE -------------------------------------
 #ifdef ENABLE_CLUSTER 
+
+// ----------------------------- P_GEMM -----------------------------------------
         } else if (command == COMMAND::P_GEMM_MULTIPLY) {
             int datatype;
             MPI_Bcast(&datatype, 1, MPI_INT, mpi::ROOT_ID, MPI_COMM_WORLD);
@@ -196,6 +240,8 @@ void mpi::run_mpi_slaves(const std::map<int, std::vector<MPI_Data>>& data) {
                 MPI_Abort(MPI_COMM_WORLD, 6);
             }
 #endif
+
+// -------------------------- EXIT_FROM_FUNC ---------------------------------
         } else if (command == COMMAND::EXIT_FROM_FUNC) {
             return;
         } else {
@@ -237,9 +283,9 @@ void mpi::Cannon_Multiply <COMPLEX>(const Matrix<COMPLEX>& A, const Matrix<COMPL
     MPI_Type_create_resized(tmp_type, 0, block_size * sizeof(COMPLEX), &block_type);
     MPI_Type_commit(&block_type);
 
-    Matrix<COMPLEX> localA(block_size, block_size);
-    Matrix<COMPLEX> localB(block_size, block_size);
-    Matrix<COMPLEX> localC(block_size, block_size, COMPLEX(0));
+    Matrix<COMPLEX> localA(C_STYLE, block_size, block_size);
+    Matrix<COMPLEX> localB(C_STYLE, block_size, block_size);
+    Matrix<COMPLEX> localC(C_STYLE, block_size, block_size, COMPLEX(0));
 
     std::vector<int> sendcounts(world_size);
     std::vector<int> displs(world_size);
@@ -329,10 +375,9 @@ void mpi::Cannon_Multiply <double>(const Matrix<double>& A, const Matrix<double>
     MPI_Type_create_resized(tmp_type, 0, block_size * sizeof(double), &block_type);
     MPI_Type_commit(&block_type);
 
-    Matrix<double> localA(block_size, block_size);
-    Matrix<double> localB(block_size, block_size);
-
-    Matrix<double> localC(block_size, block_size, 0.0);
+    Matrix<double> localA(C_STYLE, block_size, block_size);
+    Matrix<double> localB(C_STYLE, block_size, block_size);
+    Matrix<double> localC(C_STYLE, block_size, block_size, 0.0);
 
     std::vector<int> sendcounts(world_size);
     std::vector<int> displs(world_size);
@@ -407,9 +452,9 @@ void mpi::Cannon_Multiply <int>(const Matrix<int>& A, const Matrix<int>& B, Matr
     MPI_Type_create_resized(tmp_type, 0, block_size * sizeof(int), &block_type);
     MPI_Type_commit(&block_type);
 
-    Matrix<int> localA(block_size, block_size);
-    Matrix<int> localB(block_size, block_size);
-    Matrix<int> localC(block_size, block_size, 0);
+    Matrix<int> localA(C_STYLE, block_size, block_size);
+    Matrix<int> localB(C_STYLE, block_size, block_size);
+    Matrix<int> localC(C_STYLE, block_size, block_size, 0);
 
     std::vector<int> sendcounts(world_size);
     std::vector<int> displs(world_size);
@@ -502,8 +547,8 @@ void mpi::Dim_Multiply<COMPLEX>(const Matrix<COMPLEX>& A, const Matrix<COMPLEX>&
         MPI_Type_create_resized(tmp_type, 0, k * sizeof(COMPLEX), &row_type);
         MPI_Type_commit(&row_type);
 
-        Matrix<COMPLEX> localA(rows_map[rank], k);
-        Matrix<COMPLEX> localC(rows_map[rank], m);
+        Matrix<COMPLEX> localA(C_STYLE, rows_map[rank], k);
+        Matrix<COMPLEX> localC(C_STYLE, rows_map[rank], m);
 
         MPI_Scatterv(A.data(), rows_map.data(), displs.data(), row_type, localA.data(),
         rows_map[rank] * k, datatype,
@@ -526,12 +571,12 @@ void mpi::Dim_Multiply<COMPLEX>(const Matrix<COMPLEX>& A, const Matrix<COMPLEX>&
     }
 }
 
-// -------------------------------------------- BLACS, PBLAS -----------------------------------------------------
+// ##################################### BLACS, PBLAS ###########################################
 
 #ifdef ENABLE_CLUSTER
     
-
-MPI_Datatype Create_Block_Type_double (LP_TYPE N, LP_TYPE M, LP_TYPE NB, LP_TYPE MB) {
+// UNUSED
+MPI_Datatype Create_Block_Type_double (ILP_TYPE N, ILP_TYPE M, ILP_TYPE NB, ILP_TYPE MB) {
     MPI_Datatype tmp_type, block_type;
     int starts[2] = {0, 0};
     int global_size[2] = {N, M};
@@ -544,7 +589,7 @@ MPI_Datatype Create_Block_Type_double (LP_TYPE N, LP_TYPE M, LP_TYPE NB, LP_TYPE
 }
 
 namespace {
-    void my_dgesd2d(LP_TYPE N, LP_TYPE M, LP_TYPE row_index, LP_TYPE col_index, const Matrix<double>& A, LP_TYPE send_id) {
+    void my_dgesd2d(ILP_TYPE N, ILP_TYPE M, ILP_TYPE row_index, ILP_TYPE col_index, const Matrix<double>& A, ILP_TYPE send_id) {
         auto sub = A.submatrix(N, M, row_index, col_index);
         sub.show();
         //auto block_type = Create_Block_Type_double(bcast_data[0], bcast_data[1], bcast_data[2], bcast_data[3]);
@@ -552,9 +597,9 @@ namespace {
         MPI_Send(sub.data(), M * N, MPI_DOUBLE, send_id, 0, MPI_COMM_WORLD);
     }
 
-    void my_dgerv2d(LP_TYPE N, LP_TYPE M, LP_TYPE offset, Matrix<double>& A, LP_TYPE LDA, LP_TYPE source_id) {
-        Matrix<double> tmp(A.is_c_style(), N, M);
-        LP_TYPE row_offset, col_offset;
+    void my_dgerv2d(ILP_TYPE N, ILP_TYPE M, ILP_TYPE offset, Matrix<double>& A, ILP_TYPE LDA, ILP_TYPE source_id) {
+        Matrix<double> tmp(A.get_matrix_style(), N, M);
+        ILP_TYPE row_offset, col_offset;
         if (A.is_c_style()) {
             row_offset = offset / LDA;
             col_offset = offset % LDA;
@@ -570,15 +615,15 @@ namespace {
         }
     }
 
-    void my_zgesd2d(LP_TYPE N, LP_TYPE M, LP_TYPE row_index, LP_TYPE col_index, const Matrix<COMPLEX>& A, LP_TYPE send_id) {
+    void my_zgesd2d(ILP_TYPE N, ILP_TYPE M, ILP_TYPE row_index, ILP_TYPE col_index, const Matrix<COMPLEX>& A, ILP_TYPE send_id) {
         auto sub = A.submatrix(N, M, row_index, col_index);
         //sub.show();
         MPI_Send(sub.data(), M * N, MPI_DOUBLE_COMPLEX, send_id, 0, MPI_COMM_WORLD);
     }
 
-    void my_zgerv2d(LP_TYPE N, LP_TYPE M, LP_TYPE offset, Matrix<COMPLEX>& A, LP_TYPE LDA, LP_TYPE source_id) {
-        Matrix<COMPLEX> tmp(A.is_c_style(), N, M);
-        LP_TYPE row_offset, col_offset;
+    void my_zgerv2d(ILP_TYPE N, ILP_TYPE M, ILP_TYPE offset, Matrix<COMPLEX>& A, ILP_TYPE LDA, ILP_TYPE source_id) {
+        Matrix<COMPLEX> tmp(A.get_matrix_style(), N, M);
+        ILP_TYPE row_offset, col_offset;
         if (A.is_c_style()) {
             row_offset = offset / LDA;
             col_offset = offset % LDA;
@@ -596,34 +641,34 @@ namespace {
 
 
     // NEED TO REPLACE
-    void ScatterBLACSMatrix_double(const Matrix<double>& A, LP_TYPE NA,
-                                    LP_TYPE MA, Matrix<double>& localA,
-                                    LP_TYPE NB_A, LP_TYPE MB_A, LP_TYPE nrows_A,
-                                    LP_TYPE ncols_A, LP_TYPE myrow, LP_TYPE mycol,
-                                    LP_TYPE proc_rows, LP_TYPE proc_cols,
-                                    LP_TYPE rank, LP_TYPE* p_ctxt) {
+    void ScatterBLACSMatrix_double(const Matrix<double>& A, ILP_TYPE NA,
+                                    ILP_TYPE MA, Matrix<double>& localA,
+                                    ILP_TYPE NB_A, ILP_TYPE MB_A, ILP_TYPE nrows_A,
+                                    ILP_TYPE ncols_A, ILP_TYPE myrow, ILP_TYPE mycol,
+                                    ILP_TYPE proc_rows, ILP_TYPE proc_cols,
+                                    ILP_TYPE rank, ILP_TYPE* p_ctxt) {
 
         auto A_tmp = A;
-        LP_TYPE iZERO = 0;
-        LP_TYPE sendr = 0, sendc = 0, recvr = 0, recvc = 0;
-        for (LP_TYPE r = 0; r < NA; r += NB_A, sendr = (sendr + 1) % proc_rows) {
+        ILP_TYPE iZERO = 0;
+        ILP_TYPE sendr = 0, sendc = 0, recvr = 0, recvc = 0;
+        for (ILP_TYPE r = 0; r < NA; r += NB_A, sendr = (sendr + 1) % proc_rows) {
             sendc = 0;
             // Number of rows to be sent
             // Is this the last row block?
-            LP_TYPE nr = NB_A;
+            ILP_TYPE nr = NB_A;
             if (NA - r < NB_A)
                 nr = NA - r;
     
-            for (LP_TYPE c = 0; c < MA; c += MB_A, sendc = (sendc + 1) % proc_cols) {
+            for (ILP_TYPE c = 0; c < MA; c += MB_A, sendc = (sendc + 1) % proc_cols) {
                 // Number of cols to be sent
                 // Is this the last col block?
-                LP_TYPE nc = MB_A;
+                ILP_TYPE nc = MB_A;
                 if (MA - c < MB_A)
                     nc = MA - c;
     
                 if (rank == mpi::ROOT_ID) {
                     // Send a nr-by-nc submatrix to process (sendr, sendc)
-                    LP_TYPE send_id = blacs_pnum(p_ctxt, &sendr, &sendc);
+                    ILP_TYPE send_id = blacs_pnum(p_ctxt, &sendr, &sendc);
                     //std::cout << "Send to " << send_id << " : " << sendr << " " << sendc << std::endl;
                     //std::cout << nr << " " << nc << " " << r << " " << c << std::endl;
                     my_dgesd2d(nr, nc, r, c, A, send_id);
@@ -648,32 +693,32 @@ namespace {
     }
 
     // NEED TO REPLACE
-    void ScatterBLACSMatrix_COMPLEX(const Matrix<COMPLEX>& A, LP_TYPE NA,
-                                    LP_TYPE MA, Matrix<COMPLEX>& localA,
-                                    LP_TYPE NB_A, LP_TYPE MB_A, LP_TYPE nrows_A,
-                                    LP_TYPE ncols_A, LP_TYPE myrow, LP_TYPE mycol,
-                                    LP_TYPE proc_rows, LP_TYPE proc_cols,
-                                    LP_TYPE rank, LP_TYPE* p_ctxt) {
+    void ScatterBLACSMatrix_COMPLEX(const Matrix<COMPLEX>& A, ILP_TYPE NA,
+                                    ILP_TYPE MA, Matrix<COMPLEX>& localA,
+                                    ILP_TYPE NB_A, ILP_TYPE MB_A, ILP_TYPE nrows_A,
+                                    ILP_TYPE ncols_A, ILP_TYPE myrow, ILP_TYPE mycol,
+                                    ILP_TYPE proc_rows, ILP_TYPE proc_cols,
+                                    ILP_TYPE rank, ILP_TYPE* p_ctxt) {
 
-        LP_TYPE sendr = 0, sendc = 0, recvr = 0, recvc = 0;
-        for (LP_TYPE r = 0; r < NA; r += NB_A, sendr = (sendr + 1) % proc_rows) {
+        ILP_TYPE sendr = 0, sendc = 0, recvr = 0, recvc = 0;
+        for (ILP_TYPE r = 0; r < NA; r += NB_A, sendr = (sendr + 1) % proc_rows) {
             sendc = 0;
             // Number of rows to be sent
             // Is this the last row block?
-            LP_TYPE nr = NB_A;
+            ILP_TYPE nr = NB_A;
             if (NA - r < NB_A)
                 nr = NA - r;
     
-            for (LP_TYPE c = 0; c < MA; c += MB_A, sendc = (sendc + 1) % proc_cols) {
+            for (ILP_TYPE c = 0; c < MA; c += MB_A, sendc = (sendc + 1) % proc_cols) {
                 // Number of cols to be sent
                 // Is this the last col block?
-                LP_TYPE nc = MB_A;
+                ILP_TYPE nc = MB_A;
                 if (MA - c < MB_A)
                     nc = MA - c;
     
                 if (rank == mpi::ROOT_ID) {
                     // Send a nr-by-nc submatrix to process (sendr, sendc)
-                    LP_TYPE send_id = blacs_pnum(p_ctxt, &sendr, &sendc);
+                    ILP_TYPE send_id = blacs_pnum(p_ctxt, &sendr, &sendc);
                     //std::cout << "Send to " << send_id << " : " << sendr << " " << sendc << std::endl;
                     my_zgesd2d(nr, nc, r, c, A, send_id);
                     //zgesd2d(&ctxt, &nr, &nc, A.data() + NA * c + r, NA, sendr, sendc);
@@ -695,43 +740,43 @@ namespace {
     }
 }
 
-void mpi::init_grid(LP_TYPE& ctxt) {
-    LP_TYPE iZERO = 0;
+void mpi::init_grid(ILP_TYPE& ctxt) {
+    ILP_TYPE iZERO = 0;
     int world_size;
     MPI_Comm_size(MPI_COMM_WORLD, &world_size);
 
-    LP_TYPE myid, numproc, myrow, mycol;
+    ILP_TYPE myid, numproc, myrow, mycol;
     char order = 'R';
-    LP_TYPE proc_rows = std::sqrt(world_size), proc_cols = world_size / proc_rows;
+    ILP_TYPE proc_rows = std::sqrt(world_size), proc_cols = world_size / proc_rows;
     //std::cout << rank << " Here1\n";
     blacs_pinfo(&myid, &numproc);
-    LP_TYPE iMINUS = -1;
+    ILP_TYPE iMINUS = -1;
     blacs_get(&iMINUS, &iZERO, &ctxt);
     //std::cout << rank << " Here3\n";
     blacs_gridinit(&ctxt, &order, &proc_rows, &proc_cols);
 }
 
 template<>
-Matrix<double> mpi::scatter_blacs_matrix<double>(const Matrix<double>& A, LP_TYPE& N, LP_TYPE& M,
-                                      LP_TYPE& NB, LP_TYPE& MB, LP_TYPE& nrows,
-                                      LP_TYPE& ncols, LP_TYPE& ctxt, LP_TYPE root_id,
-                                      LP_TYPE NB_FORCE, LP_TYPE MB_FORCE) {
-    LP_TYPE iZERO = 0;
+Matrix<double> mpi::scatter_blacs_matrix<double>(const Matrix<double>& A, ILP_TYPE& N, ILP_TYPE& M,
+                                      ILP_TYPE& NB, ILP_TYPE& MB, ILP_TYPE& nrows,
+                                      ILP_TYPE& ncols, ILP_TYPE& ctxt, ILP_TYPE root_id,
+                                      ILP_TYPE NB_FORCE, ILP_TYPE MB_FORCE) {
+    ILP_TYPE iZERO = 0;
     int rank, world_size;
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
     MPI_Comm_size(MPI_COMM_WORLD, &world_size);
 
-    LP_TYPE myrow, mycol;
+    ILP_TYPE myrow, mycol;
     char order = 'R';
-    LP_TYPE proc_rows, proc_cols;
+    ILP_TYPE proc_rows, proc_cols;
     blacs_gridinfo(&ctxt, &proc_rows, &proc_cols, &myrow, &mycol);
 
-    LP_TYPE root_row, root_col;
-    LP_TYPE bcast_data[5];
+    ILP_TYPE root_row, root_col;
+    ILP_TYPE bcast_data[5];
     if (rank == root_id) {
         bcast_data[0] = A.n();
         bcast_data[1] = A.m();
-        bcast_data[2] = A.is_c_style();
+        bcast_data[2] = A.get_matrix_style();
         bcast_data[3] = myrow;
         bcast_data[4] = mycol;
     }
@@ -742,7 +787,7 @@ Matrix<double> mpi::scatter_blacs_matrix<double>(const Matrix<double>& A, LP_TYP
 
     N = bcast_data[0];
     M = bcast_data[1];
-    bool is_c_style = bcast_data[2];
+    MATRIX_STYLE is_c_style = MATRIX_STYLE(bcast_data[2]);
     root_row = bcast_data[3];
     root_col = bcast_data[4];
     NB = N / proc_rows;
@@ -753,28 +798,28 @@ Matrix<double> mpi::scatter_blacs_matrix<double>(const Matrix<double>& A, LP_TYP
 
     Matrix<double> localA(is_c_style, nrows, ncols);
 
-    LP_TYPE A_LD = A.LD();
-    LP_TYPE localA_LD = localA.LD();
+    ILP_TYPE A_LD = A.LD();
+    ILP_TYPE localA_LD = localA.LD();
     
-    LP_TYPE sendr = 0, sendc = 0, recvr = 0, recvc = 0;
-    for (LP_TYPE r = 0; r < N; r += NB, sendr = (sendr + 1) % proc_rows) {
+    ILP_TYPE sendr = 0, sendc = 0, recvr = 0, recvc = 0;
+    for (ILP_TYPE r = 0; r < N; r += NB, sendr = (sendr + 1) % proc_rows) {
         sendc = 0;
         // Number of rows to be sent
         // Is this the last row block?
-        LP_TYPE nr = NB;
+        ILP_TYPE nr = NB;
         if (N - r < NB)
             nr = N - r;
 
-        for (LP_TYPE c = 0; c < M; c += MB, sendc = (sendc + 1) % proc_cols) {
+        for (ILP_TYPE c = 0; c < M; c += MB, sendc = (sendc + 1) % proc_cols) {
             // Number of cols to be sent
             // Is this the last col block?
-            LP_TYPE nc = MB;
+            ILP_TYPE nc = MB;
             if (M - c < MB)
                 nc = M - c;
 
             if (rank == root_id) {
                 // Send a nr-by-nc submatrix to process (sendr, sendc)
-                LP_TYPE send_id = blacs_pnum(&ctxt, &sendr, &sendc);
+                ILP_TYPE send_id = blacs_pnum(&ctxt, &sendr, &sendc);
                 //std::cout << "Send to " << send_id << " : " << sendr << " " << sendc << std::endl;
                 //if (is_c_style) {
                     my_dgesd2d(nr, nc, r, c, A, send_id);
@@ -804,36 +849,36 @@ Matrix<double> mpi::scatter_blacs_matrix<double>(const Matrix<double>& A, LP_TYP
 }
 
 template<>
-Matrix<COMPLEX> mpi::scatter_blacs_matrix<COMPLEX>(const Matrix<COMPLEX>& A, LP_TYPE& N, LP_TYPE& M,
-                                      LP_TYPE& NB, LP_TYPE& MB, LP_TYPE& nrows,
-                                      LP_TYPE& ncols, LP_TYPE& ctxt, LP_TYPE root_id,
-                                      LP_TYPE NB_FORCE, LP_TYPE MB_FORCE) {
-    LP_TYPE iZERO = 0;
+Matrix<COMPLEX> mpi::scatter_blacs_matrix<COMPLEX>(const Matrix<COMPLEX>& A, ILP_TYPE& N, ILP_TYPE& M,
+                                      ILP_TYPE& NB, ILP_TYPE& MB, ILP_TYPE& nrows,
+                                      ILP_TYPE& ncols, ILP_TYPE& ctxt, ILP_TYPE root_id,
+                                      ILP_TYPE NB_FORCE, ILP_TYPE MB_FORCE) {
+    ILP_TYPE iZERO = 0;
     int rank, world_size;
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
     MPI_Comm_size(MPI_COMM_WORLD, &world_size);
+    //std::cout << rank << " SCATTER_ENTER\n";
 
-    LP_TYPE myrow, mycol;
-    LP_TYPE proc_rows, proc_cols;
+    ILP_TYPE myrow, mycol;
+    ILP_TYPE proc_rows, proc_cols;
     blacs_gridinfo(&ctxt, &proc_rows, &proc_cols, &myrow, &mycol);
 
-    LP_TYPE root_row, root_col;
-    LP_TYPE bcast_data[5];
+    ILP_TYPE root_row, root_col;
+    ILP_TYPE bcast_data[5];
     if (rank == root_id) {
+        //A.show();
         bcast_data[0] = A.n();
         bcast_data[1] = A.m();
-        bcast_data[2] = A.is_c_style();
+        bcast_data[2] = A.get_matrix_style();
         bcast_data[3] = myrow;
         bcast_data[4] = mycol;
     }
-
-    //std::cout << "HERE2\n";
 
     MPI_Bcast(&bcast_data, 5, MPI_BCAST_DATATYPE, mpi::ROOT_ID, MPI_COMM_WORLD);
 
     N = bcast_data[0];
     M = bcast_data[1];
-    bool is_c_style = bcast_data[2];
+    MATRIX_STYLE is_c_style = MATRIX_STYLE(bcast_data[2]);
     root_row = bcast_data[3];
     root_col = bcast_data[4];
     NB = N / proc_rows;
@@ -842,30 +887,31 @@ Matrix<COMPLEX> mpi::scatter_blacs_matrix<COMPLEX>(const Matrix<COMPLEX>& A, LP_
     nrows = numroc_(&N, &NB, &myrow, &iZERO, &proc_rows);
     ncols = numroc_(&M, &MB, &mycol, &iZERO, &proc_cols);
 
+    //std::cout << rank << " " << nrows << " " << ncols << N << " "std::endl;
     Matrix<COMPLEX> localA(is_c_style, nrows, ncols);
 
-    LP_TYPE A_LD = A.LD();
-    LP_TYPE localA_LD = localA.LD();
-    
-    LP_TYPE sendr = 0, sendc = 0, recvr = 0, recvc = 0;
-    for (LP_TYPE r = 0; r < N; r += NB, sendr = (sendr + 1) % proc_rows) {
+    ILP_TYPE A_LD = A.LD();
+    ILP_TYPE localA_LD = localA.LD();
+
+    ILP_TYPE sendr = 0, sendc = 0, recvr = 0, recvc = 0;
+    for (ILP_TYPE r = 0; r < N; r += NB, sendr = (sendr + 1) % proc_rows) {
         sendc = 0;
         // Number of rows to be sent
         // Is this the last row block?
-        LP_TYPE nr = NB;
+        ILP_TYPE nr = NB;
         if (N - r < NB)
             nr = N - r;
 
-        for (LP_TYPE c = 0; c < M; c += MB, sendc = (sendc + 1) % proc_cols) {
+        for (ILP_TYPE c = 0; c < M; c += MB, sendc = (sendc + 1) % proc_cols) {
             // Number of cols to be sent
             // Is this the last col block?
-            LP_TYPE nc = MB;
+            ILP_TYPE nc = MB;
             if (M - c < MB)
                 nc = M - c;
 
             if (rank == root_id) {
                 // Send a nr-by-nc submatrix to process (sendr, sendc)
-                LP_TYPE send_id = blacs_pnum(&ctxt, &sendr, &sendc);
+                ILP_TYPE send_id = blacs_pnum(&ctxt, &sendr, &sendc);
                 //std::cout << "Send to " << send_id << " : " << sendr << " " << sendc << std::endl;
                 //if (is_c_style) {
                     my_zgesd2d(nr, nc, r, c, A, send_id);
@@ -896,53 +942,54 @@ Matrix<COMPLEX> mpi::scatter_blacs_matrix<COMPLEX>(const Matrix<COMPLEX>& A, LP_
 
 template<>
 void mpi::gather_blacs_matrix<double>(const Matrix<double>& localC, Matrix<double>& C, 
-                                      LP_TYPE& N, LP_TYPE& M,
-                                      LP_TYPE& NB, LP_TYPE& MB, LP_TYPE& nrows,
-                                      LP_TYPE& ncols, LP_TYPE ctxt, LP_TYPE root_id,
-                                      LP_TYPE NB_FORCE, LP_TYPE MB_FORCE) {
-    LP_TYPE iZERO = 0;
+                                      ILP_TYPE& N, ILP_TYPE& M,
+                                      ILP_TYPE& NB, ILP_TYPE& MB, ILP_TYPE& nrows,
+                                      ILP_TYPE& ncols, ILP_TYPE ctxt, ILP_TYPE root_id,
+                                      ILP_TYPE NB_FORCE, ILP_TYPE MB_FORCE) {
+    assert(localC.get_matrix_style() == C.get_matrix_style());
+    ILP_TYPE iZERO = 0;
     int rank, world_size;
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
     MPI_Comm_size(MPI_COMM_WORLD, &world_size);
 
-    LP_TYPE myrow, mycol;
-    LP_TYPE proc_rows, proc_cols;
+    ILP_TYPE myrow, mycol;
+    ILP_TYPE proc_rows, proc_cols;
     blacs_gridinfo(&ctxt, &proc_rows, &proc_cols, &myrow, &mycol);
 
-    LP_TYPE root_row, root_col;
-    LP_TYPE bcast_data[2];
+    ILP_TYPE root_row, root_col;
+    ILP_TYPE bcast_data[2];
     if (rank == root_id) {
         bcast_data[0] = myrow;
         bcast_data[1] = mycol;
     }
-    //std::cout << "HERE2\n";
+    std::cout << "HERE2\n";
 
     MPI_Bcast(&bcast_data, 2, MPI_BCAST_DATATYPE, mpi::ROOT_ID, MPI_COMM_WORLD);
 
-    bool is_c_style = localC.is_c_style();
+    MATRIX_STYLE is_c_style = localC.get_matrix_style();
     root_row = bcast_data[0];
     root_col = bcast_data[1];
 
-    LP_TYPE C_LD;
+    ILP_TYPE C_LD;
     if (rank == root_id) {
         C_LD = C.LD();
     }
 
-    LP_TYPE localC_LD = localC.LD();
+    ILP_TYPE localC_LD = localC.LD();
     
-    LP_TYPE sendr = 0, sendc = 0, recvr = 0, recvc = 0;
-    for (LP_TYPE r = 0; r < N; r += NB, sendr = (sendr + 1) % proc_rows) {
+    ILP_TYPE sendr = 0, sendc = 0, recvr = 0, recvc = 0;
+    for (ILP_TYPE r = 0; r < N; r += NB, sendr = (sendr + 1) % proc_rows) {
         sendc = 0;
         // Number of rows to be sent
         // Is this the last row block?
-        LP_TYPE nr = NB;
+        ILP_TYPE nr = NB;
         if (N - r < NB)
             nr = N - r;
 
-        for (LP_TYPE c = 0; c < M; c += MB, sendc = (sendc + 1) % proc_cols) {
+        for (ILP_TYPE c = 0; c < M; c += MB, sendc = (sendc + 1) % proc_cols) {
             // Number of cols to be sent
             // Is this the last col block?
-            LP_TYPE nc = MB;
+            ILP_TYPE nc = MB;
             if (M - c < MB)
                 nc = M - c;
 
@@ -960,7 +1007,7 @@ void mpi::gather_blacs_matrix<double>(const Matrix<double>& localC, Matrix<doubl
             //if (myrow == sendr && mycol == sendc) {
             if (rank == root_id) {
                 //std::cout << "Recv " << myrow << " " << mycol << " " << recvr << " " << recvc << std::endl;
-                LP_TYPE source_id = blacs_pnum(&ctxt, &sendr, &sendc);
+                ILP_TYPE source_id = blacs_pnum(&ctxt, &sendr, &sendc);
                 if (is_c_style) {
                     my_dgerv2d(nr, nc, M * r + c, C, C_LD, source_id);
                 } else {
@@ -977,53 +1024,54 @@ void mpi::gather_blacs_matrix<double>(const Matrix<double>& localC, Matrix<doubl
 
 template<>
 void mpi::gather_blacs_matrix<COMPLEX>(const Matrix<COMPLEX>& localC, Matrix<COMPLEX>& C, 
-                                      LP_TYPE& N, LP_TYPE& M,
-                                      LP_TYPE& NB, LP_TYPE& MB, LP_TYPE& nrows,
-                                      LP_TYPE& ncols, LP_TYPE ctxt, LP_TYPE root_id,
-                                      LP_TYPE NB_FORCE, LP_TYPE MB_FORCE) {
-    LP_TYPE iZERO = 0;
+                                      ILP_TYPE& N, ILP_TYPE& M,
+                                      ILP_TYPE& NB, ILP_TYPE& MB, ILP_TYPE& nrows,
+                                      ILP_TYPE& ncols, ILP_TYPE ctxt, ILP_TYPE root_id,
+                                      ILP_TYPE NB_FORCE, ILP_TYPE MB_FORCE) {
+    assert(localC.get_matrix_style() == C.get_matrix_style());
+    ILP_TYPE iZERO = 0;
     int rank, world_size;
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
     MPI_Comm_size(MPI_COMM_WORLD, &world_size);
 
-    LP_TYPE myrow, mycol;
-    LP_TYPE proc_rows, proc_cols;
+    //mpi::print_distributed_matrix<COMPLEX>(localC, "rho", MPI_COMM_WORLD);
+    ILP_TYPE myrow, mycol;
+    ILP_TYPE proc_rows, proc_cols;
     blacs_gridinfo(&ctxt, &proc_rows, &proc_cols, &myrow, &mycol);
 
-    LP_TYPE root_row, root_col;
-    LP_TYPE bcast_data[2];
+    ILP_TYPE root_row, root_col;
+    ILP_TYPE bcast_data[2];
     if (rank == root_id) {
         bcast_data[0] = myrow;
         bcast_data[1] = mycol;
     }
-    //std::cout << "HERE2\n";
 
     MPI_Bcast(&bcast_data, 2, MPI_BCAST_DATATYPE, mpi::ROOT_ID, MPI_COMM_WORLD);
 
-    bool is_c_style = localC.is_c_style();
+    MATRIX_STYLE is_c_style = localC.get_matrix_style();
     root_row = bcast_data[0];
     root_col = bcast_data[1];
 
-    LP_TYPE C_LD;
+    ILP_TYPE C_LD;
     if (rank == root_id) {
         C_LD = C.LD();
     }
 
-    LP_TYPE localC_LD = localC.LD();
+    ILP_TYPE localC_LD = localC.LD();
     
-    LP_TYPE sendr = 0, sendc = 0, recvr = 0, recvc = 0;
-    for (LP_TYPE r = 0; r < N; r += NB, sendr = (sendr + 1) % proc_rows) {
+    ILP_TYPE sendr = 0, sendc = 0, recvr = 0, recvc = 0;
+    for (ILP_TYPE r = 0; r < N; r += NB, sendr = (sendr + 1) % proc_rows) {
         sendc = 0;
         // Number of rows to be sent
         // Is this the last row block?
-        LP_TYPE nr = NB;
+        ILP_TYPE nr = NB;
         if (N - r < NB)
             nr = N - r;
 
-        for (LP_TYPE c = 0; c < M; c += MB, sendc = (sendc + 1) % proc_cols) {
+        for (ILP_TYPE c = 0; c < M; c += MB, sendc = (sendc + 1) % proc_cols) {
             // Number of cols to be sent
             // Is this the last col block?
-            LP_TYPE nc = MB;
+            ILP_TYPE nc = MB;
             if (M - c < MB)
                 nc = M - c;
 
@@ -1041,7 +1089,7 @@ void mpi::gather_blacs_matrix<COMPLEX>(const Matrix<COMPLEX>& localC, Matrix<COM
             //if (myrow == sendr && mycol == sendc) {
             if (rank == root_id) {
                 //std::cout << "Recv " << myrow << " " << mycol << " " << recvr << " " << recvc << std::endl;
-                LP_TYPE source_id = blacs_pnum(&ctxt, &sendr, &sendc);
+                ILP_TYPE source_id = blacs_pnum(&ctxt, &sendr, &sendc);
                 if (is_c_style) {
                     my_zgerv2d(nr, nc, M * r + c, C, C_LD, source_id);
                 } else {
@@ -1057,17 +1105,18 @@ void mpi::gather_blacs_matrix<COMPLEX>(const Matrix<COMPLEX>& localC, Matrix<COM
 }
 
 void mpi::parallel_dgemm(const Matrix<double>& A, const Matrix<double>& B, Matrix<double>& C,
-                         bool is_distributed, LP_TYPE* desca, LP_TYPE* descb, LP_TYPE* descc) {
-    LP_TYPE iZERO = 0;
+                         bool is_distributed, ILP_TYPE* desca, ILP_TYPE* descb, ILP_TYPE* descc,
+                         char op_A, char op_B) {
+    ILP_TYPE iZERO = 0;
     int rank, world_size;
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
     MPI_Comm_size(MPI_COMM_WORLD, &world_size);
 
-    LP_TYPE ctxt;
-    LP_TYPE NA, MA, NB, MB, NB_A, MB_A, NB_B, MB_B;
-    LP_TYPE LLD_A, LLD_B, LLD_C;
-    LP_TYPE nrows_A, nrows_B, nrows_C, ncols_A, ncols_B, ncols_C;
-    LP_TYPE proc_rows, proc_cols, myrow, mycol;
+    ILP_TYPE ctxt;
+    ILP_TYPE NA, MA, NB, MB, NB_A, MB_A, NB_B, MB_B;
+    ILP_TYPE LLD_A, LLD_B, LLD_C;
+    ILP_TYPE nrows_A, nrows_B, nrows_C, ncols_A, ncols_B, ncols_C;
+    ILP_TYPE proc_rows, proc_cols, myrow, mycol;
     Matrix<double> localA;
     Matrix<double> localB;
     Matrix<double> localC;
@@ -1081,16 +1130,16 @@ void mpi::parallel_dgemm(const Matrix<double>& A, const Matrix<double>& B, Matri
         nrows_C = numroc_(&NA, &NB_A, &myrow, &iZERO, &proc_rows);
         ncols_C = numroc_(&MB, &MB_B, &mycol, &iZERO, &proc_cols);
 
-        localC = Matrix<double>(false, nrows_C, ncols_C);
+        localC = Matrix<double>(FORTRAN_STYLE, nrows_C, ncols_C);
 
         LLD_A = nrows_A;
         LLD_B = nrows_B;
         LLD_C = nrows_C;
 
-        LP_TYPE rsrc = 0, csrc = 0, info;
-        desca = new LP_TYPE[9];
-        descb = new LP_TYPE[9];
-        descc = new LP_TYPE[9];
+        ILP_TYPE rsrc = 0, csrc = 0, info;
+        desca = new ILP_TYPE[9];
+        descb = new ILP_TYPE[9];
+        descc = new ILP_TYPE[9];
         descinit_(desca, &NA, &MA, &NB_A, &MB_A, &rsrc, &csrc, &ctxt, &LLD_A, &info);
         if (info != 0) std::cout << "ERROR OF descinit__A: " << rank << " " << info << std::endl;
         descinit_(descb, &NB, &MB, &NB_B, &MB_B, &rsrc, &csrc, &ctxt, &LLD_B, &info);
@@ -1120,7 +1169,7 @@ void mpi::parallel_dgemm(const Matrix<double>& A, const Matrix<double>& B, Matri
     }
 
     char N = 'N';
-    LP_TYPE iONE = 1;
+    ILP_TYPE iONE = 1;
     double alpha = 1.0;
     double betta = 0;
 
@@ -1147,7 +1196,7 @@ void mpi::parallel_dgemm(const Matrix<double>& A, const Matrix<double>& B, Matri
     //print_distributed_matrix<double>(localC, "C", MPI_COMM_WORLD);
 
     if (!is_distributed) {
-        if (rank == mpi::ROOT_ID) C = Matrix<double>(localC.is_c_style(), NA, MB);
+        if (rank == mpi::ROOT_ID) C = Matrix<double>(localC.get_matrix_style(), NA, MB);
         gather_blacs_matrix<double>(localC, C, NA, MB, NB_A, MB_B, nrows_C, ncols_C, ctxt, mpi::ROOT_ID);
         delete [] desca;
         delete [] descb;
@@ -1158,17 +1207,19 @@ void mpi::parallel_dgemm(const Matrix<double>& A, const Matrix<double>& B, Matri
 }
 
 void mpi::parallel_zgemm(const Matrix<COMPLEX>& A, const Matrix<COMPLEX>& B, Matrix<COMPLEX>& C,
-                         bool is_distributed, LP_TYPE* desca, LP_TYPE* descb, LP_TYPE* descc) {
-    LP_TYPE iZERO = 0;
+                         bool is_distributed, ILP_TYPE* desca, ILP_TYPE* descb, ILP_TYPE* descc,
+                         char op_A, char op_B) {
+    ILP_TYPE iZERO = 0;
     int rank, world_size;
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
     MPI_Comm_size(MPI_COMM_WORLD, &world_size);
+    //std::cout << rank << " HERE\n";
 
-    LP_TYPE ctxt;
-    LP_TYPE NA, MA, NB, MB, NB_A, MB_A, NB_B, MB_B;
-    LP_TYPE LLD_A, LLD_B, LLD_C;
-    LP_TYPE nrows_A, nrows_B, nrows_C, ncols_A, ncols_B, ncols_C;
-    LP_TYPE proc_rows, proc_cols, myrow, mycol;
+    ILP_TYPE ctxt;
+    ILP_TYPE NA, MA, NB, MB, NB_A, MB_A, NB_B, MB_B;
+    ILP_TYPE LLD_A, LLD_B, LLD_C;
+    ILP_TYPE nrows_A, nrows_B, nrows_C, ncols_A, ncols_B, ncols_C;
+    ILP_TYPE proc_rows, proc_cols, myrow, mycol;
     Matrix<COMPLEX> localA;
     Matrix<COMPLEX> localB;
     Matrix<COMPLEX> localC;
@@ -1182,16 +1233,16 @@ void mpi::parallel_zgemm(const Matrix<COMPLEX>& A, const Matrix<COMPLEX>& B, Mat
         nrows_C = numroc_(&NA, &NB_A, &myrow, &iZERO, &proc_rows);
         ncols_C = numroc_(&MB, &MB_B, &mycol, &iZERO, &proc_cols);
 
-        localC = Matrix<COMPLEX>(false, nrows_C, ncols_C);
+        localC = Matrix<COMPLEX>(FORTRAN_STYLE, nrows_C, ncols_C);
 
         LLD_A = nrows_A;
         LLD_B = nrows_B;
         LLD_C = nrows_C;
 
-        LP_TYPE rsrc = 0, csrc = 0, info;
-        desca = new LP_TYPE[9];
-        descb = new LP_TYPE[9];
-        descc = new LP_TYPE[9];
+        ILP_TYPE rsrc = 0, csrc = 0, info;
+        desca = new ILP_TYPE[9];
+        descb = new ILP_TYPE[9];
+        descc = new ILP_TYPE[9];
         descinit_(desca, &NA, &MA, &NB_A, &MB_A, &rsrc, &csrc, &ctxt, &LLD_A, &info);
         if (info != 0) std::cout << "ERROR OF descinit__A: " << rank << " " << info << std::endl;
         descinit_(descb, &NB, &MB, &NB_B, &MB_B, &rsrc, &csrc, &ctxt, &LLD_B, &info);
@@ -1211,44 +1262,43 @@ void mpi::parallel_zgemm(const Matrix<COMPLEX>& A, const Matrix<COMPLEX>& B, Mat
 
     bool return_to_c_style = false;
 
-    if (localA.is_c_style()) {
+    if (!is_distributed and localA.is_c_style()) {
         return_to_c_style = true;
         localA.to_fortran_style();
     }
 
-    if (localB.is_c_style()) {
+    if (!is_distributed and localB.is_c_style()) {
         localB.to_fortran_style();
     }
 
-    char N = 'N';
-    LP_TYPE iONE = 1;
+    ILP_TYPE iONE = 1;
     COMPLEX alpha(1.0, 0);
     COMPLEX betta(0, 0);
 
     if (!is_distributed) {
         auto begin = std::chrono::steady_clock::now();
-        pzgemm_(&N, &N, &NA, &MB, &MA, &alpha, localA.data(), &iONE, &iONE, desca,
+        pzgemm_(&op_A, &op_B, &NA, &MB, &MA, &alpha, localA.data(), &iONE, &iONE, desca,
                                         localB.data(), &iONE, &iONE, descb,
                                         &betta, localC.data(), &iONE, &iONE, descc);
         auto end = std::chrono::steady_clock::now();
-        if (rank == mpi::ROOT_ID) std::cout << "PZGEMM: " << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count() << std::endl;
+        //if (rank == mpi::ROOT_ID) std::cout << "PZGEMM: " << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count() << std::endl;
     } else {
         auto begin = std::chrono::steady_clock::now();
-        pzgemm_(&N, &N, &NA, &MB, &MA, &alpha, A.data(), &iONE, &iONE, desca,
+        pzgemm_(&op_A, &op_B, &NA, &MB, &MA, &alpha, A.data(), &iONE, &iONE, desca,
                                         B.data(), &iONE, &iONE, descb,
                                         &betta, C.data(), &iONE, &iONE, descc);
         auto end = std::chrono::steady_clock::now();
-        if (rank == mpi::ROOT_ID) std::cout << "PZGEMM: " << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count() << std::endl;  
+        //if (rank == mpi::ROOT_ID) std::cout << "PZGEMM: " << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count() << std::endl;  
     }
 
-    if (return_to_c_style) {
+    if (!is_distributed and return_to_c_style) {
         localC.to_c_style();
     }
 
     //print_distributed_matrix<COMPLEX>(localC, "C", MPI_COMM_WORLD);
 
     if (!is_distributed) {
-        if (rank == mpi::ROOT_ID) C = Matrix<COMPLEX>(localC.is_c_style(), NA, MB);
+        if (rank == mpi::ROOT_ID) C = Matrix<COMPLEX>(localC.get_matrix_style(), NA, MB);
         gather_blacs_matrix<COMPLEX>(localC, C, NA, MB, NB_A, MB_B, nrows_C, ncols_C, ctxt, mpi::ROOT_ID);
         delete [] desca;
         delete [] descb;

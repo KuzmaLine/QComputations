@@ -13,7 +13,7 @@
 namespace matrix_testing {
     template<typename T>
     Matrix<T> create_rand_matrix(size_t n, size_t m, T a, T b) {
-        Matrix<T> A(n, m);
+        Matrix<T> A(C_STYLE, n, m);
 
         std::random_device rd;
         std::mt19937 re(rd());
@@ -29,7 +29,7 @@ namespace matrix_testing {
 
     template<typename T>
     Matrix<std::complex<T>> create_rand_matrix(size_t n, size_t m, std::complex<T> a, std::complex<T> b) {
-        Matrix<std::complex<T>> A(n, m);
+        Matrix<std::complex<T>> A(C_STYLE, n, m);
 
         std::random_device rd;
         std::mt19937 re(rd());
@@ -48,7 +48,7 @@ namespace matrix_testing {
 
     template<typename T>
     Matrix<std::complex<T>> create_hermit_rand_matrix(size_t n, size_t m, std::complex<T> a, std::complex<T> b) {
-        Matrix<std::complex<T>> A(n, m);
+        Matrix<std::complex<T>> A(C_STYLE, n, m);
 
         std::random_device rd;
         std::mt19937 re(rd());

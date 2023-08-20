@@ -8,7 +8,7 @@
 
 Matrix<COMPLEX> Evolution::create_A_destroy(const std::set<State>& basis, size_t cavity_id) {
     size_t dim = basis.size();
-    Matrix<COMPLEX> A(dim, dim, 0);
+    Matrix<COMPLEX> A(DEFAULT_MATRIX_STYLE, dim, dim, 0);
 
     size_t index = 0;
     for (const auto& state: basis) {
@@ -29,7 +29,7 @@ Matrix<COMPLEX> Evolution::create_A_destroy(const std::set<State>& basis, size_t
 
 Matrix<COMPLEX> Evolution::create_A_create(const std::set<State>& basis, size_t cavity_id) {
     size_t dim = basis.size();
-    Matrix<COMPLEX> A(dim, dim, 0);
+    Matrix<COMPLEX> A(DEFAULT_MATRIX_STYLE, dim, dim, 0);
 
     size_t index = 0;
     for (const auto& state: basis) {
@@ -48,7 +48,7 @@ Matrix<COMPLEX> Evolution::create_A_create(const std::set<State>& basis, size_t 
 
 Evolution::Rho Evolution::create_init_rho(const std::vector<COMPLEX>& init_state) {
     size_t dim = init_state.size();
-    Evolution::Rho rho(dim, dim);
+    Evolution::Rho rho(C_STYLE, dim, dim);
     for (size_t i = 0; i < dim; i++) {
         for (size_t j = 0; j < dim; j++) {
             rho[i][j] = init_state[i] * std::conj(init_state[j]);
@@ -87,7 +87,7 @@ Evolution::Probs Evolution::schrodinger(const std::vector<COMPLEX>& init_state, 
         mpi::bcast_vector_complex(eigen_vectors.get_mass());
     } else {
         eigen_values = mpi::bcast_vector_double();
-        eigen_vectors = Matrix<COMPLEX>(mpi::bcast_vector_complex(), eigen_values.size(), eigen_values.size(), true); // c_style
+        eigen_vectors = Matrix<COMPLEX>(mpi::bcast_vector_complex(), eigen_values.size(), eigen_values.size(), C_STYLE); // c_style
     }
 #endif
     std::vector<COMPLEX> lambda;
@@ -97,7 +97,7 @@ Evolution::Probs Evolution::schrodinger(const std::vector<COMPLEX>& init_state, 
     }
 
     //std::cout << "L - " << norm(lambda) << std::endl;
-    Probs probs(eigen_values.size(), time_vec.size());
+    Probs probs(C_STYLE, eigen_values.size(), time_vec.size());
     size_t time_index = 0;
     eigen_vectors = eigen_vectors.transpose();
 #ifdef ENABLE_MPI
@@ -230,7 +230,7 @@ Evolution::Probs Evolution::quantum_master_equation(const std::vector<COMPLEX>& 
     //auto end_c = std::chrono::steady_clock::now();
     //std::cout << " c " << std::chrono::duration_cast<std::chrono::milliseconds>(end_c - begin_c).count() << std::endl;
     if (!is_full_rho) {
-        Evolution::Probs probs(dim, time_vec.size());
+        Evolution::Probs probs(C_STYLE, dim, time_vec.size());
 
         for (size_t i = 0; i < dim; i++) {
             for (size_t t = 0; t < time_vec.size(); t++) {
@@ -253,7 +253,7 @@ Evolution::Probs Evolution::quantum_master_equation(const std::vector<COMPLEX>& 
         return probs;
     }
 
-    Evolution::Probs probs(dim * dim, time_vec.size());
+    Evolution::Probs probs(C_STYLE, dim * dim, time_vec.size());
 
     bool is_null = true;
 
@@ -324,39 +324,86 @@ Evolution::Probs Evolution::Parallel_QME(const std::vector<COMPLEX>& init_state,
                                          Hamiltonian& H,
                                          const std::vector<double>& time_vec,
                                          bool is_full_rho) {
+    auto OLD_MULTIPLY_MODE = config::MULTIPLY_MODE;
+    config::MULTIPLY_MODE = config::P_GEMM_MODE;
     int rank, world_size;
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
     MPI_Comm_size(MPI_COMM_WORLD, &world_size);
-    std::vector<int> tasks;
-
     if (rank == mpi::ROOT_ID) {
         mpi::make_command(COMMAND::QME);
 
-        int bcast_data[5];
-        bcast_data[0] = init_state.size();
-        bcast_data[1] = H.size(); 
+        mpi::bcast_vector_complex(init_state);
+        mpi::bcast_vector_double(time_vec);
+        MPI_Bcast(&is_full_rho, 1, MPI_C_BOOL, mpi::ROOT_ID, MPI_COMM_WORLD);
     }
 
-    size_t dim = H.size();
+    MPI_Barrier(MPI_COMM_WORLD);
+
+    //std::cout << rank << " QME\n";
+    ILP_TYPE ctxt;
+    mpi::init_grid(ctxt);
+
+    ILP_TYPE dim, NB, MB;
+    ILP_TYPE nrows, ncols;
+    ILP_TYPE proc_rows, proc_cols, myrow, mycol;
+    //std::cout << rank << " RUNGE_KUTT\n";
+    auto localH = mpi::scatter_blacs_matrix<COMPLEX>(H.get_matrix(), dim, dim, NB, MB, nrows, ncols, ctxt, mpi::ROOT_ID);
+
+    //std::cout << rank << " RUNGE_KUTT_1\n";
+    State grid;
+    if (rank == mpi::ROOT_ID) {
+        grid = mpi::bcast_state(H.get_grid());
+    } else {
+        grid = mpi::bcast_state();
+    }
+
+    //std::cout << rank << " RUNGE_KUTT\n";
+    //size_t dim = H.size();
     //A.show(config::WIDTH);
-    auto grid = H.get_grid();
+    //auto grid = H.get_grid();
     std::vector<std::function<Evolution::Rho(const Evolution::Rho& rho)>> lindblads;
 
     auto cavities_with_leak = grid.get_cavities_with_leak();
     auto cavities_with_gain = grid.get_cavities_with_gain();
 
+    localH.to_fortran_style();
+    ILP_TYPE LLD = localH.LD();
+    auto descg = new ILP_TYPE[9];
+    ILP_TYPE rsrc = 0, csrc = 0, info;
+    descinit_(descg, &dim, &dim, &NB, &MB, &rsrc, &csrc, &ctxt, &LLD, &info);
     //for (const auto& cavity_id: cavities_with_leak) {
     for (size_t cavity_id = 0; cavity_id < grid.cavities_count(); cavity_id++) {
         auto A = create_A_destroy(H.get_basis(), cavity_id);
         //A.show();
         auto gamma = grid.get_leak_gamma(cavity_id);
+
+        auto localA = mpi::scatter_blacs_matrix<COMPLEX>(A, dim, dim, NB, MB, nrows, ncols, ctxt, mpi::ROOT_ID);
+        localA.to_fortran_style();
         if (!is_zero(gamma)) {
             //std::cout << gamma << std::endl;
             lindblads.push_back(std::function<Evolution::Rho(const Evolution::Rho& rho)> {
-                [A, gamma](const Evolution::Rho& rho) {
+                [localA, gamma, descg, nrows, ncols](const Evolution::Rho& rho) {
+                    /*
                     auto Aconj = A.hermit();
                     auto AconjA = Aconj * A;
                     return (A * rho * Aconj - (AconjA * rho + rho * AconjA) * COMPLEX(0.5)) * gamma;
+                    */
+                    Matrix<COMPLEX> tmp(FORTRAN_STYLE, nrows, ncols);
+                    Matrix<COMPLEX> res(FORTRAN_STYLE, nrows, ncols);
+                    mpi::parallel_zgemm(localA, rho, tmp, true, descg, descg, descg);
+                    mpi::parallel_zgemm(tmp, localA, res, true, descg, descg, descg, 'N', 'C');
+
+                    Matrix<COMPLEX> AconjA(FORTRAN_STYLE, nrows, ncols);
+                    mpi::parallel_zgemm(localA, localA, AconjA, true, descg, descg, descg, 'C', 'N');
+                    
+                    Matrix<COMPLEX> tmp_second(FORTRAN_STYLE, nrows, ncols);
+                    mpi::parallel_zgemm(AconjA, rho, tmp, true, descg, descg, descg);
+                    mpi::parallel_zgemm(rho, AconjA, tmp_second, true, descg, descg, descg);
+
+                    res -= (tmp + tmp_second) * COMPLEX(0.5);
+                    res *= gamma;
+
+                    return res;
                 }
             }
             );
@@ -368,78 +415,140 @@ Evolution::Probs Evolution::Parallel_QME(const std::vector<COMPLEX>& init_state,
         auto A = create_A_create(H.get_basis(), cavity_id);
         //A.show();
         auto gamma = grid.get_gain_gamma(cavity_id);
+        auto localA = mpi::scatter_blacs_matrix<COMPLEX>(A, dim, dim, NB, MB, nrows, ncols, ctxt, mpi::ROOT_ID);
+        localA.to_fortran_style();
         if (!is_zero(gamma)) {
             //std::cout << gamma << std::endl;
             lindblads.push_back(std::function<Evolution::Rho(const Evolution::Rho& rho)> {
-                [A, gamma](const Evolution::Rho& rho) {
+                [localA, gamma, descg, nrows, ncols](const Evolution::Rho& rho) {
+                    /*
                     auto Aconj = A.hermit();
                     auto AconjA = Aconj * A;
                     return (A * rho * Aconj - (AconjA * rho + rho * AconjA) * COMPLEX(0.5)) * gamma;
+                    */
+                    Matrix<COMPLEX> tmp(FORTRAN_STYLE, nrows, ncols);
+                    Matrix<COMPLEX> res(FORTRAN_STYLE, nrows, ncols);
+                    mpi::parallel_zgemm(localA, rho, tmp, true, descg, descg, descg);
+                    mpi::parallel_zgemm(tmp, localA, res, true, descg, descg, descg, 'N', 'C');
+
+                    Matrix<COMPLEX> AconjA(FORTRAN_STYLE, nrows, ncols);
+                    mpi::parallel_zgemm(localA, localA, AconjA, true, descg, descg, descg, 'C', 'N');
+                    
+                    Matrix<COMPLEX> tmp_second(FORTRAN_STYLE, nrows, ncols);
+                    mpi::parallel_zgemm(AconjA, rho, tmp, true, descg, descg, descg);
+                    mpi::parallel_zgemm(rho, AconjA, tmp_second, true, descg, descg, descg);
+
+                    res -= (tmp + tmp_second) * COMPLEX(0.5);
+                    res *= gamma;
+
+                    return res;
                 }
             }
             );
         }
     }
 
-    auto H_matrix = H.get_matrix();
-    std::function<Evolution::Rho(double t, const Evolution::Rho&)> equation {[&H_matrix, &lindblads](double t, const Evolution::Rho& rho) {
-        auto tmp = (H_matrix * rho - rho * H_matrix) * COMPLEX(0, -1);
-        for (const auto& lindblad: lindblads) {
-            tmp += lindblad(rho);
+    std::function<Evolution::Rho(double t, const Evolution::Rho&)> equation {
+        [&localH, &lindblads, &descg, nrows, ncols](double t, const Evolution::Rho& rho) {
+            /*
+            auto tmp = (H_matrix * rho - rho * H_matrix) * COMPLEX(0, -1);
+            for (const auto& lindblad: lindblads) {
+                tmp += lindblad(rho);
+            }
+            */
+
+            Matrix<COMPLEX> tmp(FORTRAN_STYLE, nrows, ncols);
+            Matrix<COMPLEX> res(FORTRAN_STYLE, nrows, ncols);
+            mpi::parallel_zgemm(localH, rho, res, true, descg, descg, descg);
+            mpi::parallel_zgemm(rho, localH, tmp, true, descg, descg, descg);
+            res -= tmp;
+            res *= COMPLEX(0, -1);
+            
+            for (const auto& lindblad: lindblads) {
+                res += lindblad(rho);
+            }
+
+            return res;
         }
+    };
 
-        return tmp;
-    }};
+    Matrix<COMPLEX> rho_0;
+    if (rank == mpi::ROOT_ID) rho_0 = Evolution::create_init_rho(init_state);
 
+    auto local_rho_0 = mpi::scatter_blacs_matrix<COMPLEX>(rho_0, dim, dim, NB, MB, nrows, ncols, ctxt, mpi::ROOT_ID);
+    local_rho_0.to_fortran_style();
+    
+    //mpi::print_distributed_matrix<COMPLEX>(local_rho_0, "rho_0", MPI_COMM_WORLD);
+    //mpi::print_distributed_matrix<COMPLEX>(localH, "H", MPI_COMM_WORLD);
+    auto rho_vec_blocked = Runge_Kutt_4<double, Evolution::Rho>(time_vec, local_rho_0, equation);
+    std::vector<Evolution::Rho> rho_vec;
+    Evolution::Rho tmp(FORTRAN_STYLE, dim, dim);
+    for (const auto& rho : rho_vec_blocked) {
+        mpi::gather_blacs_matrix<COMPLEX>(rho, tmp, dim, dim, NB, MB, nrows, ncols, ctxt, mpi::ROOT_ID);
+        rho_vec.emplace_back(tmp);
+        //if (rank == mpi::ROOT_ID) tmp.show();
+    }
+// -------------------- stoped here --------------------
+
+    /*
     auto rho_0 = Evolution::create_init_rho(init_state);
     //rho_0.show();
     //auto begin_c = std::chrono::steady_clock::now();
     auto rho_vec = Runge_Kutt_4<double, Evolution::Rho>(time_vec, rho_0, equation);
     //auto end_c = std::chrono::steady_clock::now();
     //std::cout << " c " << std::chrono::duration_cast<std::chrono::milliseconds>(end_c - begin_c).count() << std::endl;
-    if (!is_full_rho) {
-        Evolution::Probs probs(dim, time_vec.size());
+    */
 
-        for (size_t i = 0; i < dim; i++) {
-            for (size_t t = 0; t < time_vec.size(); t++) {
-                probs[i][t] = std::abs(rho_vec[t][i][i]);
-            }
-        }
+    delete [] descg;
+    config::MULTIPLY_MODE = OLD_MULTIPLY_MODE;
+    if (rank == mpi::ROOT_ID) {
+        if (!is_full_rho) {
+            Evolution::Probs probs(C_STYLE, dim, time_vec.size());
 
-        for (size_t t = 0; t < time_vec.size(); t++) {
-            double res = 0.0;
             for (size_t i = 0; i < dim; i++) {
-                res += probs[i][t];
-            }
-
-            //std::cout << t << " " << res << std::endl;
-
-            if (std::abs(res - 1) >= config::eps) {
-                //std::cout << t << " " << res << std::endl;
-            }
-        }
-        return probs;
-    }
-
-    Evolution::Probs probs(dim * dim, time_vec.size());
-
-    bool is_null = true;
-
-    for (size_t i = 0; i < dim; i++) {
-        for (size_t j = 0; j < dim; j++) {
-            for (size_t t = 0; t < time_vec.size(); t++) {
-                probs[i * dim + j][t] = std::abs(rho_vec[t][i][j]);
-                if (probs[i * dim + j][t] >= config::eps) {
-                    is_null = false;
+                for (size_t t = 0; t < time_vec.size(); t++) {
+                    probs[i][t] = std::abs(rho_vec[t][i][i]);
                 }
             }
 
-            if (is_null) probs[i * dim + j][0] = -1;
-            is_null = true;
-        }
-    }
+            for (size_t t = 0; t < time_vec.size(); t++) {
+                double res = 0.0;
+                for (size_t i = 0; i < dim; i++) {
+                    res += probs[i][t];
+                }
 
-    return probs;
+                //std::cout << t << " " << res << std::endl;
+
+                if (std::abs(res - 1) >= config::eps) {
+                    //std::cout << t << " " << res << std::endl;
+                }
+            }
+
+            return probs;
+        }
+
+        Evolution::Probs probs(C_STYLE, dim * dim, time_vec.size());
+
+        bool is_null = true;
+
+        for (size_t i = 0; i < dim; i++) {
+            for (size_t j = 0; j < dim; j++) {
+                for (size_t t = 0; t < time_vec.size(); t++) {
+                    probs[i * dim + j][t] = std::abs(rho_vec[t][i][j]);
+                    if (probs[i * dim + j][t] >= config::eps) {
+                        is_null = false;
+                    }
+                }
+
+                if (is_null) probs[i * dim + j][0] = -1;
+                is_null = true;
+            }
+        }
+
+        return probs;
+    } else {
+        return {};
+    }
 }
 
 #endif

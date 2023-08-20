@@ -19,7 +19,7 @@ namespace {
     Matrix<COMPLEX> a_destroy(size_t n) {
         size_t size = n + 1;
 
-        Matrix<COMPLEX> a(size, size, 0);
+        Matrix<COMPLEX> a(DEFAULT_MATRIX_STYLE, size, size, 0);
 
         int j = 1;
         for (int i = 0; i < size - 1; i++) {
@@ -35,7 +35,7 @@ namespace {
     }
 
     Matrix<COMPLEX> E_photons(int n) {
-        Matrix<COMPLEX> E(n, n, 0);
+        Matrix<COMPLEX> E(DEFAULT_MATRIX_STYLE, n, n, 0);
         for (int i = 0; i < n; i++) {
             E[i][i] = i * config::h * config::w;
         }
@@ -58,14 +58,14 @@ namespace {
 
     Matrix<COMPLEX> sum_sigma_down(size_t n) {
         size_t size = std::pow(2, n);
-        Matrix<COMPLEX> sum_sigma(size, size, 0);
+        Matrix<COMPLEX> sum_sigma(DEFAULT_MATRIX_STYLE, size, size, 0);
 
         for (int i = 0; i < n; i++) {
             size_t left_size = std::pow(2, i);
             size_t right_size = std::pow(2, n - i - 1);
 
-            Matrix<COMPLEX> eye_left(left_size, left_size, 0);
-            Matrix<COMPLEX> eye_right(right_size, right_size, 0);
+            Matrix<COMPLEX> eye_left(DEFAULT_MATRIX_STYLE, left_size, left_size, 0);
+            Matrix<COMPLEX> eye_right(DEFAULT_MATRIX_STYLE, right_size, right_size, 0);
 
             for (int j = 0; j < left_size; j++) {
                 eye_left[j][j] = 1;
@@ -257,7 +257,7 @@ std::pair<std::vector<double>, Matrix<COMPLEX>> Hamiltonian::eigen() {
 
 H_by_func::H_by_func(size_t n, std::function<COMPLEX(size_t, size_t)> func) : func_(func) {
     auto size = n;
-    H_ = Matrix<COMPLEX>(size, size);
+    H_ = Matrix<COMPLEX>(DEFAULT_MATRIX_STYLE, size, size);
 
 #ifdef ENABLE_MPI
     int rank, world_size;
@@ -444,8 +444,10 @@ H_TCH::H_TCH(const State& grid) {
 
     size_t size = basis_.size();
     std::cout << "Size - " << size << std::endl;
-    H_ = Matrix<COMPLEX>(size, size, 0);
+    //show_basis(basis_);
+    H_ = Matrix<COMPLEX>(DEFAULT_MATRIX_STYLE, size, size, 0);
 
+    //std::cout << H_.is_c_style() << " " << H_.n() << " " << H_.m() << std::endl;
 #ifdef ENABLE_MPI
     size_t start_col;
     auto rank_map = make_rank_map(size, rank, world_size, start_col);

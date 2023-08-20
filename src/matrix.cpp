@@ -14,7 +14,7 @@ namespace {
 template<>
 Matrix<double> Matrix<double>::operator* (const Matrix<double>& A) const {
     assert(m_ == A.n_);
-    Matrix<double> res(n_, A.m_, this->is_c_style());
+    Matrix<double> res(this->get_matrix_style(), n_, A.m_);
 
     double alpha = 1.0;
     double betta = 0.0;
@@ -40,7 +40,7 @@ Matrix<int> Matrix<int>::operator* (const Matrix<int>& A) const {
 template<>
 Matrix<COMPLEX> Matrix<COMPLEX>::operator* (const Matrix<COMPLEX>& A) const {
     assert(m_ == A.n_);
-    Matrix<COMPLEX> res(n_, A.m_, this->is_c_style());
+    Matrix<COMPLEX> res(this->get_matrix_style(), n_, A.m_);
 
     COMPLEX alpha(1, 0);
     COMPLEX betta(0, 0);
@@ -59,9 +59,9 @@ Matrix<COMPLEX> Matrix<COMPLEX>::operator* (const Matrix<COMPLEX>& A) const {
 template<>
 Matrix<double> Matrix<double>::operator* (const Matrix<double>& A) const {
     assert(m_ == A.n_);
-    Matrix<double> res(this->is_c_style(), n_, A.m_);
+    Matrix<double> res(this->get_matrix_style(), n_, A.m_);
 
-    if (this->MULTIPLY_MODE == config::CANNON_MODE) {
+    if (config::MULTIPLY_MODE == config::CANNON_MODE) {
         size_t n = n_, k = m_, m = A.m_;
         int rank, world_size;
         MPI_Comm_size(MPI_COMM_WORLD, &world_size);
@@ -198,7 +198,7 @@ Matrix<double> Matrix<double>::operator* (const Matrix<double>& A) const {
 
         end = std::chrono::steady_clock::now();
         std::cout << "AFTER: " << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count() << std::endl;
-    } else if (this->MULTIPLY_MODE == config::COMMON_MODE) {
+    } else if (config::MULTIPLY_MODE == config::COMMON_MODE) {
         double alpha = 1;
         double betta = 0;
 
@@ -209,7 +209,7 @@ Matrix<double> Matrix<double>::operator* (const Matrix<double>& A) const {
                     this->LD(), A.mass_.data(), A.LD(), betta,
                     res.mass_.data(), res.LD());
 
-    } else if (this->MULTIPLY_MODE == config::DIM_MODE) {
+    } else if (config::MULTIPLY_MODE == config::DIM_MODE) {
         size_t n = n_, k = m_, m = A.m_;
         int rank, world_size;
         MPI_Comm_size(MPI_COMM_WORLD, &world_size);
@@ -226,7 +226,7 @@ Matrix<double> Matrix<double>::operator* (const Matrix<double>& A) const {
         //mpi::Dim_Multiply(*this, A, res);
     }
 #ifdef ENABLE_CLUSTER 
-    else if (this->MULTIPLY_MODE == config::P_GEMM_MODE) {
+    else if (config::MULTIPLY_MODE == config::P_GEMM_MODE) {
         size_t n = n_, k = m_, m = A.m_;
         mpi::make_command(COMMAND::P_GEMM_MULTIPLY);
 
@@ -242,9 +242,9 @@ Matrix<double> Matrix<double>::operator* (const Matrix<double>& A) const {
 template<>
 Matrix<COMPLEX> Matrix<COMPLEX>::operator* (const Matrix<COMPLEX>& A) const {
     assert(m_ == A.n_);
-    Matrix<COMPLEX> res(this->is_c_style(), n_, A.m_);
+    Matrix<COMPLEX> res(this->get_matrix_style(), n_, A.m_);
 
-    if (this->MULTIPLY_MODE == config::CANNON_MODE) {
+    if (config::MULTIPLY_MODE == config::CANNON_MODE) {
         size_t n = n_, k = m_, m = A.m_;
         int rank, world_size;
         MPI_Comm_size(MPI_COMM_WORLD, &world_size);
@@ -381,7 +381,7 @@ Matrix<COMPLEX> Matrix<COMPLEX>::operator* (const Matrix<COMPLEX>& A) const {
 
         end = std::chrono::steady_clock::now();
         std::cout << "AFTER: " << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count() << std::endl;
-    } else if (this->MULTIPLY_MODE == config::COMMON_MODE) {
+    } else if (config::MULTIPLY_MODE == config::COMMON_MODE) {
         COMPLEX alpha(1, 0);
         COMPLEX betta(0, 0);
 
@@ -392,7 +392,7 @@ Matrix<COMPLEX> Matrix<COMPLEX>::operator* (const Matrix<COMPLEX>& A) const {
                     this->LD(), A.mass_.data(), A.LD(), &betta,
                     res.mass_.data(), res.LD());
 
-    } else if (this->MULTIPLY_MODE == config::DIM_MODE) {
+    } else if (config::MULTIPLY_MODE == config::DIM_MODE) {
         size_t n = n_, k = m_, m = A.m_;
         int rank, world_size;
         MPI_Comm_size(MPI_COMM_WORLD, &world_size);
@@ -409,7 +409,7 @@ Matrix<COMPLEX> Matrix<COMPLEX>::operator* (const Matrix<COMPLEX>& A) const {
         mpi::Dim_Multiply(*this, A, res);
     }
 #ifdef ENABLE_CLUSTER 
-    else if (this->MULTIPLY_MODE == config::P_GEMM_MODE) {
+    else if (config::MULTIPLY_MODE == config::P_GEMM_MODE) {
         size_t n = n_, k = m_, m = A.m_;
         mpi::make_command(COMMAND::P_GEMM_MULTIPLY);
 
