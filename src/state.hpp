@@ -6,6 +6,7 @@
 #include <cassert>
 #include "cavity_state.hpp"
 #include "matrix.hpp"
+#include "big_uint.hpp"
 
 class State {
     using COMPLEX = std::complex<double>;
@@ -62,6 +63,7 @@ class State {
         State add_state(const Cavity_State& state) const;
 
         std::string to_string() const;
+
 
         size_t cavities_count() const { return grid_states_.size(); }
         size_t cavity_atoms_count(CavityId id) const { return grid_states_.at(id).m(); }

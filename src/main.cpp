@@ -4,7 +4,7 @@
 #include "matrix.hpp"
 #include "hamiltonian.hpp"
 #include "state.hpp"
-#include "test.hpp"
+//#include "test.hpp"
 #include "plot.hpp"
 #include "config.hpp"
 #include "dynamic.hpp"
@@ -27,6 +27,66 @@ COMPLEX func(size_t i, size_t j) {
 
 int main(int argc, char** argv) {
     int n = 8000;
+
+    unsigned int tmp = 0xFFFFFFFF;
+    BigUInt a_num(tmp);
+    BigUInt b_num(2);
+    auto res = a_num + b_num;
+    auto str_res = res.binary_str();
+
+    std::cout << str_res.size() << std::endl;
+    for (size_t i = 0; (i + 1) * 32 < str_res.size(); i++) {
+        str_res.insert((i + 1) * 32 + i, " ");
+    }
+    std::cout << str_res << std::endl;
+    /*
+    res = res - BigUInt(2);
+    str_res = res.binary_str();
+    std::cout << str_res.size() << std::endl;
+    for (size_t i = 0; (i + 1) * 32 < str_res.size(); i++) {
+        str_res.insert((i + 1) * 32 + i, " ");
+    }
+    std::cout << str_res << std::endl;
+
+    res <<= 3;
+    str_res = res.binary_str();
+    std::cout << str_res.size() << std::endl;
+    for (size_t i = 0; (i + 1) * 32 < str_res.size(); i++) {
+        str_res.insert((i + 1) * 32 + i, " ");
+    }
+    std::cout << str_res << std::endl;
+
+    res >>= 2;
+    str_res = res.binary_str();
+    std::cout << str_res.size() << std::endl;
+    for (size_t i = 0; (i + 1) * 32 < str_res.size(); i++) {
+        str_res.insert((i + 1) * 32 + i, " ");
+    }
+    std::cout << str_res << std::endl;
+
+    std::cout << "CHECK >= " << (BigUInt(3) >= BigUInt(3)) << std::endl;
+    */
+    std::cout << res << std::endl;
+    res <<= 1;
+    std::cout << res << std::endl;
+    res = res % BigUInt(2);
+    str_res = res.binary_str();
+    std::cout << str_res.size() << std::endl;
+    for (size_t i = 0; (i + 1) * 32 < str_res.size(); i++) {
+        str_res.insert((i + 1) * 32 + i, " ");
+    }
+    std::cout << str_res << std::endl;
+
+    res = BigUInt(3) % BigUInt(2);
+    str_res = res.binary_str();
+    std::cout << str_res.size() << std::endl;
+    for (size_t i = 0; (i + 1) * 32 < str_res.size(); i++) {
+        str_res.insert((i + 1) * 32 + i, " ");
+    }
+    std::cout << str_res << std::endl;
+    
+
+    return 0;
 
     std::vector<size_t> grid_config = {1, 1};
     //State state("|0;00>");

@@ -70,6 +70,24 @@ namespace matrix_testing {
 }
 
 namespace printing {
+    template<typename T>
+    void binary_print(T num) {
+        T mask = T(0);
+        size_t bits_count = 32;
+        if (typeid(T) == typeid(long)) bits_count = 64;
+
+        mask = T(1) << (bits_count - 1);
+
+        //std::cout << "Printing: " << mask << std::endl;
+        for (size_t i = 0; i < bits_count; i++) {
+            //std::cout << mask << " " << (num & mask) << std::endl;
+            std::cout << (((num & mask) == T(0)) ? 0 : 1);
+            mask >>= 1;
+        }
+
+        std::cout << std::endl;
+    }
+
     void probs_print(const Matrix<double>& probs, const std::set<State>& basis, const std::vector<double>& time_vec) {
         size_t index = 0;
         for (const auto& b: basis) {
