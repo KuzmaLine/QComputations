@@ -33,6 +33,12 @@ class BigUInt {
         void operator/=(const BigUInt& num);
         void operator%=(const BigUInt& num);
 
+        BigUInt operator|(const BigUInt& num) const;
+        BigUInt operator&(const BigUInt& num) const;
+
+        void operator|=(const BigUInt& num);
+        void operator&=(const BigUInt& num);
+
         bool operator<(const BigUInt& num) const;
         bool operator<=(const BigUInt& num) const;
         bool operator==(const BigUInt& num) const;
@@ -55,6 +61,11 @@ class BigUInt {
 
         long long high_order_bit_id() const;
         size_t num_size() const { return num_.size(); }
+
+        NumType get_bits_count() const { return BITS_COUNT; }
+        NumType get_num(size_t id = 0) const { return num_[id]; }
+        NumType get_bit(size_t id) const;
+        NumType to_uint() const { return num_[0]; }
     private:
         std::vector<NumType> num_; 
         NumType base_;

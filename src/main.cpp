@@ -28,6 +28,7 @@ COMPLEX func(size_t i, size_t j) {
 int main(int argc, char** argv) {
     int n = 8000;
 
+    /*
     unsigned int tmp = 0xFFFFFFFF;
     BigUInt a_num(tmp);
     BigUInt b_num(2);
@@ -39,6 +40,7 @@ int main(int argc, char** argv) {
         str_res.insert((i + 1) * 32 + i, " ");
     }
     std::cout << str_res << std::endl;
+    */
     /*
     res = res - BigUInt(2);
     str_res = res.binary_str();
@@ -66,6 +68,7 @@ int main(int argc, char** argv) {
 
     std::cout << "CHECK >= " << (BigUInt(3) >= BigUInt(3)) << std::endl;
     */
+    /*
     std::cout << res << std::endl;
     res <<= 1;
     std::cout << res << std::endl;
@@ -85,8 +88,20 @@ int main(int argc, char** argv) {
     }
     std::cout << str_res << std::endl;
     
+    */
 
+    State tmp_state("|12,10;10,1>");
+    std::cout << tmp_state.to_uint().binary_str() << std::endl;
+    State second_state("|11,13;11,1>");
+    print_state_biguint(tmp_state);
+    std::cout << std::endl;
+    print_state_biguint(second_state);
+    std::cout << std::endl;
+    tmp_state.from_uint(second_state.to_uint());
+    print_state_biguint(tmp_state);
+    std::cout << std::endl;
     return 0;
+
 
     std::vector<size_t> grid_config = {1, 1};
     //State state("|0;00>");

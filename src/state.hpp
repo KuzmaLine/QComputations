@@ -94,7 +94,8 @@ class State {
         COMPLEX get_gamma(CavityId from_id, CavityId to_id) const { return gamma_[from_id][to_id]; }
         std::set<CavityId> get_cavities_with_atoms() const { return cavities_with_atoms_; }
 
-        size_t hash() const;
+        BigUInt to_uint() const;
+        void from_uint(const BigUInt& state_num);
     private:
         size_t max_N_;
         size_t min_N_;

@@ -164,6 +164,45 @@ size_t State::get_index() const {
     return index;
 }
 
+BigUInt State::to_uint() const {
+    BigUInt res(0);
+
+    for (size_t i = 0; i < grid_states_.size(); i++) {
+        res <<= 32;
+        res += BigUInt(this->n(i));
+    }
+
+    for (size_t i = 0; i < grid_states_.size(); i++) {
+        auto state = grid_states_[i].get_atoms_state();
+
+        for (const auto& st: state) {
+            res <<= 1;
+            res += BigUInt(st);
+        }
+    }
+
+    return res;
+}
+
+void State::from_uint(const BigUInt& state_num) {
+    size_t index = 0;
+    for (long long i = grid_states_.size() - 1; i >= 0; i--) {
+        long long m = grid_states_[i].m();
+        //auto state = grid_states_[i].get_atoms_state();
+
+        for (long long j = m - 1; j >= 0; j--) {
+            this->set_qubit(i, j, state_num.get_bit(index++));
+        }
+    }
+
+    auto n_num = state_num >> index;
+    for (size_t i = 0; i < grid_states_.size(); i++) {
+        this->set_n(n_num.get_num(grid_states_.size() - i - 1), i);
+    }
+}
+
+
+
 std::string State::to_string() const {
     std::string res = "|";
 

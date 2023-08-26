@@ -15,7 +15,7 @@ namespace {
 
     // https://systo.ru/prog/pract/int_div.html first algorithm
     Division div(const BigUInt& a, const BigUInt& b)  {
-        Division res;
+        Division res = Division{BigZero, BigZero};
         if (a < b) { return Division{BigZero, a}; }
 
 
@@ -220,8 +220,9 @@ bool BigUInt::operator!=(const BigUInt& num) const {
 
 BigUInt BigUInt::operator>>(size_t shift) const {
     BigUInt res;
-
     res.num_ = num_;
+    assert(res.num_size() != 0);
+
     if (shift == 0) return res;
 
     if (BITS_COUNT < shift) {
@@ -247,7 +248,7 @@ BigUInt BigUInt::operator>>(size_t shift) const {
         carry = tmp;
     }
 
-    if (res.num_size() * BITS_COUNT - BITS_COUNT > res.high_order_bit_id()) res.num_.resize(num_.size() - 1);
+    if (res.num_size() * BITS_COUNT - BITS_COUNT > res.high_order_bit_id() and num_.size() != 1) res.num_.resize(num_.size() - 1);
 
     return res;
 }
@@ -258,8 +259,9 @@ void BigUInt::operator>>=(size_t shift) {
 
 BigUInt BigUInt::operator<<(size_t shift) const {
     BigUInt res;
-
     res.num_ = num_;
+    assert(res.num_size() != 0);
+
     if (shift == 0) return res;
 
     for (size_t i = 0; BITS_COUNT < shift; shift -= BITS_COUNT) {
@@ -269,7 +271,7 @@ BigUInt BigUInt::operator<<(size_t shift) const {
     NumType carry = 0;
     //std::cout << res.binary_str() << std::endl;
     //std::cout << "Here - " << BITS_COUNT << " " << res.high_order_bit_id() % BITS_COUNT << " " << BITS_COUNT - res.high_order_bit_id() % BITS_COUNT << std::endl; 
-    if (BITS_COUNT - res.high_order_bit_id() % BITS_COUNT <= shift or res.num_size() == 0) {
+    if (BITS_COUNT - res.high_order_bit_id() % BITS_COUNT <= shift) {
         res = concatenate(res, BigZero);
     }
     for (size_t i = 0; i < res.num_.size(); i++) {
@@ -352,6 +354,41 @@ BigUInt BigUInt::operator%(const BigUInt& num) const {
     return (div(*this, num)).Residue;
 }
 
+BigUInt::NumType BigUInt::get_bit(size_t id) const {
+    assert(id <= num_.size() * BITS_COUNT);
+
+    auto num_id = id / BITS_COUNT;
+    id %= BITS_COUNT;
+
+    return ((num_[num_id] & (NumType(1) << id) == 0) ? 0 : 1);
+}
+
+BigUInt BigUInt::operator&(const BigUInt& num) const {
+    BigUInt res(0);
+
+    auto res_size = std::min(num_.size(), num.num_.size());
+    res.num_.resize(res_size);
+
+    for (size_t i = 0; i < res_size; i++) {
+        res.num_[i] = num_[i] & num.num_[i];
+    }
+
+    return res;    
+}
+
+BigUInt BigUInt::operator|(const BigUInt& num) const {
+    BigUInt res(0);
+
+    auto res_size = std::max(num_.size(), num.num_.size());
+    res.num_.resize(res_size);
+
+    for (size_t i = 0; i < res_size; i++) {
+        res.num_[i] = num_[i] | num.num_[i];
+    }
+
+    return res;    
+}
+
 BigUInt BigUInt::operator+(const BigUInt& num) const {
     BigUInt res;
 
@@ -399,6 +436,10 @@ BigUInt BigUInt::operator+(const BigUInt& num) const {
     }
 
     return res;
+}
+
+void BigUInt::operator+=(const BigUInt& num) {
+    *this = (*this) + num;
 }
 
 BigUInt concatenate(const BigUInt& a, const BigUInt& b) {

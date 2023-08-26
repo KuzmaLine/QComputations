@@ -261,6 +261,31 @@ Matrix<COMPLEX> FROM_lapack_complex_double_TO_Matrix(lapack_complex_double* A, l
     return res;
 }
 
+void print_state_biguint(const State& state) {
+    auto num = state.to_uint();
+    auto num_str = num.binary_str();
+
+    size_t index = 0;
+    size_t m_count = 0;
+    for (long long i = state.cavities_count() - 1; i >= 0; i--) {
+        if (state.m(i) != 0) {
+            num_str.insert(num_str.size() - state.m(i) - index, " ");
+            index += state.m(i) + 1;
+            m_count += state.m(i);
+        }
+    }
+
+    num_str = num_str.substr(num_str.size() - index + 1, num_str.size() - 1);
+
+    num >>= m_count;
+
+    for (long long i = state.cavities_count() - 1; i >= 0; i--) {
+        std::cout << num.get_num(i) << " ";
+    }
+
+    std::cout << num_str;
+}
+
 std::vector<double> make_timeline(double start, double end, double step) {
     size_t n = (end - start) / step;
     std::vector<double> timeline(n + 1);

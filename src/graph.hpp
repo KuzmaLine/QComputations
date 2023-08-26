@@ -5,7 +5,7 @@
 #include <queue>
 #include <unordered_set>
 #include <set>
-#include "cavity_state.hpp"
+#include "state.hpp"
 
 
 // DON'T TOUCH
@@ -22,6 +22,13 @@ class State_Graph {
         std::unordered_map<Cavity_State, std::unordered_set<Cavity_State>> from_;
 };
 
-class Quantum_Neural_Network : public State_Graph {
-
+class Quantum_Neural_Network {
+    public:
+        Quantum_Neural_Network(const State& init_grid, const Matrix<COMPLEX>& H);
+        void show() const;
+    private:
+        std::set<State> basis_;
+        std::unordered_map<BigUInt, std::unordered_set<BigUInt>> to_;
+        std::unordered_map<BigUInt, std::unordered_set<BigUInt>> from_;
+        Matrix<COMPLEX> H_;
 };

@@ -11,6 +11,7 @@
 #include <mkl_lapack.h>
 #include <mkl_lapacke.h>
 #include <mkl_cblas.h>
+#include "big_uint.hpp"
 
 #ifdef ENABLE_MPI
 #include "mpi.h"
@@ -22,6 +23,8 @@ namespace {
     using vec_complex = std::vector<COMPLEX>;
     using vec_levels = std::vector<E_LEVEL>;
 }
+
+void print_state_biguint(const State& state);
 
 std::vector<double> FROM_double_TO_vector(double* A, lapack_int n);
 Matrix<COMPLEX> FROM_lapack_complex_double_TO_Matrix(lapack_complex_double* A, lapack_int n, lapack_int m);
