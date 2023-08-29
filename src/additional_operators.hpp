@@ -30,6 +30,15 @@ std::vector<T> operator*(const std::vector<T>& v, T num) {
 }
 
 template<typename T>
+std::ostream& operator<<(std::ostream& out, const std::vector<T>& v) {
+    for (const auto& val: v) {
+        out << val << " ";
+    }
+
+    return out;
+}
+
+template<typename T>
 std::vector<T> operator*(T num, const std::vector<T>& v) { return v * num; }
 
 template<typename T>

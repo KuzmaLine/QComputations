@@ -136,6 +136,9 @@ template<typename T> class Matrix {
 
         size_t index(size_t i, size_t j) const { if (matrix_style_ == C_STYLE) return i * m_ + j;
                                                  else return j * n_ + i; }
+
+        T& elem(size_t i, size_t j) { return mass_.data()[this->index(i, j)]; }
+        const T elem(size_t i, size_t j) const { return mass_.data()[this->index(i, j)]; }
     private:
         size_t get_index(size_t i, size_t j) const { if (matrix_style_ == C_STYLE) return i * m_ + j;
                                                      else return j * n_ + i; }

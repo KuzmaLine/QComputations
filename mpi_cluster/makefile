@@ -24,7 +24,7 @@ prog: $(OBJ)
 .cpp.o:
 	${CC} -g -c $< ${CFLAGS} -o $@
 
-main.o: matrix.hpp cavity_state.hpp graph.hpp big_uint.hpp state.hpp quantum_operators.hpp hamiltonian.hpp additional_operators.hpp mpi_functions.hpp functions.hpp dynamic.hpp plot.hpp test.hpp config.hpp matplotlibcpp.hpp
+main.o: matrix.hpp cavity_state.hpp graph.hpp big_uint.hpp state.hpp quantum_operators.hpp hamiltonian.hpp additional_operators.hpp mpi_functions.hpp functions.hpp dynamic.hpp plot.hpp test.hpp config.hpp csr_matrix.hpp matplotlibcpp.hpp
 
 clean:
 	rm -rf *.o prog

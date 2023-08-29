@@ -75,7 +75,8 @@
         "mpi": "hpp",
         "*.ipp": "cpp",
         "regex": "cpp",
-        "shared_mutex": "cpp"
+        "shared_mutex": "cpp",
+        "__split_buffer": "cpp"
     },
     "makefile.launchConfigurations": [
         {

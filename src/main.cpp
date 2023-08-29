@@ -2,6 +2,7 @@
 #include <iostream>
 #include "functions.hpp"
 #include "matrix.hpp"
+#include "csr_matrix.hpp"
 #include "hamiltonian.hpp"
 #include "state.hpp"
 //#include "test.hpp"
@@ -90,16 +91,12 @@ int main(int argc, char** argv) {
     
     */
 
-    State tmp_state("|12,10;10,1>");
-    std::cout << tmp_state.to_uint().binary_str() << std::endl;
-    State second_state("|11,13;11,1>");
-    print_state_biguint(tmp_state);
-    std::cout << std::endl;
-    print_state_biguint(second_state);
-    std::cout << std::endl;
-    tmp_state.from_uint(second_state.to_uint());
-    print_state_biguint(tmp_state);
-    std::cout << std::endl;
+    Matrix<double> A({{1, 0, 2}, {0, 0, 3}, {4, 2, 0}});
+    A.show();
+
+    CSR_Matrix<double> CSR_A(A);
+    //std::cout << "HERE\n";
+    CSR_A.show();
     return 0;
 
 
