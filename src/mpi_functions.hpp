@@ -73,6 +73,8 @@ namespace mpi {
 
 
 #ifdef ENABLE_CLUSTER
+
+    // Печатает блок матрицы каждого процессора.
     template<typename T>
     void print_distributed_matrix(const Matrix<T>& A, const std::string& matrix_name, MPI_Comm comm) {
         int myid, numproc;
@@ -95,6 +97,7 @@ namespace mpi {
     // ON BLACS GRID
     void init_grid(ILP_TYPE& ctxt);
 
+    // Распределяет по Blacs решётке блоки матрицы. Реализовано только для Matrix<double> и Matrix<std::complex<double>>
     template<typename T>
     Matrix<T> scatter_blacs_matrix(const Matrix<T>& A, ILP_TYPE& N, ILP_TYPE& M,
                              ILP_TYPE& NB, ILP_TYPE& MB, ILP_TYPE& nrows,
@@ -112,6 +115,7 @@ namespace mpi {
                                        ILP_TYPE& ncols, ILP_TYPE& ctxt, ILP_TYPE root_id,
                                        ILP_TYPE NB_FORCE, ILP_TYPE MB_FORCE);
     
+    // Распределяет обратно.
     template<typename T>
     void gather_blacs_matrix(const Matrix<T>& localC, Matrix<T>& C, ILP_TYPE& N, ILP_TYPE& M,
                              ILP_TYPE& NB, ILP_TYPE& MB, ILP_TYPE& nrows,
@@ -131,8 +135,8 @@ namespace mpi {
 
 #endif
 
-    MPI_Datatype Create_Block_Type_double (ILP_TYPE N, ILP_TYPE M, ILP_TYPE NB, ILP_TYPE MB);
-    MPI_Datatype Create_Block_Type_complex (ILP_TYPE N, ILP_TYPE M, ILP_TYPE NB, ILP_TYPE MB);
+    MPI_Datatype Create_Block_Type_double (ILP_TYPE N, ILP_TYPE M, ILP_TYPE NB, ILP_TYPE MB);  // not ready
+    MPI_Datatype Create_Block_Type_complex (ILP_TYPE N, ILP_TYPE M, ILP_TYPE NB, ILP_TYPE MB); // not ready
 
     // DELETE
     void RING_Bcast(double *buf, int count, MPI_Datatype type, int root, MPI_Comm comm);
@@ -197,6 +201,7 @@ namespace mpi {
     */
 
 #ifdef ENABLE_CLUSTER
+   // Parallel matrix computations
    void parallel_dgemm(const Matrix<double>& A, const Matrix<double>& B, Matrix<double>& C,
                        bool is_distributed = false, ILP_TYPE* desca = NULL, ILP_TYPE* descb = NULL, ILP_TYPE* descc = NULL,
                        char op_A = 'N', char op_B = 'N');

@@ -205,6 +205,7 @@ std::vector<T> Pro_Race_Algorithm(const Matrix<T>& B, const std::vector<T>& y) {
     return x;
 }
 
+// Testing function
 template<typename T>
 void show_vector(const std::vector<T>& v) {
     for (const auto& num: v) {
@@ -227,6 +228,7 @@ std::vector<T> f_vector(std::function<T(T)> f, const std::vector<T>& x) {
     return res;
 }
 
+// Рудимент - удалить
 template<typename T>
 void Multiply_Matrix (const Matrix<T>& A, const Matrix<T>& B, Matrix<T>& C) {
     assert(A.m() == B.n());
@@ -242,6 +244,7 @@ void Multiply_Matrix (const Matrix<T>& A, const Matrix<T>& B, Matrix<T>& C) {
     }
 }
 
+// Не трогать!!!!!
 void cblas_MM_double_complex(COMPLEX* A, COMPLEX* B, COMPLEX* C, int n, int k, int m, double alpha, double betta);
 
 void cblas_MM_double(double* A, double* B, double* C, int n, int k, int m, double alpha, double betta);

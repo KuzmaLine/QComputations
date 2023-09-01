@@ -20,6 +20,7 @@ Matrix<COMPLEX> operator* (const Matrix<COMPLEX>& A, const Matrix<double>& B);
 
 /// ################################ std::vector ###################################
 
+// vector * num
 template<typename T>
 std::vector<T> operator*(const std::vector<T>& v, T num) {
     std::vector<T> answer(v.size());
@@ -31,6 +32,7 @@ std::vector<T> operator*(const std::vector<T>& v, T num) {
     return answer;
 }
 
+// std::cout << vector
 template<typename T>
 std::ostream& operator<<(std::ostream& out, const std::vector<T>& v) {
     for (const auto& val: v) {
@@ -40,9 +42,11 @@ std::ostream& operator<<(std::ostream& out, const std::vector<T>& v) {
     return out;
 }
 
+// num * vector
 template<typename T>
 std::vector<T> operator*(T num, const std::vector<T>& v) { return v * num; }
 
+// a[i] * b[i] -> vector
 template<typename T>
 std::vector<T> operator*(const std::vector<T>& a, const std::vector<T>& b) {
     std::vector<T> answer(a.size());
@@ -60,6 +64,7 @@ namespace quantum {
 
 }
 
+// vector / num
 template<typename T>
 std::vector<T> operator/(const std::vector<T>& v, T num) {
     std::vector<T> answer(v.size());
@@ -76,6 +81,7 @@ template<typename T>
 std::vector<T> operator/(T num, const std::vector<T>& v) { return v * num; }
 */
 
+// vector - vector
 template<typename T>
 std::vector<T> operator-(const std::vector<T>& a, const std::vector<T>& b) {
     size_t m = a.size();
@@ -89,6 +95,8 @@ std::vector<T> operator-(const std::vector<T>& a, const std::vector<T>& b) {
 }
 
 } // namespace QComputations
+
+// hash functions for Cavity_State (cavity_state.hpp)
 
 template<>
 struct std::hash<std::vector<COMPLEX>> {

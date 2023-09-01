@@ -155,6 +155,7 @@ State::State(const Cavity_State& state) {
     gamma_ = Matrix<COMPLEX>(C_STYLE, 1, 1, 0);
 }
 
+// Рудимент
 size_t State::get_index() const {
     size_t index = 0;
 

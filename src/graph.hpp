@@ -11,6 +11,8 @@
 namespace QComputations {
 // DON'T TOUCH
 // NEED REWORK
+
+// Рудимент
 class State_Graph {
     public:
         explicit State_Graph(const Cavity_State& init_state, bool with_loss_photons = false, bool GAIN_PHOTONS = false, size_t N = 1);
@@ -23,6 +25,7 @@ class State_Graph {
         std::unordered_map<Cavity_State, std::unordered_set<Cavity_State>> from_;
 };
 
+// Это тебе знать необязательно
 class Quantum_Neural_Network {
     public:
         Quantum_Neural_Network(const State& init_grid, const Matrix<COMPLEX>& H);

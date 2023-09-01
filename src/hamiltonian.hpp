@@ -55,8 +55,8 @@ class H_by_Matrix : public Hamiltonian {
 // NEED UPDATE
 class H_JC : public Hamiltonian {
     public:
-        explicit H_JC(const State& state);  // Make H_JC_RWA
-        void make_exact();                  // Make H_JC 
+        explicit H_JC(const State& state);  // Генерируется по умолчанию в RWA приближении
+        void make_exact();                  // Делает гамильтониан точным
     private:
         size_t n_;
 };

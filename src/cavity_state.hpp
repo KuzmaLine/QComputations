@@ -57,7 +57,7 @@ class Cavity_State {
         // Return state_ (converted from 2 numerical system)
         size_t get_atoms_index() const;
 
-        // return sum of n_ and ones is state_
+        // return sum of n_ and ones in state_
         size_t get_energy() const;
 
         bool operator==(const Cavity_State& other) const { return state_ == other.state_ and n_ == other.n_; }

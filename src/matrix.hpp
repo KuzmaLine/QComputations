@@ -54,6 +54,7 @@ template<typename T> class Matrix {
         explicit Matrix(const Matrix<T>& A): n_(A.n_), m_(A.m_), mass_(A.mass_), matrix_style_(A.matrix_style_) {}
         explicit Matrix(const std::vector<T>& mass, size_t n, size_t m, MATRIX_STYLE matrix_style): n_(n), m_(m), mass_(mass), matrix_style_(matrix_style) {}
 
+        // Conversation to another type
         template<typename V>
         Matrix(const Matrix<V>& A): n_(A.n()), m_(A.m()) {
             for (size_t i = 0; i < n_; i++) {
@@ -83,8 +84,8 @@ template<typename T> class Matrix {
         void add_cols(size_t m);
         void remove_rows(size_t n);
         void remove_cols(size_t m);
-        void expand(size_t n);
-        void reduce(size_t n);
+        void expand(size_t n); // add_rows + add_cols
+        void reduce(size_t n); // remove_rows + remove_cols
 
         // DON'T ADD GENERAL TEMPLATE VERSION
         Matrix<T> operator* (const Matrix<T>& A) const;

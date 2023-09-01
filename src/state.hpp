@@ -28,14 +28,15 @@ class State {
         size_t y_size() const { return y_size_; }
         size_t z_size() const { return z_size_; }
 
-        size_t max_N() const { return max_N_; }
-        void set_max_N(size_t N) { max_N_ = N; }
-        size_t min_N() const { return min_N_; }
-        void set_min_N(size_t N) { min_N_ = N; }
-        size_t n(CavityId id = 0) const { return grid_states_[id].n(); } // TMP
-        void set_n(size_t n, CavityId id = 0) { grid_states_[id].set_n(n); } // TMP
-        size_t m(CavityId id) const { return grid_states_[id].m(); }
+        size_t max_N() const { return max_N_; }  // Get maximum considering energy on grid
+        void set_max_N(size_t N) { max_N_ = N; } // Set maximum considering energy on grid
+        size_t min_N() const { return min_N_; }  // Get minimum considering energy on grid
+        void set_min_N(size_t N) { min_N_ = N; } // Set minimum considering energy on grid
+        size_t n(CavityId id = 0) const { return grid_states_[id].n(); } // get amount of photons in cavity with id = id
+        void set_n(size_t n, CavityId id = 0) { grid_states_[id].set_n(n); } // set n photons in cavity with id = id
+        size_t m(CavityId id) const { return grid_states_[id].m(); } // get amount of atoms in cavity with id = id
 
+        // change grid shapes
         void reshape(size_t x_size, size_t y_size, size_t z_size) {
             assert(x_size * y_size * z_size == grid_states_.size());
 
@@ -47,6 +48,7 @@ class State {
             is_init_gamma_ = false;
         }
 
+        // TMP realizations
         void set_gamma(COMPLEX gamma) { gamma_ = Matrix<COMPLEX>(C_STYLE, grid_states_.size(),
                                                                  grid_states_.size(),
                                                                  gamma);
@@ -55,31 +57,43 @@ class State {
                                                   is_init_gamma_ = true;}
         void set_gamma(size_t from_id, size_t to_id, COMPLEX gamma);
 
+        // get qubit in cavity with atom_index
         E_LEVEL get_qubit(CavityId pol_id, AtomId atom_index) const { return grid_states_[pol_id].get_qubit(atom_index); }
 
+        // set qubit in cavity with atom_index
         void set_qubit(CavityId pol_id, AtomId atom_index, E_LEVEL level) {
             grid_states_[pol_id].set_qubit(atom_index, level);
         }
 
+        // set entire state in cavity with id = id
         void set_state(CavityId id, const Cavity_State& state);
+
+        // add cavity to grid (Don't safe, be careful)
         State add_state(const Cavity_State& state) const;
 
         std::string to_string() const;
 
-
         size_t cavities_count() const { return grid_states_.size(); }
         size_t cavity_atoms_count(CavityId id) const { return grid_states_.at(id).m(); }
+        
+        // Рудимент
         size_t cavity_max_size(CavityId id) const { return grid_states_[id].variants_of_state_count(max_N_); }
 
         bool operator==(const State& other) const { return grid_states_ == other.grid_states_; }
         bool operator<(const State& other) const { return this->to_string() > other.to_string(); }
 
+        // Return state vector from cavity
         Cavity_State get_state_in_pol(CavityId pol_id) const { return grid_states_[pol_id]; }
         Cavity_State operator[](CavityId pol_id) const { return grid_states_[pol_id]; }
         
+        // Рудимент
         size_t get_index() const;
+
+        // Get index of state in basis
         size_t get_index(const std::set<State>& basis) const;
         size_t get_max_size() const;
+
+        // return energy in state (photons + atoms in state one)
         size_t get_energy() const;
     
         std::set<CavityId> get_cavities_with_leak() const { return leak_cavities_; }
@@ -96,7 +110,10 @@ class State {
         COMPLEX get_gamma(CavityId from_id, CavityId to_id) const { return gamma_[from_id][to_id]; }
         std::set<CavityId> get_cavities_with_atoms() const { return cavities_with_atoms_; }
 
+        // Like a hash
         BigUInt to_uint() const;
+
+        // Change state to with BigUint = state_num
         void from_uint(const BigUInt& state_num);
     private:
         size_t max_N_;

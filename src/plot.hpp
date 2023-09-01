@@ -15,7 +15,7 @@ namespace QComputations {
 
 // !!!!!!!!!!!!!! ЕСТЬ ОДНА ЗАЛУПА. ПРИ ИСПОЛЬЗОВАНИИ Parallel_QME команду make_figure 
 // !!!!!!!!!!!!!! использовать только ДО ВЫЗОВА Parallel_QME, иначе free invalid pointer по причине - хз,
-// !!!!!!!!!!!!!! что-то интерпретатор питона шлёт нахер
+// !!!!!!!!!!!!!! интерпретатор питона тупа шлёт нахер.
 namespace matplotlib {
     void make_figure(size_t x = 0, size_t y = 0, size_t dpi = config::dpi);
     void probs_to_plot(const Evolution::Probs& probs,

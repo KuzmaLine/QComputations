@@ -18,28 +18,28 @@ class BigUInt {
     using NumType = unsigned int;
     public:
         explicit BigUInt() : num_(), base_(NUMTYPE_MAX) {}
-        explicit BigUInt(const std::string& num_str);
+        explicit BigUInt(const std::string& num_str); // not ready
         explicit BigUInt(NumType num) : base_(NUMTYPE_MAX) { num_ = {num}; }
 
         BigUInt& operator=(const BigUInt& num);
 
         BigUInt operator+(const BigUInt& num) const;
         BigUInt operator-(const BigUInt& num) const;
-        BigUInt operator*(const BigUInt& num) const;
+        BigUInt operator*(const BigUInt& num) const; // not ready
         BigUInt operator/(const BigUInt& num) const;
         BigUInt operator%(const BigUInt& num) const;
 
         void operator+=(const BigUInt& num);
-        void operator-=(const BigUInt& num);
-        void operator*=(const BigUInt& num);
-        void operator/=(const BigUInt& num);
-        void operator%=(const BigUInt& num);
+        void operator-=(const BigUInt& num); // not ready
+        void operator*=(const BigUInt& num); // not ready
+        void operator/=(const BigUInt& num); // not ready
+        void operator%=(const BigUInt& num); // not ready
 
         BigUInt operator|(const BigUInt& num) const;
         BigUInt operator&(const BigUInt& num) const;
 
-        void operator|=(const BigUInt& num);
-        void operator&=(const BigUInt& num);
+        void operator|=(const BigUInt& num); // not ready
+        void operator&=(const BigUInt& num); // not ready
 
         bool operator<(const BigUInt& num) const;
         bool operator<=(const BigUInt& num) const;
