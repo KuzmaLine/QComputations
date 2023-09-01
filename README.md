@@ -6,7 +6,7 @@
 Cmake реализует 3 библиотеки: - (Не готово)
 1. Для одного ядра - single (Требуется Intel MKL)
 2. Для нескольких MPI ядер - mpi (Требуется Intel MKL, OpenMPI или IntelMPI)
-3. Для нескольких узлов - mpi_cluster (Требуется полный пакет Intel OneApi c Intel DPCPP++, Intel MPI и Intel Python из-за IntelMPI)
+3. Для нескольких узлов - mpi_cluster (Требуется полный пакет Intel OneApi BaseToolkit (бесплатный) + Intel DPCPP++ + Intel MPI + Intel Python из-за IntelMPI)
 
 Разница между 2 и 3 библиотеками в том, что во 2 не реализована эффективное параллельное перемножение матриц (Та же скорость, что и у blas)
 
