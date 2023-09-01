@@ -2,6 +2,8 @@
 #include <algorithm>
 #include <functional>
 
+namespace QComputations {
+
 namespace {
     constexpr int DOWN = 0;
     constexpr int UP = 1;
@@ -89,3 +91,5 @@ void State_Graph::show() const {
         std::cout << std::endl;
     }
 }
+
+} // namespace QComputations

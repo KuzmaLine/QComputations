@@ -13,6 +13,8 @@
 #include "config.hpp"
 #include "additional_operators.hpp"
 
+namespace QComputations {
+
 namespace {
     template <typename T>
     bool is_close(T a, T b) {
@@ -119,3 +121,5 @@ void CSR_Matrix<T>::show() const {
         std::cout << std::endl;
     }
 }
+
+} // namespace QComputations

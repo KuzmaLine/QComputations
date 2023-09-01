@@ -8,6 +8,8 @@
 #include "matrix.hpp"
 #include "big_uint.hpp"
 
+namespace QComputations {
+
 class State {
     using COMPLEX = std::complex<double>;
     using matrix = std::vector<std::vector<COMPLEX>>;
@@ -123,3 +125,5 @@ class State {
 ...
 
 */
+
+} // namespace QComputations

@@ -19,6 +19,9 @@
 
 #endif
 
+namespace QComputations {
+
+namespace {
 #ifdef MKL_ILP64
     using ILP_TYPE = long long;
     constexpr MPI_Datatype MPI_BCAST_DATATYPE = MPI_LONG_LONG;
@@ -27,7 +30,6 @@
     constexpr MPI_Datatype MPI_BCAST_DATATYPE = MPI_INT;
 #endif
 
-namespace {
     using COMPLEX = std::complex<double>;
 }
 
@@ -206,5 +208,7 @@ namespace mpi {
    void print_distributed_matrix(const Matrix<double>& A, const std::string& matrix_name, MPI_Comm comm = MPI_COMM_WORLD);
 #endif
 }
+
+} // namespace QComputations
 
 #endif // ENABLE_MPI

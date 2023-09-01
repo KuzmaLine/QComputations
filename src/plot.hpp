@@ -9,6 +9,8 @@
 
 #include "matplotlibcpp.hpp"
 
+namespace QComputations {
+
 // NEED REWORK
 
 // !!!!!!!!!!!!!! ЕСТЬ ОДНА ЗАЛУПА. ПРИ ИСПОЛЬЗОВАНИИ Parallel_QME команду make_figure 
@@ -37,7 +39,11 @@ namespace matplotlib {
     void grid(bool is_enable = true);
 }
 
+} // namespace QComputations
+
 #endif
+
+namespace QComputations {
 
 namespace plotly {
 
@@ -46,3 +52,5 @@ namespace plotly {
 namespace matlab {
 
 }
+
+} // namespace QComputations

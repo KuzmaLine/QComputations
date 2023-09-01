@@ -17,6 +17,8 @@
 #include "mpi.h"
 #endif
 
+namespace QComputations {
+
 namespace {
     using E_LEVEL = int;
     using COMPLEX = std::complex<double>;
@@ -249,3 +251,5 @@ void cblas_MM_int(int* A, int* B, int* C, int n, int k, int m, double alpha, dou
  #ifdef ENABLE_MPI
 
 #endif
+
+} // namespace QComputations

@@ -7,6 +7,8 @@
 #include "config.hpp"
 #include "matrix.hpp"
 
+namespace QComputations {
+
 namespace {
     typedef std::complex<double> COMPLEX;
 }
@@ -75,3 +77,5 @@ class H_TCH : public Hamiltonian {
     public:
         H_TCH(const State& init_state);
 };
+
+} // namespace QComputations

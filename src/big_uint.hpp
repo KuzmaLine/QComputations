@@ -12,6 +12,8 @@ namespace {
     constexpr unsigned int BITS_COUNT = 32;
 }
 
+namespace QComputations {
+
 class BigUInt {
     using NumType = unsigned int;
     public:
@@ -70,3 +72,5 @@ class BigUInt {
         std::vector<NumType> num_; 
         NumType base_;
 };
+
+} // namespace QComputations

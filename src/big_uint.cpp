@@ -4,6 +4,8 @@
 #include "test.hpp"
 
 namespace {
+    using namespace QComputations;
+
     const BigUInt BigZero(0);
     const BigUInt BigOne(1);
 
@@ -46,6 +48,8 @@ namespace {
         return res;
     }
 }
+
+namespace QComputations {
 
 /*
 BigUInt::BigUInt(const std::string& str) : base_(std::pow(10, 9)) {
@@ -455,3 +459,5 @@ BigUInt concatenate(const BigUInt& a, const BigUInt& b) {
 
     return res;
 }
+
+} // namespace QComputations

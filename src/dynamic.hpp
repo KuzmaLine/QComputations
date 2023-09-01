@@ -4,6 +4,8 @@
 #include "state.hpp"
 #include "hamiltonian.hpp"
 
+namespace QComputations {
+
 namespace Evolution {
     using COMPLEX = std::complex<double>;
     using Probs = Matrix<double>;
@@ -48,3 +50,5 @@ namespace Evolution {
 #endif
     // TO BE CONTINUED...
 }
+
+} // namespace QComputations

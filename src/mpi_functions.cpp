@@ -24,6 +24,8 @@ JC, int * DESCC );
 
 #endif
 
+namespace QComputations {
+
 void mpi::make_command(COMMAND::COMMANDS command) {
     MPI_Bcast(&command, 1, MPI_INT, ROOT_ID, MPI_COMM_WORLD);
 }
@@ -1310,4 +1312,6 @@ void mpi::parallel_zgemm(const Matrix<COMPLEX>& A, const Matrix<COMPLEX>& B, Mat
 
 #endif // ENABLE_CLUSTER
 
+} // namespace QComputations
 #endif // ENABLE_MPI
+

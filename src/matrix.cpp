@@ -6,6 +6,8 @@
 #include <chrono>
 #include "functions.hpp"
 
+namespace QComputations {
+
 namespace {
     using COMPLEX = std::complex<double>;
 }
@@ -496,3 +498,5 @@ lapack_complex_double* Matrix<COMPLEX>::to_lapack() const {
 
     return a;
 }
+
+} // namespace QComputations

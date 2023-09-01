@@ -25,6 +25,8 @@ namespace {
     }
 }
 
+namespace QComputations {
+
 Cavity_State::Cavity_State(size_t n, size_t m, size_t state): n_(n), state_(index_to_state(m, state)) {}
 
 Cavity_State::Cavity_State(size_t n, const std::vector<E_LEVEL>& state) : n_(n) {
@@ -127,3 +129,5 @@ std::string Cavity_State::to_string() const {
     }
     return str_state;
 }
+
+} // namespace QComputations

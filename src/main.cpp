@@ -27,6 +27,7 @@ COMPLEX func(size_t i, size_t j) {
 }
 
 int main(int argc, char** argv) {
+    using namespace QComputations;
     int n = 8000;
 
     /*

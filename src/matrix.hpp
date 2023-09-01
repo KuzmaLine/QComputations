@@ -10,6 +10,8 @@
 #include <mkl_lapacke.h>
 #include "config.hpp"
 
+namespace QComputations {
+
 namespace {
     using COMPLEX = std::complex<double>;
     template<typename T>
@@ -523,3 +525,5 @@ lapack_complex_double* Matrix<COMPLEX>::to_upper_lapack() const;
 
 template<>
 lapack_complex_double* Matrix<COMPLEX>::to_lapack() const;
+
+} // namespace QComputations

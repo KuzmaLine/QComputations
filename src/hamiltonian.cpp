@@ -13,6 +13,8 @@
 #include "mpi_functions.hpp"
 #endif
 
+namespace QComputations {
+
 namespace {
     typedef std::complex<double> COMPLEX;
 
@@ -526,3 +528,5 @@ H_TCH::H_TCH(const State& grid) {
     }
 #endif
 }
+
+} // namespace QComputations

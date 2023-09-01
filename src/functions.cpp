@@ -11,6 +11,8 @@ extern "C"
     void zdotc(COMPLEX*, int*, const COMPLEX*, int*, const COMPLEX*, int*);
 }
 
+namespace QComputations {
+
 namespace {
     constexpr double eps = 1e-12;
     const double EPS = eps;
@@ -745,3 +747,5 @@ void cblas_MM_int(int* A, int* B, int* C, int n, int k, int m, double alpha, dou
 #ifdef ENABLE_MPI
 
 #endif
+
+} // namespace QComputations

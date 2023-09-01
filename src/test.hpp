@@ -9,6 +9,8 @@
 #include <set>
 #include <complex>
 
+namespace QComputations {
+
 // TESTING - Для отладки либы, для остального бесполезны
 namespace matrix_testing {
     template<typename T>
@@ -164,3 +166,5 @@ namespace functions_testing {
         }
     }
 }
+
+} // namespace QComputations

@@ -8,6 +8,7 @@
 #include "state.hpp"
 
 
+namespace QComputations {
 // DON'T TOUCH
 // NEED REWORK
 class State_Graph {
@@ -32,3 +33,5 @@ class Quantum_Neural_Network {
         std::unordered_map<BigUInt, std::unordered_set<BigUInt>> from_;
         Matrix<COMPLEX> H_;
 };
+
+} // namespace QComputations

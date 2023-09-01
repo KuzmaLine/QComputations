@@ -1,6 +1,8 @@
 #include "plot.hpp"
 #include "functions.hpp"
 
+namespace QComputations {
+
 namespace {
 #ifdef ENABLE_MATPLOTLIB
     namespace plt = matplotlibcpp;
@@ -163,3 +165,5 @@ void matplotlib::grid(bool is_enable) {
 }
 
 #endif
+
+} // namespace QComputations

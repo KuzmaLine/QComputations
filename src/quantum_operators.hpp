@@ -3,6 +3,8 @@
 #include "state.hpp"
 #include "config.hpp"
 
+namespace QComputations {
+
 namespace {
     using COMPLEX = std::complex<double>;
 }
@@ -14,3 +16,5 @@ COMPLEX excitation_atom(const State& state_from, const State& state_to, COMPLEX 
 COMPLEX de_excitation_atom(const State& state_from, const State& state_to, COMPLEX g = config::g);
 COMPLEX photon_exchange(const State& state_from, const State& state_to, const State& grid);
 COMPLEX JC_addition(const State& state_from, const State& state_to, COMPLEX g = config::g);
+
+} // namespace QComputations

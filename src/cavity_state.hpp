@@ -8,6 +8,8 @@
 #include <set>
 
 
+namespace QComputations {
+
 // STATE IN CAVITIES
 class Cavity_State {
     using COMPLEX = std::complex<double>;
@@ -66,3 +68,5 @@ class Cavity_State {
         size_t n_;
         std::vector<E_LEVEL> state_;
 };
+
+} // namespace QComputations

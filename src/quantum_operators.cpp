@@ -1,5 +1,7 @@
 #include "quantum_operators.hpp"
 
+namespace QComputations {
+
 COMPLEX self_energy_photon(const State& state_from, const State& state_to, COMPLEX hw) {
     if (state_from == state_to) {
         COMPLEX res(0);
@@ -167,3 +169,5 @@ COMPLEX JC_addition(const State& state_from, const State& state_to, COMPLEX g) {
         return 0;
     }
 }
+
+} // namespace QComputations

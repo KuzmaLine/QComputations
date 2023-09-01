@@ -12,6 +12,8 @@ namespace {
     using vec_levels = std::vector<E_LEVEL>;
 }
 
+namespace QComputations {
+
 // Additional operators for vector, Matrix, States and so on
 
 Matrix<COMPLEX> operator* (const Matrix<COMPLEX>& A, const Matrix<double>& B);
@@ -86,6 +88,8 @@ std::vector<T> operator-(const std::vector<T>& a, const std::vector<T>& b) {
     return res;
 }
 
+} // namespace QComputations
+
 template<>
 struct std::hash<std::vector<COMPLEX>> {
     size_t operator()(const std::vector<COMPLEX>& v) const {
@@ -126,16 +130,16 @@ struct std::hash<std::map<int, std::vector<int>>> {
 
 
 template<>
-struct std::hash<Cavity_State> {
-    size_t operator()(const Cavity_State& state) const {
+struct std::hash<QComputations::Cavity_State> {
+    size_t operator()(const QComputations::Cavity_State& state) const {
         return state.hash();
     }
 };
 
 template<>
-struct std::hash<std::pair<Cavity_State, Cavity_State>> {
-    size_t operator()(const std::pair<Cavity_State, Cavity_State>& p) const {
-        std::hash<Cavity_State> state_hash;
+struct std::hash<std::pair<QComputations::Cavity_State, QComputations::Cavity_State>> {
+    size_t operator()(const std::pair<QComputations::Cavity_State, QComputations::Cavity_State>& p) const {
+        std::hash<QComputations::Cavity_State> state_hash;
         size_t h1 = state_hash(p.first);
         size_t h2 = state_hash(p.second);
         return h1 ^ (h2 << 1);

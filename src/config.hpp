@@ -2,6 +2,8 @@
 #include <complex>
 
 
+namespace QComputations {
+
 namespace config {
 //  Quantum parametrs
     constexpr double h = 1;
@@ -31,3 +33,4 @@ namespace config {
 #endif
 }
 
+} // namespace QComputations

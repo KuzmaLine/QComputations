@@ -6,6 +6,8 @@
 
 #include "plot.hpp"
 
+namespace QComputations {
+
 Matrix<COMPLEX> Evolution::create_A_destroy(const std::set<State>& basis, size_t cavity_id) {
     size_t dim = basis.size();
     Matrix<COMPLEX> A(DEFAULT_MATRIX_STYLE, dim, dim, 0);
@@ -552,3 +554,5 @@ Evolution::Probs Evolution::Parallel_QME(const std::vector<COMPLEX>& init_state,
 }
 
 #endif
+
+} // namespace QComputations

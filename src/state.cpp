@@ -1,6 +1,8 @@
 #include "state.hpp"
 #include "functions.hpp"
 
+
+namespace QComputations {
 // REWRITE TO REGEXP
 State::State(const std::string& grid_state, const std::string& format) : gamma_(C_STYLE, 0, 0, 0) {
     size_t format_index = 0;
@@ -232,3 +234,5 @@ std::string State::to_string() const {
 
     return res;
 }
+
+} // namespace QComputations
