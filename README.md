@@ -86,7 +86,7 @@ install.sh реализует 3 библиотеки: - (Не готово)
  int main(int argc, char** argv) {
      using namespace QComputations;
  
- // ---------------- 
+ // ---------------- BIG MPI_Init -------------
      int rank, world_size;
      MPI_Init(&argc, &argv);
      MPI_Comm_size(MPI_COMM_WORLD, &world_size);
@@ -101,13 +101,19 @@ install.sh реализует 3 библиотеки: - (Не готово)
      MPI_Comm_rank(MPI_COMM_WORLD, &rank);
  
      if (rank != 0) {
+        // run_mpi_slaves() - запуск автоматического распараллеливания
+        // !!! ВСЕ ПРОЦЕССЫ, КРОМЕ 1, ДОЛЖНЫ БЫТЬ В run_mpi_slaves() !!!
          mpi::run_mpi_slaves();
          MPI_Finalize();
          return 0;
      }
- 
+ // ------------------ end BIG MPI_Init --------
+
+
     std::cout << "Hello, world!" << std::endl;
 
+
+    // Остановка остальных MPI процессов. (Просто выходят из run_mpi_slaves())
      mpi::stop_mpi_slaves();
      return 0;
  }
