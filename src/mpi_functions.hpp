@@ -142,7 +142,7 @@ namespace mpi {
     void RING_Bcast(double *buf, int count, MPI_Datatype type, int root, MPI_Comm comm);
 
     // Stay to wait all MPI process until root process give commands. MPI_Init included
-    void run_mpi_slaves(const std::map<int, std::vector<MPI_Data>>& data); 
+    void run_mpi_slaves(const std::map<int, std::vector<MPI_Data>>& data = {}); 
 
     // Stop MPI. MPI_Finalize() included
     void stop_mpi_slaves();
