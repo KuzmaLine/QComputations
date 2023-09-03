@@ -1,0 +1,20 @@
+vpath %.cpp ./src
+vpath %.hpp ./src
+CC=g++
+
+LFGLAGS = -std=c++11 -Werror
+CFLAGS = -std=c++11 -Werror
+OBJ = basis.o graph.o hamiltonian.o functions.o dynamic.o main.o
+
+all: prog
+
+prog: $(OBJ)
+	${CC} ${OBJ} ${LFLAGS} -o $@
+
+.cpp.o:
+	${CC} -g ${CFLAGS} -c $< -o $@
+
+main.o: basis.hpp graph.hpp hamiltonian.hpp functions.hpp dynamic.hpp additional_operators.hpp config.hpp
+
+clean:
+	rm -rf *.o prog
