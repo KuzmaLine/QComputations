@@ -1,16 +1,16 @@
 vpath %.cpp ../src
 vpath %.hpp ../src
-CC=mpiicpc
+CC=mpicc
 
-CFLAGS = -Werror -fopenmp -diag-disable=10441 \
+CFLAGS = -Werror -fopenmp -m64\
 		 -I/opt/intel/oneapi/mkl -I/opt/intel/oneapi/intelpython/python3.9/include/python3.9 \
 		 -I/opt/intel/oneapi/intelpython/python3.9/lib/python3.9/site-packages/numpy/core/include \
 		 -DENABLE_MPI -DENABLE_MATPLOTLIB
 LFLAGS = -Werror \
 		 -lmkl_intel_lp64 \
-		 -lmkl_intel_thread -lmkl_core -lmkl_blacs_intelmpi_lp64 \
+		 -lmkl_gnu_thread -lmkl_core \
 		 -lm -ldl \
-		 -liomp5 -lpthread \
+		 -lgomp -lpthread \
 		 -L/opt/intel/oneapi/intelpython/python3.9/lib \
 		 -lpython3.9 \
 		 -DENABLE_MPI -DENABLE_MATPLOTLIB
