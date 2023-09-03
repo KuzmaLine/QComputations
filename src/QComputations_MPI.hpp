@@ -6,4 +6,5 @@
 #include "state.hpp"
 #include "config.hpp"
 #include "dynamic.hpp"
+#include "mpi_functions.hpp"
 #include "plot.hpp"
