@@ -1,0 +1,94 @@
+
+;; Function operator new (_ZnwmPv, funcdef_no=40, decl_uid=3762, cgraph_uid=29, symbol_order=28)
+
+starting the processing of deferred insns
+ending the processing of deferred insns
+
+
+operator new
+
+Dataflow summary:
+;;  fully invalidated by EH 	 0 [ax] 1 [dx] 2 [cx] 4 [si] 5 [di] 8 [st] 9 [st(1)] 10 [st(2)] 11 [st(3)] 12 [st(4)] 13 [st(5)] 14 [st(6)] 15 [st(7)] 17 [flags] 18 [fpsr] 20 [xmm0] 21 [xmm1] 22 [xmm2] 23 [xmm3] 24 [xmm4] 25 [xmm5] 26 [xmm6] 27 [xmm7] 28 [mm0] 29 [mm1] 30 [mm2] 31 [mm3] 32 [mm4] 33 [mm5] 34 [mm6] 35 [mm7] 36 [r8] 37 [r9] 38 [r10] 39 [r11] 44 [xmm8] 45 [xmm9] 46 [xmm10] 47 [xmm11] 48 [xmm12] 49 [xmm13] 50 [xmm14] 51 [xmm15] 52 [xmm16] 53 [xmm17] 54 [xmm18] 55 [xmm19] 56 [xmm20] 57 [xmm21] 58 [xmm22] 59 [xmm23] 60 [xmm24] 61 [xmm25] 62 [xmm26] 63 [xmm27] 64 [xmm28] 65 [xmm29] 66 [xmm30] 67 [xmm31] 68 [k0] 69 [k1] 70 [k2] 71 [k3] 72 [k4] 73 [k5] 74 [k6] 75 [k7]
+;;  hardware regs used 	
+;;  regular block artificial uses 	 6 [bp] 7 [sp] 16 [argp] 19 [frame]
+;;  eh block artificial uses 	 6 [bp] 7 [sp] 16 [argp] 19 [frame]
+;;  entry block defs 	 0 [ax] 1 [dx] 2 [cx] 4 [si] 5 [di] 6 [bp] 7 [sp] 16 [argp] 19 [frame] 20 [xmm0] 21 [xmm1] 22 [xmm2] 23 [xmm3] 24 [xmm4] 25 [xmm5] 26 [xmm6] 27 [xmm7] 36 [r8] 37 [r9]
+;;  exit block uses 	 0 [ax] 6 [bp] 7 [sp] 19 [frame]
+;;  regs ever live 	 0 [ax] 4 [si] 5 [di]
+;;  ref usage 	r0={2d,2u} r1={1d} r2={1d} r4={1d,1u} r5={1d,1u} r6={1d,2u} r7={1d,2u} r16={1d,1u} r19={1d,5u} r20={1d} r21={1d} r22={1d} r23={1d} r24={1d} r25={1d} r26={1d} r27={1d} r36={1d} r37={1d} r82={1d,1u} r83={1d,1u} 
+;;    total ref usage 38{22d,16u,0e} in 6{6 regular + 0 call} insns.
+(note 1 0 5 NOTE_INSN_DELETED)
+;; basic block 2, loop depth 0, maybe hot
+;;  prev block 0, next block 1, flags: (NEW, REACHABLE, RTL, MODIFIED)
+;;  pred:       ENTRY (FALLTHRU)
+;; bb 2 artificial_defs: { }
+;; bb 2 artificial_uses: { u-1(6){ }u-1(7){ }u-1(16){ }u-1(19){ }}
+(note 5 1 2 2 [bb 2] NOTE_INSN_BASIC_BLOCK)
+(insn 2 5 3 2 (set (mem/c:DI (plus:DI (reg/f:DI 19 frame)
+                (const_int -8 [0xfffffffffffffff8])) [4 D.3760+0 S8 A64])
+        (reg:DI 5 di [ D.3760 ])) "/usr/include/c++/12/new":175:1 80 {*movdi_internal}
+     (nil))
+(insn 3 2 4 2 (set (mem/f/c:DI (plus:DI (reg/f:DI 19 frame)
+                (const_int -16 [0xfffffffffffffff0])) [5 __p+0 S8 A64])
+        (reg:DI 4 si [ __p ])) "/usr/include/c++/12/new":175:1 80 {*movdi_internal}
+     (nil))
+(note 4 3 7 2 NOTE_INSN_FUNCTION_BEG)
+(insn 7 4 10 2 (set (reg/f:DI 82 [ _2 ])
+        (mem/f/c:DI (plus:DI (reg/f:DI 19 frame)
+                (const_int -16 [0xfffffffffffffff0])) [5 __p+0 S8 A64])) "/usr/include/c++/12/new":175:10 80 {*movdi_internal}
+     (nil))
+(insn 10 7 14 2 (set (reg/f:DI 83 [ <retval> ])
+        (reg/f:DI 82 [ _2 ])) "/usr/include/c++/12/new":175:10 80 {*movdi_internal}
+     (nil))
+(insn 14 10 15 2 (set (reg/i:DI 0 ax)
+        (reg/f:DI 83 [ <retval> ])) "/usr/include/c++/12/new":175:15 80 {*movdi_internal}
+     (nil))
+(insn 15 14 0 2 (use (reg/i:DI 0 ax)) "/usr/include/c++/12/new":175:15 -1
+     (nil))
+;;  succ:       EXIT [always]  (FALLTHRU)
+
+
+;; Function std::__size_to_integer (_ZSt17__size_to_integerm, funcdef_no=652, decl_uid=17400, cgraph_uid=181, symbol_order=194)
+
+starting the processing of deferred insns
+ending the processing of deferred insns
+
+
+std::__size_to_integer
+
+Dataflow summary:
+;;  fully invalidated by EH 	 0 [ax] 1 [dx] 2 [cx] 4 [si] 5 [di] 8 [st] 9 [st(1)] 10 [st(2)] 11 [st(3)] 12 [st(4)] 13 [st(5)] 14 [st(6)] 15 [st(7)] 17 [flags] 18 [fpsr] 20 [xmm0] 21 [xmm1] 22 [xmm2] 23 [xmm3] 24 [xmm4] 25 [xmm5] 26 [xmm6] 27 [xmm7] 28 [mm0] 29 [mm1] 30 [mm2] 31 [mm3] 32 [mm4] 33 [mm5] 34 [mm6] 35 [mm7] 36 [r8] 37 [r9] 38 [r10] 39 [r11] 44 [xmm8] 45 [xmm9] 46 [xmm10] 47 [xmm11] 48 [xmm12] 49 [xmm13] 50 [xmm14] 51 [xmm15] 52 [xmm16] 53 [xmm17] 54 [xmm18] 55 [xmm19] 56 [xmm20] 57 [xmm21] 58 [xmm22] 59 [xmm23] 60 [xmm24] 61 [xmm25] 62 [xmm26] 63 [xmm27] 64 [xmm28] 65 [xmm29] 66 [xmm30] 67 [xmm31] 68 [k0] 69 [k1] 70 [k2] 71 [k3] 72 [k4] 73 [k5] 74 [k6] 75 [k7]
+;;  hardware regs used 	
+;;  regular block artificial uses 	 6 [bp] 7 [sp] 16 [argp] 19 [frame]
+;;  eh block artificial uses 	 6 [bp] 7 [sp] 16 [argp] 19 [frame]
+;;  entry block defs 	 0 [ax] 1 [dx] 2 [cx] 4 [si] 5 [di] 6 [bp] 7 [sp] 16 [argp] 19 [frame] 20 [xmm0] 21 [xmm1] 22 [xmm2] 23 [xmm3] 24 [xmm4] 25 [xmm5] 26 [xmm6] 27 [xmm7] 36 [r8] 37 [r9]
+;;  exit block uses 	 0 [ax] 6 [bp] 7 [sp] 19 [frame]
+;;  regs ever live 	 0 [ax] 5 [di]
+;;  ref usage 	r0={2d,2u} r1={1d} r2={1d} r4={1d} r5={1d,1u} r6={1d,2u} r7={1d,2u} r16={1d,1u} r19={1d,4u} r20={1d} r21={1d} r22={1d} r23={1d} r24={1d} r25={1d} r26={1d} r27={1d} r36={1d} r37={1d} r82={1d,1u} r83={1d,1u} 
+;;    total ref usage 36{22d,14u,0e} in 5{5 regular + 0 call} insns.
+(note 1 0 4 NOTE_INSN_DELETED)
+;; basic block 2, loop depth 0, maybe hot
+;;  prev block 0, next block 1, flags: (NEW, REACHABLE, RTL, MODIFIED)
+;;  pred:       ENTRY (FALLTHRU)
+;; bb 2 artificial_defs: { }
+;; bb 2 artificial_uses: { u-1(6){ }u-1(7){ }u-1(16){ }u-1(19){ }}
+(note 4 1 2 2 [bb 2] NOTE_INSN_BASIC_BLOCK)
+(insn 2 4 3 2 (set (mem/c:DI (plus:DI (reg/f:DI 19 frame)
+                (const_int -8 [0xfffffffffffffff8])) [4 __n+0 S8 A64])
+        (reg:DI 5 di [ __n ])) "/usr/include/c++/12/bits/stl_algobase.h":1009:40 80 {*movdi_internal}
+     (nil))
+(note 3 2 6 2 NOTE_INSN_FUNCTION_BEG)
+(insn 6 3 9 2 (set (reg:DI 82 [ _2 ])
+        (mem/c:DI (plus:DI (reg/f:DI 19 frame)
+                (const_int -8 [0xfffffffffffffff8])) [4 __n+0 S8 A64])) "/usr/include/c++/12/bits/stl_algobase.h":1009:49 80 {*movdi_internal}
+     (nil))
+(insn 9 6 13 2 (set (reg:DI 83 [ <retval> ])
+        (reg:DI 82 [ _2 ])) "/usr/include/c++/12/bits/stl_algobase.h":1009:49 80 {*movdi_internal}
+     (nil))
+(insn 13 9 14 2 (set (reg/i:DI 0 ax)
+        (reg:DI 83 [ <retval> ])) "/usr/include/c++/12/bits/stl_algobase.h":1009:54 80 {*movdi_internal}
+     (nil))
+(insn 14 13 0 2 (use (reg/i:DI 0 ax)) "/usr/include/c++/12/bits/stl_algobase.h":1009:54 -1
+     (nil))
+;;  succ:       EXIT [always]  (FALLTHRU)
+

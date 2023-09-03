@@ -179,6 +179,7 @@ void mpi::run_mpi_slaves(const std::map<int, std::vector<MPI_Data>>& data) {
             Evolution::schrodinger(init_state, H, time_vec);
 
 // ------------------------------------- QME -------------------------------------------
+#ifdef ENABLE_CLUSTER
         } else if (command == COMMAND::QME) {
             auto init_state = bcast_vector_complex();
             auto time_vec = bcast_vector_double();
@@ -188,7 +189,7 @@ void mpi::run_mpi_slaves(const std::map<int, std::vector<MPI_Data>>& data) {
 
             auto H_tmp = Hamiltonian();
             Evolution::Parallel_QME(init_state, H_tmp, time_vec, is_full_rho);
-
+#endif
 // ---------------------------------- DELETE --------------------------------------
 // --------------------------------------------------------------------------------
         // NOT EFFECTIVE, DELETE

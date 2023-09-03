@@ -321,6 +321,7 @@ std::vector<double> Evolution::scan_gamma(const std::vector<COMPLEX>& init_state
 }
 
 #ifdef ENABLE_MPI
+#ifdef ENABLE_CLUSTER
 
 Evolution::Probs Evolution::Parallel_QME(const std::vector<COMPLEX>& init_state,
                                          Hamiltonian& H,
@@ -553,6 +554,7 @@ Evolution::Probs Evolution::Parallel_QME(const std::vector<COMPLEX>& init_state,
     }
 }
 
-#endif
+#endif // ENABLE_CLUSTER
+#endif // ENABLE_MPI
 
 } // namespace QComputations

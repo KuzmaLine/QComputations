@@ -1,0 +1,237 @@
+
+;; Function operator new (_ZnwmPv, funcdef_no=40, decl_uid=3762, cgraph_uid=29, symbol_order=28)
+
+
+********** Local #1: **********
+
+	   Spilling non-eliminable hard regs: 6
+New elimination table:
+Can't eliminate 16 to 7 (offset=16, prev_offset=0)
+Can eliminate 16 to 6 (offset=16, prev_offset=0)
+Can't eliminate 19 to 7 (offset=0, prev_offset=0)
+Can eliminate 19 to 6 (offset=0, prev_offset=0)
+            0 Non-pseudo reload: reject+=2
+            0 Non input pseudo reload: reject++
+            alt=2: Bad operand -- refuse
+            0 Non-pseudo reload: reject+=2
+            0 Non input pseudo reload: reject++
+            Cycle danger: overall += LRA_MAX_REJECT
+          alt=3,overall=609,losers=1,rld_nregs=1
+            0 Non-pseudo reload: reject+=2
+            0 Non input pseudo reload: reject++
+            alt=4: Bad operand -- refuse
+          alt=5,overall=0,losers=0,rld_nregs=0
+	 Choosing alt 5 in insn 2:  (0) m  (1) re {*movdi_internal}
+            0 Non-pseudo reload: reject+=2
+            0 Non input pseudo reload: reject++
+            alt=2: Bad operand -- refuse
+            0 Non-pseudo reload: reject+=2
+            0 Non input pseudo reload: reject++
+            Cycle danger: overall += LRA_MAX_REJECT
+          alt=3,overall=609,losers=1,rld_nregs=1
+            0 Non-pseudo reload: reject+=2
+            0 Non input pseudo reload: reject++
+            alt=4: Bad operand -- refuse
+          alt=5,overall=0,losers=0,rld_nregs=0
+	 Choosing alt 5 in insn 3:  (0) m  (1) re {*movdi_internal}
+            alt=2: Bad operand -- refuse
+          alt=3,overall=0,losers=0,rld_nregs=0
+	 Choosing alt 3 in insn 7:  (0) r  (1) rem {*movdi_internal}
+	   Spilling non-eliminable hard regs: 6
+
+********** Inheritance #1: **********
+
+EBB 2
+
+********** Pseudo live ranges #1: **********
+
+  BB 2
+   Insn 15: point = 0, n_alt = -1
+   Insn 14: point = 0, n_alt = -2
+   Insn 10: point = 1, n_alt = -2
+   Insn 7: point = 3, n_alt = 3
+   Insn 3: point = 4, n_alt = 5
+   Insn 2: point = 4, n_alt = 5
+ r82: [2..3]
+ r83: [0..1]
+Compressing live ranges: from 4 to 4 - 100%
+Ranges after the compression:
+ r82: [2..3]
+ r83: [0..1]
+
+********** Assignment #1: **********
+
+
+********** Undoing inheritance #1: **********
+
+
+********** Local #2: **********
+
+	   Spilling non-eliminable hard regs: 6
+	   Spilling non-eliminable hard regs: 6
+New elimination table:
+Can't eliminate 16 to 7 (offset=16, prev_offset=0)
+Can eliminate 16 to 6 (offset=16, prev_offset=16)
+Can't eliminate 19 to 7 (offset=0, prev_offset=0)
+Can eliminate 19 to 6 (offset=0, prev_offset=0)
+changing reg in insn 7
+changing reg in insn 10
+changing reg in insn 10
+changing reg in insn 14
+deleting insn with uid = 10.
+deleting insn with uid = 14.
+starting the processing of deferred insns
+ending the processing of deferred insns
+
+
+operator new
+
+Dataflow summary:
+;;  fully invalidated by EH 	 0 [ax] 1 [dx] 2 [cx] 4 [si] 5 [di] 8 [st] 9 [st(1)] 10 [st(2)] 11 [st(3)] 12 [st(4)] 13 [st(5)] 14 [st(6)] 15 [st(7)] 17 [flags] 18 [fpsr] 20 [xmm0] 21 [xmm1] 22 [xmm2] 23 [xmm3] 24 [xmm4] 25 [xmm5] 26 [xmm6] 27 [xmm7] 28 [mm0] 29 [mm1] 30 [mm2] 31 [mm3] 32 [mm4] 33 [mm5] 34 [mm6] 35 [mm7] 36 [r8] 37 [r9] 38 [r10] 39 [r11] 44 [xmm8] 45 [xmm9] 46 [xmm10] 47 [xmm11] 48 [xmm12] 49 [xmm13] 50 [xmm14] 51 [xmm15] 52 [xmm16] 53 [xmm17] 54 [xmm18] 55 [xmm19] 56 [xmm20] 57 [xmm21] 58 [xmm22] 59 [xmm23] 60 [xmm24] 61 [xmm25] 62 [xmm26] 63 [xmm27] 64 [xmm28] 65 [xmm29] 66 [xmm30] 67 [xmm31] 68 [k0] 69 [k1] 70 [k2] 71 [k3] 72 [k4] 73 [k5] 74 [k6] 75 [k7]
+;;  hardware regs used 	
+;;  regular block artificial uses 	 6 [bp] 7 [sp]
+;;  eh block artificial uses 	 6 [bp] 7 [sp] 16 [argp] 19 [frame]
+;;  entry block defs 	 0 [ax] 1 [dx] 2 [cx] 4 [si] 5 [di] 6 [bp] 7 [sp] 19 [frame] 20 [xmm0] 21 [xmm1] 22 [xmm2] 23 [xmm3] 24 [xmm4] 25 [xmm5] 26 [xmm6] 27 [xmm7] 36 [r8] 37 [r9]
+;;  exit block uses 	 0 [ax] 6 [bp] 7 [sp] 19 [frame]
+;;  regs ever live 	 0 [ax] 4 [si] 5 [di] 6 [bp]
+;;  ref usage 	r0={2d,2u} r1={1d} r2={1d} r4={1d,1u} r5={1d,1u} r6={1d,5u} r7={1d,2u} r19={1d,1u} r20={1d} r21={1d} r22={1d} r23={1d} r24={1d} r25={1d} r26={1d} r27={1d} r36={1d} r37={1d} 
+;;    total ref usage 31{19d,12u,0e} in 4{4 regular + 0 call} insns.
+(note 1 0 5 NOTE_INSN_DELETED)
+;; basic block 2, loop depth 0, maybe hot
+;;  prev block 0, next block 1, flags: (RTL, MODIFIED)
+;;  pred:       ENTRY (FALLTHRU)
+;; bb 2 artificial_defs: { }
+;; bb 2 artificial_uses: { u-1(6){ }u-1(7){ }}
+;; lr  in  	 4 [si] 5 [di] 6 [bp] 7 [sp] 16 [argp] 19 [frame]
+;; lr  use 	 4 [si] 5 [di] 6 [bp] 7 [sp] 16 [argp] 19 [frame]
+;; lr  def 	 0 [ax] 82 83
+(note 5 1 2 2 [bb 2] NOTE_INSN_BASIC_BLOCK)
+(insn 2 5 3 2 (set (mem/c:DI (plus:DI (reg/f:DI 6 bp)
+                (const_int -8 [0xfffffffffffffff8])) [4 D.3760+0 S8 A64])
+        (reg:DI 5 di [ D.3760 ])) "/usr/include/c++/12/new":175:1 80 {*movdi_internal}
+     (nil))
+(insn 3 2 4 2 (set (mem/f/c:DI (plus:DI (reg/f:DI 6 bp)
+                (const_int -16 [0xfffffffffffffff0])) [5 __p+0 S8 A64])
+        (reg:DI 4 si [ __p ])) "/usr/include/c++/12/new":175:1 80 {*movdi_internal}
+     (nil))
+(note 4 3 7 2 NOTE_INSN_FUNCTION_BEG)
+(insn 7 4 15 2 (set (reg/f:DI 0 ax [orig:82 _2 ] [82])
+        (mem/f/c:DI (plus:DI (reg/f:DI 6 bp)
+                (const_int -16 [0xfffffffffffffff0])) [5 __p+0 S8 A64])) "/usr/include/c++/12/new":175:10 80 {*movdi_internal}
+     (nil))
+(insn 15 7 17 2 (use (reg/i:DI 0 ax)) "/usr/include/c++/12/new":175:15 -1
+     (nil))
+;;  succ:       EXIT [always]  (FALLTHRU)
+;; lr  out 	 0 [ax] 6 [bp] 7 [sp] 16 [argp] 19 [frame]
+
+(note 17 15 0 NOTE_INSN_DELETED)
+
+;; Function std::__size_to_integer (_ZSt17__size_to_integerm, funcdef_no=652, decl_uid=17400, cgraph_uid=181, symbol_order=194)
+
+
+********** Local #1: **********
+
+	   Spilling non-eliminable hard regs: 6
+New elimination table:
+Can't eliminate 16 to 7 (offset=16, prev_offset=0)
+Can eliminate 16 to 6 (offset=16, prev_offset=0)
+Can't eliminate 19 to 7 (offset=0, prev_offset=0)
+Can eliminate 19 to 6 (offset=0, prev_offset=0)
+            0 Non-pseudo reload: reject+=2
+            0 Non input pseudo reload: reject++
+            alt=2: Bad operand -- refuse
+            0 Non-pseudo reload: reject+=2
+            0 Non input pseudo reload: reject++
+            Cycle danger: overall += LRA_MAX_REJECT
+          alt=3,overall=609,losers=1,rld_nregs=1
+            0 Non-pseudo reload: reject+=2
+            0 Non input pseudo reload: reject++
+            alt=4: Bad operand -- refuse
+          alt=5,overall=0,losers=0,rld_nregs=0
+	 Choosing alt 5 in insn 2:  (0) m  (1) re {*movdi_internal}
+            alt=2: Bad operand -- refuse
+          alt=3,overall=0,losers=0,rld_nregs=0
+	 Choosing alt 3 in insn 6:  (0) r  (1) rem {*movdi_internal}
+	   Spilling non-eliminable hard regs: 6
+
+********** Inheritance #1: **********
+
+EBB 2
+
+********** Pseudo live ranges #1: **********
+
+  BB 2
+   Insn 14: point = 0, n_alt = -1
+   Insn 13: point = 0, n_alt = -2
+   Insn 9: point = 1, n_alt = -2
+   Insn 6: point = 3, n_alt = 3
+   Insn 2: point = 4, n_alt = 5
+ r82: [2..3]
+ r83: [0..1]
+Compressing live ranges: from 4 to 4 - 100%
+Ranges after the compression:
+ r82: [2..3]
+ r83: [0..1]
+
+********** Assignment #1: **********
+
+
+********** Undoing inheritance #1: **********
+
+
+********** Local #2: **********
+
+	   Spilling non-eliminable hard regs: 6
+	   Spilling non-eliminable hard regs: 6
+New elimination table:
+Can't eliminate 16 to 7 (offset=16, prev_offset=0)
+Can eliminate 16 to 6 (offset=16, prev_offset=16)
+Can't eliminate 19 to 7 (offset=0, prev_offset=0)
+Can eliminate 19 to 6 (offset=0, prev_offset=0)
+changing reg in insn 6
+changing reg in insn 9
+changing reg in insn 9
+changing reg in insn 13
+deleting insn with uid = 9.
+deleting insn with uid = 13.
+starting the processing of deferred insns
+ending the processing of deferred insns
+
+
+std::__size_to_integer
+
+Dataflow summary:
+;;  fully invalidated by EH 	 0 [ax] 1 [dx] 2 [cx] 4 [si] 5 [di] 8 [st] 9 [st(1)] 10 [st(2)] 11 [st(3)] 12 [st(4)] 13 [st(5)] 14 [st(6)] 15 [st(7)] 17 [flags] 18 [fpsr] 20 [xmm0] 21 [xmm1] 22 [xmm2] 23 [xmm3] 24 [xmm4] 25 [xmm5] 26 [xmm6] 27 [xmm7] 28 [mm0] 29 [mm1] 30 [mm2] 31 [mm3] 32 [mm4] 33 [mm5] 34 [mm6] 35 [mm7] 36 [r8] 37 [r9] 38 [r10] 39 [r11] 44 [xmm8] 45 [xmm9] 46 [xmm10] 47 [xmm11] 48 [xmm12] 49 [xmm13] 50 [xmm14] 51 [xmm15] 52 [xmm16] 53 [xmm17] 54 [xmm18] 55 [xmm19] 56 [xmm20] 57 [xmm21] 58 [xmm22] 59 [xmm23] 60 [xmm24] 61 [xmm25] 62 [xmm26] 63 [xmm27] 64 [xmm28] 65 [xmm29] 66 [xmm30] 67 [xmm31] 68 [k0] 69 [k1] 70 [k2] 71 [k3] 72 [k4] 73 [k5] 74 [k6] 75 [k7]
+;;  hardware regs used 	
+;;  regular block artificial uses 	 6 [bp] 7 [sp]
+;;  eh block artificial uses 	 6 [bp] 7 [sp] 16 [argp] 19 [frame]
+;;  entry block defs 	 0 [ax] 1 [dx] 2 [cx] 4 [si] 5 [di] 6 [bp] 7 [sp] 19 [frame] 20 [xmm0] 21 [xmm1] 22 [xmm2] 23 [xmm3] 24 [xmm4] 25 [xmm5] 26 [xmm6] 27 [xmm7] 36 [r8] 37 [r9]
+;;  exit block uses 	 0 [ax] 6 [bp] 7 [sp] 19 [frame]
+;;  regs ever live 	 0 [ax] 5 [di] 6 [bp]
+;;  ref usage 	r0={2d,2u} r1={1d} r2={1d} r4={1d} r5={1d,1u} r6={1d,4u} r7={1d,2u} r19={1d,1u} r20={1d} r21={1d} r22={1d} r23={1d} r24={1d} r25={1d} r26={1d} r27={1d} r36={1d} r37={1d} 
+;;    total ref usage 29{19d,10u,0e} in 3{3 regular + 0 call} insns.
+(note 1 0 4 NOTE_INSN_DELETED)
+;; basic block 2, loop depth 0, maybe hot
+;;  prev block 0, next block 1, flags: (RTL, MODIFIED)
+;;  pred:       ENTRY (FALLTHRU)
+;; bb 2 artificial_defs: { }
+;; bb 2 artificial_uses: { u-1(6){ }u-1(7){ }}
+;; lr  in  	 5 [di] 6 [bp] 7 [sp] 16 [argp] 19 [frame]
+;; lr  use 	 5 [di] 6 [bp] 7 [sp] 16 [argp] 19 [frame]
+;; lr  def 	 0 [ax] 82 83
+(note 4 1 2 2 [bb 2] NOTE_INSN_BASIC_BLOCK)
+(insn 2 4 3 2 (set (mem/c:DI (plus:DI (reg/f:DI 6 bp)
+                (const_int -8 [0xfffffffffffffff8])) [4 __n+0 S8 A64])
+        (reg:DI 5 di [ __n ])) "/usr/include/c++/12/bits/stl_algobase.h":1009:40 80 {*movdi_internal}
+     (nil))
+(note 3 2 6 2 NOTE_INSN_FUNCTION_BEG)
+(insn 6 3 14 2 (set (reg:DI 0 ax [orig:82 _2 ] [82])
+        (mem/c:DI (plus:DI (reg/f:DI 6 bp)
+                (const_int -8 [0xfffffffffffffff8])) [4 __n+0 S8 A64])) "/usr/include/c++/12/bits/stl_algobase.h":1009:49 80 {*movdi_internal}
+     (nil))
+(insn 14 6 16 2 (use (reg/i:DI 0 ax)) "/usr/include/c++/12/bits/stl_algobase.h":1009:54 -1
+     (nil))
+;;  succ:       EXIT [always]  (FALLTHRU)
+;; lr  out 	 0 [ax] 6 [bp] 7 [sp] 16 [argp] 19 [frame]
+
+(note 16 14 0 NOTE_INSN_DELETED)

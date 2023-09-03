@@ -1,0 +1,3044 @@
+
+;; Function QComputations::Matrix<int>::operator* (_ZNK13QComputations6MatrixIiEmlERKS1_, funcdef_no=5083, decl_uid=365321, cgraph_uid=1272, symbol_order=1835)
+
+
+
+QComputations::Matrix<int>::operator*
+
+Dataflow summary:
+;;  fully invalidated by EH 	 0 [ax] 1 [dx] 2 [cx] 4 [si] 5 [di] 8 [st] 9 [st(1)] 10 [st(2)] 11 [st(3)] 12 [st(4)] 13 [st(5)] 14 [st(6)] 15 [st(7)] 17 [flags] 18 [fpsr] 20 [xmm0] 21 [xmm1] 22 [xmm2] 23 [xmm3] 24 [xmm4] 25 [xmm5] 26 [xmm6] 27 [xmm7] 28 [mm0] 29 [mm1] 30 [mm2] 31 [mm3] 32 [mm4] 33 [mm5] 34 [mm6] 35 [mm7] 36 [r8] 37 [r9] 38 [r10] 39 [r11] 44 [xmm8] 45 [xmm9] 46 [xmm10] 47 [xmm11] 48 [xmm12] 49 [xmm13] 50 [xmm14] 51 [xmm15] 52 [xmm16] 53 [xmm17] 54 [xmm18] 55 [xmm19] 56 [xmm20] 57 [xmm21] 58 [xmm22] 59 [xmm23] 60 [xmm24] 61 [xmm25] 62 [xmm26] 63 [xmm27] 64 [xmm28] 65 [xmm29] 66 [xmm30] 67 [xmm31] 68 [k0] 69 [k1] 70 [k2] 71 [k3] 72 [k4] 73 [k5] 74 [k6] 75 [k7]
+;;  hardware regs used 	 7 [sp]
+;;  regular block artificial uses 	 6 [bp] 7 [sp]
+;;  eh block artificial uses 	 6 [bp] 7 [sp] 16 [argp] 19 [frame]
+;;  entry block defs 	 0 [ax] 1 [dx] 2 [cx] 3 [bx] 4 [si] 5 [di] 6 [bp] 7 [sp] 19 [frame] 20 [xmm0] 21 [xmm1] 22 [xmm2] 23 [xmm3] 24 [xmm4] 25 [xmm5] 26 [xmm6] 27 [xmm7] 36 [r8] 37 [r9]
+;;  exit block uses 	 0 [ax] 3 [bx] 6 [bp] 7 [sp] 19 [frame]
+;;  regs ever live 	 0 [ax] 1 [dx] 2 [cx] 3 [bx] 4 [si] 5 [di] 6 [bp] 7 [sp] 17 [flags]
+;;  ref usage 	r0={30d,16u} r1={20d,5u} r2={14d,1u} r3={5d,3u} r4={17d,5u} r5={24d,12u} r6={3d,38u} r7={5d,31u} r8={12d} r9={12d} r10={12d} r11={12d} r12={12d} r13={12d} r14={12d} r15={12d} r16={3u} r17={15d,1u} r18={12d} r19={1d,4u} r20={13d} r21={13d} r22={13d} r23={13d} r24={13d} r25={13d} r26={13d} r27={13d} r28={12d} r29={12d} r30={12d} r31={12d} r32={12d} r33={12d} r34={12d} r35={12d} r36={13d} r37={13d} r38={12d} r39={12d} r44={12d} r45={12d} r46={12d} r47={12d} r48={12d} r49={12d} r50={12d} r51={12d} r52={12d} r53={12d} r54={12d} r55={12d} r56={12d} r57={12d} r58={12d} r59={12d} r60={12d} r61={12d} r62={12d} r63={12d} r64={12d} r65={12d} r66={12d} r67={12d} r68={12d} r69={12d} r70={12d} r71={12d} r72={12d} r73={12d} r74={12d} r75={12d} 
+;;    total ref usage 995{876d,119u,0e} in 66{54 regular + 12 call} insns.
+(note 1 0 7 NOTE_INSN_DELETED)
+(note 7 1 109 2 [bb 2] NOTE_INSN_BASIC_BLOCK)
+(insn/f 109 7 110 2 (set (mem:DI (pre_dec:DI (reg/f:DI 7 sp)) [0  S8 A8])
+        (reg/f:DI 6 bp)) "../src/matrix.cpp":33:65 -1
+     (nil))
+(insn/f 110 109 111 2 (set (reg/f:DI 6 bp)
+        (reg/f:DI 7 sp)) "../src/matrix.cpp":33:65 -1
+     (nil))
+(insn/f 111 110 112 2 (set (mem:DI (pre_dec:DI (reg/f:DI 7 sp)) [0  S8 A8])
+        (reg:DI 3 bx)) "../src/matrix.cpp":33:65 -1
+     (nil))
+(insn/f 112 111 113 2 (parallel [
+            (set (reg/f:DI 7 sp)
+                (plus:DI (reg/f:DI 7 sp)
+                    (const_int -200 [0xffffffffffffff38])))
+            (clobber (reg:CC 17 flags))
+            (clobber (mem:BLK (scratch) [0  A8]))
+        ]) "../src/matrix.cpp":33:65 -1
+     (nil))
+(note 113 112 2 2 NOTE_INSN_PROLOGUE_END)
+(insn 2 113 3 2 (set (mem/f/c:DI (plus:DI (reg/f:DI 6 bp)
+                (const_int -184 [0xffffffffffffff48])) [29 .result_ptr+0 S8 A64])
+        (reg:DI 5 di [ .result_ptr ])) "../src/matrix.cpp":33:65 80 {*movdi_internal}
+     (nil))
+(insn 3 2 4 2 (set (mem/f/c:DI (plus:DI (reg/f:DI 6 bp)
+                (const_int -192 [0xffffffffffffff40])) [29 this+0 S8 A64])
+        (reg:DI 4 si [ this ])) "../src/matrix.cpp":33:65 80 {*movdi_internal}
+     (nil))
+(insn 4 3 5 2 (set (mem/f/c:DI (plus:DI (reg/f:DI 6 bp)
+                (const_int -200 [0xffffffffffffff38])) [30 A+0 S8 A64])
+        (reg:DI 1 dx [ A ])) "../src/matrix.cpp":33:65 80 {*movdi_internal}
+     (nil))
+(note 5 4 6 2 NOTE_INSN_FUNCTION_BEG)
+(insn 6 5 9 2 (parallel [
+            (set (mem/v/f/c:DI (plus:DI (reg/f:DI 6 bp)
+                        (const_int -24 [0xffffffffffffffe8])) [7 D.385492+0 S8 A64])
+                (unspec:DI [
+                        (mem/v/f:DI (const_int 40 [0x28]) [0 MEM[(<address-space-1> long unsigned int *)40B]+0 S8 A64 AS1])
+                    ] UNSPEC_SP_SET))
+            (set (reg:DI 0 ax [104])
+                (const_int 0 [0]))
+            (clobber (reg:CC 17 flags))
+        ]) "../src/matrix.cpp":33:65 1265 {stack_protect_set_1_di}
+     (nil))
+(insn 9 6 129 2 (set (reg:DI 1 dx [83])
+        (mem/f/c:DI (plus:DI (reg/f:DI 6 bp)
+                (const_int -200 [0xffffffffffffff38])) [30 A+0 S8 A64])) "../src/matrix.cpp":34:27 80 {*movdi_internal}
+     (nil))
+(insn 129 9 11 2 (set (reg:DI 0 ax [84])
+        (plus:DI (reg/f:DI 6 bp)
+            (const_int -176 [0xffffffffffffff50]))) "../src/matrix.cpp":34:27 226 {*leadi}
+     (nil))
+(insn 11 129 12 2 (set (reg:DI 4 si)
+        (reg:DI 1 dx [83])) "../src/matrix.cpp":34:27 80 {*movdi_internal}
+     (nil))
+(insn 12 11 131 2 (set (reg:DI 5 di)
+        (reg:DI 0 ax [84])) "../src/matrix.cpp":34:27 80 {*movdi_internal}
+     (nil))
+(note 131 12 13 2 0 NOTE_INSN_EH_REGION_BEG)
+(call_insn 13 131 132 2 (call (mem:QI (symbol_ref/i:DI ("_ZN13QComputations6MatrixIdEC1IiEERKNS0_IT_EE") [flags 0x1]  <function_decl 0x7ff9730a3000 __ct_comp >) [0 __ct_comp  S1 A8])
+        (const_int 0 [0])) "../src/matrix.cpp":34:27 898 {*call}
+     (nil)
+    (expr_list:DI (use (reg:DI 5 di))
+        (expr_list:DI (use (reg:DI 4 si))
+            (nil))))
+(note 132 13 14 2 0 NOTE_INSN_EH_REGION_END)
+(insn 14 132 130 2 (set (reg:DI 1 dx [85])
+        (mem/f/c:DI (plus:DI (reg/f:DI 6 bp)
+                (const_int -192 [0xffffffffffffff40])) [29 this+0 S8 A64])) "../src/matrix.cpp":35:34 80 {*movdi_internal}
+     (nil))
+(insn 130 14 16 2 (set (reg:DI 0 ax [86])
+        (plus:DI (reg/f:DI 6 bp)
+            (const_int -128 [0xffffffffffffff80]))) "../src/matrix.cpp":35:34 226 {*leadi}
+     (nil))
+(insn 16 130 17 2 (set (reg:DI 4 si)
+        (reg:DI 1 dx [85])) "../src/matrix.cpp":35:34 80 {*movdi_internal}
+     (nil))
+(insn 17 16 133 2 (set (reg:DI 5 di)
+        (reg:DI 0 ax [86])) "../src/matrix.cpp":35:34 80 {*movdi_internal}
+     (nil))
+(note 133 17 18 2 1 NOTE_INSN_EH_REGION_BEG)
+(call_insn 18 133 134 2 (call (mem:QI (symbol_ref/i:DI ("_ZN13QComputations6MatrixIdEC1IiEERKNS0_IT_EE") [flags 0x1]  <function_decl 0x7ff9730a3000 __ct_comp >) [0 __ct_comp  S1 A8])
+        (const_int 0 [0])) "../src/matrix.cpp":35:34 898 {*call}
+     (expr_list:REG_EH_REGION (const_int 2 [0x2])
+        (nil))
+    (expr_list:DI (use (reg:DI 5 di))
+        (expr_list:DI (use (reg:DI 4 si))
+            (nil))))
+(note 134 18 19 1 NOTE_INSN_EH_REGION_END)
+(note 19 134 126 3 [bb 3] NOTE_INSN_BASIC_BLOCK)
+(insn 126 19 127 3 (set (reg:DI 0 ax [87])
+        (plus:DI (reg/f:DI 6 bp)
+            (const_int -80 [0xffffffffffffffb0]))) "../src/matrix.cpp":37:41 226 {*leadi}
+     (nil))
+(insn 127 126 128 3 (set (reg:DI 1 dx [88])
+        (plus:DI (reg/f:DI 6 bp)
+            (const_int -176 [0xffffffffffffff50]))) "../src/matrix.cpp":37:41 226 {*leadi}
+     (nil))
+(insn 128 127 24 3 (set (reg:DI 2 cx [89])
+        (plus:DI (reg/f:DI 6 bp)
+            (const_int -128 [0xffffffffffffff80]))) "../src/matrix.cpp":37:41 226 {*leadi}
+     (nil))
+(insn 24 128 25 3 (set (reg:DI 4 si)
+        (reg:DI 2 cx [89])) "../src/matrix.cpp":37:41 80 {*movdi_internal}
+     (nil))
+(insn 25 24 135 3 (set (reg:DI 5 di)
+        (reg:DI 0 ax [87])) "../src/matrix.cpp":37:41 80 {*movdi_internal}
+     (nil))
+(note 135 25 26 3 2 NOTE_INSN_EH_REGION_BEG)
+(call_insn 26 135 136 3 (call (mem:QI (symbol_ref:DI ("_ZNK13QComputations6MatrixIdEmlERKS1_") [flags 0x1]  <function_decl 0x7ff972fb7c00 operator*>) [0 operator* S1 A8])
+        (const_int 0 [0])) "../src/matrix.cpp":37:41 898 {*call}
+     (expr_list:REG_EH_REGION (const_int 3 [0x3])
+        (nil))
+    (expr_list:DI (use (reg:DI 5 di))
+        (expr_list:DI (use (reg:DI 4 si))
+            (expr_list:DI (use (reg:DI 1 dx))
+                (nil)))))
+(note 136 26 27 2 NOTE_INSN_EH_REGION_END)
+(note 27 136 125 4 [bb 4] NOTE_INSN_BASIC_BLOCK)
+(insn 125 27 29 4 (set (reg:DI 1 dx [90])
+        (plus:DI (reg/f:DI 6 bp)
+            (const_int -80 [0xffffffffffffffb0]))) "../src/matrix.cpp":39:31 226 {*leadi}
+     (nil))
+(insn 29 125 30 4 (set (reg:DI 0 ax [91])
+        (mem/f/c:DI (plus:DI (reg/f:DI 6 bp)
+                (const_int -184 [0xffffffffffffff48])) [30 <retval>+0 S8 A64])) "../src/matrix.cpp":39:31 80 {*movdi_internal}
+     (nil))
+(insn 30 29 31 4 (set (reg:DI 4 si)
+        (reg:DI 1 dx [90])) "../src/matrix.cpp":39:31 80 {*movdi_internal}
+     (nil))
+(insn 31 30 137 4 (set (reg:DI 5 di)
+        (reg:DI 0 ax [91])) "../src/matrix.cpp":39:31 80 {*movdi_internal}
+     (nil))
+(note 137 31 32 4 3 NOTE_INSN_EH_REGION_BEG)
+(call_insn 32 137 138 4 (call (mem:QI (symbol_ref/i:DI ("_ZN13QComputations6MatrixIiEC1IdEERKNS0_IT_EE") [flags 0x1]  <function_decl 0x7ff972d32b00 __ct_comp >) [0 __ct_comp  S1 A8])
+        (const_int 0 [0])) "../src/matrix.cpp":39:31 898 {*call}
+     (expr_list:REG_EH_REGION (const_int 4 [0x4])
+        (nil))
+    (expr_list:DI (use (reg:DI 5 di))
+        (expr_list:DI (use (reg:DI 4 si))
+            (nil))))
+(note 138 32 33 3 NOTE_INSN_EH_REGION_END)
+(note 33 138 98 5 [bb 5] NOTE_INSN_BASIC_BLOCK)
+(insn 98 33 122 5 (const_int 0 [0]) "../src/matrix.cpp":39:31 928 {nop}
+     (nil))
+(insn 122 98 36 5 (set (reg:DI 0 ax [92])
+        (plus:DI (reg/f:DI 6 bp)
+            (const_int -80 [0xffffffffffffffb0]))) "../src/matrix.cpp":40:1 226 {*leadi}
+     (nil))
+(insn 36 122 37 5 (set (reg:DI 5 di)
+        (reg:DI 0 ax [92])) "../src/matrix.cpp":40:1 80 {*movdi_internal}
+     (nil))
+(call_insn 37 36 123 5 (call (mem:QI (symbol_ref/i:DI ("_ZN13QComputations6MatrixIdED1Ev") [flags 0x1]  <function_decl 0x7ff973061e00 __dt_comp >) [0 __dt_comp  S1 A8])
+        (const_int 0 [0])) "../src/matrix.cpp":40:1 898 {*call}
+     (expr_list:REG_EH_REGION (const_int 0 [0])
+        (nil))
+    (expr_list:DI (use (reg:DI 5 di))
+        (nil)))
+(insn 123 37 39 5 (set (reg:DI 0 ax [93])
+        (plus:DI (reg/f:DI 6 bp)
+            (const_int -128 [0xffffffffffffff80]))) "../src/matrix.cpp":40:1 226 {*leadi}
+     (nil))
+(insn 39 123 40 5 (set (reg:DI 5 di)
+        (reg:DI 0 ax [93])) "../src/matrix.cpp":40:1 80 {*movdi_internal}
+     (nil))
+(call_insn 40 39 124 5 (call (mem:QI (symbol_ref/i:DI ("_ZN13QComputations6MatrixIdED1Ev") [flags 0x1]  <function_decl 0x7ff973061e00 __dt_comp >) [0 __dt_comp  S1 A8])
+        (const_int 0 [0])) "../src/matrix.cpp":40:1 898 {*call}
+     (expr_list:REG_EH_REGION (const_int 0 [0])
+        (nil))
+    (expr_list:DI (use (reg:DI 5 di))
+        (nil)))
+(insn 124 40 42 5 (set (reg:DI 0 ax [94])
+        (plus:DI (reg/f:DI 6 bp)
+            (const_int -176 [0xffffffffffffff50]))) "../src/matrix.cpp":40:1 226 {*leadi}
+     (nil))
+(insn 42 124 43 5 (set (reg:DI 5 di)
+        (reg:DI 0 ax [94])) "../src/matrix.cpp":40:1 80 {*movdi_internal}
+     (nil))
+(call_insn 43 42 99 5 (call (mem:QI (symbol_ref/i:DI ("_ZN13QComputations6MatrixIdED1Ev") [flags 0x1]  <function_decl 0x7ff973061e00 __dt_comp >) [0 __dt_comp  S1 A8])
+        (const_int 0 [0])) "../src/matrix.cpp":40:1 898 {*call}
+     (expr_list:REG_EH_REGION (const_int 0 [0])
+        (nil))
+    (expr_list:DI (use (reg:DI 5 di))
+        (nil)))
+(insn 99 43 72 5 (const_int 0 [0]) "../src/matrix.cpp":39:31 928 {nop}
+     (nil))
+(insn 72 99 73 5 (parallel [
+            (set (reg:CCZ 17 flags)
+                (unspec:CCZ [
+                        (mem/v/f/c:DI (plus:DI (reg/f:DI 6 bp)
+                                (const_int -24 [0xffffffffffffffe8])) [7 D.385492+0 S8 A64])
+                        (mem/v/f:DI (const_int 40 [0x28]) [0 MEM[(<address-space-1> long unsigned int *)40B]+0 S8 A64 AS1])
+                    ] UNSPEC_SP_TEST))
+            (clobber (reg:DI 0 ax [105]))
+        ]) "../src/matrix.cpp":40:1 1270 {stack_protect_test_1_di}
+     (nil))
+(jump_insn 73 72 100 5 (set (pc)
+        (if_then_else (eq (reg:CCZ 17 flags)
+                (const_int 0 [0]))
+            (label_ref 76)
+            (pc))) "../src/matrix.cpp":40:1 891 {*jcc}
+     (nil)
+ -> 76)
+(note 100 73 102 6 [bb 6] NOTE_INSN_BASIC_BLOCK)
+(jump_insn 102 100 103 6 (set (pc)
+        (label_ref 101)) 892 {jump}
+     (nil)
+ -> 101)
+(barrier 103 102 94)
+(code_label/s 94 103 97 7 31 (nil) [1 uses])
+(note 97 94 95 7 [bb 7] NOTE_INSN_BASIC_BLOCK)
+(insn 95 97 121 7 (set (reg:DI 3 bx [97])
+        (reg:DI 0 ax)) "../src/matrix.cpp":40:1 80 {*movdi_internal}
+     (nil))
+(insn 121 95 51 7 (set (reg:DI 0 ax [95])
+        (plus:DI (reg/f:DI 6 bp)
+            (const_int -80 [0xffffffffffffffb0]))) "../src/matrix.cpp":40:1 226 {*leadi}
+     (nil))
+(insn 51 121 52 7 (set (reg:DI 5 di)
+        (reg:DI 0 ax [95])) "../src/matrix.cpp":40:1 80 {*movdi_internal}
+     (nil))
+(call_insn 52 51 104 7 (call (mem:QI (symbol_ref/i:DI ("_ZN13QComputations6MatrixIdED1Ev") [flags 0x1]  <function_decl 0x7ff973061e00 __dt_comp >) [0 __dt_comp  S1 A8])
+        (const_int 0 [0])) "../src/matrix.cpp":40:1 898 {*call}
+     (expr_list:REG_EH_REGION (const_int 0 [0])
+        (nil))
+    (expr_list:DI (use (reg:DI 5 di))
+        (nil)))
+(jump_insn 104 52 105 7 (set (pc)
+        (label_ref 55)) 892 {jump}
+     (nil)
+ -> 55)
+(barrier 105 104 88)
+(code_label/s 88 105 93 8 30 (nil) [1 uses])
+(note 93 88 89 8 [bb 8] NOTE_INSN_BASIC_BLOCK)
+(insn 89 93 55 8 (set (reg:DI 3 bx [96])
+        (reg:DI 0 ax)) "../src/matrix.cpp":40:1 80 {*movdi_internal}
+     (nil))
+(code_label 55 89 56 9 26 (nil) [1 uses])
+(note 56 55 120 9 [bb 9] NOTE_INSN_BASIC_BLOCK)
+(insn 120 56 58 9 (set (reg:DI 0 ax [100])
+        (plus:DI (reg/f:DI 6 bp)
+            (const_int -128 [0xffffffffffffff80]))) "../src/matrix.cpp":40:1 226 {*leadi}
+     (nil))
+(insn 58 120 59 9 (set (reg:DI 5 di)
+        (reg:DI 0 ax [100])) "../src/matrix.cpp":40:1 80 {*movdi_internal}
+     (nil))
+(call_insn 59 58 106 9 (call (mem:QI (symbol_ref/i:DI ("_ZN13QComputations6MatrixIdED1Ev") [flags 0x1]  <function_decl 0x7ff973061e00 __dt_comp >) [0 __dt_comp  S1 A8])
+        (const_int 0 [0])) "../src/matrix.cpp":40:1 898 {*call}
+     (expr_list:REG_EH_REGION (const_int 0 [0])
+        (nil))
+    (expr_list:DI (use (reg:DI 5 di))
+        (nil)))
+(jump_insn 106 59 107 9 (set (pc)
+        (label_ref 62)) 892 {jump}
+     (nil)
+ -> 62)
+(barrier 107 106 82)
+(code_label/s 82 107 87 10 29 (nil) [1 uses])
+(note 87 82 83 10 [bb 10] NOTE_INSN_BASIC_BLOCK)
+(insn 83 87 62 10 (set (reg:DI 3 bx [101])
+        (reg:DI 0 ax)) "../src/matrix.cpp":40:1 80 {*movdi_internal}
+     (nil))
+(code_label 62 83 63 11 27 (nil) [1 uses])
+(note 63 62 119 11 [bb 11] NOTE_INSN_BASIC_BLOCK)
+(insn 119 63 65 11 (set (reg:DI 0 ax [103])
+        (plus:DI (reg/f:DI 6 bp)
+            (const_int -176 [0xffffffffffffff50]))) "../src/matrix.cpp":40:1 226 {*leadi}
+     (nil))
+(insn 65 119 66 11 (set (reg:DI 5 di)
+        (reg:DI 0 ax [103])) "../src/matrix.cpp":40:1 80 {*movdi_internal}
+     (nil))
+(call_insn 66 65 67 11 (call (mem:QI (symbol_ref/i:DI ("_ZN13QComputations6MatrixIdED1Ev") [flags 0x1]  <function_decl 0x7ff973061e00 __dt_comp >) [0 __dt_comp  S1 A8])
+        (const_int 0 [0])) "../src/matrix.cpp":40:1 898 {*call}
+     (expr_list:REG_EH_REGION (const_int 0 [0])
+        (nil))
+    (expr_list:DI (use (reg:DI 5 di))
+        (nil)))
+(insn 67 66 68 11 (set (reg/f:DI 0 ax [orig:82 D.385491 ] [82])
+        (reg:DI 3 bx [101])) 80 {*movdi_internal}
+     (nil))
+(insn 68 67 139 11 (set (reg:DI 5 di)
+        (reg/f:DI 0 ax [orig:82 D.385491 ] [82])) 80 {*movdi_internal}
+     (nil))
+(note 139 68 69 11 4 NOTE_INSN_EH_REGION_BEG)
+(call_insn 69 139 140 11 (call (mem:QI (symbol_ref:DI ("_Unwind_Resume") [flags 0x41]  <function_decl 0x7ff982f0ac00 __builtin_unwind_resume>) [0 __builtin_unwind_resume S1 A8])
+        (const_int 0 [0])) 898 {*call}
+     (expr_list:REG_ARGS_SIZE (const_int 0 [0])
+        (expr_list:REG_NORETURN (const_int 0 [0])
+            (nil)))
+    (expr_list:DI (use (reg:DI 5 di))
+        (nil)))
+(note 140 69 70 4 NOTE_INSN_EH_REGION_END)
+(barrier 70 140 101)
+(code_label 101 70 80 12 32 (nil) [1 uses])
+(note 80 101 74 12 [bb 12] NOTE_INSN_BASIC_BLOCK)
+(call_insn 74 80 75 12 (call (mem:QI (symbol_ref:DI ("__stack_chk_fail") [flags 0x41]  <function_decl 0x7ff971c32200 __stack_chk_fail>) [0 __stack_chk_fail S1 A8])
+        (const_int 0 [0])) "../src/matrix.cpp":40:1 898 {*call}
+     (expr_list:REG_ARGS_SIZE (const_int 0 [0])
+        (expr_list:REG_NORETURN (const_int 0 [0])
+            (expr_list:REG_EH_REGION (const_int 0 [0])
+                (nil))))
+    (nil))
+(barrier 75 74 76)
+(code_label 76 75 81 13 28 (nil) [1 uses])
+(note 81 76 77 13 [bb 13] NOTE_INSN_BASIC_BLOCK)
+(insn 77 81 78 13 (set (reg/i:DI 0 ax)
+        (mem/f/c:DI (plus:DI (reg/f:DI 6 bp)
+                (const_int -184 [0xffffffffffffff48])) [30 <retval>+0 S8 A64])) "../src/matrix.cpp":40:1 80 {*movdi_internal}
+     (nil))
+(insn 78 77 114 13 (use (reg/i:DI 0 ax)) "../src/matrix.cpp":40:1 -1
+     (nil))
+(note 114 78 115 13 NOTE_INSN_EPILOGUE_BEG)
+(insn 115 114 116 13 (set (reg:DI 3 bx)
+        (mem/c:DI (plus:DI (reg/f:DI 6 bp)
+                (const_int -8 [0xfffffffffffffff8])) [31  S8 A8])) "../src/matrix.cpp":40:1 -1
+     (nil))
+(insn/f 116 115 117 13 (parallel [
+            (set (reg/f:DI 7 sp)
+                (plus:DI (reg/f:DI 6 bp)
+                    (const_int 8 [0x8])))
+            (set (reg/f:DI 6 bp)
+                (mem:DI (reg/f:DI 6 bp) [0  S8 A8]))
+            (clobber (mem:BLK (scratch) [0  A8]))
+        ]) "../src/matrix.cpp":40:1 -1
+     (expr_list:REG_CFA_DEF_CFA (plus:DI (reg/f:DI 7 sp)
+            (const_int 8 [0x8]))
+        (nil)))
+(jump_insn 117 116 118 13 (simple_return) "../src/matrix.cpp":40:1 -1
+     (nil)
+ -> simple_return)
+(barrier 118 117 108)
+(note 108 118 0 NOTE_INSN_DELETED)
+
+;; Function std::_Vector_base<int, std::allocator<int> >::~_Vector_base (_ZNSt12_Vector_baseIiSaIiEED2Ev, funcdef_no=5453, decl_uid=333710, cgraph_uid=1639, symbol_order=2209)
+
+
+
+std::_Vector_base<int, std::allocator<int> >::~_Vector_base
+
+Dataflow summary:
+;;  fully invalidated by EH 	 0 [ax] 1 [dx] 2 [cx] 4 [si] 5 [di] 8 [st] 9 [st(1)] 10 [st(2)] 11 [st(3)] 12 [st(4)] 13 [st(5)] 14 [st(6)] 15 [st(7)] 17 [flags] 18 [fpsr] 20 [xmm0] 21 [xmm1] 22 [xmm2] 23 [xmm3] 24 [xmm4] 25 [xmm5] 26 [xmm6] 27 [xmm7] 28 [mm0] 29 [mm1] 30 [mm2] 31 [mm3] 32 [mm4] 33 [mm5] 34 [mm6] 35 [mm7] 36 [r8] 37 [r9] 38 [r10] 39 [r11] 44 [xmm8] 45 [xmm9] 46 [xmm10] 47 [xmm11] 48 [xmm12] 49 [xmm13] 50 [xmm14] 51 [xmm15] 52 [xmm16] 53 [xmm17] 54 [xmm18] 55 [xmm19] 56 [xmm20] 57 [xmm21] 58 [xmm22] 59 [xmm23] 60 [xmm24] 61 [xmm25] 62 [xmm26] 63 [xmm27] 64 [xmm28] 65 [xmm29] 66 [xmm30] 67 [xmm31] 68 [k0] 69 [k1] 70 [k2] 71 [k3] 72 [k4] 73 [k5] 74 [k6] 75 [k7]
+;;  hardware regs used 	 7 [sp]
+;;  regular block artificial uses 	 6 [bp] 7 [sp]
+;;  eh block artificial uses 	 6 [bp] 7 [sp] 16 [argp] 19 [frame]
+;;  entry block defs 	 0 [ax] 1 [dx] 2 [cx] 4 [si] 5 [di] 6 [bp] 7 [sp] 19 [frame] 20 [xmm0] 21 [xmm1] 22 [xmm2] 23 [xmm3] 24 [xmm4] 25 [xmm5] 26 [xmm6] 27 [xmm7] 36 [r8] 37 [r9]
+;;  exit block uses 	 6 [bp] 7 [sp] 19 [frame]
+;;  regs ever live 	 0 [ax] 1 [dx] 2 [cx] 4 [si] 5 [di] 6 [bp] 7 [sp] 17 [flags]
+;;  ref usage 	r0={11d,8u} r1={6d,3u,1e} r2={4d,1u} r4={4d,1u} r5={5d,3u} r6={3d,11u} r7={4d,9u} r8={2d} r9={2d} r10={2d} r11={2d} r12={2d} r13={2d} r14={2d} r15={2d} r17={5d} r18={2d} r19={1d,1u} r20={3d} r21={3d} r22={3d} r23={3d} r24={3d} r25={3d} r26={3d} r27={3d} r28={2d} r29={2d} r30={2d} r31={2d} r32={2d} r33={2d} r34={2d} r35={2d} r36={3d} r37={3d} r38={2d} r39={2d} r44={2d} r45={2d} r46={2d} r47={2d} r48={2d} r49={2d} r50={2d} r51={2d} r52={2d} r53={2d} r54={2d} r55={2d} r56={2d} r57={2d} r58={2d} r59={2d} r60={2d} r61={2d} r62={2d} r63={2d} r64={2d} r65={2d} r66={2d} r67={2d} r68={2d} r69={2d} r70={2d} r71={2d} r72={2d} r73={2d} r74={2d} r75={2d} 
+;;    total ref usage 213{175d,37u,1e} in 24{22 regular + 2 call} insns.
+(note 1 0 4 NOTE_INSN_DELETED)
+(note 4 1 31 2 [bb 2] NOTE_INSN_BASIC_BLOCK)
+(insn/f 31 4 32 2 (set (mem:DI (pre_dec:DI (reg/f:DI 7 sp)) [0  S8 A8])
+        (reg/f:DI 6 bp)) "/usr/include/c++/12/bits/stl_vector.h":364:7 -1
+     (nil))
+(insn/f 32 31 33 2 (set (reg/f:DI 6 bp)
+        (reg/f:DI 7 sp)) "/usr/include/c++/12/bits/stl_vector.h":364:7 -1
+     (nil))
+(insn/f 33 32 34 2 (parallel [
+            (set (reg/f:DI 7 sp)
+                (plus:DI (reg/f:DI 7 sp)
+                    (const_int -16 [0xfffffffffffffff0])))
+            (clobber (reg:CC 17 flags))
+            (clobber (mem:BLK (scratch) [0  A8]))
+        ]) "/usr/include/c++/12/bits/stl_vector.h":364:7 -1
+     (nil))
+(note 34 33 2 2 NOTE_INSN_PROLOGUE_END)
+(insn 2 34 3 2 (set (mem/f/c:DI (plus:DI (reg/f:DI 6 bp)
+                (const_int -8 [0xfffffffffffffff8])) [15 this+0 S8 A64])
+        (reg:DI 5 di [ this ])) "/usr/include/c++/12/bits/stl_vector.h":364:7 80 {*movdi_internal}
+     (nil))
+(note 3 2 6 2 NOTE_INSN_FUNCTION_BEG)
+(insn 6 3 7 2 (set (reg/f:DI 0 ax [89])
+        (mem/f/c:DI (plus:DI (reg/f:DI 6 bp)
+                (const_int -8 [0xfffffffffffffff8])) [15 this+0 S8 A64])) "/usr/include/c++/12/bits/stl_vector.h":367:17 80 {*movdi_internal}
+     (nil))
+(insn 7 6 8 2 (set (reg/f:DI 1 dx [orig:82 _1 ] [82])
+        (mem/f:DI (plus:DI (reg/f:DI 0 ax [89])
+                (const_int 16 [0x10])) [48 this_9(D)->_M_impl.D.333600._M_end_of_storage+0 S8 A64])) "/usr/include/c++/12/bits/stl_vector.h":367:17 80 {*movdi_internal}
+     (nil))
+(insn 8 7 9 2 (set (reg/f:DI 0 ax [90])
+        (mem/f/c:DI (plus:DI (reg/f:DI 6 bp)
+                (const_int -8 [0xfffffffffffffff8])) [15 this+0 S8 A64])) "/usr/include/c++/12/bits/stl_vector.h":367:45 80 {*movdi_internal}
+     (nil))
+(insn 9 8 10 2 (set (reg/f:DI 0 ax [orig:83 _2 ] [83])
+        (mem/f:DI (reg/f:DI 0 ax [90]) [48 this_9(D)->_M_impl.D.333600._M_start+0 S8 A64])) "/usr/include/c++/12/bits/stl_vector.h":367:45 80 {*movdi_internal}
+     (nil))
+(insn 10 9 29 2 (parallel [
+            (set (reg:DI 1 dx [orig:84 _3 ] [84])
+                (minus:DI (reg/f:DI 1 dx [orig:82 _1 ] [82])
+                    (reg/f:DI 0 ax [orig:83 _2 ] [83])))
+            (clobber (reg:CC 17 flags))
+        ]) "/usr/include/c++/12/bits/stl_vector.h":367:35 303 {*subdi_1}
+     (nil))
+(insn 29 10 11 2 (set (reg:DI 0 ax [orig:84 _3 ] [84])
+        (reg:DI 1 dx [orig:84 _3 ] [84])) "/usr/include/c++/12/bits/stl_vector.h":367:35 80 {*movdi_internal}
+     (nil))
+(insn 11 29 13 2 (parallel [
+            (set (reg:DI 0 ax [orig:84 _3 ] [84])
+                (ashiftrt:DI (reg:DI 0 ax [orig:84 _3 ] [84])
+                    (const_int 2 [0x2])))
+            (clobber (reg:CC 17 flags))
+        ]) "/usr/include/c++/12/bits/stl_vector.h":367:35 766 {*ashrdi3_1}
+     (expr_list:REG_EQUAL (div:DI (reg:DI 1 dx [orig:84 _3 ] [84])
+            (const_int 4 [0x4]))
+        (nil)))
+(insn 13 11 14 2 (set (reg:DI 1 dx [orig:86 _5 ] [86])
+        (reg:DI 0 ax [orig:85 _4 ] [85])) "/usr/include/c++/12/bits/stl_vector.h":366:15 80 {*movdi_internal}
+     (nil))
+(insn 14 13 15 2 (set (reg/f:DI 0 ax [92])
+        (mem/f/c:DI (plus:DI (reg/f:DI 6 bp)
+                (const_int -8 [0xfffffffffffffff8])) [15 this+0 S8 A64])) "/usr/include/c++/12/bits/stl_vector.h":366:15 80 {*movdi_internal}
+     (nil))
+(insn 15 14 16 2 (set (reg/f:DI 2 cx [orig:87 _6 ] [87])
+        (mem/f:DI (reg/f:DI 0 ax [92]) [48 this_9(D)->_M_impl.D.333600._M_start+0 S8 A64])) "/usr/include/c++/12/bits/stl_vector.h":366:15 80 {*movdi_internal}
+     (nil))
+(insn 16 15 18 2 (set (reg:DI 0 ax [93])
+        (mem/f/c:DI (plus:DI (reg/f:DI 6 bp)
+                (const_int -8 [0xfffffffffffffff8])) [15 this+0 S8 A64])) "/usr/include/c++/12/bits/stl_vector.h":366:15 80 {*movdi_internal}
+     (nil))
+(insn 18 16 19 2 (set (reg:DI 4 si)
+        (reg/f:DI 2 cx [orig:87 _6 ] [87])) "/usr/include/c++/12/bits/stl_vector.h":366:15 80 {*movdi_internal}
+     (nil))
+(insn 19 18 20 2 (set (reg:DI 5 di)
+        (reg:DI 0 ax [93])) "/usr/include/c++/12/bits/stl_vector.h":366:15 80 {*movdi_internal}
+     (nil))
+(call_insn 20 19 21 2 (call (mem:QI (symbol_ref/i:DI ("_ZNSt12_Vector_baseIiSaIiEE13_M_deallocateEPim") [flags 0x1]  <function_decl 0x7ff97413aa00 _M_deallocate>) [0 _M_deallocate S1 A8])
+        (const_int 0 [0])) "/usr/include/c++/12/bits/stl_vector.h":366:15 898 {*call}
+     (expr_list:REG_EH_REGION (const_int -1 [0xffffffffffffffff])
+        (nil))
+    (expr_list:DI (use (reg:DI 5 di))
+        (expr_list:DI (use (reg:DI 4 si))
+            (expr_list:DI (use (reg:DI 1 dx))
+                (nil)))))
+(insn 21 20 22 2 (set (reg/f:DI 0 ax [orig:88 _7 ] [88])
+        (mem/f/c:DI (plus:DI (reg/f:DI 6 bp)
+                (const_int -8 [0xfffffffffffffff8])) [15 this+0 S8 A64])) "/usr/include/c++/12/bits/stl_vector.h":368:7 80 {*movdi_internal}
+     (nil))
+(insn 22 21 23 2 (set (reg:DI 5 di)
+        (reg/f:DI 0 ax [orig:88 _7 ] [88])) "/usr/include/c++/12/bits/stl_vector.h":368:7 80 {*movdi_internal}
+     (nil))
+(call_insn 23 22 27 2 (call (mem:QI (symbol_ref/i:DI ("_ZNSt12_Vector_baseIiSaIiEE12_Vector_implD1Ev") [flags 0x1]  <function_decl 0x7ff97413f600 __dt_comp >) [0 __dt_comp  S1 A8])
+        (const_int 0 [0])) "/usr/include/c++/12/bits/stl_vector.h":368:7 898 {*call}
+     (expr_list:REG_EH_REGION (const_int 0 [0])
+        (nil))
+    (expr_list:DI (use (reg:DI 5 di))
+        (nil)))
+(insn 27 23 35 2 (const_int 0 [0]) "/usr/include/c++/12/bits/stl_vector.h":368:7 928 {nop}
+     (nil))
+(note 35 27 36 2 NOTE_INSN_EPILOGUE_BEG)
+(insn/f 36 35 37 2 (parallel [
+            (set (reg/f:DI 7 sp)
+                (plus:DI (reg/f:DI 6 bp)
+                    (const_int 8 [0x8])))
+            (set (reg/f:DI 6 bp)
+                (mem:DI (reg/f:DI 6 bp) [0  S8 A8]))
+            (clobber (mem:BLK (scratch) [0  A8]))
+        ]) "/usr/include/c++/12/bits/stl_vector.h":368:7 -1
+     (expr_list:REG_CFA_DEF_CFA (plus:DI (reg/f:DI 7 sp)
+            (const_int 8 [0x8]))
+        (nil)))
+(jump_insn 37 36 38 2 (simple_return) "/usr/include/c++/12/bits/stl_vector.h":368:7 -1
+     (nil)
+ -> simple_return)
+(barrier 38 37 28)
+(note 28 38 0 NOTE_INSN_DELETED)
+
+;; Function std::vector<int>::~vector (_ZNSt6vectorIiSaIiEED2Ev, funcdef_no=5456, decl_uid=334258, cgraph_uid=1642, symbol_order=2212)
+
+
+
+std::vector<int>::~vector
+
+Dataflow summary:
+;;  fully invalidated by EH 	 0 [ax] 1 [dx] 2 [cx] 4 [si] 5 [di] 8 [st] 9 [st(1)] 10 [st(2)] 11 [st(3)] 12 [st(4)] 13 [st(5)] 14 [st(6)] 15 [st(7)] 17 [flags] 18 [fpsr] 20 [xmm0] 21 [xmm1] 22 [xmm2] 23 [xmm3] 24 [xmm4] 25 [xmm5] 26 [xmm6] 27 [xmm7] 28 [mm0] 29 [mm1] 30 [mm2] 31 [mm3] 32 [mm4] 33 [mm5] 34 [mm6] 35 [mm7] 36 [r8] 37 [r9] 38 [r10] 39 [r11] 44 [xmm8] 45 [xmm9] 46 [xmm10] 47 [xmm11] 48 [xmm12] 49 [xmm13] 50 [xmm14] 51 [xmm15] 52 [xmm16] 53 [xmm17] 54 [xmm18] 55 [xmm19] 56 [xmm20] 57 [xmm21] 58 [xmm22] 59 [xmm23] 60 [xmm24] 61 [xmm25] 62 [xmm26] 63 [xmm27] 64 [xmm28] 65 [xmm29] 66 [xmm30] 67 [xmm31] 68 [k0] 69 [k1] 70 [k2] 71 [k3] 72 [k4] 73 [k5] 74 [k6] 75 [k7]
+;;  hardware regs used 	 7 [sp]
+;;  regular block artificial uses 	 6 [bp] 7 [sp]
+;;  eh block artificial uses 	 6 [bp] 7 [sp] 16 [argp] 19 [frame]
+;;  entry block defs 	 0 [ax] 1 [dx] 2 [cx] 4 [si] 5 [di] 6 [bp] 7 [sp] 19 [frame] 20 [xmm0] 21 [xmm1] 22 [xmm2] 23 [xmm3] 24 [xmm4] 25 [xmm5] 26 [xmm6] 27 [xmm7] 36 [r8] 37 [r9]
+;;  exit block uses 	 6 [bp] 7 [sp] 19 [frame]
+;;  regs ever live 	 0 [ax] 1 [dx] 2 [cx] 4 [si] 5 [di] 6 [bp] 7 [sp]
+;;  ref usage 	r0={9d,6u} r1={5d,1u} r2={5d,1u} r4={5d,1u} r5={7d,4u} r6={3d,10u} r7={4d,10u} r8={3d} r9={3d} r10={3d} r11={3d} r12={3d} r13={3d} r14={3d} r15={3d} r17={4d} r18={3d} r19={1d,1u} r20={4d} r21={4d} r22={4d} r23={4d} r24={4d} r25={4d} r26={4d} r27={4d} r28={3d} r29={3d} r30={3d} r31={3d} r32={3d} r33={3d} r34={3d} r35={3d} r36={4d} r37={4d} r38={3d} r39={3d} r44={3d} r45={3d} r46={3d} r47={3d} r48={3d} r49={3d} r50={3d} r51={3d} r52={3d} r53={3d} r54={3d} r55={3d} r56={3d} r57={3d} r58={3d} r59={3d} r60={3d} r61={3d} r62={3d} r63={3d} r64={3d} r65={3d} r66={3d} r67={3d} r68={3d} r69={3d} r70={3d} r71={3d} r72={3d} r73={3d} r74={3d} r75={3d} 
+;;    total ref usage 270{236d,34u,0e} in 21{18 regular + 3 call} insns.
+(note 1 0 4 NOTE_INSN_DELETED)
+(note 4 1 26 2 [bb 2] NOTE_INSN_BASIC_BLOCK)
+(insn/f 26 4 27 2 (set (mem:DI (pre_dec:DI (reg/f:DI 7 sp)) [0  S8 A8])
+        (reg/f:DI 6 bp)) "/usr/include/c++/12/bits/stl_vector.h":728:7 -1
+     (nil))
+(insn/f 27 26 28 2 (set (reg/f:DI 6 bp)
+        (reg/f:DI 7 sp)) "/usr/include/c++/12/bits/stl_vector.h":728:7 -1
+     (nil))
+(insn/f 28 27 29 2 (parallel [
+            (set (reg/f:DI 7 sp)
+                (plus:DI (reg/f:DI 7 sp)
+                    (const_int -16 [0xfffffffffffffff0])))
+            (clobber (reg:CC 17 flags))
+            (clobber (mem:BLK (scratch) [0  A8]))
+        ]) "/usr/include/c++/12/bits/stl_vector.h":728:7 -1
+     (nil))
+(note 29 28 2 2 NOTE_INSN_PROLOGUE_END)
+(insn 2 29 3 2 (set (mem/f/c:DI (plus:DI (reg/f:DI 6 bp)
+                (const_int -8 [0xfffffffffffffff8])) [16 this+0 S8 A64])
+        (reg:DI 5 di [ this ])) "/usr/include/c++/12/bits/stl_vector.h":728:7 80 {*movdi_internal}
+     (nil))
+(note 3 2 6 2 NOTE_INSN_FUNCTION_BEG)
+(insn 6 3 7 2 (set (reg/f:DI 0 ax [orig:82 _1 ] [82])
+        (mem/f/c:DI (plus:DI (reg/f:DI 6 bp)
+                (const_int -8 [0xfffffffffffffff8])) [16 this+0 S8 A64])) "/usr/include/c++/12/bits/stl_vector.h":731:28 80 {*movdi_internal}
+     (nil))
+(insn 7 6 8 2 (set (reg:DI 5 di)
+        (reg/f:DI 0 ax [orig:82 _1 ] [82])) "/usr/include/c++/12/bits/stl_vector.h":731:28 80 {*movdi_internal}
+     (nil))
+(call_insn 8 7 9 2 (set (reg:DI 0 ax)
+        (call (mem:QI (symbol_ref/i:DI ("_ZNSt12_Vector_baseIiSaIiEE19_M_get_Tp_allocatorEv") [flags 0x1]  <function_decl 0x7ff974524600 _M_get_Tp_allocator>) [0 _M_get_Tp_allocator S1 A8])
+            (const_int 0 [0]))) "/usr/include/c++/12/bits/stl_vector.h":731:28 909 {*call_value}
+     (expr_list:REG_EH_REGION (const_int 0 [0])
+        (nil))
+    (expr_list:DI (use (reg:DI 5 di))
+        (nil)))
+(insn 9 8 10 2 (set (reg/f:DI 1 dx [orig:83 _2 ] [83])
+        (reg:DI 0 ax)) "/usr/include/c++/12/bits/stl_vector.h":731:28 80 {*movdi_internal}
+     (nil))
+(insn 10 9 11 2 (set (reg/f:DI 0 ax [87])
+        (mem/f/c:DI (plus:DI (reg/f:DI 6 bp)
+                (const_int -8 [0xfffffffffffffff8])) [16 this+0 S8 A64])) "/usr/include/c++/12/bits/stl_vector.h":730:15 80 {*movdi_internal}
+     (nil))
+(insn 11 10 12 2 (set (reg/f:DI 2 cx [orig:84 _3 ] [84])
+        (mem/f:DI (plus:DI (reg/f:DI 0 ax [87])
+                (const_int 8 [0x8])) [48 this_6(D)->D.334261._M_impl.D.333600._M_finish+0 S8 A64])) "/usr/include/c++/12/bits/stl_vector.h":730:15 80 {*movdi_internal}
+     (nil))
+(insn 12 11 13 2 (set (reg/f:DI 0 ax [88])
+        (mem/f/c:DI (plus:DI (reg/f:DI 6 bp)
+                (const_int -8 [0xfffffffffffffff8])) [16 this+0 S8 A64])) "/usr/include/c++/12/bits/stl_vector.h":730:15 80 {*movdi_internal}
+     (nil))
+(insn 13 12 15 2 (set (reg/f:DI 0 ax [orig:85 _4 ] [85])
+        (mem/f:DI (reg/f:DI 0 ax [88]) [48 this_6(D)->D.334261._M_impl.D.333600._M_start+0 S8 A64])) "/usr/include/c++/12/bits/stl_vector.h":730:15 80 {*movdi_internal}
+     (nil))
+(insn 15 13 16 2 (set (reg:DI 4 si)
+        (reg/f:DI 2 cx [orig:84 _3 ] [84])) "/usr/include/c++/12/bits/stl_vector.h":730:15 80 {*movdi_internal}
+     (nil))
+(insn 16 15 17 2 (set (reg:DI 5 di)
+        (reg/f:DI 0 ax [orig:85 _4 ] [85])) "/usr/include/c++/12/bits/stl_vector.h":730:15 80 {*movdi_internal}
+     (nil))
+(call_insn 17 16 18 2 (call (mem:QI (symbol_ref/i:DI ("_ZSt8_DestroyIPiiEvT_S1_RSaIT0_E") [flags 0x1]  <function_decl 0x7ff972d1e100 _Destroy>) [0 _Destroy S1 A8])
+        (const_int 0 [0])) "/usr/include/c++/12/bits/stl_vector.h":730:15 898 {*call}
+     (expr_list:REG_EH_REGION (const_int -1 [0xffffffffffffffff])
+        (nil))
+    (expr_list:DI (use (reg:DI 5 di))
+        (expr_list:DI (use (reg:DI 4 si))
+            (expr_list:DI (use (reg:DI 1 dx))
+                (nil)))))
+(insn 18 17 19 2 (set (reg/f:DI 0 ax [orig:86 _5 ] [86])
+        (mem/f/c:DI (plus:DI (reg/f:DI 6 bp)
+                (const_int -8 [0xfffffffffffffff8])) [16 this+0 S8 A64])) "/usr/include/c++/12/bits/stl_vector.h":733:7 80 {*movdi_internal}
+     (nil))
+(insn 19 18 20 2 (set (reg:DI 5 di)
+        (reg/f:DI 0 ax [orig:86 _5 ] [86])) "/usr/include/c++/12/bits/stl_vector.h":733:7 80 {*movdi_internal}
+     (nil))
+(call_insn 20 19 24 2 (call (mem:QI (symbol_ref/i:DI ("_ZNSt12_Vector_baseIiSaIiEED2Ev") [flags 0x1]  <function_decl 0x7ff974142b00 __dt_base >) [0 __dt_base  S1 A8])
+        (const_int 0 [0])) "/usr/include/c++/12/bits/stl_vector.h":733:7 898 {*call}
+     (expr_list:REG_EH_REGION (const_int 0 [0])
+        (nil))
+    (expr_list:DI (use (reg:DI 5 di))
+        (nil)))
+(insn 24 20 30 2 (const_int 0 [0]) "/usr/include/c++/12/bits/stl_vector.h":733:7 928 {nop}
+     (nil))
+(note 30 24 31 2 NOTE_INSN_EPILOGUE_BEG)
+(insn/f 31 30 32 2 (parallel [
+            (set (reg/f:DI 7 sp)
+                (plus:DI (reg/f:DI 6 bp)
+                    (const_int 8 [0x8])))
+            (set (reg/f:DI 6 bp)
+                (mem:DI (reg/f:DI 6 bp) [0  S8 A8]))
+            (clobber (mem:BLK (scratch) [0  A8]))
+        ]) "/usr/include/c++/12/bits/stl_vector.h":733:7 -1
+     (expr_list:REG_CFA_DEF_CFA (plus:DI (reg/f:DI 7 sp)
+            (const_int 8 [0x8]))
+        (nil)))
+(jump_insn 32 31 33 2 (simple_return) "/usr/include/c++/12/bits/stl_vector.h":733:7 -1
+     (nil)
+ -> simple_return)
+(barrier 33 32 25)
+(note 25 33 0 NOTE_INSN_DELETED)
+
+;; Function QComputations::Matrix<double>::Matrix (_ZN13QComputations6MatrixIdEC2ENS_12MATRIX_STYLEEmm, funcdef_no=5549, decl_uid=365189, cgraph_uid=1735, symbol_order=2305)
+
+
+
+QComputations::Matrix<double>::Matrix
+
+Dataflow summary:
+;;  fully invalidated by EH 	 0 [ax] 1 [dx] 2 [cx] 4 [si] 5 [di] 8 [st] 9 [st(1)] 10 [st(2)] 11 [st(3)] 12 [st(4)] 13 [st(5)] 14 [st(6)] 15 [st(7)] 17 [flags] 18 [fpsr] 20 [xmm0] 21 [xmm1] 22 [xmm2] 23 [xmm3] 24 [xmm4] 25 [xmm5] 26 [xmm6] 27 [xmm7] 28 [mm0] 29 [mm1] 30 [mm2] 31 [mm3] 32 [mm4] 33 [mm5] 34 [mm6] 35 [mm7] 36 [r8] 37 [r9] 38 [r10] 39 [r11] 44 [xmm8] 45 [xmm9] 46 [xmm10] 47 [xmm11] 48 [xmm12] 49 [xmm13] 50 [xmm14] 51 [xmm15] 52 [xmm16] 53 [xmm17] 54 [xmm18] 55 [xmm19] 56 [xmm20] 57 [xmm21] 58 [xmm22] 59 [xmm23] 60 [xmm24] 61 [xmm25] 62 [xmm26] 63 [xmm27] 64 [xmm28] 65 [xmm29] 66 [xmm30] 67 [xmm31] 68 [k0] 69 [k1] 70 [k2] 71 [k3] 72 [k4] 73 [k5] 74 [k6] 75 [k7]
+;;  hardware regs used 	 7 [sp]
+;;  regular block artificial uses 	 6 [bp] 7 [sp]
+;;  eh block artificial uses 	 6 [bp] 7 [sp] 16 [argp] 19 [frame]
+;;  entry block defs 	 0 [ax] 1 [dx] 2 [cx] 3 [bx] 4 [si] 5 [di] 6 [bp] 7 [sp] 19 [frame] 20 [xmm0] 21 [xmm1] 22 [xmm2] 23 [xmm3] 24 [xmm4] 25 [xmm5] 26 [xmm6] 27 [xmm7] 36 [r8] 37 [r9]
+;;  exit block uses 	 3 [bx] 6 [bp] 7 [sp] 19 [frame]
+;;  regs ever live 	 0 [ax] 1 [dx] 2 [cx] 3 [bx] 4 [si] 5 [di] 6 [bp] 7 [sp] 17 [flags]
+;;  ref usage 	r0={22d,13u} r1={13d,6u} r2={7d,1u} r3={4d,4u} r4={8d,2u} r5={12d,6u} r6={3d,30u} r7={5d,19u} r8={6d} r9={6d} r10={6d} r11={6d} r12={6d} r13={6d} r14={6d} r15={6d} r16={1u} r17={10d,1u} r18={6d} r19={1d,2u} r20={7d} r21={7d} r22={7d} r23={7d} r24={7d} r25={7d} r26={7d} r27={7d} r28={6d} r29={6d} r30={6d} r31={6d} r32={6d} r33={6d} r34={6d} r35={6d} r36={7d} r37={7d} r38={6d} r39={6d} r44={6d} r45={6d} r46={6d} r47={6d} r48={6d} r49={6d} r50={6d} r51={6d} r52={6d} r53={6d} r54={6d} r55={6d} r56={6d} r57={6d} r58={6d} r59={6d} r60={6d} r61={6d} r62={6d} r63={6d} r64={6d} r65={6d} r66={6d} r67={6d} r68={6d} r69={6d} r70={6d} r71={6d} r72={6d} r73={6d} r74={6d} r75={6d} 
+;;    total ref usage 546{461d,85u,0e} in 50{44 regular + 6 call} insns.
+(note 1 0 8 NOTE_INSN_DELETED)
+(note 8 1 67 2 [bb 2] NOTE_INSN_BASIC_BLOCK)
+(insn/f 67 8 68 2 (set (mem:DI (pre_dec:DI (reg/f:DI 7 sp)) [0  S8 A8])
+        (reg/f:DI 6 bp)) "../src/matrix.hpp":50:18 -1
+     (nil))
+(insn/f 68 67 69 2 (set (reg/f:DI 6 bp)
+        (reg/f:DI 7 sp)) "../src/matrix.hpp":50:18 -1
+     (nil))
+(insn/f 69 68 70 2 (set (mem:DI (pre_dec:DI (reg/f:DI 7 sp)) [0  S8 A8])
+        (reg:DI 3 bx)) "../src/matrix.hpp":50:18 -1
+     (nil))
+(insn/f 70 69 71 2 (parallel [
+            (set (reg/f:DI 7 sp)
+                (plus:DI (reg/f:DI 7 sp)
+                    (const_int -56 [0xffffffffffffffc8])))
+            (clobber (reg:CC 17 flags))
+            (clobber (mem:BLK (scratch) [0  A8]))
+        ]) "../src/matrix.hpp":50:18 -1
+     (nil))
+(note 71 70 2 2 NOTE_INSN_PROLOGUE_END)
+(insn 2 71 3 2 (set (mem/f/c:DI (plus:DI (reg/f:DI 6 bp)
+                (const_int -40 [0xffffffffffffffd8])) [18 this+0 S8 A64])
+        (reg:DI 5 di [ this ])) "../src/matrix.hpp":50:18 80 {*movdi_internal}
+     (nil))
+(insn 3 2 4 2 (set (mem/c:SI (plus:DI (reg/f:DI 6 bp)
+                (const_int -44 [0xffffffffffffffd4])) [13 matrix_style+0 S4 A32])
+        (reg:SI 4 si [ matrix_style ])) "../src/matrix.hpp":50:18 81 {*movsi_internal}
+     (nil))
+(insn 4 3 5 2 (set (mem/c:DI (plus:DI (reg/f:DI 6 bp)
+                (const_int -56 [0xffffffffffffffc8])) [6 n+0 S8 A64])
+        (reg:DI 1 dx [ n ])) "../src/matrix.hpp":50:18 80 {*movdi_internal}
+     (nil))
+(insn 5 4 6 2 (set (mem/c:DI (plus:DI (reg/f:DI 6 bp)
+                (const_int -64 [0xffffffffffffffc0])) [6 m+0 S8 A64])
+        (reg:DI 2 cx [ m ])) "../src/matrix.hpp":50:18 80 {*movdi_internal}
+     (nil))
+(note 6 5 7 2 NOTE_INSN_FUNCTION_BEG)
+(insn 7 6 10 2 (parallel [
+            (set (mem/v/f/c:DI (plus:DI (reg/f:DI 6 bp)
+                        (const_int -24 [0xffffffffffffffe8])) [7 D.385503+0 S8 A64])
+                (unspec:DI [
+                        (mem/v/f:DI (const_int 40 [0x28]) [0 MEM[(<address-space-1> long unsigned int *)40B]+0 S8 A64 AS1])
+                    ] UNSPEC_SP_SET))
+            (set (reg:DI 0 ax [102])
+                (const_int 0 [0]))
+            (clobber (reg:CC 17 flags))
+        ]) "../src/matrix.hpp":50:18 1265 {stack_protect_set_1_di}
+     (nil))
+(insn 10 7 11 2 (set (reg/f:DI 0 ax [88])
+        (mem/f/c:DI (plus:DI (reg/f:DI 6 bp)
+                (const_int -40 [0xffffffffffffffd8])) [18 this+0 S8 A64])) "../src/matrix.hpp":50:103 80 {*movdi_internal}
+     (nil))
+(insn 11 10 12 2 (set (reg:DI 1 dx [89])
+        (mem/c:DI (plus:DI (reg/f:DI 6 bp)
+                (const_int -56 [0xffffffffffffffc8])) [6 n+0 S8 A64])) "../src/matrix.hpp":50:103 80 {*movdi_internal}
+     (nil))
+(insn 12 11 13 2 (set (mem:DI (reg/f:DI 0 ax [88]) [6 this_7(D)->n_+0 S8 A64])
+        (reg:DI 1 dx [89])) "../src/matrix.hpp":50:103 80 {*movdi_internal}
+     (nil))
+(insn 13 12 14 2 (set (reg/f:DI 0 ax [90])
+        (mem/f/c:DI (plus:DI (reg/f:DI 6 bp)
+                (const_int -40 [0xffffffffffffffd8])) [18 this+0 S8 A64])) "../src/matrix.hpp":50:110 80 {*movdi_internal}
+     (nil))
+(insn 14 13 15 2 (set (reg:DI 1 dx [91])
+        (mem/c:DI (plus:DI (reg/f:DI 6 bp)
+                (const_int -64 [0xffffffffffffffc0])) [6 m+0 S8 A64])) "../src/matrix.hpp":50:110 80 {*movdi_internal}
+     (nil))
+(insn 15 14 16 2 (set (mem:DI (plus:DI (reg/f:DI 0 ax [90])
+                (const_int 8 [0x8])) [6 this_7(D)->m_+0 S8 A64])
+        (reg:DI 1 dx [91])) "../src/matrix.hpp":50:110 80 {*movdi_internal}
+     (nil))
+(insn 16 15 79 2 (set (reg/f:DI 0 ax [92])
+        (mem/f/c:DI (plus:DI (reg/f:DI 6 bp)
+                (const_int -40 [0xffffffffffffffd8])) [18 this+0 S8 A64])) "../src/matrix.hpp":50:117 80 {*movdi_internal}
+     (nil))
+(insn 79 16 80 2 (set (reg/f:DI 3 bx [orig:82 _1 ] [82])
+        (plus:DI (reg/f:DI 0 ax [92])
+            (const_int 16 [0x10]))) "../src/matrix.hpp":50:117 226 {*leadi}
+     (nil))
+(insn 80 79 19 2 (set (reg:DI 0 ax [93])
+        (plus:DI (reg/f:DI 6 bp)
+            (const_int -25 [0xffffffffffffffe7]))) "../src/matrix.hpp":50:117 226 {*leadi}
+     (nil))
+(insn 19 80 20 2 (set (reg:DI 5 di)
+        (reg:DI 0 ax [93])) "../src/matrix.hpp":50:117 80 {*movdi_internal}
+     (nil))
+(call_insn 20 19 21 2 (call (mem:QI (symbol_ref/i:DI ("_ZNSaIdEC1Ev") [flags 0x1]  <function_decl 0x7ff972fd7700 __ct_comp >) [0 __ct_comp  S1 A8])
+        (const_int 0 [0])) "../src/matrix.hpp":50:117 898 {*call}
+     (expr_list:REG_EH_REGION (const_int 0 [0])
+        (nil))
+    (expr_list:DI (use (reg:DI 5 di))
+        (nil)))
+(insn 21 20 22 2 (set (reg/f:DI 0 ax [94])
+        (mem/f/c:DI (plus:DI (reg/f:DI 6 bp)
+                (const_int -40 [0xffffffffffffffd8])) [18 this+0 S8 A64])) "../src/matrix.hpp":50:123 80 {*movdi_internal}
+     (nil))
+(insn 22 21 23 2 (set (reg:DI 1 dx [orig:83 _2 ] [83])
+        (mem:DI (reg/f:DI 0 ax [94]) [6 this_7(D)->n_+0 S8 A64])) "../src/matrix.hpp":50:123 80 {*movdi_internal}
+     (nil))
+(insn 23 22 24 2 (set (reg/f:DI 0 ax [95])
+        (mem/f/c:DI (plus:DI (reg/f:DI 6 bp)
+                (const_int -40 [0xffffffffffffffd8])) [18 this+0 S8 A64])) "../src/matrix.hpp":50:128 80 {*movdi_internal}
+     (nil))
+(insn 24 23 25 2 (set (reg:DI 0 ax [orig:84 _3 ] [84])
+        (mem:DI (plus:DI (reg/f:DI 0 ax [95])
+                (const_int 8 [0x8])) [6 this_7(D)->m_+0 S8 A64])) "../src/matrix.hpp":50:128 80 {*movdi_internal}
+     (nil))
+(insn 25 24 81 2 (parallel [
+            (set (reg:DI 0 ax [orig:85 _4 ] [85])
+                (mult:DI (reg:DI 0 ax [orig:84 _3 ] [84])
+                    (reg:DI 1 dx [orig:83 _2 ] [83])))
+            (clobber (reg:CC 17 flags))
+        ]) "../src/matrix.hpp":50:117 445 {*muldi3_1}
+     (nil))
+(insn 81 25 28 2 (set (reg:DI 1 dx [96])
+        (plus:DI (reg/f:DI 6 bp)
+            (const_int -25 [0xffffffffffffffe7]))) "../src/matrix.hpp":50:117 226 {*leadi}
+     (nil))
+(insn 28 81 29 2 (set (reg:DI 4 si)
+        (reg:DI 0 ax [orig:85 _4 ] [85])) "../src/matrix.hpp":50:117 80 {*movdi_internal}
+     (nil))
+(insn 29 28 82 2 (set (reg:DI 5 di)
+        (reg/f:DI 3 bx [orig:82 _1 ] [82])) "../src/matrix.hpp":50:117 80 {*movdi_internal}
+     (nil))
+(note 82 29 30 2 5 NOTE_INSN_EH_REGION_BEG)
+(call_insn 30 82 83 2 (call (mem:QI (symbol_ref/i:DI ("_ZNSt6vectorIdSaIdEEC1EmRKS0_") [flags 0x1]  <function_decl 0x7ff973046400 __ct_comp >) [0 __ct_comp  S1 A8])
+        (const_int 0 [0])) "../src/matrix.hpp":50:117 898 {*call}
+     (expr_list:REG_EH_REGION (const_int 1 [0x1])
+        (nil))
+    (expr_list:DI (use (reg:DI 5 di))
+        (expr_list:DI (use (reg:DI 4 si))
+            (expr_list:DI (use (reg:DI 1 dx))
+                (nil)))))
+(note 83 30 31 5 NOTE_INSN_EH_REGION_END)
+(note 31 83 78 3 [bb 3] NOTE_INSN_BASIC_BLOCK)
+(insn 78 31 33 3 (set (reg:DI 0 ax [97])
+        (plus:DI (reg/f:DI 6 bp)
+            (const_int -25 [0xffffffffffffffe7]))) "../src/matrix.hpp":50:117 226 {*leadi}
+     (nil))
+(insn 33 78 34 3 (set (reg:DI 5 di)
+        (reg:DI 0 ax [97])) "../src/matrix.hpp":50:117 80 {*movdi_internal}
+     (nil))
+(call_insn 34 33 35 3 (call (mem:QI (symbol_ref/i:DI ("_ZNSaIdED1Ev") [flags 0x1]  <function_decl 0x7ff972fd7900 __dt_comp >) [0 __dt_comp  S1 A8])
+        (const_int 0 [0])) "../src/matrix.hpp":50:117 898 {*call}
+     (expr_list:REG_EH_REGION (const_int 0 [0])
+        (nil))
+    (expr_list:DI (use (reg:DI 5 di))
+        (nil)))
+(insn 35 34 36 3 (set (reg/f:DI 0 ax [98])
+        (mem/f/c:DI (plus:DI (reg/f:DI 6 bp)
+                (const_int -40 [0xffffffffffffffd8])) [18 this+0 S8 A64])) "../src/matrix.hpp":50:74 80 {*movdi_internal}
+     (nil))
+(insn 36 35 37 3 (set (reg:SI 1 dx [99])
+        (mem/c:SI (plus:DI (reg/f:DI 6 bp)
+                (const_int -44 [0xffffffffffffffd4])) [13 matrix_style+0 S4 A32])) "../src/matrix.hpp":50:74 81 {*movsi_internal}
+     (nil))
+(insn 37 36 61 3 (set (mem:SI (plus:DI (reg/f:DI 0 ax [98])
+                (const_int 40 [0x28])) [13 this_7(D)->matrix_style_+0 S4 A64])
+        (reg:SI 1 dx [99])) "../src/matrix.hpp":50:74 81 {*movsi_internal}
+     (nil))
+(insn 61 37 50 3 (const_int 0 [0]) "../src/matrix.hpp":50:133 928 {nop}
+     (nil))
+(insn 50 61 51 3 (parallel [
+            (set (reg:CCZ 17 flags)
+                (unspec:CCZ [
+                        (mem/v/f/c:DI (plus:DI (reg/f:DI 6 bp)
+                                (const_int -24 [0xffffffffffffffe8])) [7 D.385503+0 S8 A64])
+                        (mem/v/f:DI (const_int 40 [0x28]) [0 MEM[(<address-space-1> long unsigned int *)40B]+0 S8 A64 AS1])
+                    ] UNSPEC_SP_TEST))
+            (clobber (reg:DI 0 ax [103]))
+        ]) "../src/matrix.hpp":50:133 1270 {stack_protect_test_1_di}
+     (nil))
+(jump_insn 51 50 62 3 (set (pc)
+        (if_then_else (eq (reg:CCZ 17 flags)
+                (const_int 0 [0]))
+            (label_ref 54)
+            (pc))) "../src/matrix.hpp":50:133 891 {*jcc}
+     (nil)
+ -> 54)
+(note 62 51 64 4 [bb 4] NOTE_INSN_BASIC_BLOCK)
+(jump_insn 64 62 65 4 (set (pc)
+        (label_ref 63)) 892 {jump}
+     (nil)
+ -> 63)
+(barrier 65 64 58)
+(code_label/s 58 65 60 5 74 (nil) [1 uses])
+(note 60 58 59 5 [bb 5] NOTE_INSN_BASIC_BLOCK)
+(insn 59 60 77 5 (set (reg:DI 3 bx [101])
+        (reg:DI 0 ax)) "../src/matrix.hpp":50:117 80 {*movdi_internal}
+     (nil))
+(insn 77 59 43 5 (set (reg:DI 0 ax [100])
+        (plus:DI (reg/f:DI 6 bp)
+            (const_int -25 [0xffffffffffffffe7]))) "../src/matrix.hpp":50:117 226 {*leadi}
+     (nil))
+(insn 43 77 44 5 (set (reg:DI 5 di)
+        (reg:DI 0 ax [100])) "../src/matrix.hpp":50:117 80 {*movdi_internal}
+     (nil))
+(call_insn 44 43 45 5 (call (mem:QI (symbol_ref/i:DI ("_ZNSaIdED1Ev") [flags 0x1]  <function_decl 0x7ff972fd7900 __dt_comp >) [0 __dt_comp  S1 A8])
+        (const_int 0 [0])) "../src/matrix.hpp":50:117 898 {*call}
+     (expr_list:REG_EH_REGION (const_int 0 [0])
+        (nil))
+    (expr_list:DI (use (reg:DI 5 di))
+        (nil)))
+(insn 45 44 46 5 (set (reg/f:DI 0 ax [orig:87 D.385502 ] [87])
+        (reg:DI 3 bx [101])) 80 {*movdi_internal}
+     (nil))
+(insn 46 45 84 5 (set (reg:DI 5 di)
+        (reg/f:DI 0 ax [orig:87 D.385502 ] [87])) 80 {*movdi_internal}
+     (nil))
+(note 84 46 47 5 6 NOTE_INSN_EH_REGION_BEG)
+(call_insn 47 84 85 5 (call (mem:QI (symbol_ref:DI ("_Unwind_Resume") [flags 0x41]  <function_decl 0x7ff982f0ac00 __builtin_unwind_resume>) [0 __builtin_unwind_resume S1 A8])
+        (const_int 0 [0])) 898 {*call}
+     (expr_list:REG_ARGS_SIZE (const_int 0 [0])
+        (expr_list:REG_NORETURN (const_int 0 [0])
+            (nil)))
+    (expr_list:DI (use (reg:DI 5 di))
+        (nil)))
+(note 85 47 48 6 NOTE_INSN_EH_REGION_END)
+(barrier 48 85 63)
+(code_label 63 48 56 6 75 (nil) [1 uses])
+(note 56 63 52 6 [bb 6] NOTE_INSN_BASIC_BLOCK)
+(call_insn 52 56 53 6 (call (mem:QI (symbol_ref:DI ("__stack_chk_fail") [flags 0x41]  <function_decl 0x7ff971c32200 __stack_chk_fail>) [0 __stack_chk_fail S1 A8])
+        (const_int 0 [0])) "../src/matrix.hpp":50:133 898 {*call}
+     (expr_list:REG_ARGS_SIZE (const_int 0 [0])
+        (expr_list:REG_NORETURN (const_int 0 [0])
+            (expr_list:REG_EH_REGION (const_int 0 [0])
+                (nil))))
+    (nil))
+(barrier 53 52 54)
+(code_label 54 53 57 7 73 (nil) [1 uses])
+(note 57 54 72 7 [bb 7] NOTE_INSN_BASIC_BLOCK)
+(note 72 57 73 7 NOTE_INSN_EPILOGUE_BEG)
+(insn 73 72 74 7 (set (reg:DI 3 bx)
+        (mem/c:DI (plus:DI (reg/f:DI 6 bp)
+                (const_int -8 [0xfffffffffffffff8])) [31  S8 A8])) "../src/matrix.hpp":50:133 -1
+     (nil))
+(insn/f 74 73 75 7 (parallel [
+            (set (reg/f:DI 7 sp)
+                (plus:DI (reg/f:DI 6 bp)
+                    (const_int 8 [0x8])))
+            (set (reg/f:DI 6 bp)
+                (mem:DI (reg/f:DI 6 bp) [0  S8 A8]))
+            (clobber (mem:BLK (scratch) [0  A8]))
+        ]) "../src/matrix.hpp":50:133 -1
+     (expr_list:REG_CFA_DEF_CFA (plus:DI (reg/f:DI 7 sp)
+            (const_int 8 [0x8]))
+        (nil)))
+(jump_insn 75 74 76 7 (simple_return) "../src/matrix.hpp":50:133 -1
+     (nil)
+ -> simple_return)
+(barrier 76 75 66)
+(note 66 76 0 NOTE_INSN_DELETED)
+
+;; Function std::vector<double>::~vector (_ZNSt6vectorIdSaIdEED2Ev, funcdef_no=5552, decl_uid=365129, cgraph_uid=1738, symbol_order=2308)
+
+
+
+std::vector<double>::~vector
+
+Dataflow summary:
+;;  fully invalidated by EH 	 0 [ax] 1 [dx] 2 [cx] 4 [si] 5 [di] 8 [st] 9 [st(1)] 10 [st(2)] 11 [st(3)] 12 [st(4)] 13 [st(5)] 14 [st(6)] 15 [st(7)] 17 [flags] 18 [fpsr] 20 [xmm0] 21 [xmm1] 22 [xmm2] 23 [xmm3] 24 [xmm4] 25 [xmm5] 26 [xmm6] 27 [xmm7] 28 [mm0] 29 [mm1] 30 [mm2] 31 [mm3] 32 [mm4] 33 [mm5] 34 [mm6] 35 [mm7] 36 [r8] 37 [r9] 38 [r10] 39 [r11] 44 [xmm8] 45 [xmm9] 46 [xmm10] 47 [xmm11] 48 [xmm12] 49 [xmm13] 50 [xmm14] 51 [xmm15] 52 [xmm16] 53 [xmm17] 54 [xmm18] 55 [xmm19] 56 [xmm20] 57 [xmm21] 58 [xmm22] 59 [xmm23] 60 [xmm24] 61 [xmm25] 62 [xmm26] 63 [xmm27] 64 [xmm28] 65 [xmm29] 66 [xmm30] 67 [xmm31] 68 [k0] 69 [k1] 70 [k2] 71 [k3] 72 [k4] 73 [k5] 74 [k6] 75 [k7]
+;;  hardware regs used 	 7 [sp]
+;;  regular block artificial uses 	 6 [bp] 7 [sp]
+;;  eh block artificial uses 	 6 [bp] 7 [sp] 16 [argp] 19 [frame]
+;;  entry block defs 	 0 [ax] 1 [dx] 2 [cx] 4 [si] 5 [di] 6 [bp] 7 [sp] 19 [frame] 20 [xmm0] 21 [xmm1] 22 [xmm2] 23 [xmm3] 24 [xmm4] 25 [xmm5] 26 [xmm6] 27 [xmm7] 36 [r8] 37 [r9]
+;;  exit block uses 	 6 [bp] 7 [sp] 19 [frame]
+;;  regs ever live 	 0 [ax] 1 [dx] 2 [cx] 4 [si] 5 [di] 6 [bp] 7 [sp]
+;;  ref usage 	r0={9d,6u} r1={5d,1u} r2={5d,1u} r4={5d,1u} r5={7d,4u} r6={3d,10u} r7={4d,10u} r8={3d} r9={3d} r10={3d} r11={3d} r12={3d} r13={3d} r14={3d} r15={3d} r17={4d} r18={3d} r19={1d,1u} r20={4d} r21={4d} r22={4d} r23={4d} r24={4d} r25={4d} r26={4d} r27={4d} r28={3d} r29={3d} r30={3d} r31={3d} r32={3d} r33={3d} r34={3d} r35={3d} r36={4d} r37={4d} r38={3d} r39={3d} r44={3d} r45={3d} r46={3d} r47={3d} r48={3d} r49={3d} r50={3d} r51={3d} r52={3d} r53={3d} r54={3d} r55={3d} r56={3d} r57={3d} r58={3d} r59={3d} r60={3d} r61={3d} r62={3d} r63={3d} r64={3d} r65={3d} r66={3d} r67={3d} r68={3d} r69={3d} r70={3d} r71={3d} r72={3d} r73={3d} r74={3d} r75={3d} 
+;;    total ref usage 270{236d,34u,0e} in 21{18 regular + 3 call} insns.
+(note 1 0 4 NOTE_INSN_DELETED)
+(note 4 1 26 2 [bb 2] NOTE_INSN_BASIC_BLOCK)
+(insn/f 26 4 27 2 (set (mem:DI (pre_dec:DI (reg/f:DI 7 sp)) [0  S8 A8])
+        (reg/f:DI 6 bp)) "/usr/include/c++/12/bits/stl_vector.h":728:7 -1
+     (nil))
+(insn/f 27 26 28 2 (set (reg/f:DI 6 bp)
+        (reg/f:DI 7 sp)) "/usr/include/c++/12/bits/stl_vector.h":728:7 -1
+     (nil))
+(insn/f 28 27 29 2 (parallel [
+            (set (reg/f:DI 7 sp)
+                (plus:DI (reg/f:DI 7 sp)
+                    (const_int -16 [0xfffffffffffffff0])))
+            (clobber (reg:CC 17 flags))
+            (clobber (mem:BLK (scratch) [0  A8]))
+        ]) "/usr/include/c++/12/bits/stl_vector.h":728:7 -1
+     (nil))
+(note 29 28 2 2 NOTE_INSN_PROLOGUE_END)
+(insn 2 29 3 2 (set (mem/f/c:DI (plus:DI (reg/f:DI 6 bp)
+                (const_int -8 [0xfffffffffffffff8])) [52 this+0 S8 A64])
+        (reg:DI 5 di [ this ])) "/usr/include/c++/12/bits/stl_vector.h":728:7 80 {*movdi_internal}
+     (nil))
+(note 3 2 6 2 NOTE_INSN_FUNCTION_BEG)
+(insn 6 3 7 2 (set (reg/f:DI 0 ax [orig:82 _1 ] [82])
+        (mem/f/c:DI (plus:DI (reg/f:DI 6 bp)
+                (const_int -8 [0xfffffffffffffff8])) [52 this+0 S8 A64])) "/usr/include/c++/12/bits/stl_vector.h":731:28 80 {*movdi_internal}
+     (nil))
+(insn 7 6 8 2 (set (reg:DI 5 di)
+        (reg/f:DI 0 ax [orig:82 _1 ] [82])) "/usr/include/c++/12/bits/stl_vector.h":731:28 80 {*movdi_internal}
+     (nil))
+(call_insn 8 7 9 2 (set (reg:DI 0 ax)
+        (call (mem:QI (symbol_ref/i:DI ("_ZNSt12_Vector_baseIdSaIdEE19_M_get_Tp_allocatorEv") [flags 0x1]  <function_decl 0x7ff972fe3c00 _M_get_Tp_allocator>) [0 _M_get_Tp_allocator S1 A8])
+            (const_int 0 [0]))) "/usr/include/c++/12/bits/stl_vector.h":731:28 909 {*call_value}
+     (expr_list:REG_EH_REGION (const_int 0 [0])
+        (nil))
+    (expr_list:DI (use (reg:DI 5 di))
+        (nil)))
+(insn 9 8 10 2 (set (reg/f:DI 1 dx [orig:83 _2 ] [83])
+        (reg:DI 0 ax)) "/usr/include/c++/12/bits/stl_vector.h":731:28 80 {*movdi_internal}
+     (nil))
+(insn 10 9 11 2 (set (reg/f:DI 0 ax [87])
+        (mem/f/c:DI (plus:DI (reg/f:DI 6 bp)
+                (const_int -8 [0xfffffffffffffff8])) [52 this+0 S8 A64])) "/usr/include/c++/12/bits/stl_vector.h":730:15 80 {*movdi_internal}
+     (nil))
+(insn 11 10 12 2 (set (reg/f:DI 2 cx [orig:84 _3 ] [84])
+        (mem/f:DI (plus:DI (reg/f:DI 0 ax [87])
+                (const_int 8 [0x8])) [28 this_6(D)->D.365132._M_impl.D.364471._M_finish+0 S8 A64])) "/usr/include/c++/12/bits/stl_vector.h":730:15 80 {*movdi_internal}
+     (nil))
+(insn 12 11 13 2 (set (reg/f:DI 0 ax [88])
+        (mem/f/c:DI (plus:DI (reg/f:DI 6 bp)
+                (const_int -8 [0xfffffffffffffff8])) [52 this+0 S8 A64])) "/usr/include/c++/12/bits/stl_vector.h":730:15 80 {*movdi_internal}
+     (nil))
+(insn 13 12 15 2 (set (reg/f:DI 0 ax [orig:85 _4 ] [85])
+        (mem/f:DI (reg/f:DI 0 ax [88]) [28 this_6(D)->D.365132._M_impl.D.364471._M_start+0 S8 A64])) "/usr/include/c++/12/bits/stl_vector.h":730:15 80 {*movdi_internal}
+     (nil))
+(insn 15 13 16 2 (set (reg:DI 4 si)
+        (reg/f:DI 2 cx [orig:84 _3 ] [84])) "/usr/include/c++/12/bits/stl_vector.h":730:15 80 {*movdi_internal}
+     (nil))
+(insn 16 15 17 2 (set (reg:DI 5 di)
+        (reg/f:DI 0 ax [orig:85 _4 ] [85])) "/usr/include/c++/12/bits/stl_vector.h":730:15 80 {*movdi_internal}
+     (nil))
+(call_insn 17 16 18 2 (call (mem:QI (symbol_ref/i:DI ("_ZSt8_DestroyIPddEvT_S1_RSaIT0_E") [flags 0x1]  <function_decl 0x7ff972a71400 _Destroy>) [0 _Destroy S1 A8])
+        (const_int 0 [0])) "/usr/include/c++/12/bits/stl_vector.h":730:15 898 {*call}
+     (expr_list:REG_EH_REGION (const_int -1 [0xffffffffffffffff])
+        (nil))
+    (expr_list:DI (use (reg:DI 5 di))
+        (expr_list:DI (use (reg:DI 4 si))
+            (expr_list:DI (use (reg:DI 1 dx))
+                (nil)))))
+(insn 18 17 19 2 (set (reg/f:DI 0 ax [orig:86 _5 ] [86])
+        (mem/f/c:DI (plus:DI (reg/f:DI 6 bp)
+                (const_int -8 [0xfffffffffffffff8])) [52 this+0 S8 A64])) "/usr/include/c++/12/bits/stl_vector.h":733:7 80 {*movdi_internal}
+     (nil))
+(insn 19 18 20 2 (set (reg:DI 5 di)
+        (reg/f:DI 0 ax [orig:86 _5 ] [86])) "/usr/include/c++/12/bits/stl_vector.h":733:7 80 {*movdi_internal}
+     (nil))
+(call_insn 20 19 24 2 (call (mem:QI (symbol_ref/i:DI ("_ZNSt12_Vector_baseIdSaIdEED2Ev") [flags 0x1]  <function_decl 0x7ff97300a100 __dt_base >) [0 __dt_base  S1 A8])
+        (const_int 0 [0])) "/usr/include/c++/12/bits/stl_vector.h":733:7 898 {*call}
+     (expr_list:REG_EH_REGION (const_int 0 [0])
+        (nil))
+    (expr_list:DI (use (reg:DI 5 di))
+        (nil)))
+(insn 24 20 30 2 (const_int 0 [0]) "/usr/include/c++/12/bits/stl_vector.h":733:7 928 {nop}
+     (nil))
+(note 30 24 31 2 NOTE_INSN_EPILOGUE_BEG)
+(insn/f 31 30 32 2 (parallel [
+            (set (reg/f:DI 7 sp)
+                (plus:DI (reg/f:DI 6 bp)
+                    (const_int 8 [0x8])))
+            (set (reg/f:DI 6 bp)
+                (mem:DI (reg/f:DI 6 bp) [0  S8 A8]))
+            (clobber (mem:BLK (scratch) [0  A8]))
+        ]) "/usr/include/c++/12/bits/stl_vector.h":733:7 -1
+     (expr_list:REG_CFA_DEF_CFA (plus:DI (reg/f:DI 7 sp)
+            (const_int 8 [0x8]))
+        (nil)))
+(jump_insn 32 31 33 2 (simple_return) "/usr/include/c++/12/bits/stl_vector.h":733:7 -1
+     (nil)
+ -> simple_return)
+(barrier 33 32 25)
+(note 25 33 0 NOTE_INSN_DELETED)
+
+;; Function QComputations::Matrix<double>::Matrix<int> (_ZN13QComputations6MatrixIdEC2IiEERKNS0_IT_EE, funcdef_no=5572, decl_uid=365505, cgraph_uid=1758, symbol_order=2328)
+
+
+
+QComputations::Matrix<double>::Matrix<int>
+
+Dataflow summary:
+;;  fully invalidated by EH 	 0 [ax] 1 [dx] 2 [cx] 4 [si] 5 [di] 8 [st] 9 [st(1)] 10 [st(2)] 11 [st(3)] 12 [st(4)] 13 [st(5)] 14 [st(6)] 15 [st(7)] 17 [flags] 18 [fpsr] 20 [xmm0] 21 [xmm1] 22 [xmm2] 23 [xmm3] 24 [xmm4] 25 [xmm5] 26 [xmm6] 27 [xmm7] 28 [mm0] 29 [mm1] 30 [mm2] 31 [mm3] 32 [mm4] 33 [mm5] 34 [mm6] 35 [mm7] 36 [r8] 37 [r9] 38 [r10] 39 [r11] 44 [xmm8] 45 [xmm9] 46 [xmm10] 47 [xmm11] 48 [xmm12] 49 [xmm13] 50 [xmm14] 51 [xmm15] 52 [xmm16] 53 [xmm17] 54 [xmm18] 55 [xmm19] 56 [xmm20] 57 [xmm21] 58 [xmm22] 59 [xmm23] 60 [xmm24] 61 [xmm25] 62 [xmm26] 63 [xmm27] 64 [xmm28] 65 [xmm29] 66 [xmm30] 67 [xmm31] 68 [k0] 69 [k1] 70 [k2] 71 [k3] 72 [k4] 73 [k5] 74 [k6] 75 [k7]
+;;  hardware regs used 	 7 [sp]
+;;  regular block artificial uses 	 6 [bp] 7 [sp]
+;;  eh block artificial uses 	 6 [bp] 7 [sp] 16 [argp] 19 [frame]
+;;  entry block defs 	 0 [ax] 1 [dx] 2 [cx] 3 [bx] 4 [si] 5 [di] 6 [bp] 7 [sp] 19 [frame] 20 [xmm0] 21 [xmm1] 22 [xmm2] 23 [xmm3] 24 [xmm4] 25 [xmm5] 26 [xmm6] 27 [xmm7] 36 [r8] 37 [r9]
+;;  exit block uses 	 3 [bx] 6 [bp] 7 [sp] 19 [frame]
+;;  regs ever live 	 0 [ax] 1 [dx] 3 [bx] 4 [si] 5 [di] 6 [bp] 7 [sp] 17 [flags]
+;;  ref usage 	r0={31d,23u} r1={17d,6u} r2={10d} r3={4d,4u} r4={12d,3u} r5={18d,9u} r6={3d,46u} r7={5d,28u} r8={9d} r9={9d} r10={9d} r11={9d} r12={9d} r13={9d} r14={9d} r15={9d} r16={1u} r17={20d,3u} r18={9d} r19={1d,2u,3e} r20={10d} r21={10d} r22={10d} r23={10d} r24={10d} r25={10d} r26={10d} r27={10d} r28={9d} r29={9d} r30={9d} r31={9d} r32={9d} r33={9d} r34={9d} r35={9d} r36={10d} r37={10d} r38={9d} r39={9d} r44={9d} r45={9d} r46={9d} r47={9d} r48={9d} r49={9d} r50={9d} r51={9d} r52={9d} r53={9d} r54={9d} r55={9d} r56={9d} r57={9d} r58={9d} r59={9d} r60={9d} r61={9d} r62={9d} r63={9d} r64={9d} r65={9d} r66={9d} r67={9d} r68={9d} r69={9d} r70={9d} r71={9d} r72={9d} r73={9d} r74={9d} r75={9d} 
+;;    total ref usage 808{680d,125u,3e} in 74{65 regular + 9 call} insns.
+(note 1 0 6 NOTE_INSN_DELETED)
+(note 6 1 110 2 [bb 2] NOTE_INSN_BASIC_BLOCK)
+(insn/f 110 6 111 2 (set (mem:DI (pre_dec:DI (reg/f:DI 7 sp)) [0  S8 A8])
+        (reg/f:DI 6 bp)) "../src/matrix.hpp":59:9 -1
+     (nil))
+(insn/f 111 110 112 2 (set (reg/f:DI 6 bp)
+        (reg/f:DI 7 sp)) "../src/matrix.hpp":59:9 -1
+     (nil))
+(insn/f 112 111 113 2 (set (mem:DI (pre_dec:DI (reg/f:DI 7 sp)) [0  S8 A8])
+        (reg:DI 3 bx)) "../src/matrix.hpp":59:9 -1
+     (nil))
+(insn/f 113 112 114 2 (parallel [
+            (set (reg/f:DI 7 sp)
+                (plus:DI (reg/f:DI 7 sp)
+                    (const_int -56 [0xffffffffffffffc8])))
+            (clobber (reg:CC 17 flags))
+            (clobber (mem:BLK (scratch) [0  A8]))
+        ]) "../src/matrix.hpp":59:9 -1
+     (nil))
+(note 114 113 2 2 NOTE_INSN_PROLOGUE_END)
+(insn 2 114 3 2 (set (mem/f/c:DI (plus:DI (reg/f:DI 6 bp)
+                (const_int -56 [0xffffffffffffffc8])) [18 this+0 S8 A64])
+        (reg:DI 5 di [ this ])) "../src/matrix.hpp":59:9 80 {*movdi_internal}
+     (nil))
+(insn 3 2 4 2 (set (mem/f/c:DI (plus:DI (reg/f:DI 6 bp)
+                (const_int -64 [0xffffffffffffffc0])) [30 A+0 S8 A64])
+        (reg:DI 4 si [ A ])) "../src/matrix.hpp":59:9 80 {*movdi_internal}
+     (nil))
+(note 4 3 5 2 NOTE_INSN_FUNCTION_BEG)
+(insn 5 4 8 2 (parallel [
+            (set (mem/v/f/c:DI (plus:DI (reg/f:DI 6 bp)
+                        (const_int -24 [0xffffffffffffffe8])) [7 D.385505+0 S8 A64])
+                (unspec:DI [
+                        (mem/v/f:DI (const_int 40 [0x28]) [0 MEM[(<address-space-1> long unsigned int *)40B]+0 S8 A64 AS1])
+                    ] UNSPEC_SP_SET))
+            (set (reg:DI 0 ax [112])
+                (const_int 0 [0]))
+            (clobber (reg:CC 17 flags))
+        ]) "../src/matrix.hpp":59:9 1265 {stack_protect_set_1_di}
+     (nil))
+(insn 8 5 9 2 (set (reg:DI 0 ax [95])
+        (mem/f/c:DI (plus:DI (reg/f:DI 6 bp)
+                (const_int -64 [0xffffffffffffffc0])) [30 A+0 S8 A64])) "../src/matrix.hpp":59:43 80 {*movdi_internal}
+     (nil))
+(insn 9 8 10 2 (set (reg:DI 5 di)
+        (reg:DI 0 ax [95])) "../src/matrix.hpp":59:43 80 {*movdi_internal}
+     (nil))
+(call_insn 10 9 12 2 (set (reg:DI 0 ax)
+        (call (mem:QI (symbol_ref/i:DI ("_ZNK13QComputations6MatrixIiE1nEv") [flags 0x1]  <function_decl 0x7ff973084300 n>) [0 n S1 A8])
+            (const_int 0 [0]))) "../src/matrix.hpp":59:43 909 {*call_value}
+     (expr_list:REG_EH_REGION (const_int 0 [0])
+        (nil))
+    (expr_list:DI (use (reg:DI 5 di))
+        (nil)))
+(insn 12 10 13 2 (set (reg/f:DI 1 dx [96])
+        (mem/f/c:DI (plus:DI (reg/f:DI 6 bp)
+                (const_int -56 [0xffffffffffffffc8])) [18 this+0 S8 A64])) "../src/matrix.hpp":59:37 80 {*movdi_internal}
+     (nil))
+(insn 13 12 14 2 (set (mem:DI (reg/f:DI 1 dx [96]) [6 this_18(D)->n_+0 S8 A64])
+        (reg:DI 0 ax [orig:82 _1 ] [82])) "../src/matrix.hpp":59:37 80 {*movdi_internal}
+     (nil))
+(insn 14 13 15 2 (set (reg:DI 0 ax [97])
+        (mem/f/c:DI (plus:DI (reg/f:DI 6 bp)
+                (const_int -64 [0xffffffffffffffc0])) [30 A+0 S8 A64])) "../src/matrix.hpp":59:54 80 {*movdi_internal}
+     (nil))
+(insn 15 14 16 2 (set (reg:DI 5 di)
+        (reg:DI 0 ax [97])) "../src/matrix.hpp":59:54 80 {*movdi_internal}
+     (nil))
+(call_insn 16 15 18 2 (set (reg:DI 0 ax)
+        (call (mem:QI (symbol_ref/i:DI ("_ZNK13QComputations6MatrixIiE1mEv") [flags 0x1]  <function_decl 0x7ff973084500 m>) [0 m S1 A8])
+            (const_int 0 [0]))) "../src/matrix.hpp":59:54 909 {*call_value}
+     (expr_list:REG_EH_REGION (const_int 0 [0])
+        (nil))
+    (expr_list:DI (use (reg:DI 5 di))
+        (nil)))
+(insn 18 16 19 2 (set (reg/f:DI 1 dx [98])
+        (mem/f/c:DI (plus:DI (reg/f:DI 6 bp)
+                (const_int -56 [0xffffffffffffffc8])) [18 this+0 S8 A64])) "../src/matrix.hpp":59:48 80 {*movdi_internal}
+     (nil))
+(insn 19 18 20 2 (set (mem:DI (plus:DI (reg/f:DI 1 dx [98])
+                (const_int 8 [0x8])) [6 this_18(D)->m_+0 S8 A64])
+        (reg:DI 0 ax [orig:83 _2 ] [83])) "../src/matrix.hpp":59:48 80 {*movdi_internal}
+     (nil))
+(insn 20 19 21 2 (set (reg/f:DI 0 ax [99])
+        (mem/f/c:DI (plus:DI (reg/f:DI 6 bp)
+                (const_int -56 [0xffffffffffffffc8])) [18 this+0 S8 A64])) "../src/matrix.hpp":59:56 80 {*movdi_internal}
+     (nil))
+(insn 21 20 22 2 (parallel [
+            (set (reg/f:DI 0 ax [orig:84 _3 ] [84])
+                (plus:DI (reg/f:DI 0 ax [99])
+                    (const_int 16 [0x10])))
+            (clobber (reg:CC 17 flags))
+        ]) "../src/matrix.hpp":59:56 230 {*adddi_1}
+     (expr_list:REG_EQUAL (plus:DI (mem/f/c:DI (plus:DI (reg/f:DI 19 frame)
+                    (const_int -40 [0xffffffffffffffd8])) [18 this+0 S8 A64])
+            (const_int 16 [0x10]))
+        (nil)))
+(insn 22 21 23 2 (set (reg:DI 5 di)
+        (reg/f:DI 0 ax [orig:84 _3 ] [84])) "../src/matrix.hpp":59:56 80 {*movdi_internal}
+     (nil))
+(call_insn 23 22 24 2 (call (mem:QI (symbol_ref/i:DI ("_ZNSt6vectorIdSaIdEEC1Ev") [flags 0x1]  <function_decl 0x7ff973046800 __ct_comp >) [0 __ct_comp  S1 A8])
+        (const_int 0 [0])) "../src/matrix.hpp":59:56 898 {*call}
+     (expr_list:REG_EH_REGION (const_int 0 [0])
+        (nil))
+    (expr_list:DI (use (reg:DI 5 di))
+        (nil)))
+(insn 24 23 25 2 (set (reg/f:DI 0 ax [100])
+        (mem/f/c:DI (plus:DI (reg/f:DI 6 bp)
+                (const_int -56 [0xffffffffffffffc8])) [18 this+0 S8 A64])) "../src/matrix.hpp":59:56 80 {*movdi_internal}
+     (nil))
+(insn 25 24 26 2 (set (mem:SI (plus:DI (reg/f:DI 0 ax [100])
+                (const_int 40 [0x28])) [13 this_18(D)->matrix_style_+0 S4 A64])
+        (const_int 120 [0x78])) "../src/matrix.hpp":59:56 81 {*movsi_internal}
+     (nil))
+(insn 26 25 101 2 (set (mem/c:DI (plus:DI (reg/f:DI 6 bp)
+                (const_int -40 [0xffffffffffffffd8])) [6 i+0 S8 A64])
+        (const_int 0 [0])) "../src/matrix.hpp":60:25 80 {*movdi_internal}
+     (nil))
+(jump_insn 101 26 102 2 (set (pc)
+        (label_ref 62)) "../src/matrix.hpp":60:13 892 {jump}
+     (nil)
+ -> 62)
+(barrier 102 101 66)
+(code_label 66 102 29 3 94 (nil) [1 uses])
+(note 29 66 30 3 [bb 3] NOTE_INSN_BASIC_BLOCK)
+(insn 30 29 103 3 (set (mem/c:DI (plus:DI (reg/f:DI 6 bp)
+                (const_int -32 [0xffffffffffffffe0])) [6 j+0 S8 A64])
+        (const_int 0 [0])) "../src/matrix.hpp":61:29 80 {*movdi_internal}
+     (nil))
+(jump_insn 103 30 104 3 (set (pc)
+        (label_ref 53)) "../src/matrix.hpp":61:17 892 {jump}
+     (nil)
+ -> 53)
+(barrier 104 103 57)
+(code_label 57 104 33 4 93 (nil) [1 uses])
+(note 33 57 34 4 [bb 4] NOTE_INSN_BASIC_BLOCK)
+(insn 34 33 120 4 (set (reg/f:DI 0 ax [101])
+        (mem/f/c:DI (plus:DI (reg/f:DI 6 bp)
+                (const_int -56 [0xffffffffffffffc8])) [18 this+0 S8 A64])) "../src/matrix.hpp":62:39 80 {*movdi_internal}
+     (nil))
+(insn 120 34 36 4 (set (reg/f:DI 3 bx [orig:85 _4 ] [85])
+        (plus:DI (reg/f:DI 0 ax [101])
+            (const_int 16 [0x10]))) "../src/matrix.hpp":62:39 226 {*leadi}
+     (nil))
+(insn 36 120 37 4 (set (reg:DI 1 dx [102])
+        (mem/c:DI (plus:DI (reg/f:DI 6 bp)
+                (const_int -40 [0xffffffffffffffd8])) [6 i+0 S8 A64])) "../src/matrix.hpp":62:56 80 {*movdi_internal}
+     (nil))
+(insn 37 36 38 4 (set (reg:DI 0 ax [103])
+        (mem/f/c:DI (plus:DI (reg/f:DI 6 bp)
+                (const_int -64 [0xffffffffffffffc0])) [30 A+0 S8 A64])) "../src/matrix.hpp":62:56 80 {*movdi_internal}
+     (nil))
+(insn 38 37 39 4 (set (reg:DI 4 si)
+        (reg:DI 1 dx [102])) "../src/matrix.hpp":62:56 80 {*movdi_internal}
+     (nil))
+(insn 39 38 40 4 (set (reg:DI 5 di)
+        (reg:DI 0 ax [103])) "../src/matrix.hpp":62:56 80 {*movdi_internal}
+     (nil))
+(call_insn 40 39 42 4 (set (reg:DI 0 ax)
+        (call (mem:QI (symbol_ref/i:DI ("_ZNK13QComputations6MatrixIiEixEm") [flags 0x1]  <function_decl 0x7ff97308c100 operator[]>) [0 operator[] S1 A8])
+            (const_int 0 [0]))) "../src/matrix.hpp":62:56 909 {*call_value}
+     (expr_list:REG_EH_REGION (const_int 0 [0])
+        (nil))
+    (expr_list:DI (use (reg:DI 5 di))
+        (expr_list:DI (use (reg:DI 4 si))
+            (nil))))
+(insn 42 40 43 4 (set (reg:DI 1 dx [104])
+        (mem/c:DI (plus:DI (reg/f:DI 6 bp)
+                (const_int -32 [0xffffffffffffffe0])) [6 j+0 S8 A64])) "../src/matrix.hpp":62:59 80 {*movdi_internal}
+     (nil))
+(insn 43 42 44 4 (parallel [
+            (set (reg:DI 1 dx [orig:87 _6 ] [87])
+                (ashift:DI (reg:DI 1 dx [104])
+                    (const_int 2 [0x2])))
+            (clobber (reg:CC 17 flags))
+        ]) "../src/matrix.hpp":62:59 713 {*ashldi3_1}
+     (expr_list:REG_EQUAL (ashift:DI (mem/c:DI (plus:DI (reg/f:DI 19 frame)
+                    (const_int -16 [0xfffffffffffffff0])) [6 j+0 S8 A64])
+            (const_int 2 [0x2]))
+        (nil)))
+(insn 44 43 45 4 (parallel [
+            (set (reg/f:DI 0 ax [orig:88 _7 ] [88])
+                (plus:DI (reg/f:DI 0 ax [orig:86 _5 ] [86])
+                    (reg:DI 1 dx [orig:87 _6 ] [87])))
+            (clobber (reg:CC 17 flags))
+        ]) "../src/matrix.hpp":62:59 230 {*adddi_1}
+     (nil))
+(insn 45 44 46 4 (set (reg:SI 0 ax [orig:89 _8 ] [89])
+        (mem:SI (reg/f:DI 0 ax [orig:88 _7 ] [88]) [12 *_7+0 S4 A32])) "../src/matrix.hpp":62:40 81 {*movsi_internal}
+     (nil))
+(insn 46 45 121 4 (set (mem/c:SI (plus:DI (reg/f:DI 6 bp)
+                (const_int -44 [0xffffffffffffffd4])) [12 D.373630+0 S4 A32])
+        (reg:SI 0 ax [orig:89 _8 ] [89])) "../src/matrix.hpp":62:40 81 {*movsi_internal}
+     (nil))
+(insn 121 46 48 4 (set (reg:DI 0 ax [105])
+        (plus:DI (reg/f:DI 6 bp)
+            (const_int -44 [0xffffffffffffffd4]))) "../src/matrix.hpp":62:39 226 {*leadi}
+     (nil))
+(insn 48 121 49 4 (set (reg:DI 4 si)
+        (reg:DI 0 ax [105])) "../src/matrix.hpp":62:39 80 {*movdi_internal}
+     (nil))
+(insn 49 48 122 4 (set (reg:DI 5 di)
+        (reg/f:DI 3 bx [orig:85 _4 ] [85])) "../src/matrix.hpp":62:39 80 {*movdi_internal}
+     (nil))
+(note 122 49 50 4 7 NOTE_INSN_EH_REGION_BEG)
+(call_insn 50 122 123 4 (set (reg:DI 0 ax)
+        (call (mem:QI (symbol_ref/i:DI ("_ZNSt6vectorIdSaIdEE12emplace_backIJiEEERdDpOT_") [flags 0x1]  <function_decl 0x7ff972a9b600 emplace_back>) [0 emplace_back S1 A8])
+            (const_int 0 [0]))) "../src/matrix.hpp":62:39 909 {*call_value}
+     (expr_list:REG_EH_REGION (const_int 2 [0x2])
+        (nil))
+    (expr_list:DI (use (reg:DI 5 di))
+        (expr_list:DI (use (reg:DI 4 si))
+            (nil))))
+(note 123 50 51 7 NOTE_INSN_EH_REGION_END)
+(note 51 123 52 5 [bb 5] NOTE_INSN_BASIC_BLOCK)
+(insn 52 51 53 5 (parallel [
+            (set (mem/c:DI (plus:DI (reg/f:DI 6 bp)
+                        (const_int -32 [0xffffffffffffffe0])) [6 j+0 S8 A64])
+                (plus:DI (mem/c:DI (plus:DI (reg/f:DI 6 bp)
+                            (const_int -32 [0xffffffffffffffe0])) [6 j+0 S8 A64])
+                    (const_int 1 [0x1])))
+            (clobber (reg:CC 17 flags))
+        ]) "../src/matrix.hpp":61:17 230 {*adddi_1}
+     (nil))
+(code_label 53 52 54 6 92 (nil) [1 uses])
+(note 54 53 55 6 [bb 6] NOTE_INSN_BASIC_BLOCK)
+(insn 55 54 56 6 (set (reg/f:DI 0 ax [106])
+        (mem/f/c:DI (plus:DI (reg/f:DI 6 bp)
+                (const_int -56 [0xffffffffffffffc8])) [18 this+0 S8 A64])) "../src/matrix.hpp":61:40 80 {*movdi_internal}
+     (nil))
+(insn 56 55 58 6 (set (reg:DI 0 ax [orig:90 _9 ] [90])
+        (mem:DI (plus:DI (reg/f:DI 0 ax [106])
+                (const_int 8 [0x8])) [6 this_18(D)->m_+0 S8 A64])) "../src/matrix.hpp":61:40 80 {*movdi_internal}
+     (nil))
+(insn 58 56 59 6 (set (reg:CC 17 flags)
+        (compare:CC (mem/c:DI (plus:DI (reg/f:DI 6 bp)
+                    (const_int -32 [0xffffffffffffffe0])) [6 j+0 S8 A64])
+            (reg:DI 0 ax [orig:90 _9 ] [90]))) "../src/matrix.hpp":61:38 12 {*cmpdi_1}
+     (nil))
+(jump_insn 59 58 60 6 (set (pc)
+        (if_then_else (ltu (reg:CC 17 flags)
+                (const_int 0 [0]))
+            (label_ref 57)
+            (pc))) "../src/matrix.hpp":61:38 891 {*jcc}
+     (nil)
+ -> 57)
+(note 60 59 61 7 [bb 7] NOTE_INSN_BASIC_BLOCK)
+(insn 61 60 62 7 (parallel [
+            (set (mem/c:DI (plus:DI (reg/f:DI 6 bp)
+                        (const_int -40 [0xffffffffffffffd8])) [6 i+0 S8 A64])
+                (plus:DI (mem/c:DI (plus:DI (reg/f:DI 6 bp)
+                            (const_int -40 [0xffffffffffffffd8])) [6 i+0 S8 A64])
+                    (const_int 1 [0x1])))
+            (clobber (reg:CC 17 flags))
+        ]) "../src/matrix.hpp":60:13 230 {*adddi_1}
+     (nil))
+(code_label 62 61 63 8 91 (nil) [1 uses])
+(note 63 62 64 8 [bb 8] NOTE_INSN_BASIC_BLOCK)
+(insn 64 63 65 8 (set (reg/f:DI 0 ax [107])
+        (mem/f/c:DI (plus:DI (reg/f:DI 6 bp)
+                (const_int -56 [0xffffffffffffffc8])) [18 this+0 S8 A64])) "../src/matrix.hpp":60:36 80 {*movdi_internal}
+     (nil))
+(insn 65 64 67 8 (set (reg:DI 0 ax [orig:91 _10 ] [91])
+        (mem:DI (reg/f:DI 0 ax [107]) [6 this_18(D)->n_+0 S8 A64])) "../src/matrix.hpp":60:36 80 {*movdi_internal}
+     (nil))
+(insn 67 65 68 8 (set (reg:CC 17 flags)
+        (compare:CC (mem/c:DI (plus:DI (reg/f:DI 6 bp)
+                    (const_int -40 [0xffffffffffffffd8])) [6 i+0 S8 A64])
+            (reg:DI 0 ax [orig:91 _10 ] [91]))) "../src/matrix.hpp":60:34 12 {*cmpdi_1}
+     (nil))
+(jump_insn 68 67 69 8 (set (pc)
+        (if_then_else (ltu (reg:CC 17 flags)
+                (const_int 0 [0]))
+            (label_ref 66)
+            (pc))) "../src/matrix.hpp":60:34 891 {*jcc}
+     (nil)
+ -> 66)
+(note 69 68 70 9 [bb 9] NOTE_INSN_BASIC_BLOCK)
+(insn 70 69 71 9 (set (reg:DI 0 ax [108])
+        (mem/f/c:DI (plus:DI (reg/f:DI 6 bp)
+                (const_int -64 [0xffffffffffffffc0])) [30 A+0 S8 A64])) "../src/matrix.hpp":66:47 80 {*movdi_internal}
+     (nil))
+(insn 71 70 72 9 (set (reg:DI 5 di)
+        (reg:DI 0 ax [108])) "../src/matrix.hpp":66:47 80 {*movdi_internal}
+     (nil))
+(call_insn 72 71 74 9 (set (reg:SI 0 ax)
+        (call (mem:QI (symbol_ref/i:DI ("_ZNK13QComputations6MatrixIiE16get_matrix_styleEv") [flags 0x1]  <function_decl 0x7ff97308c500 get_matrix_style>) [0 get_matrix_style S1 A8])
+            (const_int 0 [0]))) "../src/matrix.hpp":66:47 909 {*call_value}
+     (expr_list:REG_EH_REGION (const_int 0 [0])
+        (nil))
+    (expr_list:DI (use (reg:DI 5 di))
+        (nil)))
+(insn 74 72 75 9 (set (reg/f:DI 1 dx [109])
+        (mem/f/c:DI (plus:DI (reg/f:DI 6 bp)
+                (const_int -56 [0xffffffffffffffc8])) [18 this+0 S8 A64])) "../src/matrix.hpp":66:27 80 {*movdi_internal}
+     (nil))
+(insn 75 74 100 9 (set (mem:SI (plus:DI (reg/f:DI 1 dx [109])
+                (const_int 40 [0x28])) [13 this_18(D)->matrix_style_+0 S4 A64])
+        (reg:SI 0 ax [orig:92 _11 ] [92])) "../src/matrix.hpp":66:27 81 {*movsi_internal}
+     (nil))
+(insn 100 75 89 9 (const_int 0 [0]) "../src/matrix.hpp":67:9 928 {nop}
+     (nil))
+(insn 89 100 90 9 (parallel [
+            (set (reg:CCZ 17 flags)
+                (unspec:CCZ [
+                        (mem/v/f/c:DI (plus:DI (reg/f:DI 6 bp)
+                                (const_int -24 [0xffffffffffffffe8])) [7 D.385505+0 S8 A64])
+                        (mem/v/f:DI (const_int 40 [0x28]) [0 MEM[(<address-space-1> long unsigned int *)40B]+0 S8 A64 AS1])
+                    ] UNSPEC_SP_TEST))
+            (clobber (reg:DI 0 ax [113]))
+        ]) "../src/matrix.hpp":67:9 1270 {stack_protect_test_1_di}
+     (nil))
+(jump_insn 90 89 105 9 (set (pc)
+        (if_then_else (eq (reg:CCZ 17 flags)
+                (const_int 0 [0]))
+            (label_ref 93)
+            (pc))) "../src/matrix.hpp":67:9 891 {*jcc}
+     (nil)
+ -> 93)
+(note 105 90 107 10 [bb 10] NOTE_INSN_BASIC_BLOCK)
+(jump_insn 107 105 108 10 (set (pc)
+        (label_ref 106)) 892 {jump}
+     (nil)
+ -> 106)
+(barrier 108 107 97)
+(code_label/s 97 108 99 11 97 (nil) [1 uses])
+(note 99 97 98 11 [bb 11] NOTE_INSN_BASIC_BLOCK)
+(insn 98 99 80 11 (set (reg:DI 3 bx [111])
+        (reg:DI 0 ax)) "../src/matrix.hpp":67:9 80 {*movdi_internal}
+     (nil))
+(insn 80 98 81 11 (set (reg/f:DI 0 ax [110])
+        (mem/f/c:DI (plus:DI (reg/f:DI 6 bp)
+                (const_int -56 [0xffffffffffffffc8])) [18 this+0 S8 A64])) "../src/matrix.hpp":67:9 80 {*movdi_internal}
+     (nil))
+(insn 81 80 82 11 (parallel [
+            (set (reg/f:DI 0 ax [orig:93 _12 ] [93])
+                (plus:DI (reg/f:DI 0 ax [110])
+                    (const_int 16 [0x10])))
+            (clobber (reg:CC 17 flags))
+        ]) "../src/matrix.hpp":67:9 230 {*adddi_1}
+     (expr_list:REG_EQUAL (plus:DI (mem/f/c:DI (plus:DI (reg/f:DI 19 frame)
+                    (const_int -40 [0xffffffffffffffd8])) [18 this+0 S8 A64])
+            (const_int 16 [0x10]))
+        (nil)))
+(insn 82 81 83 11 (set (reg:DI 5 di)
+        (reg/f:DI 0 ax [orig:93 _12 ] [93])) "../src/matrix.hpp":67:9 80 {*movdi_internal}
+     (nil))
+(call_insn 83 82 84 11 (call (mem:QI (symbol_ref/i:DI ("_ZNSt6vectorIdSaIdEED1Ev") [flags 0x1]  <function_decl 0x7ff973046a00 __dt_comp >) [0 __dt_comp  S1 A8])
+        (const_int 0 [0])) "../src/matrix.hpp":67:9 898 {*call}
+     (expr_list:REG_EH_REGION (const_int 0 [0])
+        (nil))
+    (expr_list:DI (use (reg:DI 5 di))
+        (nil)))
+(insn 84 83 85 11 (set (reg/f:DI 0 ax [orig:94 D.385504 ] [94])
+        (reg:DI 3 bx [111])) 80 {*movdi_internal}
+     (nil))
+(insn 85 84 124 11 (set (reg:DI 5 di)
+        (reg/f:DI 0 ax [orig:94 D.385504 ] [94])) 80 {*movdi_internal}
+     (nil))
+(note 124 85 86 11 8 NOTE_INSN_EH_REGION_BEG)
+(call_insn 86 124 125 11 (call (mem:QI (symbol_ref:DI ("_Unwind_Resume") [flags 0x41]  <function_decl 0x7ff982f0ac00 __builtin_unwind_resume>) [0 __builtin_unwind_resume S1 A8])
+        (const_int 0 [0])) 898 {*call}
+     (expr_list:REG_ARGS_SIZE (const_int 0 [0])
+        (expr_list:REG_NORETURN (const_int 0 [0])
+            (nil)))
+    (expr_list:DI (use (reg:DI 5 di))
+        (nil)))
+(note 125 86 87 8 NOTE_INSN_EH_REGION_END)
+(barrier 87 125 106)
+(code_label 106 87 95 12 98 (nil) [1 uses])
+(note 95 106 91 12 [bb 12] NOTE_INSN_BASIC_BLOCK)
+(call_insn 91 95 92 12 (call (mem:QI (symbol_ref:DI ("__stack_chk_fail") [flags 0x41]  <function_decl 0x7ff971c32200 __stack_chk_fail>) [0 __stack_chk_fail S1 A8])
+        (const_int 0 [0])) "../src/matrix.hpp":67:9 898 {*call}
+     (expr_list:REG_ARGS_SIZE (const_int 0 [0])
+        (expr_list:REG_NORETURN (const_int 0 [0])
+            (expr_list:REG_EH_REGION (const_int 0 [0])
+                (nil))))
+    (nil))
+(barrier 92 91 93)
+(code_label 93 92 96 13 96 (nil) [1 uses])
+(note 96 93 115 13 [bb 13] NOTE_INSN_BASIC_BLOCK)
+(note 115 96 116 13 NOTE_INSN_EPILOGUE_BEG)
+(insn 116 115 117 13 (set (reg:DI 3 bx)
+        (mem/c:DI (plus:DI (reg/f:DI 6 bp)
+                (const_int -8 [0xfffffffffffffff8])) [31  S8 A8])) "../src/matrix.hpp":67:9 -1
+     (nil))
+(insn/f 117 116 118 13 (parallel [
+            (set (reg/f:DI 7 sp)
+                (plus:DI (reg/f:DI 6 bp)
+                    (const_int 8 [0x8])))
+            (set (reg/f:DI 6 bp)
+                (mem:DI (reg/f:DI 6 bp) [0  S8 A8]))
+            (clobber (mem:BLK (scratch) [0  A8]))
+        ]) "../src/matrix.hpp":67:9 -1
+     (expr_list:REG_CFA_DEF_CFA (plus:DI (reg/f:DI 7 sp)
+            (const_int 8 [0x8]))
+        (nil)))
+(jump_insn 118 117 119 13 (simple_return) "../src/matrix.hpp":67:9 -1
+     (nil)
+ -> simple_return)
+(barrier 119 118 109)
+(note 109 119 0 NOTE_INSN_DELETED)
+
+;; Function QComputations::Matrix<int>::Matrix<double> (_ZN13QComputations6MatrixIiEC2IdEERKNS0_IT_EE, funcdef_no=5575, decl_uid=366570, cgraph_uid=1761, symbol_order=2331)
+
+
+
+QComputations::Matrix<int>::Matrix<double>
+
+Dataflow summary:
+;;  fully invalidated by EH 	 0 [ax] 1 [dx] 2 [cx] 4 [si] 5 [di] 8 [st] 9 [st(1)] 10 [st(2)] 11 [st(3)] 12 [st(4)] 13 [st(5)] 14 [st(6)] 15 [st(7)] 17 [flags] 18 [fpsr] 20 [xmm0] 21 [xmm1] 22 [xmm2] 23 [xmm3] 24 [xmm4] 25 [xmm5] 26 [xmm6] 27 [xmm7] 28 [mm0] 29 [mm1] 30 [mm2] 31 [mm3] 32 [mm4] 33 [mm5] 34 [mm6] 35 [mm7] 36 [r8] 37 [r9] 38 [r10] 39 [r11] 44 [xmm8] 45 [xmm9] 46 [xmm10] 47 [xmm11] 48 [xmm12] 49 [xmm13] 50 [xmm14] 51 [xmm15] 52 [xmm16] 53 [xmm17] 54 [xmm18] 55 [xmm19] 56 [xmm20] 57 [xmm21] 58 [xmm22] 59 [xmm23] 60 [xmm24] 61 [xmm25] 62 [xmm26] 63 [xmm27] 64 [xmm28] 65 [xmm29] 66 [xmm30] 67 [xmm31] 68 [k0] 69 [k1] 70 [k2] 71 [k3] 72 [k4] 73 [k5] 74 [k6] 75 [k7]
+;;  hardware regs used 	 7 [sp]
+;;  regular block artificial uses 	 6 [bp] 7 [sp]
+;;  eh block artificial uses 	 6 [bp] 7 [sp] 16 [argp] 19 [frame]
+;;  entry block defs 	 0 [ax] 1 [dx] 2 [cx] 3 [bx] 4 [si] 5 [di] 6 [bp] 7 [sp] 19 [frame] 20 [xmm0] 21 [xmm1] 22 [xmm2] 23 [xmm3] 24 [xmm4] 25 [xmm5] 26 [xmm6] 27 [xmm7] 36 [r8] 37 [r9]
+;;  exit block uses 	 3 [bx] 6 [bp] 7 [sp] 19 [frame]
+;;  regs ever live 	 0 [ax] 1 [dx] 3 [bx] 4 [si] 5 [di] 6 [bp] 7 [sp] 17 [flags] 20 [xmm0]
+;;  ref usage 	r0={30d,22u} r1={17d,6u} r2={10d} r3={4d,4u} r4={12d,3u} r5={18d,9u} r6={3d,46u} r7={5d,28u} r8={9d} r9={9d} r10={9d} r11={9d} r12={9d} r13={9d} r14={9d} r15={9d} r16={1u} r17={20d,3u} r18={9d} r19={1d,2u,3e} r20={11d,1u} r21={10d} r22={10d} r23={10d} r24={10d} r25={10d} r26={10d} r27={10d} r28={9d} r29={9d} r30={9d} r31={9d} r32={9d} r33={9d} r34={9d} r35={9d} r36={10d} r37={10d} r38={9d} r39={9d} r44={9d} r45={9d} r46={9d} r47={9d} r48={9d} r49={9d} r50={9d} r51={9d} r52={9d} r53={9d} r54={9d} r55={9d} r56={9d} r57={9d} r58={9d} r59={9d} r60={9d} r61={9d} r62={9d} r63={9d} r64={9d} r65={9d} r66={9d} r67={9d} r68={9d} r69={9d} r70={9d} r71={9d} r72={9d} r73={9d} r74={9d} r75={9d} 
+;;    total ref usage 808{680d,125u,3e} in 74{65 regular + 9 call} insns.
+(note 1 0 6 NOTE_INSN_DELETED)
+(note 6 1 110 2 [bb 2] NOTE_INSN_BASIC_BLOCK)
+(insn/f 110 6 111 2 (set (mem:DI (pre_dec:DI (reg/f:DI 7 sp)) [0  S8 A8])
+        (reg/f:DI 6 bp)) "../src/matrix.hpp":59:9 -1
+     (nil))
+(insn/f 111 110 112 2 (set (reg/f:DI 6 bp)
+        (reg/f:DI 7 sp)) "../src/matrix.hpp":59:9 -1
+     (nil))
+(insn/f 112 111 113 2 (set (mem:DI (pre_dec:DI (reg/f:DI 7 sp)) [0  S8 A8])
+        (reg:DI 3 bx)) "../src/matrix.hpp":59:9 -1
+     (nil))
+(insn/f 113 112 114 2 (parallel [
+            (set (reg/f:DI 7 sp)
+                (plus:DI (reg/f:DI 7 sp)
+                    (const_int -56 [0xffffffffffffffc8])))
+            (clobber (reg:CC 17 flags))
+            (clobber (mem:BLK (scratch) [0  A8]))
+        ]) "../src/matrix.hpp":59:9 -1
+     (nil))
+(note 114 113 2 2 NOTE_INSN_PROLOGUE_END)
+(insn 2 114 3 2 (set (mem/f/c:DI (plus:DI (reg/f:DI 6 bp)
+                (const_int -56 [0xffffffffffffffc8])) [29 this+0 S8 A64])
+        (reg:DI 5 di [ this ])) "../src/matrix.hpp":59:9 80 {*movdi_internal}
+     (nil))
+(insn 3 2 4 2 (set (mem/f/c:DI (plus:DI (reg/f:DI 6 bp)
+                (const_int -64 [0xffffffffffffffc0])) [20 A+0 S8 A64])
+        (reg:DI 4 si [ A ])) "../src/matrix.hpp":59:9 80 {*movdi_internal}
+     (nil))
+(note 4 3 5 2 NOTE_INSN_FUNCTION_BEG)
+(insn 5 4 8 2 (parallel [
+            (set (mem/v/f/c:DI (plus:DI (reg/f:DI 6 bp)
+                        (const_int -24 [0xffffffffffffffe8])) [7 D.385507+0 S8 A64])
+                (unspec:DI [
+                        (mem/v/f:DI (const_int 40 [0x28]) [0 MEM[(<address-space-1> long unsigned int *)40B]+0 S8 A64 AS1])
+                    ] UNSPEC_SP_SET))
+            (set (reg:DI 0 ax [112])
+                (const_int 0 [0]))
+            (clobber (reg:CC 17 flags))
+        ]) "../src/matrix.hpp":59:9 1265 {stack_protect_set_1_di}
+     (nil))
+(insn 8 5 9 2 (set (reg:DI 0 ax [95])
+        (mem/f/c:DI (plus:DI (reg/f:DI 6 bp)
+                (const_int -64 [0xffffffffffffffc0])) [20 A+0 S8 A64])) "../src/matrix.hpp":59:43 80 {*movdi_internal}
+     (nil))
+(insn 9 8 10 2 (set (reg:DI 5 di)
+        (reg:DI 0 ax [95])) "../src/matrix.hpp":59:43 80 {*movdi_internal}
+     (nil))
+(call_insn 10 9 12 2 (set (reg:DI 0 ax)
+        (call (mem:QI (symbol_ref/i:DI ("_ZNK13QComputations6MatrixIdE1nEv") [flags 0x1]  <function_decl 0x7ff972fb7300 n>) [0 n S1 A8])
+            (const_int 0 [0]))) "../src/matrix.hpp":59:43 909 {*call_value}
+     (expr_list:REG_EH_REGION (const_int 0 [0])
+        (nil))
+    (expr_list:DI (use (reg:DI 5 di))
+        (nil)))
+(insn 12 10 13 2 (set (reg/f:DI 1 dx [96])
+        (mem/f/c:DI (plus:DI (reg/f:DI 6 bp)
+                (const_int -56 [0xffffffffffffffc8])) [29 this+0 S8 A64])) "../src/matrix.hpp":59:37 80 {*movdi_internal}
+     (nil))
+(insn 13 12 14 2 (set (mem:DI (reg/f:DI 1 dx [96]) [6 this_18(D)->n_+0 S8 A64])
+        (reg:DI 0 ax [orig:82 _1 ] [82])) "../src/matrix.hpp":59:37 80 {*movdi_internal}
+     (nil))
+(insn 14 13 15 2 (set (reg:DI 0 ax [97])
+        (mem/f/c:DI (plus:DI (reg/f:DI 6 bp)
+                (const_int -64 [0xffffffffffffffc0])) [20 A+0 S8 A64])) "../src/matrix.hpp":59:54 80 {*movdi_internal}
+     (nil))
+(insn 15 14 16 2 (set (reg:DI 5 di)
+        (reg:DI 0 ax [97])) "../src/matrix.hpp":59:54 80 {*movdi_internal}
+     (nil))
+(call_insn 16 15 18 2 (set (reg:DI 0 ax)
+        (call (mem:QI (symbol_ref/i:DI ("_ZNK13QComputations6MatrixIdE1mEv") [flags 0x1]  <function_decl 0x7ff972fb7500 m>) [0 m S1 A8])
+            (const_int 0 [0]))) "../src/matrix.hpp":59:54 909 {*call_value}
+     (expr_list:REG_EH_REGION (const_int 0 [0])
+        (nil))
+    (expr_list:DI (use (reg:DI 5 di))
+        (nil)))
+(insn 18 16 19 2 (set (reg/f:DI 1 dx [98])
+        (mem/f/c:DI (plus:DI (reg/f:DI 6 bp)
+                (const_int -56 [0xffffffffffffffc8])) [29 this+0 S8 A64])) "../src/matrix.hpp":59:48 80 {*movdi_internal}
+     (nil))
+(insn 19 18 20 2 (set (mem:DI (plus:DI (reg/f:DI 1 dx [98])
+                (const_int 8 [0x8])) [6 this_18(D)->m_+0 S8 A64])
+        (reg:DI 0 ax [orig:83 _2 ] [83])) "../src/matrix.hpp":59:48 80 {*movdi_internal}
+     (nil))
+(insn 20 19 21 2 (set (reg/f:DI 0 ax [99])
+        (mem/f/c:DI (plus:DI (reg/f:DI 6 bp)
+                (const_int -56 [0xffffffffffffffc8])) [29 this+0 S8 A64])) "../src/matrix.hpp":59:56 80 {*movdi_internal}
+     (nil))
+(insn 21 20 22 2 (parallel [
+            (set (reg/f:DI 0 ax [orig:84 _3 ] [84])
+                (plus:DI (reg/f:DI 0 ax [99])
+                    (const_int 16 [0x10])))
+            (clobber (reg:CC 17 flags))
+        ]) "../src/matrix.hpp":59:56 230 {*adddi_1}
+     (expr_list:REG_EQUAL (plus:DI (mem/f/c:DI (plus:DI (reg/f:DI 19 frame)
+                    (const_int -40 [0xffffffffffffffd8])) [29 this+0 S8 A64])
+            (const_int 16 [0x10]))
+        (nil)))
+(insn 22 21 23 2 (set (reg:DI 5 di)
+        (reg/f:DI 0 ax [orig:84 _3 ] [84])) "../src/matrix.hpp":59:56 80 {*movdi_internal}
+     (nil))
+(call_insn 23 22 24 2 (call (mem:QI (symbol_ref/i:DI ("_ZNSt6vectorIiSaIiEEC1Ev") [flags 0x1]  <function_decl 0x7ff974181200 __ct_comp >) [0 __ct_comp  S1 A8])
+        (const_int 0 [0])) "../src/matrix.hpp":59:56 898 {*call}
+     (expr_list:REG_EH_REGION (const_int 0 [0])
+        (nil))
+    (expr_list:DI (use (reg:DI 5 di))
+        (nil)))
+(insn 24 23 25 2 (set (reg/f:DI 0 ax [100])
+        (mem/f/c:DI (plus:DI (reg/f:DI 6 bp)
+                (const_int -56 [0xffffffffffffffc8])) [29 this+0 S8 A64])) "../src/matrix.hpp":59:56 80 {*movdi_internal}
+     (nil))
+(insn 25 24 26 2 (set (mem:SI (plus:DI (reg/f:DI 0 ax [100])
+                (const_int 40 [0x28])) [13 this_18(D)->matrix_style_+0 S4 A64])
+        (const_int 120 [0x78])) "../src/matrix.hpp":59:56 81 {*movsi_internal}
+     (nil))
+(insn 26 25 101 2 (set (mem/c:DI (plus:DI (reg/f:DI 6 bp)
+                (const_int -40 [0xffffffffffffffd8])) [6 i+0 S8 A64])
+        (const_int 0 [0])) "../src/matrix.hpp":60:25 80 {*movdi_internal}
+     (nil))
+(jump_insn 101 26 102 2 (set (pc)
+        (label_ref 62)) "../src/matrix.hpp":60:13 892 {jump}
+     (nil)
+ -> 62)
+(barrier 102 101 66)
+(code_label 66 102 29 3 103 (nil) [1 uses])
+(note 29 66 30 3 [bb 3] NOTE_INSN_BASIC_BLOCK)
+(insn 30 29 103 3 (set (mem/c:DI (plus:DI (reg/f:DI 6 bp)
+                (const_int -32 [0xffffffffffffffe0])) [6 j+0 S8 A64])
+        (const_int 0 [0])) "../src/matrix.hpp":61:29 80 {*movdi_internal}
+     (nil))
+(jump_insn 103 30 104 3 (set (pc)
+        (label_ref 53)) "../src/matrix.hpp":61:17 892 {jump}
+     (nil)
+ -> 53)
+(barrier 104 103 57)
+(code_label 57 104 33 4 102 (nil) [1 uses])
+(note 33 57 34 4 [bb 4] NOTE_INSN_BASIC_BLOCK)
+(insn 34 33 120 4 (set (reg/f:DI 0 ax [101])
+        (mem/f/c:DI (plus:DI (reg/f:DI 6 bp)
+                (const_int -56 [0xffffffffffffffc8])) [29 this+0 S8 A64])) "../src/matrix.hpp":62:39 80 {*movdi_internal}
+     (nil))
+(insn 120 34 36 4 (set (reg/f:DI 3 bx [orig:85 _4 ] [85])
+        (plus:DI (reg/f:DI 0 ax [101])
+            (const_int 16 [0x10]))) "../src/matrix.hpp":62:39 226 {*leadi}
+     (nil))
+(insn 36 120 37 4 (set (reg:DI 1 dx [102])
+        (mem/c:DI (plus:DI (reg/f:DI 6 bp)
+                (const_int -40 [0xffffffffffffffd8])) [6 i+0 S8 A64])) "../src/matrix.hpp":62:56 80 {*movdi_internal}
+     (nil))
+(insn 37 36 38 4 (set (reg:DI 0 ax [103])
+        (mem/f/c:DI (plus:DI (reg/f:DI 6 bp)
+                (const_int -64 [0xffffffffffffffc0])) [20 A+0 S8 A64])) "../src/matrix.hpp":62:56 80 {*movdi_internal}
+     (nil))
+(insn 38 37 39 4 (set (reg:DI 4 si)
+        (reg:DI 1 dx [102])) "../src/matrix.hpp":62:56 80 {*movdi_internal}
+     (nil))
+(insn 39 38 40 4 (set (reg:DI 5 di)
+        (reg:DI 0 ax [103])) "../src/matrix.hpp":62:56 80 {*movdi_internal}
+     (nil))
+(call_insn 40 39 42 4 (set (reg:DI 0 ax)
+        (call (mem:QI (symbol_ref/i:DI ("_ZNK13QComputations6MatrixIdEixEm") [flags 0x1]  <function_decl 0x7ff972fc0100 operator[]>) [0 operator[] S1 A8])
+            (const_int 0 [0]))) "../src/matrix.hpp":62:56 909 {*call_value}
+     (expr_list:REG_EH_REGION (const_int 0 [0])
+        (nil))
+    (expr_list:DI (use (reg:DI 5 di))
+        (expr_list:DI (use (reg:DI 4 si))
+            (nil))))
+(insn 42 40 43 4 (set (reg:DI 1 dx [104])
+        (mem/c:DI (plus:DI (reg/f:DI 6 bp)
+                (const_int -32 [0xffffffffffffffe0])) [6 j+0 S8 A64])) "../src/matrix.hpp":62:59 80 {*movdi_internal}
+     (nil))
+(insn 43 42 44 4 (parallel [
+            (set (reg:DI 1 dx [orig:87 _6 ] [87])
+                (ashift:DI (reg:DI 1 dx [104])
+                    (const_int 3 [0x3])))
+            (clobber (reg:CC 17 flags))
+        ]) "../src/matrix.hpp":62:59 713 {*ashldi3_1}
+     (expr_list:REG_EQUAL (ashift:DI (mem/c:DI (plus:DI (reg/f:DI 19 frame)
+                    (const_int -16 [0xfffffffffffffff0])) [6 j+0 S8 A64])
+            (const_int 3 [0x3]))
+        (nil)))
+(insn 44 43 45 4 (parallel [
+            (set (reg/f:DI 0 ax [orig:88 _7 ] [88])
+                (plus:DI (reg/f:DI 0 ax [orig:86 _5 ] [86])
+                    (reg:DI 1 dx [orig:87 _6 ] [87])))
+            (clobber (reg:CC 17 flags))
+        ]) "../src/matrix.hpp":62:59 230 {*adddi_1}
+     (nil))
+(insn 45 44 46 4 (set (reg:DF 20 xmm0 [orig:89 _8 ] [89])
+        (mem:DF (reg/f:DI 0 ax [orig:88 _7 ] [88]) [5 *_7+0 S8 A64])) "../src/matrix.hpp":62:40 141 {*movdf_internal}
+     (nil))
+(insn 46 45 121 4 (set (mem/c:DF (plus:DI (reg/f:DI 6 bp)
+                (const_int -48 [0xffffffffffffffd0])) [5 D.373658+0 S8 A64])
+        (reg:DF 20 xmm0 [orig:89 _8 ] [89])) "../src/matrix.hpp":62:40 141 {*movdf_internal}
+     (nil))
+(insn 121 46 48 4 (set (reg:DI 0 ax [105])
+        (plus:DI (reg/f:DI 6 bp)
+            (const_int -48 [0xffffffffffffffd0]))) "../src/matrix.hpp":62:39 226 {*leadi}
+     (nil))
+(insn 48 121 49 4 (set (reg:DI 4 si)
+        (reg:DI 0 ax [105])) "../src/matrix.hpp":62:39 80 {*movdi_internal}
+     (nil))
+(insn 49 48 122 4 (set (reg:DI 5 di)
+        (reg/f:DI 3 bx [orig:85 _4 ] [85])) "../src/matrix.hpp":62:39 80 {*movdi_internal}
+     (nil))
+(note 122 49 50 4 9 NOTE_INSN_EH_REGION_BEG)
+(call_insn 50 122 123 4 (set (reg:DI 0 ax)
+        (call (mem:QI (symbol_ref/i:DI ("_ZNSt6vectorIiSaIiEE12emplace_backIJdEEERiDpOT_") [flags 0x1]  <function_decl 0x7ff972a9bb00 emplace_back>) [0 emplace_back S1 A8])
+            (const_int 0 [0]))) "../src/matrix.hpp":62:39 909 {*call_value}
+     (expr_list:REG_EH_REGION (const_int 2 [0x2])
+        (nil))
+    (expr_list:DI (use (reg:DI 5 di))
+        (expr_list:DI (use (reg:DI 4 si))
+            (nil))))
+(note 123 50 51 9 NOTE_INSN_EH_REGION_END)
+(note 51 123 52 5 [bb 5] NOTE_INSN_BASIC_BLOCK)
+(insn 52 51 53 5 (parallel [
+            (set (mem/c:DI (plus:DI (reg/f:DI 6 bp)
+                        (const_int -32 [0xffffffffffffffe0])) [6 j+0 S8 A64])
+                (plus:DI (mem/c:DI (plus:DI (reg/f:DI 6 bp)
+                            (const_int -32 [0xffffffffffffffe0])) [6 j+0 S8 A64])
+                    (const_int 1 [0x1])))
+            (clobber (reg:CC 17 flags))
+        ]) "../src/matrix.hpp":61:17 230 {*adddi_1}
+     (nil))
+(code_label 53 52 54 6 101 (nil) [1 uses])
+(note 54 53 55 6 [bb 6] NOTE_INSN_BASIC_BLOCK)
+(insn 55 54 56 6 (set (reg/f:DI 0 ax [106])
+        (mem/f/c:DI (plus:DI (reg/f:DI 6 bp)
+                (const_int -56 [0xffffffffffffffc8])) [29 this+0 S8 A64])) "../src/matrix.hpp":61:40 80 {*movdi_internal}
+     (nil))
+(insn 56 55 58 6 (set (reg:DI 0 ax [orig:90 _9 ] [90])
+        (mem:DI (plus:DI (reg/f:DI 0 ax [106])
+                (const_int 8 [0x8])) [6 this_18(D)->m_+0 S8 A64])) "../src/matrix.hpp":61:40 80 {*movdi_internal}
+     (nil))
+(insn 58 56 59 6 (set (reg:CC 17 flags)
+        (compare:CC (mem/c:DI (plus:DI (reg/f:DI 6 bp)
+                    (const_int -32 [0xffffffffffffffe0])) [6 j+0 S8 A64])
+            (reg:DI 0 ax [orig:90 _9 ] [90]))) "../src/matrix.hpp":61:38 12 {*cmpdi_1}
+     (nil))
+(jump_insn 59 58 60 6 (set (pc)
+        (if_then_else (ltu (reg:CC 17 flags)
+                (const_int 0 [0]))
+            (label_ref 57)
+            (pc))) "../src/matrix.hpp":61:38 891 {*jcc}
+     (nil)
+ -> 57)
+(note 60 59 61 7 [bb 7] NOTE_INSN_BASIC_BLOCK)
+(insn 61 60 62 7 (parallel [
+            (set (mem/c:DI (plus:DI (reg/f:DI 6 bp)
+                        (const_int -40 [0xffffffffffffffd8])) [6 i+0 S8 A64])
+                (plus:DI (mem/c:DI (plus:DI (reg/f:DI 6 bp)
+                            (const_int -40 [0xffffffffffffffd8])) [6 i+0 S8 A64])
+                    (const_int 1 [0x1])))
+            (clobber (reg:CC 17 flags))
+        ]) "../src/matrix.hpp":60:13 230 {*adddi_1}
+     (nil))
+(code_label 62 61 63 8 100 (nil) [1 uses])
+(note 63 62 64 8 [bb 8] NOTE_INSN_BASIC_BLOCK)
+(insn 64 63 65 8 (set (reg/f:DI 0 ax [107])
+        (mem/f/c:DI (plus:DI (reg/f:DI 6 bp)
+                (const_int -56 [0xffffffffffffffc8])) [29 this+0 S8 A64])) "../src/matrix.hpp":60:36 80 {*movdi_internal}
+     (nil))
+(insn 65 64 67 8 (set (reg:DI 0 ax [orig:91 _10 ] [91])
+        (mem:DI (reg/f:DI 0 ax [107]) [6 this_18(D)->n_+0 S8 A64])) "../src/matrix.hpp":60:36 80 {*movdi_internal}
+     (nil))
+(insn 67 65 68 8 (set (reg:CC 17 flags)
+        (compare:CC (mem/c:DI (plus:DI (reg/f:DI 6 bp)
+                    (const_int -40 [0xffffffffffffffd8])) [6 i+0 S8 A64])
+            (reg:DI 0 ax [orig:91 _10 ] [91]))) "../src/matrix.hpp":60:34 12 {*cmpdi_1}
+     (nil))
+(jump_insn 68 67 69 8 (set (pc)
+        (if_then_else (ltu (reg:CC 17 flags)
+                (const_int 0 [0]))
+            (label_ref 66)
+            (pc))) "../src/matrix.hpp":60:34 891 {*jcc}
+     (nil)
+ -> 66)
+(note 69 68 70 9 [bb 9] NOTE_INSN_BASIC_BLOCK)
+(insn 70 69 71 9 (set (reg:DI 0 ax [108])
+        (mem/f/c:DI (plus:DI (reg/f:DI 6 bp)
+                (const_int -64 [0xffffffffffffffc0])) [20 A+0 S8 A64])) "../src/matrix.hpp":66:47 80 {*movdi_internal}
+     (nil))
+(insn 71 70 72 9 (set (reg:DI 5 di)
+        (reg:DI 0 ax [108])) "../src/matrix.hpp":66:47 80 {*movdi_internal}
+     (nil))
+(call_insn 72 71 74 9 (set (reg:SI 0 ax)
+        (call (mem:QI (symbol_ref/i:DI ("_ZNK13QComputations6MatrixIdE16get_matrix_styleEv") [flags 0x1]  <function_decl 0x7ff972fc0500 get_matrix_style>) [0 get_matrix_style S1 A8])
+            (const_int 0 [0]))) "../src/matrix.hpp":66:47 909 {*call_value}
+     (expr_list:REG_EH_REGION (const_int 0 [0])
+        (nil))
+    (expr_list:DI (use (reg:DI 5 di))
+        (nil)))
+(insn 74 72 75 9 (set (reg/f:DI 1 dx [109])
+        (mem/f/c:DI (plus:DI (reg/f:DI 6 bp)
+                (const_int -56 [0xffffffffffffffc8])) [29 this+0 S8 A64])) "../src/matrix.hpp":66:27 80 {*movdi_internal}
+     (nil))
+(insn 75 74 100 9 (set (mem:SI (plus:DI (reg/f:DI 1 dx [109])
+                (const_int 40 [0x28])) [13 this_18(D)->matrix_style_+0 S4 A64])
+        (reg:SI 0 ax [orig:92 _11 ] [92])) "../src/matrix.hpp":66:27 81 {*movsi_internal}
+     (nil))
+(insn 100 75 89 9 (const_int 0 [0]) "../src/matrix.hpp":67:9 928 {nop}
+     (nil))
+(insn 89 100 90 9 (parallel [
+            (set (reg:CCZ 17 flags)
+                (unspec:CCZ [
+                        (mem/v/f/c:DI (plus:DI (reg/f:DI 6 bp)
+                                (const_int -24 [0xffffffffffffffe8])) [7 D.385507+0 S8 A64])
+                        (mem/v/f:DI (const_int 40 [0x28]) [0 MEM[(<address-space-1> long unsigned int *)40B]+0 S8 A64 AS1])
+                    ] UNSPEC_SP_TEST))
+            (clobber (reg:DI 0 ax [113]))
+        ]) "../src/matrix.hpp":67:9 1270 {stack_protect_test_1_di}
+     (nil))
+(jump_insn 90 89 105 9 (set (pc)
+        (if_then_else (eq (reg:CCZ 17 flags)
+                (const_int 0 [0]))
+            (label_ref 93)
+            (pc))) "../src/matrix.hpp":67:9 891 {*jcc}
+     (nil)
+ -> 93)
+(note 105 90 107 10 [bb 10] NOTE_INSN_BASIC_BLOCK)
+(jump_insn 107 105 108 10 (set (pc)
+        (label_ref 106)) 892 {jump}
+     (nil)
+ -> 106)
+(barrier 108 107 97)
+(code_label/s 97 108 99 11 106 (nil) [1 uses])
+(note 99 97 98 11 [bb 11] NOTE_INSN_BASIC_BLOCK)
+(insn 98 99 80 11 (set (reg:DI 3 bx [111])
+        (reg:DI 0 ax)) "../src/matrix.hpp":67:9 80 {*movdi_internal}
+     (nil))
+(insn 80 98 81 11 (set (reg/f:DI 0 ax [110])
+        (mem/f/c:DI (plus:DI (reg/f:DI 6 bp)
+                (const_int -56 [0xffffffffffffffc8])) [29 this+0 S8 A64])) "../src/matrix.hpp":67:9 80 {*movdi_internal}
+     (nil))
+(insn 81 80 82 11 (parallel [
+            (set (reg/f:DI 0 ax [orig:93 _12 ] [93])
+                (plus:DI (reg/f:DI 0 ax [110])
+                    (const_int 16 [0x10])))
+            (clobber (reg:CC 17 flags))
+        ]) "../src/matrix.hpp":67:9 230 {*adddi_1}
+     (expr_list:REG_EQUAL (plus:DI (mem/f/c:DI (plus:DI (reg/f:DI 19 frame)
+                    (const_int -40 [0xffffffffffffffd8])) [29 this+0 S8 A64])
+            (const_int 16 [0x10]))
+        (nil)))
+(insn 82 81 83 11 (set (reg:DI 5 di)
+        (reg/f:DI 0 ax [orig:93 _12 ] [93])) "../src/matrix.hpp":67:9 80 {*movdi_internal}
+     (nil))
+(call_insn 83 82 84 11 (call (mem:QI (symbol_ref/i:DI ("_ZNSt6vectorIiSaIiEED1Ev") [flags 0x1]  <function_decl 0x7ff974181400 __dt_comp >) [0 __dt_comp  S1 A8])
+        (const_int 0 [0])) "../src/matrix.hpp":67:9 898 {*call}
+     (expr_list:REG_EH_REGION (const_int 0 [0])
+        (nil))
+    (expr_list:DI (use (reg:DI 5 di))
+        (nil)))
+(insn 84 83 85 11 (set (reg/f:DI 0 ax [orig:94 D.385506 ] [94])
+        (reg:DI 3 bx [111])) 80 {*movdi_internal}
+     (nil))
+(insn 85 84 124 11 (set (reg:DI 5 di)
+        (reg/f:DI 0 ax [orig:94 D.385506 ] [94])) 80 {*movdi_internal}
+     (nil))
+(note 124 85 86 11 10 NOTE_INSN_EH_REGION_BEG)
+(call_insn 86 124 125 11 (call (mem:QI (symbol_ref:DI ("_Unwind_Resume") [flags 0x41]  <function_decl 0x7ff982f0ac00 __builtin_unwind_resume>) [0 __builtin_unwind_resume S1 A8])
+        (const_int 0 [0])) 898 {*call}
+     (expr_list:REG_ARGS_SIZE (const_int 0 [0])
+        (expr_list:REG_NORETURN (const_int 0 [0])
+            (nil)))
+    (expr_list:DI (use (reg:DI 5 di))
+        (nil)))
+(note 125 86 87 10 NOTE_INSN_EH_REGION_END)
+(barrier 87 125 106)
+(code_label 106 87 95 12 107 (nil) [1 uses])
+(note 95 106 91 12 [bb 12] NOTE_INSN_BASIC_BLOCK)
+(call_insn 91 95 92 12 (call (mem:QI (symbol_ref:DI ("__stack_chk_fail") [flags 0x41]  <function_decl 0x7ff971c32200 __stack_chk_fail>) [0 __stack_chk_fail S1 A8])
+        (const_int 0 [0])) "../src/matrix.hpp":67:9 898 {*call}
+     (expr_list:REG_ARGS_SIZE (const_int 0 [0])
+        (expr_list:REG_NORETURN (const_int 0 [0])
+            (expr_list:REG_EH_REGION (const_int 0 [0])
+                (nil))))
+    (nil))
+(barrier 92 91 93)
+(code_label 93 92 96 13 105 (nil) [1 uses])
+(note 96 93 115 13 [bb 13] NOTE_INSN_BASIC_BLOCK)
+(note 115 96 116 13 NOTE_INSN_EPILOGUE_BEG)
+(insn 116 115 117 13 (set (reg:DI 3 bx)
+        (mem/c:DI (plus:DI (reg/f:DI 6 bp)
+                (const_int -8 [0xfffffffffffffff8])) [31  S8 A8])) "../src/matrix.hpp":67:9 -1
+     (nil))
+(insn/f 117 116 118 13 (parallel [
+            (set (reg/f:DI 7 sp)
+                (plus:DI (reg/f:DI 6 bp)
+                    (const_int 8 [0x8])))
+            (set (reg/f:DI 6 bp)
+                (mem:DI (reg/f:DI 6 bp) [0  S8 A8]))
+            (clobber (mem:BLK (scratch) [0  A8]))
+        ]) "../src/matrix.hpp":67:9 -1
+     (expr_list:REG_CFA_DEF_CFA (plus:DI (reg/f:DI 7 sp)
+            (const_int 8 [0x8]))
+        (nil)))
+(jump_insn 118 117 119 13 (simple_return) "../src/matrix.hpp":67:9 -1
+     (nil)
+ -> simple_return)
+(barrier 119 118 109)
+(note 109 119 0 NOTE_INSN_DELETED)
+
+;; Function QComputations::Matrix<std::complex<double> >::Matrix (_ZN13QComputations6MatrixISt7complexIdEEC2ENS_12MATRIX_STYLEEmm, funcdef_no=5579, decl_uid=302940, cgraph_uid=1765, symbol_order=2335)
+
+
+
+QComputations::Matrix<std::complex<double> >::Matrix
+
+Dataflow summary:
+;;  fully invalidated by EH 	 0 [ax] 1 [dx] 2 [cx] 4 [si] 5 [di] 8 [st] 9 [st(1)] 10 [st(2)] 11 [st(3)] 12 [st(4)] 13 [st(5)] 14 [st(6)] 15 [st(7)] 17 [flags] 18 [fpsr] 20 [xmm0] 21 [xmm1] 22 [xmm2] 23 [xmm3] 24 [xmm4] 25 [xmm5] 26 [xmm6] 27 [xmm7] 28 [mm0] 29 [mm1] 30 [mm2] 31 [mm3] 32 [mm4] 33 [mm5] 34 [mm6] 35 [mm7] 36 [r8] 37 [r9] 38 [r10] 39 [r11] 44 [xmm8] 45 [xmm9] 46 [xmm10] 47 [xmm11] 48 [xmm12] 49 [xmm13] 50 [xmm14] 51 [xmm15] 52 [xmm16] 53 [xmm17] 54 [xmm18] 55 [xmm19] 56 [xmm20] 57 [xmm21] 58 [xmm22] 59 [xmm23] 60 [xmm24] 61 [xmm25] 62 [xmm26] 63 [xmm27] 64 [xmm28] 65 [xmm29] 66 [xmm30] 67 [xmm31] 68 [k0] 69 [k1] 70 [k2] 71 [k3] 72 [k4] 73 [k5] 74 [k6] 75 [k7]
+;;  hardware regs used 	 7 [sp]
+;;  regular block artificial uses 	 6 [bp] 7 [sp]
+;;  eh block artificial uses 	 6 [bp] 7 [sp] 16 [argp] 19 [frame]
+;;  entry block defs 	 0 [ax] 1 [dx] 2 [cx] 3 [bx] 4 [si] 5 [di] 6 [bp] 7 [sp] 19 [frame] 20 [xmm0] 21 [xmm1] 22 [xmm2] 23 [xmm3] 24 [xmm4] 25 [xmm5] 26 [xmm6] 27 [xmm7] 36 [r8] 37 [r9]
+;;  exit block uses 	 3 [bx] 6 [bp] 7 [sp] 19 [frame]
+;;  regs ever live 	 0 [ax] 1 [dx] 2 [cx] 3 [bx] 4 [si] 5 [di] 6 [bp] 7 [sp] 17 [flags]
+;;  ref usage 	r0={22d,13u} r1={13d,6u} r2={7d,1u} r3={4d,4u} r4={8d,2u} r5={12d,6u} r6={3d,30u} r7={5d,19u} r8={6d} r9={6d} r10={6d} r11={6d} r12={6d} r13={6d} r14={6d} r15={6d} r16={1u} r17={10d,1u} r18={6d} r19={1d,2u} r20={7d} r21={7d} r22={7d} r23={7d} r24={7d} r25={7d} r26={7d} r27={7d} r28={6d} r29={6d} r30={6d} r31={6d} r32={6d} r33={6d} r34={6d} r35={6d} r36={7d} r37={7d} r38={6d} r39={6d} r44={6d} r45={6d} r46={6d} r47={6d} r48={6d} r49={6d} r50={6d} r51={6d} r52={6d} r53={6d} r54={6d} r55={6d} r56={6d} r57={6d} r58={6d} r59={6d} r60={6d} r61={6d} r62={6d} r63={6d} r64={6d} r65={6d} r66={6d} r67={6d} r68={6d} r69={6d} r70={6d} r71={6d} r72={6d} r73={6d} r74={6d} r75={6d} 
+;;    total ref usage 546{461d,85u,0e} in 50{44 regular + 6 call} insns.
+(note 1 0 8 NOTE_INSN_DELETED)
+(note 8 1 67 2 [bb 2] NOTE_INSN_BASIC_BLOCK)
+(insn/f 67 8 68 2 (set (mem:DI (pre_dec:DI (reg/f:DI 7 sp)) [0  S8 A8])
+        (reg/f:DI 6 bp)) "../src/matrix.hpp":50:18 -1
+     (nil))
+(insn/f 68 67 69 2 (set (reg/f:DI 6 bp)
+        (reg/f:DI 7 sp)) "../src/matrix.hpp":50:18 -1
+     (nil))
+(insn/f 69 68 70 2 (set (mem:DI (pre_dec:DI (reg/f:DI 7 sp)) [0  S8 A8])
+        (reg:DI 3 bx)) "../src/matrix.hpp":50:18 -1
+     (nil))
+(insn/f 70 69 71 2 (parallel [
+            (set (reg/f:DI 7 sp)
+                (plus:DI (reg/f:DI 7 sp)
+                    (const_int -56 [0xffffffffffffffc8])))
+            (clobber (reg:CC 17 flags))
+            (clobber (mem:BLK (scratch) [0  A8]))
+        ]) "../src/matrix.hpp":50:18 -1
+     (nil))
+(note 71 70 2 2 NOTE_INSN_PROLOGUE_END)
+(insn 2 71 3 2 (set (mem/f/c:DI (plus:DI (reg/f:DI 6 bp)
+                (const_int -40 [0xffffffffffffffd8])) [32 this+0 S8 A64])
+        (reg:DI 5 di [ this ])) "../src/matrix.hpp":50:18 80 {*movdi_internal}
+     (nil))
+(insn 3 2 4 2 (set (mem/c:SI (plus:DI (reg/f:DI 6 bp)
+                (const_int -44 [0xffffffffffffffd4])) [13 matrix_style+0 S4 A32])
+        (reg:SI 4 si [ matrix_style ])) "../src/matrix.hpp":50:18 81 {*movsi_internal}
+     (nil))
+(insn 4 3 5 2 (set (mem/c:DI (plus:DI (reg/f:DI 6 bp)
+                (const_int -56 [0xffffffffffffffc8])) [6 n+0 S8 A64])
+        (reg:DI 1 dx [ n ])) "../src/matrix.hpp":50:18 80 {*movdi_internal}
+     (nil))
+(insn 5 4 6 2 (set (mem/c:DI (plus:DI (reg/f:DI 6 bp)
+                (const_int -64 [0xffffffffffffffc0])) [6 m+0 S8 A64])
+        (reg:DI 2 cx [ m ])) "../src/matrix.hpp":50:18 80 {*movdi_internal}
+     (nil))
+(note 6 5 7 2 NOTE_INSN_FUNCTION_BEG)
+(insn 7 6 10 2 (parallel [
+            (set (mem/v/f/c:DI (plus:DI (reg/f:DI 6 bp)
+                        (const_int -24 [0xffffffffffffffe8])) [7 D.385509+0 S8 A64])
+                (unspec:DI [
+                        (mem/v/f:DI (const_int 40 [0x28]) [0 MEM[(<address-space-1> long unsigned int *)40B]+0 S8 A64 AS1])
+                    ] UNSPEC_SP_SET))
+            (set (reg:DI 0 ax [102])
+                (const_int 0 [0]))
+            (clobber (reg:CC 17 flags))
+        ]) "../src/matrix.hpp":50:18 1265 {stack_protect_set_1_di}
+     (nil))
+(insn 10 7 11 2 (set (reg/f:DI 0 ax [88])
+        (mem/f/c:DI (plus:DI (reg/f:DI 6 bp)
+                (const_int -40 [0xffffffffffffffd8])) [32 this+0 S8 A64])) "../src/matrix.hpp":50:103 80 {*movdi_internal}
+     (nil))
+(insn 11 10 12 2 (set (reg:DI 1 dx [89])
+        (mem/c:DI (plus:DI (reg/f:DI 6 bp)
+                (const_int -56 [0xffffffffffffffc8])) [6 n+0 S8 A64])) "../src/matrix.hpp":50:103 80 {*movdi_internal}
+     (nil))
+(insn 12 11 13 2 (set (mem:DI (reg/f:DI 0 ax [88]) [6 this_7(D)->n_+0 S8 A64])
+        (reg:DI 1 dx [89])) "../src/matrix.hpp":50:103 80 {*movdi_internal}
+     (nil))
+(insn 13 12 14 2 (set (reg/f:DI 0 ax [90])
+        (mem/f/c:DI (plus:DI (reg/f:DI 6 bp)
+                (const_int -40 [0xffffffffffffffd8])) [32 this+0 S8 A64])) "../src/matrix.hpp":50:110 80 {*movdi_internal}
+     (nil))
+(insn 14 13 15 2 (set (reg:DI 1 dx [91])
+        (mem/c:DI (plus:DI (reg/f:DI 6 bp)
+                (const_int -64 [0xffffffffffffffc0])) [6 m+0 S8 A64])) "../src/matrix.hpp":50:110 80 {*movdi_internal}
+     (nil))
+(insn 15 14 16 2 (set (mem:DI (plus:DI (reg/f:DI 0 ax [90])
+                (const_int 8 [0x8])) [6 this_7(D)->m_+0 S8 A64])
+        (reg:DI 1 dx [91])) "../src/matrix.hpp":50:110 80 {*movdi_internal}
+     (nil))
+(insn 16 15 79 2 (set (reg/f:DI 0 ax [92])
+        (mem/f/c:DI (plus:DI (reg/f:DI 6 bp)
+                (const_int -40 [0xffffffffffffffd8])) [32 this+0 S8 A64])) "../src/matrix.hpp":50:117 80 {*movdi_internal}
+     (nil))
+(insn 79 16 80 2 (set (reg/f:DI 3 bx [orig:82 _1 ] [82])
+        (plus:DI (reg/f:DI 0 ax [92])
+            (const_int 16 [0x10]))) "../src/matrix.hpp":50:117 226 {*leadi}
+     (nil))
+(insn 80 79 19 2 (set (reg:DI 0 ax [93])
+        (plus:DI (reg/f:DI 6 bp)
+            (const_int -25 [0xffffffffffffffe7]))) "../src/matrix.hpp":50:117 226 {*leadi}
+     (nil))
+(insn 19 80 20 2 (set (reg:DI 5 di)
+        (reg:DI 0 ax [93])) "../src/matrix.hpp":50:117 80 {*movdi_internal}
+     (nil))
+(call_insn 20 19 21 2 (call (mem:QI (symbol_ref/i:DI ("_ZNSaISt7complexIdEEC1Ev") [flags 0x1]  <function_decl 0x7ff976f6b300 __ct_comp >) [0 __ct_comp  S1 A8])
+        (const_int 0 [0])) "../src/matrix.hpp":50:117 898 {*call}
+     (expr_list:REG_EH_REGION (const_int 0 [0])
+        (nil))
+    (expr_list:DI (use (reg:DI 5 di))
+        (nil)))
+(insn 21 20 22 2 (set (reg/f:DI 0 ax [94])
+        (mem/f/c:DI (plus:DI (reg/f:DI 6 bp)
+                (const_int -40 [0xffffffffffffffd8])) [32 this+0 S8 A64])) "../src/matrix.hpp":50:123 80 {*movdi_internal}
+     (nil))
+(insn 22 21 23 2 (set (reg:DI 1 dx [orig:83 _2 ] [83])
+        (mem:DI (reg/f:DI 0 ax [94]) [6 this_7(D)->n_+0 S8 A64])) "../src/matrix.hpp":50:123 80 {*movdi_internal}
+     (nil))
+(insn 23 22 24 2 (set (reg/f:DI 0 ax [95])
+        (mem/f/c:DI (plus:DI (reg/f:DI 6 bp)
+                (const_int -40 [0xffffffffffffffd8])) [32 this+0 S8 A64])) "../src/matrix.hpp":50:128 80 {*movdi_internal}
+     (nil))
+(insn 24 23 25 2 (set (reg:DI 0 ax [orig:84 _3 ] [84])
+        (mem:DI (plus:DI (reg/f:DI 0 ax [95])
+                (const_int 8 [0x8])) [6 this_7(D)->m_+0 S8 A64])) "../src/matrix.hpp":50:128 80 {*movdi_internal}
+     (nil))
+(insn 25 24 81 2 (parallel [
+            (set (reg:DI 0 ax [orig:85 _4 ] [85])
+                (mult:DI (reg:DI 0 ax [orig:84 _3 ] [84])
+                    (reg:DI 1 dx [orig:83 _2 ] [83])))
+            (clobber (reg:CC 17 flags))
+        ]) "../src/matrix.hpp":50:117 445 {*muldi3_1}
+     (nil))
+(insn 81 25 28 2 (set (reg:DI 1 dx [96])
+        (plus:DI (reg/f:DI 6 bp)
+            (const_int -25 [0xffffffffffffffe7]))) "../src/matrix.hpp":50:117 226 {*leadi}
+     (nil))
+(insn 28 81 29 2 (set (reg:DI 4 si)
+        (reg:DI 0 ax [orig:85 _4 ] [85])) "../src/matrix.hpp":50:117 80 {*movdi_internal}
+     (nil))
+(insn 29 28 82 2 (set (reg:DI 5 di)
+        (reg/f:DI 3 bx [orig:82 _1 ] [82])) "../src/matrix.hpp":50:117 80 {*movdi_internal}
+     (nil))
+(note 82 29 30 2 11 NOTE_INSN_EH_REGION_BEG)
+(call_insn 30 82 83 2 (call (mem:QI (symbol_ref/i:DI ("_ZNSt6vectorISt7complexIdESaIS1_EEC1EmRKS2_") [flags 0x1]  <function_decl 0x7ff976fdf000 __ct_comp >) [0 __ct_comp  S1 A8])
+        (const_int 0 [0])) "../src/matrix.hpp":50:117 898 {*call}
+     (expr_list:REG_EH_REGION (const_int 1 [0x1])
+        (nil))
+    (expr_list:DI (use (reg:DI 5 di))
+        (expr_list:DI (use (reg:DI 4 si))
+            (expr_list:DI (use (reg:DI 1 dx))
+                (nil)))))
+(note 83 30 31 11 NOTE_INSN_EH_REGION_END)
+(note 31 83 78 3 [bb 3] NOTE_INSN_BASIC_BLOCK)
+(insn 78 31 33 3 (set (reg:DI 0 ax [97])
+        (plus:DI (reg/f:DI 6 bp)
+            (const_int -25 [0xffffffffffffffe7]))) "../src/matrix.hpp":50:117 226 {*leadi}
+     (nil))
+(insn 33 78 34 3 (set (reg:DI 5 di)
+        (reg:DI 0 ax [97])) "../src/matrix.hpp":50:117 80 {*movdi_internal}
+     (nil))
+(call_insn 34 33 35 3 (call (mem:QI (symbol_ref/i:DI ("_ZNSaISt7complexIdEED1Ev") [flags 0x1]  <function_decl 0x7ff976f6b500 __dt_comp >) [0 __dt_comp  S1 A8])
+        (const_int 0 [0])) "../src/matrix.hpp":50:117 898 {*call}
+     (expr_list:REG_EH_REGION (const_int 0 [0])
+        (nil))
+    (expr_list:DI (use (reg:DI 5 di))
+        (nil)))
+(insn 35 34 36 3 (set (reg/f:DI 0 ax [98])
+        (mem/f/c:DI (plus:DI (reg/f:DI 6 bp)
+                (const_int -40 [0xffffffffffffffd8])) [32 this+0 S8 A64])) "../src/matrix.hpp":50:74 80 {*movdi_internal}
+     (nil))
+(insn 36 35 37 3 (set (reg:SI 1 dx [99])
+        (mem/c:SI (plus:DI (reg/f:DI 6 bp)
+                (const_int -44 [0xffffffffffffffd4])) [13 matrix_style+0 S4 A32])) "../src/matrix.hpp":50:74 81 {*movsi_internal}
+     (nil))
+(insn 37 36 61 3 (set (mem:SI (plus:DI (reg/f:DI 0 ax [98])
+                (const_int 40 [0x28])) [13 this_7(D)->matrix_style_+0 S4 A64])
+        (reg:SI 1 dx [99])) "../src/matrix.hpp":50:74 81 {*movsi_internal}
+     (nil))
+(insn 61 37 50 3 (const_int 0 [0]) "../src/matrix.hpp":50:133 928 {nop}
+     (nil))
+(insn 50 61 51 3 (parallel [
+            (set (reg:CCZ 17 flags)
+                (unspec:CCZ [
+                        (mem/v/f/c:DI (plus:DI (reg/f:DI 6 bp)
+                                (const_int -24 [0xffffffffffffffe8])) [7 D.385509+0 S8 A64])
+                        (mem/v/f:DI (const_int 40 [0x28]) [0 MEM[(<address-space-1> long unsigned int *)40B]+0 S8 A64 AS1])
+                    ] UNSPEC_SP_TEST))
+            (clobber (reg:DI 0 ax [103]))
+        ]) "../src/matrix.hpp":50:133 1270 {stack_protect_test_1_di}
+     (nil))
+(jump_insn 51 50 62 3 (set (pc)
+        (if_then_else (eq (reg:CCZ 17 flags)
+                (const_int 0 [0]))
+            (label_ref 54)
+            (pc))) "../src/matrix.hpp":50:133 891 {*jcc}
+     (nil)
+ -> 54)
+(note 62 51 64 4 [bb 4] NOTE_INSN_BASIC_BLOCK)
+(jump_insn 64 62 65 4 (set (pc)
+        (label_ref 63)) 892 {jump}
+     (nil)
+ -> 63)
+(barrier 65 64 58)
+(code_label/s 58 65 60 5 113 (nil) [1 uses])
+(note 60 58 59 5 [bb 5] NOTE_INSN_BASIC_BLOCK)
+(insn 59 60 77 5 (set (reg:DI 3 bx [101])
+        (reg:DI 0 ax)) "../src/matrix.hpp":50:117 80 {*movdi_internal}
+     (nil))
+(insn 77 59 43 5 (set (reg:DI 0 ax [100])
+        (plus:DI (reg/f:DI 6 bp)
+            (const_int -25 [0xffffffffffffffe7]))) "../src/matrix.hpp":50:117 226 {*leadi}
+     (nil))
+(insn 43 77 44 5 (set (reg:DI 5 di)
+        (reg:DI 0 ax [100])) "../src/matrix.hpp":50:117 80 {*movdi_internal}
+     (nil))
+(call_insn 44 43 45 5 (call (mem:QI (symbol_ref/i:DI ("_ZNSaISt7complexIdEED1Ev") [flags 0x1]  <function_decl 0x7ff976f6b500 __dt_comp >) [0 __dt_comp  S1 A8])
+        (const_int 0 [0])) "../src/matrix.hpp":50:117 898 {*call}
+     (expr_list:REG_EH_REGION (const_int 0 [0])
+        (nil))
+    (expr_list:DI (use (reg:DI 5 di))
+        (nil)))
+(insn 45 44 46 5 (set (reg/f:DI 0 ax [orig:87 D.385508 ] [87])
+        (reg:DI 3 bx [101])) 80 {*movdi_internal}
+     (nil))
+(insn 46 45 84 5 (set (reg:DI 5 di)
+        (reg/f:DI 0 ax [orig:87 D.385508 ] [87])) 80 {*movdi_internal}
+     (nil))
+(note 84 46 47 5 12 NOTE_INSN_EH_REGION_BEG)
+(call_insn 47 84 85 5 (call (mem:QI (symbol_ref:DI ("_Unwind_Resume") [flags 0x41]  <function_decl 0x7ff982f0ac00 __builtin_unwind_resume>) [0 __builtin_unwind_resume S1 A8])
+        (const_int 0 [0])) 898 {*call}
+     (expr_list:REG_ARGS_SIZE (const_int 0 [0])
+        (expr_list:REG_NORETURN (const_int 0 [0])
+            (nil)))
+    (expr_list:DI (use (reg:DI 5 di))
+        (nil)))
+(note 85 47 48 12 NOTE_INSN_EH_REGION_END)
+(barrier 48 85 63)
+(code_label 63 48 56 6 114 (nil) [1 uses])
+(note 56 63 52 6 [bb 6] NOTE_INSN_BASIC_BLOCK)
+(call_insn 52 56 53 6 (call (mem:QI (symbol_ref:DI ("__stack_chk_fail") [flags 0x41]  <function_decl 0x7ff971c32200 __stack_chk_fail>) [0 __stack_chk_fail S1 A8])
+        (const_int 0 [0])) "../src/matrix.hpp":50:133 898 {*call}
+     (expr_list:REG_ARGS_SIZE (const_int 0 [0])
+        (expr_list:REG_NORETURN (const_int 0 [0])
+            (expr_list:REG_EH_REGION (const_int 0 [0])
+                (nil))))
+    (nil))
+(barrier 53 52 54)
+(code_label 54 53 57 7 112 (nil) [1 uses])
+(note 57 54 72 7 [bb 7] NOTE_INSN_BASIC_BLOCK)
+(note 72 57 73 7 NOTE_INSN_EPILOGUE_BEG)
+(insn 73 72 74 7 (set (reg:DI 3 bx)
+        (mem/c:DI (plus:DI (reg/f:DI 6 bp)
+                (const_int -8 [0xfffffffffffffff8])) [31  S8 A8])) "../src/matrix.hpp":50:133 -1
+     (nil))
+(insn/f 74 73 75 7 (parallel [
+            (set (reg/f:DI 7 sp)
+                (plus:DI (reg/f:DI 6 bp)
+                    (const_int 8 [0x8])))
+            (set (reg/f:DI 6 bp)
+                (mem:DI (reg/f:DI 6 bp) [0  S8 A8]))
+            (clobber (mem:BLK (scratch) [0  A8]))
+        ]) "../src/matrix.hpp":50:133 -1
+     (expr_list:REG_CFA_DEF_CFA (plus:DI (reg/f:DI 7 sp)
+            (const_int 8 [0x8]))
+        (nil)))
+(jump_insn 75 74 76 7 (simple_return) "../src/matrix.hpp":50:133 -1
+     (nil)
+ -> simple_return)
+(barrier 76 75 66)
+(note 66 76 0 NOTE_INSN_DELETED)
+
+;; Function std::_Vector_base<std::complex<double>, std::allocator<std::complex<double> > >::~_Vector_base (_ZNSt12_Vector_baseISt7complexIdESaIS1_EED2Ev, funcdef_no=5796, decl_uid=302300, cgraph_uid=1982, symbol_order=2562)
+
+
+
+std::_Vector_base<std::complex<double>, std::allocator<std::complex<double> > >::~_Vector_base
+
+Dataflow summary:
+;;  fully invalidated by EH 	 0 [ax] 1 [dx] 2 [cx] 4 [si] 5 [di] 8 [st] 9 [st(1)] 10 [st(2)] 11 [st(3)] 12 [st(4)] 13 [st(5)] 14 [st(6)] 15 [st(7)] 17 [flags] 18 [fpsr] 20 [xmm0] 21 [xmm1] 22 [xmm2] 23 [xmm3] 24 [xmm4] 25 [xmm5] 26 [xmm6] 27 [xmm7] 28 [mm0] 29 [mm1] 30 [mm2] 31 [mm3] 32 [mm4] 33 [mm5] 34 [mm6] 35 [mm7] 36 [r8] 37 [r9] 38 [r10] 39 [r11] 44 [xmm8] 45 [xmm9] 46 [xmm10] 47 [xmm11] 48 [xmm12] 49 [xmm13] 50 [xmm14] 51 [xmm15] 52 [xmm16] 53 [xmm17] 54 [xmm18] 55 [xmm19] 56 [xmm20] 57 [xmm21] 58 [xmm22] 59 [xmm23] 60 [xmm24] 61 [xmm25] 62 [xmm26] 63 [xmm27] 64 [xmm28] 65 [xmm29] 66 [xmm30] 67 [xmm31] 68 [k0] 69 [k1] 70 [k2] 71 [k3] 72 [k4] 73 [k5] 74 [k6] 75 [k7]
+;;  hardware regs used 	 7 [sp]
+;;  regular block artificial uses 	 6 [bp] 7 [sp]
+;;  eh block artificial uses 	 6 [bp] 7 [sp] 16 [argp] 19 [frame]
+;;  entry block defs 	 0 [ax] 1 [dx] 2 [cx] 4 [si] 5 [di] 6 [bp] 7 [sp] 19 [frame] 20 [xmm0] 21 [xmm1] 22 [xmm2] 23 [xmm3] 24 [xmm4] 25 [xmm5] 26 [xmm6] 27 [xmm7] 36 [r8] 37 [r9]
+;;  exit block uses 	 6 [bp] 7 [sp] 19 [frame]
+;;  regs ever live 	 0 [ax] 1 [dx] 2 [cx] 4 [si] 5 [di] 6 [bp] 7 [sp] 17 [flags]
+;;  ref usage 	r0={11d,8u} r1={6d,3u,1e} r2={4d,1u} r4={4d,1u} r5={5d,3u} r6={3d,11u} r7={4d,9u} r8={2d} r9={2d} r10={2d} r11={2d} r12={2d} r13={2d} r14={2d} r15={2d} r17={5d} r18={2d} r19={1d,1u} r20={3d} r21={3d} r22={3d} r23={3d} r24={3d} r25={3d} r26={3d} r27={3d} r28={2d} r29={2d} r30={2d} r31={2d} r32={2d} r33={2d} r34={2d} r35={2d} r36={3d} r37={3d} r38={2d} r39={2d} r44={2d} r45={2d} r46={2d} r47={2d} r48={2d} r49={2d} r50={2d} r51={2d} r52={2d} r53={2d} r54={2d} r55={2d} r56={2d} r57={2d} r58={2d} r59={2d} r60={2d} r61={2d} r62={2d} r63={2d} r64={2d} r65={2d} r66={2d} r67={2d} r68={2d} r69={2d} r70={2d} r71={2d} r72={2d} r73={2d} r74={2d} r75={2d} 
+;;    total ref usage 213{175d,37u,1e} in 24{22 regular + 2 call} insns.
+(note 1 0 4 NOTE_INSN_DELETED)
+(note 4 1 31 2 [bb 2] NOTE_INSN_BASIC_BLOCK)
+(insn/f 31 4 32 2 (set (mem:DI (pre_dec:DI (reg/f:DI 7 sp)) [0  S8 A8])
+        (reg/f:DI 6 bp)) "/usr/include/c++/12/bits/stl_vector.h":364:7 -1
+     (nil))
+(insn/f 32 31 33 2 (set (reg/f:DI 6 bp)
+        (reg/f:DI 7 sp)) "/usr/include/c++/12/bits/stl_vector.h":364:7 -1
+     (nil))
+(insn/f 33 32 34 2 (parallel [
+            (set (reg/f:DI 7 sp)
+                (plus:DI (reg/f:DI 7 sp)
+                    (const_int -16 [0xfffffffffffffff0])))
+            (clobber (reg:CC 17 flags))
+            (clobber (mem:BLK (scratch) [0  A8]))
+        ]) "/usr/include/c++/12/bits/stl_vector.h":364:7 -1
+     (nil))
+(note 34 33 2 2 NOTE_INSN_PROLOGUE_END)
+(insn 2 34 3 2 (set (mem/f/c:DI (plus:DI (reg/f:DI 6 bp)
+                (const_int -8 [0xfffffffffffffff8])) [60 this+0 S8 A64])
+        (reg:DI 5 di [ this ])) "/usr/include/c++/12/bits/stl_vector.h":364:7 80 {*movdi_internal}
+     (nil))
+(note 3 2 6 2 NOTE_INSN_FUNCTION_BEG)
+(insn 6 3 7 2 (set (reg/f:DI 0 ax [89])
+        (mem/f/c:DI (plus:DI (reg/f:DI 6 bp)
+                (const_int -8 [0xfffffffffffffff8])) [60 this+0 S8 A64])) "/usr/include/c++/12/bits/stl_vector.h":367:17 80 {*movdi_internal}
+     (nil))
+(insn 7 6 8 2 (set (reg/f:DI 1 dx [orig:82 _1 ] [82])
+        (mem/f:DI (plus:DI (reg/f:DI 0 ax [89])
+                (const_int 16 [0x10])) [8 this_9(D)->_M_impl.D.302190._M_end_of_storage+0 S8 A64])) "/usr/include/c++/12/bits/stl_vector.h":367:17 80 {*movdi_internal}
+     (nil))
+(insn 8 7 9 2 (set (reg/f:DI 0 ax [90])
+        (mem/f/c:DI (plus:DI (reg/f:DI 6 bp)
+                (const_int -8 [0xfffffffffffffff8])) [60 this+0 S8 A64])) "/usr/include/c++/12/bits/stl_vector.h":367:45 80 {*movdi_internal}
+     (nil))
+(insn 9 8 10 2 (set (reg/f:DI 0 ax [orig:83 _2 ] [83])
+        (mem/f:DI (reg/f:DI 0 ax [90]) [8 this_9(D)->_M_impl.D.302190._M_start+0 S8 A64])) "/usr/include/c++/12/bits/stl_vector.h":367:45 80 {*movdi_internal}
+     (nil))
+(insn 10 9 29 2 (parallel [
+            (set (reg:DI 1 dx [orig:84 _3 ] [84])
+                (minus:DI (reg/f:DI 1 dx [orig:82 _1 ] [82])
+                    (reg/f:DI 0 ax [orig:83 _2 ] [83])))
+            (clobber (reg:CC 17 flags))
+        ]) "/usr/include/c++/12/bits/stl_vector.h":367:35 303 {*subdi_1}
+     (nil))
+(insn 29 10 11 2 (set (reg:DI 0 ax [orig:84 _3 ] [84])
+        (reg:DI 1 dx [orig:84 _3 ] [84])) "/usr/include/c++/12/bits/stl_vector.h":367:35 80 {*movdi_internal}
+     (nil))
+(insn 11 29 13 2 (parallel [
+            (set (reg:DI 0 ax [orig:84 _3 ] [84])
+                (ashiftrt:DI (reg:DI 0 ax [orig:84 _3 ] [84])
+                    (const_int 4 [0x4])))
+            (clobber (reg:CC 17 flags))
+        ]) "/usr/include/c++/12/bits/stl_vector.h":367:35 766 {*ashrdi3_1}
+     (expr_list:REG_EQUAL (div:DI (reg:DI 1 dx [orig:84 _3 ] [84])
+            (const_int 16 [0x10]))
+        (nil)))
+(insn 13 11 14 2 (set (reg:DI 1 dx [orig:86 _5 ] [86])
+        (reg:DI 0 ax [orig:85 _4 ] [85])) "/usr/include/c++/12/bits/stl_vector.h":366:15 80 {*movdi_internal}
+     (nil))
+(insn 14 13 15 2 (set (reg/f:DI 0 ax [92])
+        (mem/f/c:DI (plus:DI (reg/f:DI 6 bp)
+                (const_int -8 [0xfffffffffffffff8])) [60 this+0 S8 A64])) "/usr/include/c++/12/bits/stl_vector.h":366:15 80 {*movdi_internal}
+     (nil))
+(insn 15 14 16 2 (set (reg/f:DI 2 cx [orig:87 _6 ] [87])
+        (mem/f:DI (reg/f:DI 0 ax [92]) [8 this_9(D)->_M_impl.D.302190._M_start+0 S8 A64])) "/usr/include/c++/12/bits/stl_vector.h":366:15 80 {*movdi_internal}
+     (nil))
+(insn 16 15 18 2 (set (reg:DI 0 ax [93])
+        (mem/f/c:DI (plus:DI (reg/f:DI 6 bp)
+                (const_int -8 [0xfffffffffffffff8])) [60 this+0 S8 A64])) "/usr/include/c++/12/bits/stl_vector.h":366:15 80 {*movdi_internal}
+     (nil))
+(insn 18 16 19 2 (set (reg:DI 4 si)
+        (reg/f:DI 2 cx [orig:87 _6 ] [87])) "/usr/include/c++/12/bits/stl_vector.h":366:15 80 {*movdi_internal}
+     (nil))
+(insn 19 18 20 2 (set (reg:DI 5 di)
+        (reg:DI 0 ax [93])) "/usr/include/c++/12/bits/stl_vector.h":366:15 80 {*movdi_internal}
+     (nil))
+(call_insn 20 19 21 2 (call (mem:QI (symbol_ref/i:DI ("_ZNSt12_Vector_baseISt7complexIdESaIS1_EE13_M_deallocateEPS1_m") [flags 0x1]  <function_decl 0x7ff976f91c00 _M_deallocate>) [0 _M_deallocate S1 A8])
+        (const_int 0 [0])) "/usr/include/c++/12/bits/stl_vector.h":366:15 898 {*call}
+     (expr_list:REG_EH_REGION (const_int -1 [0xffffffffffffffff])
+        (nil))
+    (expr_list:DI (use (reg:DI 5 di))
+        (expr_list:DI (use (reg:DI 4 si))
+            (expr_list:DI (use (reg:DI 1 dx))
+                (nil)))))
+(insn 21 20 22 2 (set (reg/f:DI 0 ax [orig:88 _7 ] [88])
+        (mem/f/c:DI (plus:DI (reg/f:DI 6 bp)
+                (const_int -8 [0xfffffffffffffff8])) [60 this+0 S8 A64])) "/usr/include/c++/12/bits/stl_vector.h":368:7 80 {*movdi_internal}
+     (nil))
+(insn 22 21 23 2 (set (reg:DI 5 di)
+        (reg/f:DI 0 ax [orig:88 _7 ] [88])) "/usr/include/c++/12/bits/stl_vector.h":368:7 80 {*movdi_internal}
+     (nil))
+(call_insn 23 22 27 2 (call (mem:QI (symbol_ref/i:DI ("_ZNSt12_Vector_baseISt7complexIdESaIS1_EE12_Vector_implD1Ev") [flags 0x1]  <function_decl 0x7ff976f96800 __dt_comp >) [0 __dt_comp  S1 A8])
+        (const_int 0 [0])) "/usr/include/c++/12/bits/stl_vector.h":368:7 898 {*call}
+     (expr_list:REG_EH_REGION (const_int 0 [0])
+        (nil))
+    (expr_list:DI (use (reg:DI 5 di))
+        (nil)))
+(insn 27 23 35 2 (const_int 0 [0]) "/usr/include/c++/12/bits/stl_vector.h":368:7 928 {nop}
+     (nil))
+(note 35 27 36 2 NOTE_INSN_EPILOGUE_BEG)
+(insn/f 36 35 37 2 (parallel [
+            (set (reg/f:DI 7 sp)
+                (plus:DI (reg/f:DI 6 bp)
+                    (const_int 8 [0x8])))
+            (set (reg/f:DI 6 bp)
+                (mem:DI (reg/f:DI 6 bp) [0  S8 A8]))
+            (clobber (mem:BLK (scratch) [0  A8]))
+        ]) "/usr/include/c++/12/bits/stl_vector.h":368:7 -1
+     (expr_list:REG_CFA_DEF_CFA (plus:DI (reg/f:DI 7 sp)
+            (const_int 8 [0x8]))
+        (nil)))
+(jump_insn 37 36 38 2 (simple_return) "/usr/include/c++/12/bits/stl_vector.h":368:7 -1
+     (nil)
+ -> simple_return)
+(barrier 38 37 28)
+(note 28 38 0 NOTE_INSN_DELETED)
+
+;; Function std::vector<double>::vector (_ZNSt6vectorIdSaIdEEC2EmRKS0_, funcdef_no=5855, decl_uid=365112, cgraph_uid=2041, symbol_order=2621)
+
+
+
+std::vector<double>::vector
+
+Dataflow summary:
+;;  fully invalidated by EH 	 0 [ax] 1 [dx] 2 [cx] 4 [si] 5 [di] 8 [st] 9 [st(1)] 10 [st(2)] 11 [st(3)] 12 [st(4)] 13 [st(5)] 14 [st(6)] 15 [st(7)] 17 [flags] 18 [fpsr] 20 [xmm0] 21 [xmm1] 22 [xmm2] 23 [xmm3] 24 [xmm4] 25 [xmm5] 26 [xmm6] 27 [xmm7] 28 [mm0] 29 [mm1] 30 [mm2] 31 [mm3] 32 [mm4] 33 [mm5] 34 [mm6] 35 [mm7] 36 [r8] 37 [r9] 38 [r10] 39 [r11] 44 [xmm8] 45 [xmm9] 46 [xmm10] 47 [xmm11] 48 [xmm12] 49 [xmm13] 50 [xmm14] 51 [xmm15] 52 [xmm16] 53 [xmm17] 54 [xmm18] 55 [xmm19] 56 [xmm20] 57 [xmm21] 58 [xmm22] 59 [xmm23] 60 [xmm24] 61 [xmm25] 62 [xmm26] 63 [xmm27] 64 [xmm28] 65 [xmm29] 66 [xmm30] 67 [xmm31] 68 [k0] 69 [k1] 70 [k2] 71 [k3] 72 [k4] 73 [k5] 74 [k6] 75 [k7]
+;;  hardware regs used 	 7 [sp]
+;;  regular block artificial uses 	 6 [bp] 7 [sp]
+;;  eh block artificial uses 	 6 [bp] 7 [sp] 16 [argp] 19 [frame]
+;;  entry block defs 	 0 [ax] 1 [dx] 2 [cx] 3 [bx] 4 [si] 5 [di] 6 [bp] 7 [sp] 19 [frame] 20 [xmm0] 21 [xmm1] 22 [xmm2] 23 [xmm3] 24 [xmm4] 25 [xmm5] 26 [xmm6] 27 [xmm7] 36 [r8] 37 [r9]
+;;  exit block uses 	 3 [bx] 6 [bp] 7 [sp] 19 [frame]
+;;  regs ever live 	 0 [ax] 1 [dx] 2 [cx] 3 [bx] 4 [si] 5 [di] 6 [bp] 7 [sp]
+;;  ref usage 	r0={12d,7u} r1={10d,4u} r2={7d,1u} r3={4d,4u} r4={9d,4u} r5={11d,6u} r6={3d,19u} r7={5d,16u} r8={5d} r9={5d} r10={5d} r11={5d} r12={5d} r13={5d} r14={5d} r15={5d} r16={1u} r17={6d} r18={5d} r19={1d,2u} r20={6d} r21={6d} r22={6d} r23={6d} r24={6d} r25={6d} r26={6d} r27={6d} r28={5d} r29={5d} r30={5d} r31={5d} r32={5d} r33={5d} r34={5d} r35={5d} r36={6d} r37={6d} r38={5d} r39={5d} r44={5d} r45={5d} r46={5d} r47={5d} r48={5d} r49={5d} r50={5d} r51={5d} r52={5d} r53={5d} r54={5d} r55={5d} r56={5d} r57={5d} r58={5d} r59={5d} r60={5d} r61={5d} r62={5d} r63={5d} r64={5d} r65={5d} r66={5d} r67={5d} r68={5d} r69={5d} r70={5d} r71={5d} r72={5d} r73={5d} r74={5d} r75={5d} 
+;;    total ref usage 447{383d,64u,0e} in 35{30 regular + 5 call} insns.
+(note 1 0 6 NOTE_INSN_DELETED)
+(note 6 1 47 2 [bb 2] NOTE_INSN_BASIC_BLOCK)
+(insn/f 47 6 48 2 (set (mem:DI (pre_dec:DI (reg/f:DI 7 sp)) [0  S8 A8])
+        (reg/f:DI 6 bp)) "/usr/include/c++/12/bits/stl_vector.h":551:7 -1
+     (nil))
+(insn/f 48 47 49 2 (set (reg/f:DI 6 bp)
+        (reg/f:DI 7 sp)) "/usr/include/c++/12/bits/stl_vector.h":551:7 -1
+     (nil))
+(insn/f 49 48 50 2 (set (mem:DI (pre_dec:DI (reg/f:DI 7 sp)) [0  S8 A8])
+        (reg:DI 3 bx)) "/usr/include/c++/12/bits/stl_vector.h":551:7 -1
+     (nil))
+(insn/f 50 49 51 2 (parallel [
+            (set (reg/f:DI 7 sp)
+                (plus:DI (reg/f:DI 7 sp)
+                    (const_int -40 [0xffffffffffffffd8])))
+            (clobber (reg:CC 17 flags))
+            (clobber (mem:BLK (scratch) [0  A8]))
+        ]) "/usr/include/c++/12/bits/stl_vector.h":551:7 -1
+     (nil))
+(note 51 50 2 2 NOTE_INSN_PROLOGUE_END)
+(insn 2 51 3 2 (set (mem/f/c:DI (plus:DI (reg/f:DI 6 bp)
+                (const_int -24 [0xffffffffffffffe8])) [52 this+0 S8 A64])
+        (reg:DI 5 di [ this ])) "/usr/include/c++/12/bits/stl_vector.h":551:7 80 {*movdi_internal}
+     (nil))
+(insn 3 2 4 2 (set (mem/c:DI (plus:DI (reg/f:DI 6 bp)
+                (const_int -32 [0xffffffffffffffe0])) [6 __n+0 S8 A64])
+        (reg:DI 4 si [ __n ])) "/usr/include/c++/12/bits/stl_vector.h":551:7 80 {*movdi_internal}
+     (nil))
+(insn 4 3 5 2 (set (mem/f/c:DI (plus:DI (reg/f:DI 6 bp)
+                (const_int -40 [0xffffffffffffffd8])) [63 __a+0 S8 A64])
+        (reg:DI 1 dx [ __a ])) "/usr/include/c++/12/bits/stl_vector.h":551:7 80 {*movdi_internal}
+     (nil))
+(note 5 4 8 2 NOTE_INSN_FUNCTION_BEG)
+(insn 8 5 9 2 (set (reg/f:DI 3 bx [orig:82 _1 ] [82])
+        (mem/f/c:DI (plus:DI (reg/f:DI 6 bp)
+                (const_int -24 [0xffffffffffffffe8])) [52 this+0 S8 A64])) "/usr/include/c++/12/bits/stl_vector.h":552:47 80 {*movdi_internal}
+     (nil))
+(insn 9 8 10 2 (set (reg:DI 1 dx [86])
+        (mem/f/c:DI (plus:DI (reg/f:DI 6 bp)
+                (const_int -40 [0xffffffffffffffd8])) [63 __a+0 S8 A64])) "/usr/include/c++/12/bits/stl_vector.h":552:47 80 {*movdi_internal}
+     (nil))
+(insn 10 9 11 2 (set (reg:DI 0 ax [87])
+        (mem/c:DI (plus:DI (reg/f:DI 6 bp)
+                (const_int -32 [0xffffffffffffffe0])) [6 __n+0 S8 A64])) "/usr/include/c++/12/bits/stl_vector.h":552:47 80 {*movdi_internal}
+     (nil))
+(insn 11 10 12 2 (set (reg:DI 4 si)
+        (reg:DI 1 dx [86])) "/usr/include/c++/12/bits/stl_vector.h":552:47 80 {*movdi_internal}
+     (nil))
+(insn 12 11 57 2 (set (reg:DI 5 di)
+        (reg:DI 0 ax [87])) "/usr/include/c++/12/bits/stl_vector.h":552:47 80 {*movdi_internal}
+     (nil))
+(note 57 12 13 2 13 NOTE_INSN_EH_REGION_BEG)
+(call_insn 13 57 14 2 (set (reg:DI 0 ax)
+        (call (mem:QI (symbol_ref/i:DI ("_ZNSt6vectorIdSaIdEE17_S_check_init_lenEmRKS0_") [flags 0x1]  <function_decl 0x7ff97303c400 _S_check_init_len>) [0 _S_check_init_len S1 A8])
+            (const_int 0 [0]))) "/usr/include/c++/12/bits/stl_vector.h":552:47 909 {*call_value}
+     (nil)
+    (expr_list:DI (use (reg:DI 5 di))
+        (expr_list:DI (use (reg:DI 4 si))
+            (nil))))
+(insn 14 13 15 2 (set (reg:DI 2 cx [orig:83 _2 ] [83])
+        (reg:DI 0 ax)) "/usr/include/c++/12/bits/stl_vector.h":552:47 80 {*movdi_internal}
+     (nil))
+(insn 15 14 16 2 (set (reg:DI 0 ax [88])
+        (mem/f/c:DI (plus:DI (reg/f:DI 6 bp)
+                (const_int -40 [0xffffffffffffffd8])) [63 __a+0 S8 A64])) "/usr/include/c++/12/bits/stl_vector.h":552:47 80 {*movdi_internal}
+     (nil))
+(insn 16 15 17 2 (set (reg:DI 1 dx)
+        (reg:DI 0 ax [88])) "/usr/include/c++/12/bits/stl_vector.h":552:47 80 {*movdi_internal}
+     (nil))
+(insn 17 16 18 2 (set (reg:DI 4 si)
+        (reg:DI 2 cx [orig:83 _2 ] [83])) "/usr/include/c++/12/bits/stl_vector.h":552:47 80 {*movdi_internal}
+     (nil))
+(insn 18 17 19 2 (set (reg:DI 5 di)
+        (reg/f:DI 3 bx [orig:82 _1 ] [82])) "/usr/include/c++/12/bits/stl_vector.h":552:47 80 {*movdi_internal}
+     (nil))
+(call_insn 19 18 58 2 (call (mem:QI (symbol_ref/i:DI ("_ZNSt12_Vector_baseIdSaIdEEC2EmRKS0_") [flags 0x1]  <function_decl 0x7ff973007900 __ct_base >) [0 __ct_base  S1 A8])
+        (const_int 0 [0])) "/usr/include/c++/12/bits/stl_vector.h":552:47 898 {*call}
+     (nil)
+    (expr_list:DI (use (reg:DI 5 di))
+        (expr_list:DI (use (reg:DI 4 si))
+            (expr_list:DI (use (reg:DI 1 dx))
+                (nil)))))
+(note 58 19 20 2 13 NOTE_INSN_EH_REGION_END)
+(insn 20 58 21 2 (set (reg:DI 1 dx [89])
+        (mem/c:DI (plus:DI (reg/f:DI 6 bp)
+                (const_int -32 [0xffffffffffffffe0])) [6 __n+0 S8 A64])) "/usr/include/c++/12/bits/stl_vector.h":553:30 80 {*movdi_internal}
+     (nil))
+(insn 21 20 22 2 (set (reg:DI 0 ax [90])
+        (mem/f/c:DI (plus:DI (reg/f:DI 6 bp)
+                (const_int -24 [0xffffffffffffffe8])) [52 this+0 S8 A64])) "/usr/include/c++/12/bits/stl_vector.h":553:30 80 {*movdi_internal}
+     (nil))
+(insn 22 21 23 2 (set (reg:DI 4 si)
+        (reg:DI 1 dx [89])) "/usr/include/c++/12/bits/stl_vector.h":553:30 80 {*movdi_internal}
+     (nil))
+(insn 23 22 59 2 (set (reg:DI 5 di)
+        (reg:DI 0 ax [90])) "/usr/include/c++/12/bits/stl_vector.h":553:30 80 {*movdi_internal}
+     (nil))
+(note 59 23 24 2 14 NOTE_INSN_EH_REGION_BEG)
+(call_insn 24 59 60 2 (call (mem:QI (symbol_ref/i:DI ("_ZNSt6vectorIdSaIdEE21_M_default_initializeEm") [flags 0x1]  <function_decl 0x7ff973034100 _M_default_initialize>) [0 _M_default_initialize S1 A8])
+        (const_int 0 [0])) "/usr/include/c++/12/bits/stl_vector.h":553:30 898 {*call}
+     (expr_list:REG_EH_REGION (const_int 1 [0x1])
+        (nil))
+    (expr_list:DI (use (reg:DI 5 di))
+        (expr_list:DI (use (reg:DI 4 si))
+            (nil))))
+(note 60 24 42 14 NOTE_INSN_EH_REGION_END)
+(note 42 60 44 3 [bb 3] NOTE_INSN_BASIC_BLOCK)
+(jump_insn 44 42 45 3 (set (pc)
+        (label_ref 43)) "/usr/include/c++/12/bits/stl_vector.h":553:37 892 {jump}
+     (nil)
+ -> 43)
+(barrier 45 44 39)
+(code_label/s 39 45 41 4 150 (nil) [1 uses])
+(note 41 39 40 4 [bb 4] NOTE_INSN_BASIC_BLOCK)
+(insn 40 41 30 4 (set (reg:DI 3 bx [91])
+        (reg:DI 0 ax)) "/usr/include/c++/12/bits/stl_vector.h":553:37 80 {*movdi_internal}
+     (nil))
+(insn 30 40 31 4 (set (reg/f:DI 0 ax [orig:84 _3 ] [84])
+        (mem/f/c:DI (plus:DI (reg/f:DI 6 bp)
+                (const_int -24 [0xffffffffffffffe8])) [52 this+0 S8 A64])) "/usr/include/c++/12/bits/stl_vector.h":553:37 80 {*movdi_internal}
+     (nil))
+(insn 31 30 32 4 (set (reg:DI 5 di)
+        (reg/f:DI 0 ax [orig:84 _3 ] [84])) "/usr/include/c++/12/bits/stl_vector.h":553:37 80 {*movdi_internal}
+     (nil))
+(call_insn 32 31 33 4 (call (mem:QI (symbol_ref/i:DI ("_ZNSt12_Vector_baseIdSaIdEED2Ev") [flags 0x1]  <function_decl 0x7ff97300a100 __dt_base >) [0 __dt_base  S1 A8])
+        (const_int 0 [0])) "/usr/include/c++/12/bits/stl_vector.h":553:37 898 {*call}
+     (expr_list:REG_EH_REGION (const_int 0 [0])
+        (nil))
+    (expr_list:DI (use (reg:DI 5 di))
+        (nil)))
+(insn 33 32 34 4 (set (reg/f:DI 0 ax [orig:85 D.385510 ] [85])
+        (reg:DI 3 bx [91])) 80 {*movdi_internal}
+     (nil))
+(insn 34 33 61 4 (set (reg:DI 5 di)
+        (reg/f:DI 0 ax [orig:85 D.385510 ] [85])) 80 {*movdi_internal}
+     (nil))
+(note 61 34 35 4 15 NOTE_INSN_EH_REGION_BEG)
+(call_insn 35 61 62 4 (call (mem:QI (symbol_ref:DI ("_Unwind_Resume") [flags 0x41]  <function_decl 0x7ff982f0ac00 __builtin_unwind_resume>) [0 __builtin_unwind_resume S1 A8])
+        (const_int 0 [0])) 898 {*call}
+     (expr_list:REG_ARGS_SIZE (const_int 0 [0])
+        (expr_list:REG_NORETURN (const_int 0 [0])
+            (nil)))
+    (expr_list:DI (use (reg:DI 5 di))
+        (nil)))
+(note 62 35 36 15 NOTE_INSN_EH_REGION_END)
+(barrier 36 62 43)
+(code_label 43 36 38 5 151 (nil) [1 uses])
+(note 38 43 52 5 [bb 5] NOTE_INSN_BASIC_BLOCK)
+(note 52 38 53 5 NOTE_INSN_EPILOGUE_BEG)
+(insn 53 52 54 5 (set (reg:DI 3 bx)
+        (mem/c:DI (plus:DI (reg/f:DI 6 bp)
+                (const_int -8 [0xfffffffffffffff8])) [31  S8 A8])) "/usr/include/c++/12/bits/stl_vector.h":553:37 -1
+     (nil))
+(insn/f 54 53 55 5 (parallel [
+            (set (reg/f:DI 7 sp)
+                (plus:DI (reg/f:DI 6 bp)
+                    (const_int 8 [0x8])))
+            (set (reg/f:DI 6 bp)
+                (mem:DI (reg/f:DI 6 bp) [0  S8 A8]))
+            (clobber (mem:BLK (scratch) [0  A8]))
+        ]) "/usr/include/c++/12/bits/stl_vector.h":553:37 -1
+     (expr_list:REG_CFA_DEF_CFA (plus:DI (reg/f:DI 7 sp)
+            (const_int 8 [0x8]))
+        (nil)))
+(jump_insn 55 54 56 5 (simple_return) "/usr/include/c++/12/bits/stl_vector.h":553:37 -1
+     (nil)
+ -> simple_return)
+(barrier 56 55 46)
+(note 46 56 0 NOTE_INSN_DELETED)
+
+;; Function std::_Vector_base<double, std::allocator<double> >::~_Vector_base (_ZNSt12_Vector_baseIdSaIdEED2Ev, funcdef_no=5858, decl_uid=364581, cgraph_uid=2044, symbol_order=2624)
+
+
+
+std::_Vector_base<double, std::allocator<double> >::~_Vector_base
+
+Dataflow summary:
+;;  fully invalidated by EH 	 0 [ax] 1 [dx] 2 [cx] 4 [si] 5 [di] 8 [st] 9 [st(1)] 10 [st(2)] 11 [st(3)] 12 [st(4)] 13 [st(5)] 14 [st(6)] 15 [st(7)] 17 [flags] 18 [fpsr] 20 [xmm0] 21 [xmm1] 22 [xmm2] 23 [xmm3] 24 [xmm4] 25 [xmm5] 26 [xmm6] 27 [xmm7] 28 [mm0] 29 [mm1] 30 [mm2] 31 [mm3] 32 [mm4] 33 [mm5] 34 [mm6] 35 [mm7] 36 [r8] 37 [r9] 38 [r10] 39 [r11] 44 [xmm8] 45 [xmm9] 46 [xmm10] 47 [xmm11] 48 [xmm12] 49 [xmm13] 50 [xmm14] 51 [xmm15] 52 [xmm16] 53 [xmm17] 54 [xmm18] 55 [xmm19] 56 [xmm20] 57 [xmm21] 58 [xmm22] 59 [xmm23] 60 [xmm24] 61 [xmm25] 62 [xmm26] 63 [xmm27] 64 [xmm28] 65 [xmm29] 66 [xmm30] 67 [xmm31] 68 [k0] 69 [k1] 70 [k2] 71 [k3] 72 [k4] 73 [k5] 74 [k6] 75 [k7]
+;;  hardware regs used 	 7 [sp]
+;;  regular block artificial uses 	 6 [bp] 7 [sp]
+;;  eh block artificial uses 	 6 [bp] 7 [sp] 16 [argp] 19 [frame]
+;;  entry block defs 	 0 [ax] 1 [dx] 2 [cx] 4 [si] 5 [di] 6 [bp] 7 [sp] 19 [frame] 20 [xmm0] 21 [xmm1] 22 [xmm2] 23 [xmm3] 24 [xmm4] 25 [xmm5] 26 [xmm6] 27 [xmm7] 36 [r8] 37 [r9]
+;;  exit block uses 	 6 [bp] 7 [sp] 19 [frame]
+;;  regs ever live 	 0 [ax] 1 [dx] 2 [cx] 4 [si] 5 [di] 6 [bp] 7 [sp] 17 [flags]
+;;  ref usage 	r0={11d,8u} r1={6d,3u,1e} r2={4d,1u} r4={4d,1u} r5={5d,3u} r6={3d,11u} r7={4d,9u} r8={2d} r9={2d} r10={2d} r11={2d} r12={2d} r13={2d} r14={2d} r15={2d} r17={5d} r18={2d} r19={1d,1u} r20={3d} r21={3d} r22={3d} r23={3d} r24={3d} r25={3d} r26={3d} r27={3d} r28={2d} r29={2d} r30={2d} r31={2d} r32={2d} r33={2d} r34={2d} r35={2d} r36={3d} r37={3d} r38={2d} r39={2d} r44={2d} r45={2d} r46={2d} r47={2d} r48={2d} r49={2d} r50={2d} r51={2d} r52={2d} r53={2d} r54={2d} r55={2d} r56={2d} r57={2d} r58={2d} r59={2d} r60={2d} r61={2d} r62={2d} r63={2d} r64={2d} r65={2d} r66={2d} r67={2d} r68={2d} r69={2d} r70={2d} r71={2d} r72={2d} r73={2d} r74={2d} r75={2d} 
+;;    total ref usage 213{175d,37u,1e} in 24{22 regular + 2 call} insns.
+(note 1 0 4 NOTE_INSN_DELETED)
+(note 4 1 31 2 [bb 2] NOTE_INSN_BASIC_BLOCK)
+(insn/f 31 4 32 2 (set (mem:DI (pre_dec:DI (reg/f:DI 7 sp)) [0  S8 A8])
+        (reg/f:DI 6 bp)) "/usr/include/c++/12/bits/stl_vector.h":364:7 -1
+     (nil))
+(insn/f 32 31 33 2 (set (reg/f:DI 6 bp)
+        (reg/f:DI 7 sp)) "/usr/include/c++/12/bits/stl_vector.h":364:7 -1
+     (nil))
+(insn/f 33 32 34 2 (parallel [
+            (set (reg/f:DI 7 sp)
+                (plus:DI (reg/f:DI 7 sp)
+                    (const_int -16 [0xfffffffffffffff0])))
+            (clobber (reg:CC 17 flags))
+            (clobber (mem:BLK (scratch) [0  A8]))
+        ]) "/usr/include/c++/12/bits/stl_vector.h":364:7 -1
+     (nil))
+(note 34 33 2 2 NOTE_INSN_PROLOGUE_END)
+(insn 2 34 3 2 (set (mem/f/c:DI (plus:DI (reg/f:DI 6 bp)
+                (const_int -8 [0xfffffffffffffff8])) [54 this+0 S8 A64])
+        (reg:DI 5 di [ this ])) "/usr/include/c++/12/bits/stl_vector.h":364:7 80 {*movdi_internal}
+     (nil))
+(note 3 2 6 2 NOTE_INSN_FUNCTION_BEG)
+(insn 6 3 7 2 (set (reg/f:DI 0 ax [89])
+        (mem/f/c:DI (plus:DI (reg/f:DI 6 bp)
+                (const_int -8 [0xfffffffffffffff8])) [54 this+0 S8 A64])) "/usr/include/c++/12/bits/stl_vector.h":367:17 80 {*movdi_internal}
+     (nil))
+(insn 7 6 8 2 (set (reg/f:DI 1 dx [orig:82 _1 ] [82])
+        (mem/f:DI (plus:DI (reg/f:DI 0 ax [89])
+                (const_int 16 [0x10])) [28 this_9(D)->_M_impl.D.364471._M_end_of_storage+0 S8 A64])) "/usr/include/c++/12/bits/stl_vector.h":367:17 80 {*movdi_internal}
+     (nil))
+(insn 8 7 9 2 (set (reg/f:DI 0 ax [90])
+        (mem/f/c:DI (plus:DI (reg/f:DI 6 bp)
+                (const_int -8 [0xfffffffffffffff8])) [54 this+0 S8 A64])) "/usr/include/c++/12/bits/stl_vector.h":367:45 80 {*movdi_internal}
+     (nil))
+(insn 9 8 10 2 (set (reg/f:DI 0 ax [orig:83 _2 ] [83])
+        (mem/f:DI (reg/f:DI 0 ax [90]) [28 this_9(D)->_M_impl.D.364471._M_start+0 S8 A64])) "/usr/include/c++/12/bits/stl_vector.h":367:45 80 {*movdi_internal}
+     (nil))
+(insn 10 9 29 2 (parallel [
+            (set (reg:DI 1 dx [orig:84 _3 ] [84])
+                (minus:DI (reg/f:DI 1 dx [orig:82 _1 ] [82])
+                    (reg/f:DI 0 ax [orig:83 _2 ] [83])))
+            (clobber (reg:CC 17 flags))
+        ]) "/usr/include/c++/12/bits/stl_vector.h":367:35 303 {*subdi_1}
+     (nil))
+(insn 29 10 11 2 (set (reg:DI 0 ax [orig:84 _3 ] [84])
+        (reg:DI 1 dx [orig:84 _3 ] [84])) "/usr/include/c++/12/bits/stl_vector.h":367:35 80 {*movdi_internal}
+     (nil))
+(insn 11 29 13 2 (parallel [
+            (set (reg:DI 0 ax [orig:84 _3 ] [84])
+                (ashiftrt:DI (reg:DI 0 ax [orig:84 _3 ] [84])
+                    (const_int 3 [0x3])))
+            (clobber (reg:CC 17 flags))
+        ]) "/usr/include/c++/12/bits/stl_vector.h":367:35 766 {*ashrdi3_1}
+     (expr_list:REG_EQUAL (div:DI (reg:DI 1 dx [orig:84 _3 ] [84])
+            (const_int 8 [0x8]))
+        (nil)))
+(insn 13 11 14 2 (set (reg:DI 1 dx [orig:86 _5 ] [86])
+        (reg:DI 0 ax [orig:85 _4 ] [85])) "/usr/include/c++/12/bits/stl_vector.h":366:15 80 {*movdi_internal}
+     (nil))
+(insn 14 13 15 2 (set (reg/f:DI 0 ax [92])
+        (mem/f/c:DI (plus:DI (reg/f:DI 6 bp)
+                (const_int -8 [0xfffffffffffffff8])) [54 this+0 S8 A64])) "/usr/include/c++/12/bits/stl_vector.h":366:15 80 {*movdi_internal}
+     (nil))
+(insn 15 14 16 2 (set (reg/f:DI 2 cx [orig:87 _6 ] [87])
+        (mem/f:DI (reg/f:DI 0 ax [92]) [28 this_9(D)->_M_impl.D.364471._M_start+0 S8 A64])) "/usr/include/c++/12/bits/stl_vector.h":366:15 80 {*movdi_internal}
+     (nil))
+(insn 16 15 18 2 (set (reg:DI 0 ax [93])
+        (mem/f/c:DI (plus:DI (reg/f:DI 6 bp)
+                (const_int -8 [0xfffffffffffffff8])) [54 this+0 S8 A64])) "/usr/include/c++/12/bits/stl_vector.h":366:15 80 {*movdi_internal}
+     (nil))
+(insn 18 16 19 2 (set (reg:DI 4 si)
+        (reg/f:DI 2 cx [orig:87 _6 ] [87])) "/usr/include/c++/12/bits/stl_vector.h":366:15 80 {*movdi_internal}
+     (nil))
+(insn 19 18 20 2 (set (reg:DI 5 di)
+        (reg:DI 0 ax [93])) "/usr/include/c++/12/bits/stl_vector.h":366:15 80 {*movdi_internal}
+     (nil))
+(call_insn 20 19 21 2 (call (mem:QI (symbol_ref/i:DI ("_ZNSt12_Vector_baseIdSaIdEE13_M_deallocateEPdm") [flags 0x1]  <function_decl 0x7ff973003000 _M_deallocate>) [0 _M_deallocate S1 A8])
+        (const_int 0 [0])) "/usr/include/c++/12/bits/stl_vector.h":366:15 898 {*call}
+     (expr_list:REG_EH_REGION (const_int -1 [0xffffffffffffffff])
+        (nil))
+    (expr_list:DI (use (reg:DI 5 di))
+        (expr_list:DI (use (reg:DI 4 si))
+            (expr_list:DI (use (reg:DI 1 dx))
+                (nil)))))
+(insn 21 20 22 2 (set (reg/f:DI 0 ax [orig:88 _7 ] [88])
+        (mem/f/c:DI (plus:DI (reg/f:DI 6 bp)
+                (const_int -8 [0xfffffffffffffff8])) [54 this+0 S8 A64])) "/usr/include/c++/12/bits/stl_vector.h":368:7 80 {*movdi_internal}
+     (nil))
+(insn 22 21 23 2 (set (reg:DI 5 di)
+        (reg/f:DI 0 ax [orig:88 _7 ] [88])) "/usr/include/c++/12/bits/stl_vector.h":368:7 80 {*movdi_internal}
+     (nil))
+(call_insn 23 22 27 2 (call (mem:QI (symbol_ref/i:DI ("_ZNSt12_Vector_baseIdSaIdEE12_Vector_implD1Ev") [flags 0x1]  <function_decl 0x7ff973003c00 __dt_comp >) [0 __dt_comp  S1 A8])
+        (const_int 0 [0])) "/usr/include/c++/12/bits/stl_vector.h":368:7 898 {*call}
+     (expr_list:REG_EH_REGION (const_int 0 [0])
+        (nil))
+    (expr_list:DI (use (reg:DI 5 di))
+        (nil)))
+(insn 27 23 35 2 (const_int 0 [0]) "/usr/include/c++/12/bits/stl_vector.h":368:7 928 {nop}
+     (nil))
+(note 35 27 36 2 NOTE_INSN_EPILOGUE_BEG)
+(insn/f 36 35 37 2 (parallel [
+            (set (reg/f:DI 7 sp)
+                (plus:DI (reg/f:DI 6 bp)
+                    (const_int 8 [0x8])))
+            (set (reg/f:DI 6 bp)
+                (mem:DI (reg/f:DI 6 bp) [0  S8 A8]))
+            (clobber (mem:BLK (scratch) [0  A8]))
+        ]) "/usr/include/c++/12/bits/stl_vector.h":368:7 -1
+     (expr_list:REG_CFA_DEF_CFA (plus:DI (reg/f:DI 7 sp)
+            (const_int 8 [0x8]))
+        (nil)))
+(jump_insn 37 36 38 2 (simple_return) "/usr/include/c++/12/bits/stl_vector.h":368:7 -1
+     (nil)
+ -> simple_return)
+(barrier 38 37 28)
+(note 28 38 0 NOTE_INSN_DELETED)
+
+;; Function std::vector<std::complex<double>, std::allocator<std::complex<double> > >::vector (_ZNSt6vectorISt7complexIdESaIS1_EEC2EmRKS2_, funcdef_no=5879, decl_uid=302863, cgraph_uid=2065, symbol_order=2645)
+
+
+
+std::vector<std::complex<double>, std::allocator<std::complex<double> > >::vector
+
+Dataflow summary:
+;;  fully invalidated by EH 	 0 [ax] 1 [dx] 2 [cx] 4 [si] 5 [di] 8 [st] 9 [st(1)] 10 [st(2)] 11 [st(3)] 12 [st(4)] 13 [st(5)] 14 [st(6)] 15 [st(7)] 17 [flags] 18 [fpsr] 20 [xmm0] 21 [xmm1] 22 [xmm2] 23 [xmm3] 24 [xmm4] 25 [xmm5] 26 [xmm6] 27 [xmm7] 28 [mm0] 29 [mm1] 30 [mm2] 31 [mm3] 32 [mm4] 33 [mm5] 34 [mm6] 35 [mm7] 36 [r8] 37 [r9] 38 [r10] 39 [r11] 44 [xmm8] 45 [xmm9] 46 [xmm10] 47 [xmm11] 48 [xmm12] 49 [xmm13] 50 [xmm14] 51 [xmm15] 52 [xmm16] 53 [xmm17] 54 [xmm18] 55 [xmm19] 56 [xmm20] 57 [xmm21] 58 [xmm22] 59 [xmm23] 60 [xmm24] 61 [xmm25] 62 [xmm26] 63 [xmm27] 64 [xmm28] 65 [xmm29] 66 [xmm30] 67 [xmm31] 68 [k0] 69 [k1] 70 [k2] 71 [k3] 72 [k4] 73 [k5] 74 [k6] 75 [k7]
+;;  hardware regs used 	 7 [sp]
+;;  regular block artificial uses 	 6 [bp] 7 [sp]
+;;  eh block artificial uses 	 6 [bp] 7 [sp] 16 [argp] 19 [frame]
+;;  entry block defs 	 0 [ax] 1 [dx] 2 [cx] 3 [bx] 4 [si] 5 [di] 6 [bp] 7 [sp] 19 [frame] 20 [xmm0] 21 [xmm1] 22 [xmm2] 23 [xmm3] 24 [xmm4] 25 [xmm5] 26 [xmm6] 27 [xmm7] 36 [r8] 37 [r9]
+;;  exit block uses 	 3 [bx] 6 [bp] 7 [sp] 19 [frame]
+;;  regs ever live 	 0 [ax] 1 [dx] 2 [cx] 3 [bx] 4 [si] 5 [di] 6 [bp] 7 [sp]
+;;  ref usage 	r0={12d,7u} r1={10d,4u} r2={7d,1u} r3={4d,4u} r4={9d,4u} r5={11d,6u} r6={3d,19u} r7={5d,16u} r8={5d} r9={5d} r10={5d} r11={5d} r12={5d} r13={5d} r14={5d} r15={5d} r16={1u} r17={6d} r18={5d} r19={1d,2u} r20={6d} r21={6d} r22={6d} r23={6d} r24={6d} r25={6d} r26={6d} r27={6d} r28={5d} r29={5d} r30={5d} r31={5d} r32={5d} r33={5d} r34={5d} r35={5d} r36={6d} r37={6d} r38={5d} r39={5d} r44={5d} r45={5d} r46={5d} r47={5d} r48={5d} r49={5d} r50={5d} r51={5d} r52={5d} r53={5d} r54={5d} r55={5d} r56={5d} r57={5d} r58={5d} r59={5d} r60={5d} r61={5d} r62={5d} r63={5d} r64={5d} r65={5d} r66={5d} r67={5d} r68={5d} r69={5d} r70={5d} r71={5d} r72={5d} r73={5d} r74={5d} r75={5d} 
+;;    total ref usage 447{383d,64u,0e} in 35{30 regular + 5 call} insns.
+(note 1 0 6 NOTE_INSN_DELETED)
+(note 6 1 47 2 [bb 2] NOTE_INSN_BASIC_BLOCK)
+(insn/f 47 6 48 2 (set (mem:DI (pre_dec:DI (reg/f:DI 7 sp)) [0  S8 A8])
+        (reg/f:DI 6 bp)) "/usr/include/c++/12/bits/stl_vector.h":551:7 -1
+     (nil))
+(insn/f 48 47 49 2 (set (reg/f:DI 6 bp)
+        (reg/f:DI 7 sp)) "/usr/include/c++/12/bits/stl_vector.h":551:7 -1
+     (nil))
+(insn/f 49 48 50 2 (set (mem:DI (pre_dec:DI (reg/f:DI 7 sp)) [0  S8 A8])
+        (reg:DI 3 bx)) "/usr/include/c++/12/bits/stl_vector.h":551:7 -1
+     (nil))
+(insn/f 50 49 51 2 (parallel [
+            (set (reg/f:DI 7 sp)
+                (plus:DI (reg/f:DI 7 sp)
+                    (const_int -40 [0xffffffffffffffd8])))
+            (clobber (reg:CC 17 flags))
+            (clobber (mem:BLK (scratch) [0  A8]))
+        ]) "/usr/include/c++/12/bits/stl_vector.h":551:7 -1
+     (nil))
+(note 51 50 2 2 NOTE_INSN_PROLOGUE_END)
+(insn 2 51 3 2 (set (mem/f/c:DI (plus:DI (reg/f:DI 6 bp)
+                (const_int -24 [0xffffffffffffffe8])) [50 this+0 S8 A64])
+        (reg:DI 5 di [ this ])) "/usr/include/c++/12/bits/stl_vector.h":551:7 80 {*movdi_internal}
+     (nil))
+(insn 3 2 4 2 (set (mem/c:DI (plus:DI (reg/f:DI 6 bp)
+                (const_int -32 [0xffffffffffffffe0])) [6 __n+0 S8 A64])
+        (reg:DI 4 si [ __n ])) "/usr/include/c++/12/bits/stl_vector.h":551:7 80 {*movdi_internal}
+     (nil))
+(insn 4 3 5 2 (set (mem/f/c:DI (plus:DI (reg/f:DI 6 bp)
+                (const_int -40 [0xffffffffffffffd8])) [65 __a+0 S8 A64])
+        (reg:DI 1 dx [ __a ])) "/usr/include/c++/12/bits/stl_vector.h":551:7 80 {*movdi_internal}
+     (nil))
+(note 5 4 8 2 NOTE_INSN_FUNCTION_BEG)
+(insn 8 5 9 2 (set (reg/f:DI 3 bx [orig:82 _1 ] [82])
+        (mem/f/c:DI (plus:DI (reg/f:DI 6 bp)
+                (const_int -24 [0xffffffffffffffe8])) [50 this+0 S8 A64])) "/usr/include/c++/12/bits/stl_vector.h":552:47 80 {*movdi_internal}
+     (nil))
+(insn 9 8 10 2 (set (reg:DI 1 dx [86])
+        (mem/f/c:DI (plus:DI (reg/f:DI 6 bp)
+                (const_int -40 [0xffffffffffffffd8])) [65 __a+0 S8 A64])) "/usr/include/c++/12/bits/stl_vector.h":552:47 80 {*movdi_internal}
+     (nil))
+(insn 10 9 11 2 (set (reg:DI 0 ax [87])
+        (mem/c:DI (plus:DI (reg/f:DI 6 bp)
+                (const_int -32 [0xffffffffffffffe0])) [6 __n+0 S8 A64])) "/usr/include/c++/12/bits/stl_vector.h":552:47 80 {*movdi_internal}
+     (nil))
+(insn 11 10 12 2 (set (reg:DI 4 si)
+        (reg:DI 1 dx [86])) "/usr/include/c++/12/bits/stl_vector.h":552:47 80 {*movdi_internal}
+     (nil))
+(insn 12 11 57 2 (set (reg:DI 5 di)
+        (reg:DI 0 ax [87])) "/usr/include/c++/12/bits/stl_vector.h":552:47 80 {*movdi_internal}
+     (nil))
+(note 57 12 13 2 16 NOTE_INSN_EH_REGION_BEG)
+(call_insn 13 57 14 2 (set (reg:DI 0 ax)
+        (call (mem:QI (symbol_ref/i:DI ("_ZNSt6vectorISt7complexIdESaIS1_EE17_S_check_init_lenEmRKS2_") [flags 0x1]  <function_decl 0x7ff976fd5000 _S_check_init_len>) [0 _S_check_init_len S1 A8])
+            (const_int 0 [0]))) "/usr/include/c++/12/bits/stl_vector.h":552:47 909 {*call_value}
+     (nil)
+    (expr_list:DI (use (reg:DI 5 di))
+        (expr_list:DI (use (reg:DI 4 si))
+            (nil))))
+(insn 14 13 15 2 (set (reg:DI 2 cx [orig:83 _2 ] [83])
+        (reg:DI 0 ax)) "/usr/include/c++/12/bits/stl_vector.h":552:47 80 {*movdi_internal}
+     (nil))
+(insn 15 14 16 2 (set (reg:DI 0 ax [88])
+        (mem/f/c:DI (plus:DI (reg/f:DI 6 bp)
+                (const_int -40 [0xffffffffffffffd8])) [65 __a+0 S8 A64])) "/usr/include/c++/12/bits/stl_vector.h":552:47 80 {*movdi_internal}
+     (nil))
+(insn 16 15 17 2 (set (reg:DI 1 dx)
+        (reg:DI 0 ax [88])) "/usr/include/c++/12/bits/stl_vector.h":552:47 80 {*movdi_internal}
+     (nil))
+(insn 17 16 18 2 (set (reg:DI 4 si)
+        (reg:DI 2 cx [orig:83 _2 ] [83])) "/usr/include/c++/12/bits/stl_vector.h":552:47 80 {*movdi_internal}
+     (nil))
+(insn 18 17 19 2 (set (reg:DI 5 di)
+        (reg/f:DI 3 bx [orig:82 _1 ] [82])) "/usr/include/c++/12/bits/stl_vector.h":552:47 80 {*movdi_internal}
+     (nil))
+(call_insn 19 18 58 2 (call (mem:QI (symbol_ref/i:DI ("_ZNSt12_Vector_baseISt7complexIdESaIS1_EEC2EmRKS2_") [flags 0x1]  <function_decl 0x7ff976f9b500 __ct_base >) [0 __ct_base  S1 A8])
+        (const_int 0 [0])) "/usr/include/c++/12/bits/stl_vector.h":552:47 898 {*call}
+     (nil)
+    (expr_list:DI (use (reg:DI 5 di))
+        (expr_list:DI (use (reg:DI 4 si))
+            (expr_list:DI (use (reg:DI 1 dx))
+                (nil)))))
+(note 58 19 20 2 16 NOTE_INSN_EH_REGION_END)
+(insn 20 58 21 2 (set (reg:DI 1 dx [89])
+        (mem/c:DI (plus:DI (reg/f:DI 6 bp)
+                (const_int -32 [0xffffffffffffffe0])) [6 __n+0 S8 A64])) "/usr/include/c++/12/bits/stl_vector.h":553:30 80 {*movdi_internal}
+     (nil))
+(insn 21 20 22 2 (set (reg:DI 0 ax [90])
+        (mem/f/c:DI (plus:DI (reg/f:DI 6 bp)
+                (const_int -24 [0xffffffffffffffe8])) [50 this+0 S8 A64])) "/usr/include/c++/12/bits/stl_vector.h":553:30 80 {*movdi_internal}
+     (nil))
+(insn 22 21 23 2 (set (reg:DI 4 si)
+        (reg:DI 1 dx [89])) "/usr/include/c++/12/bits/stl_vector.h":553:30 80 {*movdi_internal}
+     (nil))
+(insn 23 22 59 2 (set (reg:DI 5 di)
+        (reg:DI 0 ax [90])) "/usr/include/c++/12/bits/stl_vector.h":553:30 80 {*movdi_internal}
+     (nil))
+(note 59 23 24 2 17 NOTE_INSN_EH_REGION_BEG)
+(call_insn 24 59 60 2 (call (mem:QI (symbol_ref/i:DI ("_ZNSt6vectorISt7complexIdESaIS1_EE21_M_default_initializeEm") [flags 0x1]  <function_decl 0x7ff976fc4d00 _M_default_initialize>) [0 _M_default_initialize S1 A8])
+        (const_int 0 [0])) "/usr/include/c++/12/bits/stl_vector.h":553:30 898 {*call}
+     (expr_list:REG_EH_REGION (const_int 1 [0x1])
+        (nil))
+    (expr_list:DI (use (reg:DI 5 di))
+        (expr_list:DI (use (reg:DI 4 si))
+            (nil))))
+(note 60 24 42 17 NOTE_INSN_EH_REGION_END)
+(note 42 60 44 3 [bb 3] NOTE_INSN_BASIC_BLOCK)
+(jump_insn 44 42 45 3 (set (pc)
+        (label_ref 43)) "/usr/include/c++/12/bits/stl_vector.h":553:37 892 {jump}
+     (nil)
+ -> 43)
+(barrier 45 44 39)
+(code_label/s 39 45 41 4 183 (nil) [1 uses])
+(note 41 39 40 4 [bb 4] NOTE_INSN_BASIC_BLOCK)
+(insn 40 41 30 4 (set (reg:DI 3 bx [91])
+        (reg:DI 0 ax)) "/usr/include/c++/12/bits/stl_vector.h":553:37 80 {*movdi_internal}
+     (nil))
+(insn 30 40 31 4 (set (reg/f:DI 0 ax [orig:84 _3 ] [84])
+        (mem/f/c:DI (plus:DI (reg/f:DI 6 bp)
+                (const_int -24 [0xffffffffffffffe8])) [50 this+0 S8 A64])) "/usr/include/c++/12/bits/stl_vector.h":553:37 80 {*movdi_internal}
+     (nil))
+(insn 31 30 32 4 (set (reg:DI 5 di)
+        (reg/f:DI 0 ax [orig:84 _3 ] [84])) "/usr/include/c++/12/bits/stl_vector.h":553:37 80 {*movdi_internal}
+     (nil))
+(call_insn 32 31 33 4 (call (mem:QI (symbol_ref/i:DI ("_ZNSt12_Vector_baseISt7complexIdESaIS1_EED2Ev") [flags 0x1]  <function_decl 0x7ff976f9bd00 __dt_base >) [0 __dt_base  S1 A8])
+        (const_int 0 [0])) "/usr/include/c++/12/bits/stl_vector.h":553:37 898 {*call}
+     (expr_list:REG_EH_REGION (const_int 0 [0])
+        (nil))
+    (expr_list:DI (use (reg:DI 5 di))
+        (nil)))
+(insn 33 32 34 4 (set (reg/f:DI 0 ax [orig:85 D.385511 ] [85])
+        (reg:DI 3 bx [91])) 80 {*movdi_internal}
+     (nil))
+(insn 34 33 61 4 (set (reg:DI 5 di)
+        (reg/f:DI 0 ax [orig:85 D.385511 ] [85])) 80 {*movdi_internal}
+     (nil))
+(note 61 34 35 4 18 NOTE_INSN_EH_REGION_BEG)
+(call_insn 35 61 62 4 (call (mem:QI (symbol_ref:DI ("_Unwind_Resume") [flags 0x41]  <function_decl 0x7ff982f0ac00 __builtin_unwind_resume>) [0 __builtin_unwind_resume S1 A8])
+        (const_int 0 [0])) 898 {*call}
+     (expr_list:REG_ARGS_SIZE (const_int 0 [0])
+        (expr_list:REG_NORETURN (const_int 0 [0])
+            (nil)))
+    (expr_list:DI (use (reg:DI 5 di))
+        (nil)))
+(note 62 35 36 18 NOTE_INSN_EH_REGION_END)
+(barrier 36 62 43)
+(code_label 43 36 38 5 184 (nil) [1 uses])
+(note 38 43 52 5 [bb 5] NOTE_INSN_BASIC_BLOCK)
+(note 52 38 53 5 NOTE_INSN_EPILOGUE_BEG)
+(insn 53 52 54 5 (set (reg:DI 3 bx)
+        (mem/c:DI (plus:DI (reg/f:DI 6 bp)
+                (const_int -8 [0xfffffffffffffff8])) [31  S8 A8])) "/usr/include/c++/12/bits/stl_vector.h":553:37 -1
+     (nil))
+(insn/f 54 53 55 5 (parallel [
+            (set (reg/f:DI 7 sp)
+                (plus:DI (reg/f:DI 6 bp)
+                    (const_int 8 [0x8])))
+            (set (reg/f:DI 6 bp)
+                (mem:DI (reg/f:DI 6 bp) [0  S8 A8]))
+            (clobber (mem:BLK (scratch) [0  A8]))
+        ]) "/usr/include/c++/12/bits/stl_vector.h":553:37 -1
+     (expr_list:REG_CFA_DEF_CFA (plus:DI (reg/f:DI 7 sp)
+            (const_int 8 [0x8]))
+        (nil)))
+(jump_insn 55 54 56 5 (simple_return) "/usr/include/c++/12/bits/stl_vector.h":553:37 -1
+     (nil)
+ -> simple_return)
+(barrier 56 55 46)
+(note 46 56 0 NOTE_INSN_DELETED)
+
+;; Function std::_Vector_base<std::complex<double>, std::allocator<std::complex<double> > >::_Vector_base (_ZNSt12_Vector_baseISt7complexIdESaIS1_EEC2EmRKS2_, funcdef_no=6021, decl_uid=302277, cgraph_uid=2207, symbol_order=2787)
+
+
+
+std::_Vector_base<std::complex<double>, std::allocator<std::complex<double> > >::_Vector_base
+
+Dataflow summary:
+;;  fully invalidated by EH 	 0 [ax] 1 [dx] 2 [cx] 4 [si] 5 [di] 8 [st] 9 [st(1)] 10 [st(2)] 11 [st(3)] 12 [st(4)] 13 [st(5)] 14 [st(6)] 15 [st(7)] 17 [flags] 18 [fpsr] 20 [xmm0] 21 [xmm1] 22 [xmm2] 23 [xmm3] 24 [xmm4] 25 [xmm5] 26 [xmm6] 27 [xmm7] 28 [mm0] 29 [mm1] 30 [mm2] 31 [mm3] 32 [mm4] 33 [mm5] 34 [mm6] 35 [mm7] 36 [r8] 37 [r9] 38 [r10] 39 [r11] 44 [xmm8] 45 [xmm9] 46 [xmm10] 47 [xmm11] 48 [xmm12] 49 [xmm13] 50 [xmm14] 51 [xmm15] 52 [xmm16] 53 [xmm17] 54 [xmm18] 55 [xmm19] 56 [xmm20] 57 [xmm21] 58 [xmm22] 59 [xmm23] 60 [xmm24] 61 [xmm25] 62 [xmm26] 63 [xmm27] 64 [xmm28] 65 [xmm29] 66 [xmm30] 67 [xmm31] 68 [k0] 69 [k1] 70 [k2] 71 [k3] 72 [k4] 73 [k5] 74 [k6] 75 [k7]
+;;  hardware regs used 	 7 [sp]
+;;  regular block artificial uses 	 6 [bp] 7 [sp]
+;;  eh block artificial uses 	 6 [bp] 7 [sp] 16 [argp] 19 [frame]
+;;  entry block defs 	 0 [ax] 1 [dx] 2 [cx] 3 [bx] 4 [si] 5 [di] 6 [bp] 7 [sp] 19 [frame] 20 [xmm0] 21 [xmm1] 22 [xmm2] 23 [xmm3] 24 [xmm4] 25 [xmm5] 26 [xmm6] 27 [xmm7] 36 [r8] 37 [r9]
+;;  exit block uses 	 3 [bx] 6 [bp] 7 [sp] 19 [frame]
+;;  regs ever live 	 0 [ax] 1 [dx] 3 [bx] 4 [si] 5 [di] 6 [bp] 7 [sp]
+;;  ref usage 	r0={10d,5u} r1={8d,3u} r2={5d} r3={3d,3u} r4={7d,3u} r5={9d,5u} r6={3d,17u} r7={5d,15u} r8={4d} r9={4d} r10={4d} r11={4d} r12={4d} r13={4d} r14={4d} r15={4d} r16={1u} r17={5d} r18={4d} r19={1d,2u} r20={5d} r21={5d} r22={5d} r23={5d} r24={5d} r25={5d} r26={5d} r27={5d} r28={4d} r29={4d} r30={4d} r31={4d} r32={4d} r33={4d} r34={4d} r35={4d} r36={5d} r37={5d} r38={4d} r39={4d} r44={4d} r45={4d} r46={4d} r47={4d} r48={4d} r49={4d} r50={4d} r51={4d} r52={4d} r53={4d} r54={4d} r55={4d} r56={4d} r57={4d} r58={4d} r59={4d} r60={4d} r61={4d} r62={4d} r63={4d} r64={4d} r65={4d} r66={4d} r67={4d} r68={4d} r69={4d} r70={4d} r71={4d} r72={4d} r73={4d} r74={4d} r75={4d} 
+;;    total ref usage 364{310d,54u,0e} in 28{24 regular + 4 call} insns.
+(note 1 0 6 NOTE_INSN_DELETED)
+(note 6 1 40 2 [bb 2] NOTE_INSN_BASIC_BLOCK)
+(insn/f 40 6 41 2 (set (mem:DI (pre_dec:DI (reg/f:DI 7 sp)) [0  S8 A8])
+        (reg/f:DI 6 bp)) "/usr/include/c++/12/bits/stl_vector.h":330:7 -1
+     (nil))
+(insn/f 41 40 42 2 (set (reg/f:DI 6 bp)
+        (reg/f:DI 7 sp)) "/usr/include/c++/12/bits/stl_vector.h":330:7 -1
+     (nil))
+(insn/f 42 41 43 2 (set (mem:DI (pre_dec:DI (reg/f:DI 7 sp)) [0  S8 A8])
+        (reg:DI 3 bx)) "/usr/include/c++/12/bits/stl_vector.h":330:7 -1
+     (nil))
+(insn/f 43 42 44 2 (parallel [
+            (set (reg/f:DI 7 sp)
+                (plus:DI (reg/f:DI 7 sp)
+                    (const_int -40 [0xffffffffffffffd8])))
+            (clobber (reg:CC 17 flags))
+            (clobber (mem:BLK (scratch) [0  A8]))
+        ]) "/usr/include/c++/12/bits/stl_vector.h":330:7 -1
+     (nil))
+(note 44 43 2 2 NOTE_INSN_PROLOGUE_END)
+(insn 2 44 3 2 (set (mem/f/c:DI (plus:DI (reg/f:DI 6 bp)
+                (const_int -24 [0xffffffffffffffe8])) [60 this+0 S8 A64])
+        (reg:DI 5 di [ this ])) "/usr/include/c++/12/bits/stl_vector.h":330:7 80 {*movdi_internal}
+     (nil))
+(insn 3 2 4 2 (set (mem/c:DI (plus:DI (reg/f:DI 6 bp)
+                (const_int -32 [0xffffffffffffffe0])) [6 __n+0 S8 A64])
+        (reg:DI 4 si [ __n ])) "/usr/include/c++/12/bits/stl_vector.h":330:7 80 {*movdi_internal}
+     (nil))
+(insn 4 3 5 2 (set (mem/f/c:DI (plus:DI (reg/f:DI 6 bp)
+                (const_int -40 [0xffffffffffffffd8])) [65 __a+0 S8 A64])
+        (reg:DI 1 dx [ __a ])) "/usr/include/c++/12/bits/stl_vector.h":330:7 80 {*movdi_internal}
+     (nil))
+(note 5 4 8 2 NOTE_INSN_FUNCTION_BEG)
+(insn 8 5 9 2 (set (reg/f:DI 0 ax [orig:82 _1 ] [82])
+        (mem/f/c:DI (plus:DI (reg/f:DI 6 bp)
+                (const_int -24 [0xffffffffffffffe8])) [60 this+0 S8 A64])) "/usr/include/c++/12/bits/stl_vector.h":331:9 80 {*movdi_internal}
+     (nil))
+(insn 9 8 10 2 (set (reg:DI 1 dx [85])
+        (mem/f/c:DI (plus:DI (reg/f:DI 6 bp)
+                (const_int -40 [0xffffffffffffffd8])) [65 __a+0 S8 A64])) "/usr/include/c++/12/bits/stl_vector.h":331:9 80 {*movdi_internal}
+     (nil))
+(insn 10 9 11 2 (set (reg:DI 4 si)
+        (reg:DI 1 dx [85])) "/usr/include/c++/12/bits/stl_vector.h":331:9 80 {*movdi_internal}
+     (nil))
+(insn 11 10 12 2 (set (reg:DI 5 di)
+        (reg/f:DI 0 ax [orig:82 _1 ] [82])) "/usr/include/c++/12/bits/stl_vector.h":331:9 80 {*movdi_internal}
+     (nil))
+(call_insn 12 11 13 2 (call (mem:QI (symbol_ref/i:DI ("_ZNSt12_Vector_baseISt7complexIdESaIS1_EE12_Vector_implC1ERKS2_") [flags 0x1]  <function_decl 0x7ff976f91700 __ct_comp >) [0 __ct_comp  S1 A8])
+        (const_int 0 [0])) "/usr/include/c++/12/bits/stl_vector.h":331:9 898 {*call}
+     (expr_list:REG_EH_REGION (const_int 0 [0])
+        (nil))
+    (expr_list:DI (use (reg:DI 5 di))
+        (expr_list:DI (use (reg:DI 4 si))
+            (nil))))
+(insn 13 12 14 2 (set (reg:DI 1 dx [86])
+        (mem/c:DI (plus:DI (reg/f:DI 6 bp)
+                (const_int -32 [0xffffffffffffffe0])) [6 __n+0 S8 A64])) "/usr/include/c++/12/bits/stl_vector.h":332:26 80 {*movdi_internal}
+     (nil))
+(insn 14 13 15 2 (set (reg:DI 0 ax [87])
+        (mem/f/c:DI (plus:DI (reg/f:DI 6 bp)
+                (const_int -24 [0xffffffffffffffe8])) [60 this+0 S8 A64])) "/usr/include/c++/12/bits/stl_vector.h":332:26 80 {*movdi_internal}
+     (nil))
+(insn 15 14 16 2 (set (reg:DI 4 si)
+        (reg:DI 1 dx [86])) "/usr/include/c++/12/bits/stl_vector.h":332:26 80 {*movdi_internal}
+     (nil))
+(insn 16 15 50 2 (set (reg:DI 5 di)
+        (reg:DI 0 ax [87])) "/usr/include/c++/12/bits/stl_vector.h":332:26 80 {*movdi_internal}
+     (nil))
+(note 50 16 17 2 19 NOTE_INSN_EH_REGION_BEG)
+(call_insn 17 50 51 2 (call (mem:QI (symbol_ref/i:DI ("_ZNSt12_Vector_baseISt7complexIdESaIS1_EE17_M_create_storageEm") [flags 0x1]  <function_decl 0x7ff976f91d00 _M_create_storage>) [0 _M_create_storage S1 A8])
+        (const_int 0 [0])) "/usr/include/c++/12/bits/stl_vector.h":332:26 898 {*call}
+     (expr_list:REG_EH_REGION (const_int 1 [0x1])
+        (nil))
+    (expr_list:DI (use (reg:DI 5 di))
+        (expr_list:DI (use (reg:DI 4 si))
+            (nil))))
+(note 51 17 35 19 NOTE_INSN_EH_REGION_END)
+(note 35 51 37 3 [bb 3] NOTE_INSN_BASIC_BLOCK)
+(jump_insn 37 35 38 3 (set (pc)
+        (label_ref 36)) "/usr/include/c++/12/bits/stl_vector.h":332:33 892 {jump}
+     (nil)
+ -> 36)
+(barrier 38 37 32)
+(code_label/s 32 38 34 4 198 (nil) [1 uses])
+(note 34 32 33 4 [bb 4] NOTE_INSN_BASIC_BLOCK)
+(insn 33 34 23 4 (set (reg:DI 3 bx [88])
+        (reg:DI 0 ax)) "/usr/include/c++/12/bits/stl_vector.h":332:33 80 {*movdi_internal}
+     (nil))
+(insn 23 33 24 4 (set (reg/f:DI 0 ax [orig:83 _2 ] [83])
+        (mem/f/c:DI (plus:DI (reg/f:DI 6 bp)
+                (const_int -24 [0xffffffffffffffe8])) [60 this+0 S8 A64])) "/usr/include/c++/12/bits/stl_vector.h":332:33 80 {*movdi_internal}
+     (nil))
+(insn 24 23 25 4 (set (reg:DI 5 di)
+        (reg/f:DI 0 ax [orig:83 _2 ] [83])) "/usr/include/c++/12/bits/stl_vector.h":332:33 80 {*movdi_internal}
+     (nil))
+(call_insn 25 24 26 4 (call (mem:QI (symbol_ref/i:DI ("_ZNSt12_Vector_baseISt7complexIdESaIS1_EE12_Vector_implD1Ev") [flags 0x1]  <function_decl 0x7ff976f96800 __dt_comp >) [0 __dt_comp  S1 A8])
+        (const_int 0 [0])) "/usr/include/c++/12/bits/stl_vector.h":332:33 898 {*call}
+     (expr_list:REG_EH_REGION (const_int 0 [0])
+        (nil))
+    (expr_list:DI (use (reg:DI 5 di))
+        (nil)))
+(insn 26 25 27 4 (set (reg/f:DI 0 ax [orig:84 D.385514 ] [84])
+        (reg:DI 3 bx [88])) 80 {*movdi_internal}
+     (nil))
+(insn 27 26 52 4 (set (reg:DI 5 di)
+        (reg/f:DI 0 ax [orig:84 D.385514 ] [84])) 80 {*movdi_internal}
+     (nil))
+(note 52 27 28 4 20 NOTE_INSN_EH_REGION_BEG)
+(call_insn 28 52 53 4 (call (mem:QI (symbol_ref:DI ("_Unwind_Resume") [flags 0x41]  <function_decl 0x7ff982f0ac00 __builtin_unwind_resume>) [0 __builtin_unwind_resume S1 A8])
+        (const_int 0 [0])) 898 {*call}
+     (expr_list:REG_ARGS_SIZE (const_int 0 [0])
+        (expr_list:REG_NORETURN (const_int 0 [0])
+            (nil)))
+    (expr_list:DI (use (reg:DI 5 di))
+        (nil)))
+(note 53 28 29 20 NOTE_INSN_EH_REGION_END)
+(barrier 29 53 36)
+(code_label 36 29 31 5 199 (nil) [1 uses])
+(note 31 36 45 5 [bb 5] NOTE_INSN_BASIC_BLOCK)
+(note 45 31 46 5 NOTE_INSN_EPILOGUE_BEG)
+(insn 46 45 47 5 (set (reg:DI 3 bx)
+        (mem/c:DI (plus:DI (reg/f:DI 6 bp)
+                (const_int -8 [0xfffffffffffffff8])) [31  S8 A8])) "/usr/include/c++/12/bits/stl_vector.h":332:33 -1
+     (nil))
+(insn/f 47 46 48 5 (parallel [
+            (set (reg/f:DI 7 sp)
+                (plus:DI (reg/f:DI 6 bp)
+                    (const_int 8 [0x8])))
+            (set (reg/f:DI 6 bp)
+                (mem:DI (reg/f:DI 6 bp) [0  S8 A8]))
+            (clobber (mem:BLK (scratch) [0  A8]))
+        ]) "/usr/include/c++/12/bits/stl_vector.h":332:33 -1
+     (expr_list:REG_CFA_DEF_CFA (plus:DI (reg/f:DI 7 sp)
+            (const_int 8 [0x8]))
+        (nil)))
+(jump_insn 48 47 49 5 (simple_return) "/usr/include/c++/12/bits/stl_vector.h":332:33 -1
+     (nil)
+ -> simple_return)
+(barrier 49 48 39)
+(note 39 49 0 NOTE_INSN_DELETED)
+
+;; Function std::_Vector_base<double, std::allocator<double> >::_Vector_base (_ZNSt12_Vector_baseIdSaIdEEC2EmRKS0_, funcdef_no=6106, decl_uid=364558, cgraph_uid=2292, symbol_order=2872)
+
+
+
+std::_Vector_base<double, std::allocator<double> >::_Vector_base
+
+Dataflow summary:
+;;  fully invalidated by EH 	 0 [ax] 1 [dx] 2 [cx] 4 [si] 5 [di] 8 [st] 9 [st(1)] 10 [st(2)] 11 [st(3)] 12 [st(4)] 13 [st(5)] 14 [st(6)] 15 [st(7)] 17 [flags] 18 [fpsr] 20 [xmm0] 21 [xmm1] 22 [xmm2] 23 [xmm3] 24 [xmm4] 25 [xmm5] 26 [xmm6] 27 [xmm7] 28 [mm0] 29 [mm1] 30 [mm2] 31 [mm3] 32 [mm4] 33 [mm5] 34 [mm6] 35 [mm7] 36 [r8] 37 [r9] 38 [r10] 39 [r11] 44 [xmm8] 45 [xmm9] 46 [xmm10] 47 [xmm11] 48 [xmm12] 49 [xmm13] 50 [xmm14] 51 [xmm15] 52 [xmm16] 53 [xmm17] 54 [xmm18] 55 [xmm19] 56 [xmm20] 57 [xmm21] 58 [xmm22] 59 [xmm23] 60 [xmm24] 61 [xmm25] 62 [xmm26] 63 [xmm27] 64 [xmm28] 65 [xmm29] 66 [xmm30] 67 [xmm31] 68 [k0] 69 [k1] 70 [k2] 71 [k3] 72 [k4] 73 [k5] 74 [k6] 75 [k7]
+;;  hardware regs used 	 7 [sp]
+;;  regular block artificial uses 	 6 [bp] 7 [sp]
+;;  eh block artificial uses 	 6 [bp] 7 [sp] 16 [argp] 19 [frame]
+;;  entry block defs 	 0 [ax] 1 [dx] 2 [cx] 3 [bx] 4 [si] 5 [di] 6 [bp] 7 [sp] 19 [frame] 20 [xmm0] 21 [xmm1] 22 [xmm2] 23 [xmm3] 24 [xmm4] 25 [xmm5] 26 [xmm6] 27 [xmm7] 36 [r8] 37 [r9]
+;;  exit block uses 	 3 [bx] 6 [bp] 7 [sp] 19 [frame]
+;;  regs ever live 	 0 [ax] 1 [dx] 3 [bx] 4 [si] 5 [di] 6 [bp] 7 [sp]
+;;  ref usage 	r0={10d,5u} r1={8d,3u} r2={5d} r3={3d,3u} r4={7d,3u} r5={9d,5u} r6={3d,17u} r7={5d,15u} r8={4d} r9={4d} r10={4d} r11={4d} r12={4d} r13={4d} r14={4d} r15={4d} r16={1u} r17={5d} r18={4d} r19={1d,2u} r20={5d} r21={5d} r22={5d} r23={5d} r24={5d} r25={5d} r26={5d} r27={5d} r28={4d} r29={4d} r30={4d} r31={4d} r32={4d} r33={4d} r34={4d} r35={4d} r36={5d} r37={5d} r38={4d} r39={4d} r44={4d} r45={4d} r46={4d} r47={4d} r48={4d} r49={4d} r50={4d} r51={4d} r52={4d} r53={4d} r54={4d} r55={4d} r56={4d} r57={4d} r58={4d} r59={4d} r60={4d} r61={4d} r62={4d} r63={4d} r64={4d} r65={4d} r66={4d} r67={4d} r68={4d} r69={4d} r70={4d} r71={4d} r72={4d} r73={4d} r74={4d} r75={4d} 
+;;    total ref usage 364{310d,54u,0e} in 28{24 regular + 4 call} insns.
+(note 1 0 6 NOTE_INSN_DELETED)
+(note 6 1 40 2 [bb 2] NOTE_INSN_BASIC_BLOCK)
+(insn/f 40 6 41 2 (set (mem:DI (pre_dec:DI (reg/f:DI 7 sp)) [0  S8 A8])
+        (reg/f:DI 6 bp)) "/usr/include/c++/12/bits/stl_vector.h":330:7 -1
+     (nil))
+(insn/f 41 40 42 2 (set (reg/f:DI 6 bp)
+        (reg/f:DI 7 sp)) "/usr/include/c++/12/bits/stl_vector.h":330:7 -1
+     (nil))
+(insn/f 42 41 43 2 (set (mem:DI (pre_dec:DI (reg/f:DI 7 sp)) [0  S8 A8])
+        (reg:DI 3 bx)) "/usr/include/c++/12/bits/stl_vector.h":330:7 -1
+     (nil))
+(insn/f 43 42 44 2 (parallel [
+            (set (reg/f:DI 7 sp)
+                (plus:DI (reg/f:DI 7 sp)
+                    (const_int -40 [0xffffffffffffffd8])))
+            (clobber (reg:CC 17 flags))
+            (clobber (mem:BLK (scratch) [0  A8]))
+        ]) "/usr/include/c++/12/bits/stl_vector.h":330:7 -1
+     (nil))
+(note 44 43 2 2 NOTE_INSN_PROLOGUE_END)
+(insn 2 44 3 2 (set (mem/f/c:DI (plus:DI (reg/f:DI 6 bp)
+                (const_int -24 [0xffffffffffffffe8])) [54 this+0 S8 A64])
+        (reg:DI 5 di [ this ])) "/usr/include/c++/12/bits/stl_vector.h":330:7 80 {*movdi_internal}
+     (nil))
+(insn 3 2 4 2 (set (mem/c:DI (plus:DI (reg/f:DI 6 bp)
+                (const_int -32 [0xffffffffffffffe0])) [6 __n+0 S8 A64])
+        (reg:DI 4 si [ __n ])) "/usr/include/c++/12/bits/stl_vector.h":330:7 80 {*movdi_internal}
+     (nil))
+(insn 4 3 5 2 (set (mem/f/c:DI (plus:DI (reg/f:DI 6 bp)
+                (const_int -40 [0xffffffffffffffd8])) [63 __a+0 S8 A64])
+        (reg:DI 1 dx [ __a ])) "/usr/include/c++/12/bits/stl_vector.h":330:7 80 {*movdi_internal}
+     (nil))
+(note 5 4 8 2 NOTE_INSN_FUNCTION_BEG)
+(insn 8 5 9 2 (set (reg/f:DI 0 ax [orig:82 _1 ] [82])
+        (mem/f/c:DI (plus:DI (reg/f:DI 6 bp)
+                (const_int -24 [0xffffffffffffffe8])) [54 this+0 S8 A64])) "/usr/include/c++/12/bits/stl_vector.h":331:9 80 {*movdi_internal}
+     (nil))
+(insn 9 8 10 2 (set (reg:DI 1 dx [85])
+        (mem/f/c:DI (plus:DI (reg/f:DI 6 bp)
+                (const_int -40 [0xffffffffffffffd8])) [63 __a+0 S8 A64])) "/usr/include/c++/12/bits/stl_vector.h":331:9 80 {*movdi_internal}
+     (nil))
+(insn 10 9 11 2 (set (reg:DI 4 si)
+        (reg:DI 1 dx [85])) "/usr/include/c++/12/bits/stl_vector.h":331:9 80 {*movdi_internal}
+     (nil))
+(insn 11 10 12 2 (set (reg:DI 5 di)
+        (reg/f:DI 0 ax [orig:82 _1 ] [82])) "/usr/include/c++/12/bits/stl_vector.h":331:9 80 {*movdi_internal}
+     (nil))
+(call_insn 12 11 13 2 (call (mem:QI (symbol_ref/i:DI ("_ZNSt12_Vector_baseIdSaIdEE12_Vector_implC1ERKS0_") [flags 0x1]  <function_decl 0x7ff972ffeb00 __ct_comp >) [0 __ct_comp  S1 A8])
+        (const_int 0 [0])) "/usr/include/c++/12/bits/stl_vector.h":331:9 898 {*call}
+     (expr_list:REG_EH_REGION (const_int 0 [0])
+        (nil))
+    (expr_list:DI (use (reg:DI 5 di))
+        (expr_list:DI (use (reg:DI 4 si))
+            (nil))))
+(insn 13 12 14 2 (set (reg:DI 1 dx [86])
+        (mem/c:DI (plus:DI (reg/f:DI 6 bp)
+                (const_int -32 [0xffffffffffffffe0])) [6 __n+0 S8 A64])) "/usr/include/c++/12/bits/stl_vector.h":332:26 80 {*movdi_internal}
+     (nil))
+(insn 14 13 15 2 (set (reg:DI 0 ax [87])
+        (mem/f/c:DI (plus:DI (reg/f:DI 6 bp)
+                (const_int -24 [0xffffffffffffffe8])) [54 this+0 S8 A64])) "/usr/include/c++/12/bits/stl_vector.h":332:26 80 {*movdi_internal}
+     (nil))
+(insn 15 14 16 2 (set (reg:DI 4 si)
+        (reg:DI 1 dx [86])) "/usr/include/c++/12/bits/stl_vector.h":332:26 80 {*movdi_internal}
+     (nil))
+(insn 16 15 50 2 (set (reg:DI 5 di)
+        (reg:DI 0 ax [87])) "/usr/include/c++/12/bits/stl_vector.h":332:26 80 {*movdi_internal}
+     (nil))
+(note 50 16 17 2 21 NOTE_INSN_EH_REGION_BEG)
+(call_insn 17 50 51 2 (call (mem:QI (symbol_ref/i:DI ("_ZNSt12_Vector_baseIdSaIdEE17_M_create_storageEm") [flags 0x1]  <function_decl 0x7ff973003100 _M_create_storage>) [0 _M_create_storage S1 A8])
+        (const_int 0 [0])) "/usr/include/c++/12/bits/stl_vector.h":332:26 898 {*call}
+     (expr_list:REG_EH_REGION (const_int 1 [0x1])
+        (nil))
+    (expr_list:DI (use (reg:DI 5 di))
+        (expr_list:DI (use (reg:DI 4 si))
+            (nil))))
+(note 51 17 35 21 NOTE_INSN_EH_REGION_END)
+(note 35 51 37 3 [bb 3] NOTE_INSN_BASIC_BLOCK)
+(jump_insn 37 35 38 3 (set (pc)
+        (label_ref 36)) "/usr/include/c++/12/bits/stl_vector.h":332:33 892 {jump}
+     (nil)
+ -> 36)
+(barrier 38 37 32)
+(code_label/s 32 38 34 4 212 (nil) [1 uses])
+(note 34 32 33 4 [bb 4] NOTE_INSN_BASIC_BLOCK)
+(insn 33 34 23 4 (set (reg:DI 3 bx [88])
+        (reg:DI 0 ax)) "/usr/include/c++/12/bits/stl_vector.h":332:33 80 {*movdi_internal}
+     (nil))
+(insn 23 33 24 4 (set (reg/f:DI 0 ax [orig:83 _2 ] [83])
+        (mem/f/c:DI (plus:DI (reg/f:DI 6 bp)
+                (const_int -24 [0xffffffffffffffe8])) [54 this+0 S8 A64])) "/usr/include/c++/12/bits/stl_vector.h":332:33 80 {*movdi_internal}
+     (nil))
+(insn 24 23 25 4 (set (reg:DI 5 di)
+        (reg/f:DI 0 ax [orig:83 _2 ] [83])) "/usr/include/c++/12/bits/stl_vector.h":332:33 80 {*movdi_internal}
+     (nil))
+(call_insn 25 24 26 4 (call (mem:QI (symbol_ref/i:DI ("_ZNSt12_Vector_baseIdSaIdEE12_Vector_implD1Ev") [flags 0x1]  <function_decl 0x7ff973003c00 __dt_comp >) [0 __dt_comp  S1 A8])
+        (const_int 0 [0])) "/usr/include/c++/12/bits/stl_vector.h":332:33 898 {*call}
+     (expr_list:REG_EH_REGION (const_int 0 [0])
+        (nil))
+    (expr_list:DI (use (reg:DI 5 di))
+        (nil)))
+(insn 26 25 27 4 (set (reg/f:DI 0 ax [orig:84 D.385516 ] [84])
+        (reg:DI 3 bx [88])) 80 {*movdi_internal}
+     (nil))
+(insn 27 26 52 4 (set (reg:DI 5 di)
+        (reg/f:DI 0 ax [orig:84 D.385516 ] [84])) 80 {*movdi_internal}
+     (nil))
+(note 52 27 28 4 22 NOTE_INSN_EH_REGION_BEG)
+(call_insn 28 52 53 4 (call (mem:QI (symbol_ref:DI ("_Unwind_Resume") [flags 0x41]  <function_decl 0x7ff982f0ac00 __builtin_unwind_resume>) [0 __builtin_unwind_resume S1 A8])
+        (const_int 0 [0])) 898 {*call}
+     (expr_list:REG_ARGS_SIZE (const_int 0 [0])
+        (expr_list:REG_NORETURN (const_int 0 [0])
+            (nil)))
+    (expr_list:DI (use (reg:DI 5 di))
+        (nil)))
+(note 53 28 29 22 NOTE_INSN_EH_REGION_END)
+(barrier 29 53 36)
+(code_label 36 29 31 5 213 (nil) [1 uses])
+(note 31 36 45 5 [bb 5] NOTE_INSN_BASIC_BLOCK)
+(note 45 31 46 5 NOTE_INSN_EPILOGUE_BEG)
+(insn 46 45 47 5 (set (reg:DI 3 bx)
+        (mem/c:DI (plus:DI (reg/f:DI 6 bp)
+                (const_int -8 [0xfffffffffffffff8])) [31  S8 A8])) "/usr/include/c++/12/bits/stl_vector.h":332:33 -1
+     (nil))
+(insn/f 47 46 48 5 (parallel [
+            (set (reg/f:DI 7 sp)
+                (plus:DI (reg/f:DI 6 bp)
+                    (const_int 8 [0x8])))
+            (set (reg/f:DI 6 bp)
+                (mem:DI (reg/f:DI 6 bp) [0  S8 A8]))
+            (clobber (mem:BLK (scratch) [0  A8]))
+        ]) "/usr/include/c++/12/bits/stl_vector.h":332:33 -1
+     (expr_list:REG_CFA_DEF_CFA (plus:DI (reg/f:DI 7 sp)
+            (const_int 8 [0x8]))
+        (nil)))
+(jump_insn 48 47 49 5 (simple_return) "/usr/include/c++/12/bits/stl_vector.h":332:33 -1
+     (nil)
+ -> simple_return)
+(barrier 49 48 39)
+(note 39 49 0 NOTE_INSN_DELETED)
