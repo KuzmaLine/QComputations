@@ -75,9 +75,40 @@ install.sh реализует 3 библиотеки: - (Не готово)
 Все примеры программы в examples, в которых используется MPI - с припиской _MPI. (Не готово!)
 
 В силу низкоуровневости самого MPI, использование автоматической параллелизации в данном ПО нетривиально.
+Для работы автоматической MPI версии необходимо минимум 2 MPI процесса.
+
+Внизу написан минимальный код для работы с 2, 3 версии библиотеки.
 
 ```
-int main(void) {
-    return 0;
-}
+ #include "diploma/src/QComputations_MPI.hpp"
+ #include <iostream>
+
+ int main(int argc, char** argv) {
+     using namespace QComputations;
+ 
+ // ---------------- 
+     int rank, world_size;
+     MPI_Init(&argc, &argv);
+     MPI_Comm_size(MPI_COMM_WORLD, &world_size);
+     //std::cout << "WORLD SIZE - " << world_size << std::endl;
+     if (world_size == 1) {
+         std::cerr << "Should have at least 2 processes\n";
+ 
+         MPI_Finalize();
+         return 1;
+     }
+ 
+     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+ 
+     if (rank != 0) {
+         mpi::run_mpi_slaves();
+         MPI_Finalize();
+         return 0;
+     }
+ 
+    std::cout << "Hello, world!" << std::endl;
+
+     mpi::stop_mpi_slaves();
+     return 0;
+ }
 ```
