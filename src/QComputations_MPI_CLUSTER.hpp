@@ -7,6 +7,10 @@
 #define ENABLE_MPI
 #endif
 
+#ifndef ENABLE_CLUSTER
+#define ENABLE_CLUSTER
+#endif
+
 #pragma once
 #include "functions.hpp"
 #include "matrix.hpp"
