@@ -80,7 +80,7 @@ install.sh реализует 3 библиотеки: - (Не готово)
 Внизу написан минимальный код для работы с 2, 3 версии библиотеки.
 
 ```
- #include "diploma/src/QComputations_MPI.hpp"
+ #include "QComputations_MPI.hpp"
  #include <iostream>
 
  int main(int argc, char** argv) {
