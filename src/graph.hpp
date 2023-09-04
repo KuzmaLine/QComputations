@@ -28,7 +28,7 @@ class State_Graph {
 // Это тебе знать необязательно
 class Quantum_Neural_Network {
     public:
-        Quantum_Neural_Network(const State& init_grid, const Matrix<COMPLEX>& H);
+        Quantum_Neural_Network(const State& init_grid, const Matrix<COMPLEX>& H, double t);
         void show() const;
     private:
         std::set<State> basis_;
