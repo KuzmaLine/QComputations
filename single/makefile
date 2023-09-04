@@ -3,15 +3,16 @@ vpath %.hpp ../src
 CC=g++
 
 CFLAGS = -Werror -fopenmp \
-		 -I/opt/intel/oneapi/mkl -I/opt/intel/oneapi/intelpython/python3.9/include/python3.9 \
+		 -I${MKL_INCLUDE_PATH} -I${PYTHON_H_INCLUDE_PATH} \
 		 -I/opt/intel/oneapi/intelpython/python3.9/lib/python3.9/site-packages/numpy/core/include \
+		 -I${MPI_INCLUDE_PATH} \
 		 -DENABLE_MATPLOTLIB
 LFLAGS = -Werror \
 		 -lmkl_intel_lp64 \
 		 -lmkl_intel_thread -lmkl_core \
 		 -lm -ldl \
 		 -liomp5 -lpthread \
-		 -L/opt/intel/oneapi/intelpython/python3.9/lib \
+		 -L${PYTHON_LIB_PATH} \
 		 -lpython3.9 \
 		 -DENABLE_MATPLOTLIB
 OBJ = matrix.o cavity_state.o graph.o big_uint.o state.o quantum_operators.o hamiltonian.o additional_operators.o functions.o dynamic.o plot.o main.o
