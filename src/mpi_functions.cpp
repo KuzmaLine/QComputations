@@ -258,7 +258,6 @@ void mpi::run_mpi_slaves(const std::map<int, std::vector<MPI_Data>>& data) {
 void mpi::stop_mpi_slaves() {
     auto command = COMMAND::STOP;
     make_command(command);
-    MPI_Finalize();
 }
 
 template<>

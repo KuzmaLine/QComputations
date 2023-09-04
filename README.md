@@ -137,6 +137,7 @@ install.sh реализует 3 библиотеки:
 
     // Остановка остальных MPI процессов. (Просто выходят из run_mpi_slaves())
      mpi::stop_mpi_slaves();
+     MPI_Finalize();
      return 0;
  }
 ```
