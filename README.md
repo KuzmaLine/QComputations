@@ -32,10 +32,10 @@
 
 Заголовочные файлы лежат в папке src. Для 1, 2 и 3 версии использовать заголовочные файлы QComputations.hpp, QComputations_MPI.hpp и QComputations_MPI_CLUSTER.hpp соответственно.
 
-install.sh реализует 3 библиотеки:
-1. Для одного ядра - libQComputations_single.so (Требуется Intel MKL)
-2. Для нескольких MPI ядер - libQComputations_mpi.so (Требуется Intel MKL, OpenMPI или IntelMPI)
-3. Для нескольких узлов - libQComputations_mpi_cluster.so (Требуется полный пакет Intel OneApi BaseToolkit (бесплатный) + Intel DPCPP++ + Intel MPI + Intel Python из-за IntelMPI)
+install.sh запускает 3 скрипта:
+1. Для одного ядра (install_single.sh) - libQComputations_single.so (Требуется Intel MKL)
+2. Для нескольких MPI ядер (install_mpi.sh) - libQComputations_mpi.so (Требуется Intel MKL, OpenMPI или IntelMPI)
+3. Для нескольких узлов (install_mpi_cluster.sh) - libQComputations_mpi_cluster.so (Требуется полный пакет Intel OneApi BaseToolkit (бесплатный) + Intel DPCPP++ + Intel MPI + Intel Python из-за IntelMPI)
 
 Все эти библиотеки, с добавкой sudo, переносятся в директорию, указанную в качестве аргумента скрипту install.sh. (То есть, если написать ./install.sh "/usr/lib", то все библиотеки перенесутся в /usr/lib)
 
