@@ -1,1 +1,0 @@
-https://www.intel.com/content/www/us/en/developer/tools/oneapi/onemkl-link-line-advisor.html
