@@ -25,16 +25,4 @@ class State_Graph {
         std::unordered_map<Cavity_State, std::unordered_set<Cavity_State>> from_;
 };
 
-// Это тебе знать необязательно
-class Quantum_Neural_Network {
-    public:
-        Quantum_Neural_Network(const State& init_grid, const Matrix<COMPLEX>& H, double t);
-        void show() const;
-    private:
-        std::set<State> basis_;
-        std::unordered_map<BigUInt, std::unordered_set<BigUInt>> to_;
-        std::unordered_map<BigUInt, std::unordered_set<BigUInt>> from_;
-        Matrix<COMPLEX> H_;
-};
-
 } // namespace QComputations
