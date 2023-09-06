@@ -97,9 +97,6 @@ int main(int argc, char** argv) {
 
     CSR_Matrix<double> CSR_A(A);
     //std::cout << "HERE\n";
-    CSR_A.show();
-    return 0;
-
 
     std::vector<size_t> grid_config = {1, 1};
     //State state("|0;00>");
@@ -299,8 +296,9 @@ int main(int argc, char** argv) {
     //std::cout << "P HERE\n";
     matplotlib::probs_to_plot(probs, time_vec, basis);
     matplotlib::grid();
-    matplotlib::show(false);
+    matplotlib::show();
 
+#ifdef ENABLE_MPI
     begin = std::chrono::steady_clock::now();
     //auto probs = Evolution::schrodinger(st, H, time_vec);
     probs = Evolution::Parallel_QME(st, H, time_vec, false);
@@ -315,7 +313,7 @@ int main(int argc, char** argv) {
     matplotlib::probs_to_plot(probs, time_vec, basis);
     matplotlib::grid();
     matplotlib::show();
-
+#endif
     /*
     std::vector<double> gamma_vec = make_timeline(0.008, 0.1, 0.001);
     auto tau_vec = Evolution::scan_gamma(st, H, 0, time_vec, gamma_vec, 0.9);

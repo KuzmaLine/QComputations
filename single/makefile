@@ -21,8 +21,7 @@ is_lib = "YES"
 
 all: libQC
 
-prog:
-	${OBJ}
+prog: ${OBJ}
 	${CC} ${OBJ} ${LFLAGS} -o $@
 
 .cpp.o:
