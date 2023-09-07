@@ -22,6 +22,10 @@ namespace matplotlib {
                        const std::vector<double>& time_vec,
                        const std::set<State>& basis,
                        std::vector<std::map<std::string, std::string>> keywords = {});
+    void probs_to_plot(const Evolution::Probs& probs,
+                       const std::vector<double>& time_vec,
+                       const std::vector<std::string>& basis_str,
+                       std::vector<std::map<std::string, std::string>> keywords = {});
     void rho_probs_to_plot(const Evolution::Probs& probs,
                            const std::vector<double>& time_vec,
                            const std::set<State>& basis,
