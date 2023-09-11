@@ -14,14 +14,19 @@
 
 -------------------------------------------------
 # Действия перед компиляцией
-В силу сложности, и плохой переносимости Intel-овских библиотек, принято решение ручного прописывания путей к заголовочным файлам и к динамическим библиотекам через переменные окружения. (Рекомендация - поставить Intel OneApi BaseToolkit (Ссылка скоро будет приложена))
+В силу сложности, и плохой переносимости Intel-овских библиотек, принято решение ручного прописывания путей к заголовочным файлам и к динамическим библиотекам через переменные окружения. (Рекомендация - поставить Intel OneApi BaseToolkit)
+
+Команды для установки пакетов (для каждого далее sudo ./исполняемый_файл):
+1. Intel OneApi BaseToolkit - wget https://registrationcenter-download.intel.com/akdlm/IRC_NAS/992857b9-624c-45de-9701-f6445d845359/l_BaseKit_p_2023.2.0.49397_offline.sh
+2. Intel OneApi DPCPP++ - wget https://registrationcenter-download.intel.com/akdlm/IRC_NAS/ebf5d9aa-17a7-46a4-b5df-ace004227c0e/l_dpcpp-cpp-compiler_p_2023.2.1.8_offline.sh
+3. Intel Python (Если требуются графики) - wget https://registrationcenter-download.intel.com/akdlm/IRC_NAS/03aae3a8-623a-47cf-9655-5dd8fcf86430/l_pythoni39_oneapi_p_2023.2.0.49422_offline.sh
 
 Перед компиляцией библиотеки необходимо установить пару переменных окружений.
 
 Для версии на 1 ядре (Для 1 версии):
-1. MKL_INCLUDE_PATH - директория с заголовочными файлами Intel MKL. (Установка - sudo apt install intel-mkl (Работает только для 1 и 2 версии))
-2. PYTHON_H_INCLUDE_PATH - путь к директории, где лежит Python.h от вашего текущего интерпретатора Python 3.9
-3. PYTHON_LIB_PATH - путь к директории с динамическими библиотеками от этого Python-а. В первую очередь libpython(что-то там).so
+1. MKL_INCLUDE_PATH - директория с заголовочными файлами Intel MKL. (Установка - sudo apt install intel-mkl (Работает только для 1 и 2 версий, поэтому рекомендация установить OneApi))
+2. PYTHON_H_INCLUDE_PATH (Если требуются графики) - путь к директории, где лежит Python.h от вашего текущего интерпретатора Python 3.9
+3. PYTHON_LIB_PATH (Если требуются графики) - путь к директории с динамическими библиотеками от этого Python-а. В первую очередь libpython(что-то там).so
 
 Для версии с MPI (Для 2 и 3 версии):
 1. Всё тоже самое, что и для 1 ядра.
@@ -35,7 +40,7 @@
 install.sh запускает 3 скрипта:
 1. Для одного ядра (install_single.sh) - libQComputations_single.so (Требуется Intel MKL)
 2. Для нескольких MPI ядер (install_mpi.sh) - libQComputations_mpi.so (Требуется Intel MKL, OpenMPI или IntelMPI)
-3. Для нескольких узлов (install_mpi_cluster.sh) - libQComputations_mpi_cluster.so (Требуется полный пакет Intel OneApi BaseToolkit (бесплатный) + Intel DPCPP++ + Intel MPI + Intel Python из-за IntelMPI)
+3. Для нескольких узлов (install_mpi_cluster.sh) - libQComputations_mpi_cluster.so (Требуется полный пакет Intel OneApi BaseToolkit (бесплатный) + Intel DPCPP++ + Intel MPI + Intel Python)
 
 Все эти библиотеки, с добавкой sudo, переносятся в директорию, указанную в качестве аргумента скрипту install.sh. (То есть, если написать ./install.sh "/usr/lib", то все библиотеки перенесутся в /usr/lib)
 

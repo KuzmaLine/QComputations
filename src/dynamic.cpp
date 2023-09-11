@@ -95,7 +95,7 @@ Evolution::Probs Evolution::schrodinger(const std::vector<COMPLEX>& init_state, 
     std::vector<COMPLEX> lambda;
     for (size_t i = 0; i < eigen_values.size(); i++) {
         //std::cout << norm(eigen_vectors.col(i)) << std::endl;
-        lambda.emplace_back(init_state | eigen_vectors.col(i)); // <KSI(0)|PHI_i> 
+        lambda.emplace_back(eigen_vectors.col(i) | init_state); // <PHI_i|KSI(0)> 
     }
 
     //std::cout << "L - " << norm(lambda) << std::endl;
