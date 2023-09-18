@@ -371,9 +371,9 @@ Evolution::Probs Evolution::Parallel_QME(const std::vector<COMPLEX>& init_state,
 
     localH.to_fortran_style();
     ILP_TYPE LLD = localH.LD();
-    auto descg = new ILP_TYPE[9];
+    //auto descg = new ILP_TYPE[9];
     ILP_TYPE rsrc = 0, csrc = 0, info;
-    descinit_(descg, &dim, &dim, &NB, &MB, &rsrc, &csrc, &ctxt, &LLD, &info);
+    auto descg = mpi::descinit(dim, dim, NB, MB, rsrc, csrc, ctxt, LLD, info);
     //for (const auto& cavity_id: cavities_with_leak) {
     for (size_t cavity_id = 0; cavity_id < grid.cavities_count(); cavity_id++) {
         auto A = create_A_destroy(H.get_basis(), cavity_id);

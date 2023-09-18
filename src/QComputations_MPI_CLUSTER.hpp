@@ -21,4 +21,5 @@
 #include "dynamic.hpp"
 #include "mpi_functions.hpp"
 #include "plot.hpp"
+#include "test.hpp"
 #include <mpi.h>
