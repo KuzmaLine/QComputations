@@ -235,7 +235,7 @@ namespace mpi {
                        bool is_distributed = false, ILP_TYPE* desca = NULL, ILP_TYPE* descb = NULL, ILP_TYPE* descc = NULL,
                        char op_A = 'N', char op_B = 'N');
 
-    void parallel_dgemv(const Matrix<double>& A, const std::vector<double>& x, std::vector<double>& y,
+   void parallel_dgemv(const Matrix<double>& A, const std::vector<double>& x, std::vector<double>& y,
                        bool is_distributed = false, ILP_TYPE* desca = NULL, ILP_TYPE* descx = NULL, ILP_TYPE* descy = NULL,
                        char op_A = 'N');
    void parallel_zgemv(const Matrix<COMPLEX>& A, const std::vector<COMPLEX>& x, std::vector<COMPLEX>& y,

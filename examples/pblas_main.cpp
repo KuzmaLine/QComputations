@@ -4,7 +4,7 @@
 
 using COMPLEX = std::complex<double>;
 
-#ifndef DOUBLE_TYPE
+#ifdef DOUBLE_TYPE
 using NumType = double;
 #else
 using NumType = COMPLEX;
@@ -15,8 +15,8 @@ enum NUM_TASK { MM = 100, MV = 101, HM = 102};
 int main(int argc, char** argv) {
     using namespace QComputations;
     int n_a = 4, m_a = 4;
-    int n_b = 4, m_b = 4;
-    NUM_TASK TASK = MM;
+    int n_b = 4, m_b = 1;
+    NUM_TASK TASK = MV;
     bool IS_COUT = true;
 
     int rank, world_size;
@@ -27,7 +27,7 @@ int main(int argc, char** argv) {
     Matrix<NumType> A, B, C, localA, localB, localC;
     std::vector<NumType> b, y, localb, localy;
     if (rank == 0) {
-#ifndef DOUBLE_TYPE
+#ifdef DOUBLE_TYPE
         if (TASK == MM) {
             A = matrix::create_rand_matrix<NumType>(n_a, m_a, 0, 5);
             B = matrix::create_rand_matrix<NumType>(n_b, m_b, 0, 5);
@@ -86,6 +86,7 @@ int main(int argc, char** argv) {
         ncols_C = mpi::numroc(m_b, MB_B, mycol, iZERO, proc_cols);
 
         localC = Matrix<NumType>(FORTRAN_STYLE, nrows_C, ncols_C);
+        //std::cout << localC.n() << " " << localC.m() << std::endl;
     } else if (TASK == MV) {
         localA = mpi::scatter_blacs_matrix<NumType>(A, n_a, m_a, NB_A, MB_A, nrows_A, ncols_A, ctxt, mpi::ROOT_ID, MPI_COMM_WORLD);
         //vector_to_matrix<NumType>(FORTRAN_STYLE, b).show();
@@ -127,7 +128,7 @@ int main(int argc, char** argv) {
     if (rank == mpi::ROOT_ID) std::cout << diag << std::endl;
 
     auto begin = std::chrono::steady_clock::now();
-#ifndef DOUBLE_TYPE
+#ifdef DOUBLE_TYPE
     if (TASK == MM) {
         mpi::parallel_dgemm(localA, localB, localC, true, desca, descb, descc);
     } else if (TASK == MV) {

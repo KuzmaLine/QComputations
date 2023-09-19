@@ -1370,12 +1370,12 @@ void mpi::parallel_dgemm(const Matrix<double>& A, const Matrix<double>& B, Matri
 
     bool return_to_c_style = false;
 
-    if (localA.is_c_style()) {
+    if (!is_distributed and localA.is_c_style()) {
         return_to_c_style = true;
         localA.to_fortran_style();
     }
 
-    if (localB.is_c_style()) {
+    if (!is_distributed and localB.is_c_style()) {
         localB.to_fortran_style();
     }
 
@@ -1385,19 +1385,19 @@ void mpi::parallel_dgemm(const Matrix<double>& A, const Matrix<double>& B, Matri
     double betta = 0;
 
     if (!is_distributed) {
-        auto begin = std::chrono::steady_clock::now();
-        pdgemm_(&N, &N, &NA, &MB, &MA, &alpha, localA.data(), &iONE, &iONE, desca,
+        //auto begin = std::chrono::steady_clock::now();
+        pdgemm_(&op_A, &op_B, &NA, &MB, &MA, &alpha, localA.data(), &iONE, &iONE, desca,
                                         localB.data(), &iONE, &iONE, descb,
                                         &betta, localC.data(), &iONE, &iONE, descc);
-        auto end = std::chrono::steady_clock::now();
-        if (rank == mpi::ROOT_ID) std::cout << "PDGEMM: " << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count() << std::endl;
+        //auto end = std::chrono::steady_clock::now();
+        //if (rank == mpi::ROOT_ID) std::cout << "PDGEMM: " << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count() << std::endl;
     } else {
-        auto begin = std::chrono::steady_clock::now();
-        pdgemm_(&N, &N, &NA, &MB, &MA, &alpha, A.data(), &iONE, &iONE, desca,
+        //auto begin = std::chrono::steady_clock::now();
+        pdgemm_(&op_A, &op_B, &NA, &MB, &MA, &alpha, A.data(), &iONE, &iONE, desca,
                                         B.data(), &iONE, &iONE, descb,
                                         &betta, C.data(), &iONE, &iONE, descc);
-        auto end = std::chrono::steady_clock::now();
-        if (rank == mpi::ROOT_ID) std::cout << "PDGEMM: " << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count() << std::endl;  
+        //auto end = std::chrono::steady_clock::now();
+        //if (rank == mpi::ROOT_ID) std::cout << "PDGEMM: " << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count() << std::endl;  
     }
 
     if (return_to_c_style) {
