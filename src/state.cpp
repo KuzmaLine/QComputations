@@ -77,6 +77,7 @@ State::State(const std::string& grid_state, const std::string& format) : gamma_(
 }
 
 State::State(const std::vector<size_t>& grid_config) : gamma_(C_STYLE, 0, 0, 0) {
+    std::cout << grid_config << std::endl;
     for (size_t i = 0; i < grid_config.size(); i++) {
         std::vector<int> m(grid_config[i], 0);
         grid_states_.emplace_back(0, m);
