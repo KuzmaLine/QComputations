@@ -1,0 +1,82 @@
+#ifdef ENABLE_MPI
+#ifdef ENABLE_CLUSTER
+
+#include "hamiltonian_blocked.hpp"
+#include "quantum_operators.hpp"
+#include "hamiltonian.hpp"
+#include <cassert>
+
+namespace QComputations {
+
+namespace {
+    using COMPLEX = std::complex<double>;
+}
+
+BLOCKED_H_TCH::BLOCKED_H_TCH(ILP_TYPE ctxt, const State& grid): grid_(grid) {
+    auto basis = define_basis_of_hamiltonian(grid);
+    basis_ = basis;
+
+    size_t size = basis_.size();
+    std::cout << "Size - " << size << std::endl;
+    //show_basis(basis_);
+
+    std::function<COMPLEX(size_t i, size_t j)> func = {
+        [&basis, &grid](size_t i, size_t j) {
+            auto state_from = get_elem(basis, i);
+            auto state_to = get_elem(basis, j);
+
+            return TCH_ADD(state_from, state_to, grid);
+        }
+    };
+
+    H_ = BLOCKED_Matrix<COMPLEX>(ctxt, GE, size, size, func);
+}
+
+BLOCKED_H_TC::BLOCKED_H_TC(ILP_TYPE ctxt, const State& grid): grid_(grid) {
+    assert(grid_.cavities_count() == 1);
+
+    auto basis = define_basis_of_hamiltonian(grid);
+    basis_ = basis;
+
+    size_t size = basis_.size();
+    std::cout << "Size - " << size << std::endl;
+    //show_basis(basis_);
+
+    std::function<COMPLEX(size_t i, size_t j)> func = {
+        [&basis, &grid](size_t i, size_t j) {
+            auto state_from = get_elem(basis, i);
+            auto state_to = get_elem(basis, j);
+
+            return TC_ADD(state_from, state_to, grid);
+        }
+    };
+
+    H_ = BLOCKED_Matrix<COMPLEX>(ctxt, GE, size, size, func);
+}
+
+BLOCKED_H_JC::BLOCKED_H_JC(ILP_TYPE ctxt, const State& grid): grid_(grid) {
+    assert(grid_.cavities_count() == 1);
+
+    auto basis = define_basis_of_hamiltonian(grid);
+    basis_ = basis;
+
+    size_t size = basis_.size();
+    std::cout << "Size - " << size << std::endl;
+    //show_basis(basis_);
+
+    std::function<COMPLEX(size_t i, size_t j)> func = {
+        [&basis, &grid](size_t i, size_t j) {
+            auto state_from = get_elem(basis, i);
+            auto state_to = get_elem(basis, j);
+
+            return JC_ADD(state_from, state_to, grid);
+        }
+    };
+
+    H_ = BLOCKED_Matrix<COMPLEX>(ctxt, GE, size, size, func);
+}
+
+} // namespace QComputations
+
+#endif
+#endif

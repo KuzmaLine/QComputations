@@ -234,7 +234,7 @@ Matrix<double> Matrix<double>::operator* (const Matrix<double>& A) const {
 
         int datatype = mpi::MPI_Datatype_ID::DOUBLE;
         MPI_Bcast(&datatype, 1, MPI_INT, mpi::ROOT_ID, MPI_COMM_WORLD);
-        mpi::parallel_dgemm(*this, A, res);
+        //mpi::parallel_dgemm(*this, A, res);
     }
 #endif
     return res;
@@ -417,7 +417,7 @@ Matrix<COMPLEX> Matrix<COMPLEX>::operator* (const Matrix<COMPLEX>& A) const {
 
         int datatype = mpi::MPI_Datatype_ID::DOUBLE_COMPLEX;
         MPI_Bcast(&datatype, 1, MPI_INT, mpi::ROOT_ID, MPI_COMM_WORLD);
-        mpi::parallel_zgemm(*this, A, res);
+        //mpi::parallel_zgemm(*this, A, res);
     }
 #endif
     return res;

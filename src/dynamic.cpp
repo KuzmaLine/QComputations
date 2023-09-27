@@ -393,15 +393,15 @@ Evolution::Probs Evolution::Parallel_QME(const std::vector<COMPLEX>& init_state,
                     */
                     Matrix<COMPLEX> tmp(FORTRAN_STYLE, nrows, ncols);
                     Matrix<COMPLEX> res(FORTRAN_STYLE, nrows, ncols);
-                    mpi::parallel_zgemm(localA, rho, tmp, true, descg, descg, descg);
-                    mpi::parallel_zgemm(tmp, localA, res, true, descg, descg, descg, 'N', 'C');
+                    mpi::parallel_zgemm(localA, rho, tmp, descg, descg, descg);
+                    mpi::parallel_zgemm(tmp, localA, res, descg, descg, descg, 'N', 'C');
 
                     Matrix<COMPLEX> AconjA(FORTRAN_STYLE, nrows, ncols);
-                    mpi::parallel_zgemm(localA, localA, AconjA, true, descg, descg, descg, 'C', 'N');
+                    mpi::parallel_zgemm(localA, localA, AconjA, descg, descg, descg, 'C', 'N');
                     
                     Matrix<COMPLEX> tmp_second(FORTRAN_STYLE, nrows, ncols);
-                    mpi::parallel_zgemm(AconjA, rho, tmp, true, descg, descg, descg);
-                    mpi::parallel_zgemm(rho, AconjA, tmp_second, true, descg, descg, descg);
+                    mpi::parallel_zgemm(AconjA, rho, tmp, descg, descg, descg);
+                    mpi::parallel_zgemm(rho, AconjA, tmp_second, descg, descg, descg);
 
                     res -= (tmp + tmp_second) * COMPLEX(0.5);
                     res *= gamma;
@@ -431,15 +431,15 @@ Evolution::Probs Evolution::Parallel_QME(const std::vector<COMPLEX>& init_state,
                     */
                     Matrix<COMPLEX> tmp(FORTRAN_STYLE, nrows, ncols);
                     Matrix<COMPLEX> res(FORTRAN_STYLE, nrows, ncols);
-                    mpi::parallel_zgemm(localA, rho, tmp, true, descg, descg, descg);
-                    mpi::parallel_zgemm(tmp, localA, res, true, descg, descg, descg, 'N', 'C');
+                    mpi::parallel_zgemm(localA, rho, tmp, descg, descg, descg);
+                    mpi::parallel_zgemm(tmp, localA, res, descg, descg, descg, 'N', 'C');
 
                     Matrix<COMPLEX> AconjA(FORTRAN_STYLE, nrows, ncols);
-                    mpi::parallel_zgemm(localA, localA, AconjA, true, descg, descg, descg, 'C', 'N');
+                    mpi::parallel_zgemm(localA, localA, AconjA, descg, descg, descg, 'C', 'N');
                     
                     Matrix<COMPLEX> tmp_second(FORTRAN_STYLE, nrows, ncols);
-                    mpi::parallel_zgemm(AconjA, rho, tmp, true, descg, descg, descg);
-                    mpi::parallel_zgemm(rho, AconjA, tmp_second, true, descg, descg, descg);
+                    mpi::parallel_zgemm(AconjA, rho, tmp, descg, descg, descg);
+                    mpi::parallel_zgemm(rho, AconjA, tmp_second, descg, descg, descg);
 
                     res -= (tmp + tmp_second) * COMPLEX(0.5);
                     res *= gamma;
@@ -462,8 +462,8 @@ Evolution::Probs Evolution::Parallel_QME(const std::vector<COMPLEX>& init_state,
 
             Matrix<COMPLEX> tmp(FORTRAN_STYLE, nrows, ncols);
             Matrix<COMPLEX> res(FORTRAN_STYLE, nrows, ncols);
-            mpi::parallel_zgemm(localH, rho, res, true, descg, descg, descg);
-            mpi::parallel_zgemm(rho, localH, tmp, true, descg, descg, descg);
+            mpi::parallel_zgemm(localH, rho, res, descg, descg, descg);
+            mpi::parallel_zgemm(rho, localH, tmp, descg, descg, descg);
             res -= tmp;
             res *= COMPLEX(0, -1);
             
@@ -502,7 +502,6 @@ Evolution::Probs Evolution::Parallel_QME(const std::vector<COMPLEX>& init_state,
     //std::cout << " c " << std::chrono::duration_cast<std::chrono::milliseconds>(end_c - begin_c).count() << std::endl;
     */
 
-    delete [] descg;
     config::MULTIPLY_MODE = OLD_MULTIPLY_MODE;
     if (rank == mpi::ROOT_ID) {
         if (!is_full_rho) {

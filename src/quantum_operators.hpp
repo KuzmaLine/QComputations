@@ -17,4 +17,8 @@ COMPLEX de_excitation_atom(const State& state_from, const State& state_to, COMPL
 COMPLEX photon_exchange(const State& state_from, const State& state_to, const State& grid);
 COMPLEX JC_addition(const State& state_from, const State& state_to, COMPLEX g = config::g);
 
+COMPLEX TCH_ADD(const State& state_from, const State& state_to, const State& grid);
+COMPLEX TC_ADD(const State& state_from, const State& state_to, const State& grid);
+COMPLEX JC_ADD(const State& state_from, const State& state_to, const State& grid);
+
 } // namespace QComputations

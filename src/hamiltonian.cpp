@@ -189,52 +189,52 @@ namespace {
             return true;
         }
     }
+}
 
     // N >= 1
-    std::set<State> define_basis(const State& grid) {
-        std::set<State> basis;
+std::set<State> define_basis_of_hamiltonian(const State& grid) {
+    std::set<State> basis;
 
-        long max_energy;
-        for (max_energy = grid.max_N(); max_energy >= long(grid.min_N()); max_energy--) {
-            //std::cout << max_energy << " " << target_N << std::endl;
-            State state = grid; // copy base structure of grid
+    long max_energy;
+    for (max_energy = grid.max_N(); max_energy >= long(grid.min_N()); max_energy--) {
+        //std::cout << max_energy << " " << target_N << std::endl;
+        State state = grid; // copy base structure of grid
 
-            std::vector<size_t> energy_map(grid.cavities_count(), 0);
-            energy_map[0] = max_energy;
+        std::vector<size_t> energy_map(grid.cavities_count(), 0);
+        energy_map[0] = max_energy;
 
+        //std::cout << "MAP: " << max_energy << std::endl;
+        //show_vector(energy_map);
+        std::vector<std::set<Cavity_State>> cavity_bases(grid.cavities_count());
+        std::vector<size_t> cavity_basis_index(grid.cavities_count(), 0);
+
+        while(true) {
+            for (size_t i = 0; i < grid.cavities_count(); i++) {
+                //std::cout << energy_map[i] << " " << get_energy_state(energy_map[i], grid[i].m()).to_string() << std::endl;
+                cavity_bases[i] = State_Graph(get_energy_state(energy_map[i], grid[i].m()), false, false).get_basis();
+                //show_basis(cavity_bases[i]);
+            }
+
+            do {
+                for (size_t i = 0; i < grid.cavities_count(); i++) {
+                    state.set_state(i, get_elem(cavity_bases[i], cavity_basis_index[i]));
+                }
+        
+                basis.insert(state);
+            } while(next_index(cavity_basis_index, cavity_bases));
+
+            cavity_basis_index = std::vector<size_t>(grid.cavities_count(), 0);
+
+            if (energy_map[energy_map.size() - 1] == max_energy) break;
+
+            next_permutation(energy_map, max_energy);
             //std::cout << "MAP: " << max_energy << std::endl;
             //show_vector(energy_map);
-            std::vector<std::set<Cavity_State>> cavity_bases(grid.cavities_count());
-            std::vector<size_t> cavity_basis_index(grid.cavities_count(), 0);
-
-            while(true) {
-                for (size_t i = 0; i < grid.cavities_count(); i++) {
-                    //std::cout << energy_map[i] << " " << get_energy_state(energy_map[i], grid[i].m()).to_string() << std::endl;
-                    cavity_bases[i] = State_Graph(get_energy_state(energy_map[i], grid[i].m()), false, false).get_basis();
-                    //show_basis(cavity_bases[i]);
-                }
-
-                do {
-                    for (size_t i = 0; i < grid.cavities_count(); i++) {
-                        state.set_state(i, get_elem(cavity_bases[i], cavity_basis_index[i]));
-                    }
-            
-                    basis.insert(state);
-                } while(next_index(cavity_basis_index, cavity_bases));
-
-                cavity_basis_index = std::vector<size_t>(grid.cavities_count(), 0);
-
-                if (energy_map[energy_map.size() - 1] == max_energy) break;
-
-                next_permutation(energy_map, max_energy);
-                //std::cout << "MAP: " << max_energy << std::endl;
-                //show_vector(energy_map);
-            }
-            //show_basis(basis);
         }
-
-        return basis;
+        //show_basis(basis);
     }
+
+    return basis;
 }
 
 void Hamiltonian::show(const size_t width) const {
@@ -260,7 +260,7 @@ std::pair<std::vector<double>, Matrix<COMPLEX>> Hamiltonian::eigen() {
 H_by_func::H_by_func(size_t n, std::function<COMPLEX(size_t, size_t)> func) : func_(func) {
     auto size = n;
     H_ = Matrix<COMPLEX>(DEFAULT_MATRIX_STYLE, size, size);
-
+/*
 #ifdef ENABLE_MPI
     int rank, world_size;
     MPI_Comm_size(MPI_COMM_WORLD, &world_size);
@@ -298,16 +298,18 @@ H_by_func::H_by_func(size_t n, std::function<COMPLEX(size_t, size_t)> func) : fu
         }
     }
 #else
+*/
     for (size_t i = 0; i < this->size(); i++) {
         for (size_t j = 0; j < this->size(); j++) {
             H_[i][j] = func(i, j);
         }
     }
-#endif // ENABLE_MPI
+//#endif // ENABLE_MPI
 }
 
 // ---------------------------- H_TC ----------------------------
 
+/*
 H_TC::H_TC(const State& init_state) {
     assert(init_state.cavities_count() == 1);
     H_TCH H(init_state);
@@ -397,11 +399,12 @@ H_TC::H_TC(const State& init_state) {
             H_[i][j] = tmp_H_[state_index[i]][state_index[j]];
         }
     }
-    */
 }
+*/
 
 // ---------------------------- H_JC ----------------------------
 
+/*
 H_JC::H_JC(const State& init_state) {
     assert(init_state.cavities_count() == 1 and init_state.m(0) == 1);
     H_TC tmp_H(init_state);
@@ -410,22 +413,11 @@ H_JC::H_JC(const State& init_state) {
     grid_ = init_state;
     basis_ = tmp_H.get_basis();
 }
+*/
 
-void H_JC::make_exact() {
-    size_t i = 0, j = 0;
-    for (const auto& state_from: basis_) {
-        for (const auto& state_to: basis_) {
-            H_[i][j] += JC_addition(state_from, state_to);
-            j++;
-        }
-        j = 0;
-        i++;
-    }
-}
-
-// --------------------------- H_TCH ------------------------------------
-
-H_TCH::H_TCH(const State& grid) {
+H_JC::H_JC(const State& grid) {
+    assert(grid.cavities_count() == 1 and grid.m(0) == 1);
+/*
 #ifdef ENABLE_MPI
     int rank, world_size;
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
@@ -436,13 +428,14 @@ H_TCH::H_TCH(const State& grid) {
     }
     MPI_Barrier(MPI_COMM_WORLD);
 #endif
+*/
     grid_ = grid;
 
     auto x_size = grid.x_size();
     auto y_size = grid.y_size();
     auto z_size = grid.z_size();
 
-    basis_ = define_basis(grid);
+    basis_ = define_basis_of_hamiltonian(grid);
 
     size_t size = basis_.size();
     std::cout << "Size - " << size << std::endl;
@@ -450,6 +443,7 @@ H_TCH::H_TCH(const State& grid) {
     H_ = Matrix<COMPLEX>(DEFAULT_MATRIX_STYLE, size, size, 0);
 
     //std::cout << H_.is_c_style() << " " << H_.n() << " " << H_.m() << std::endl;
+/*
 #ifdef ENABLE_MPI
     size_t start_col;
     auto rank_map = make_rank_map(size, rank, world_size, start_col);
@@ -464,6 +458,7 @@ H_TCH::H_TCH(const State& grid) {
         size_t i = 0;
     //for (const auto& state_from: basis_) {
         for (const auto& state_to: basis_) {
+            /*
             //std::vector<COMPLEX> col(size, 0);
             H_[i][j] += self_energy_atom(state_from, state_to);
             //std::cout << "Energy_atom PASSED\n";
@@ -474,7 +469,10 @@ H_TCH::H_TCH(const State& grid) {
             H_[i][j] += de_excitation_atom(state_from, state_to);
             //std::cout << "de_excitation_atom PASSED\n";
             H_[i][j] += photon_exchange(state_from, state_to, grid);
+            */
 
+/*
+            H_[i][j] += TCH_ADD(state_from, state_to, grid);
             //if (rank == 0)
             //std::cout << rank << " " << i << " " << j << " " << H_[i][j] << ": " << state_from.to_string() << " -> " << state_to.to_string() << std::endl;
             i++;
@@ -508,9 +506,11 @@ H_TCH::H_TCH(const State& grid) {
         }
     }
 #else
+*/
     size_t i = 0, j = 0;
     for (const auto& state_from: basis_) {
         for (const auto& state_to: basis_) {
+            /*
             //std::cout << i << " " << j << ": " << state_from.to_string() << " -> " << state_to.to_string() << std::endl;
             H_[i][j] += self_energy_atom(state_from, state_to);
             //std::cout << "Energy_atom PASSED\n";
@@ -521,12 +521,250 @@ H_TCH::H_TCH(const State& grid) {
             H_[i][j] += de_excitation_atom(state_from, state_to);
             //std::cout << "de_excitation_atom PASSED\n";
             H_[i][j] += photon_exchange(state_from, state_to, grid);
+            */
+
+            H_[i][j] += JC_ADD(state_from, state_to, grid);
             j++;
         }
         j = 0;
         i++;
     }
+//#endif
+}
+
+void H_JC::make_exact() {
+    size_t i = 0, j = 0;
+    for (const auto& state_from: basis_) {
+        for (const auto& state_to: basis_) {
+            H_[i][j] += JC_addition(state_from, state_to);
+            j++;
+        }
+        j = 0;
+        i++;
+    }
+}
+
+H_TC::H_TC(const State& grid) {
+    assert(grid.cavities_count() == 1);
+    grid_ = grid;
+
+    auto x_size = grid.x_size();
+    auto y_size = grid.y_size();
+    auto z_size = grid.z_size();
+
+    basis_ = define_basis_of_hamiltonian(grid);
+
+    size_t size = basis_.size();
+    std::cout << "Size - " << size << std::endl;
+    //show_basis(basis_);
+    H_ = Matrix<COMPLEX>(DEFAULT_MATRIX_STYLE, size, size, 0);
+
+    //std::cout << H_.is_c_style() << " " << H_.n() << " " << H_.m() << std::endl;
+/*
+#ifdef ENABLE_MPI
+    size_t start_col;
+    auto rank_map = make_rank_map(size, rank, world_size, start_col);
+
+    //if (rank == 0) {
+    //    std::cout << "rank_map: ";
+    //    show_vector(rank_map);
+    //}
+    //std::cout << "RANGE: " << rank << " -> " << start_col << " " << start_col + rank_map[rank] - 1 << std::endl;
+    for (size_t j = start_col; j < start_col + rank_map[rank]; j++) {
+        auto state_from = get_elem(basis_, j);
+        size_t i = 0;
+    //for (const auto& state_from: basis_) {
+        for (const auto& state_to: basis_) {
+            /*
+            //std::vector<COMPLEX> col(size, 0);
+            H_[i][j] += self_energy_atom(state_from, state_to);
+            //std::cout << "Energy_atom PASSED\n";
+            H_[i][j] += self_energy_photon(state_from, state_to);
+            //std::cout << "Energy_photon PASSED\n";
+            H_[i][j] += excitation_atom(state_from, state_to);
+            //std::cout << "excitation_atom PASSED\n";
+            H_[i][j] += de_excitation_atom(state_from, state_to);
+            //std::cout << "de_excitation_atom PASSED\n";
+            H_[i][j] += photon_exchange(state_from, state_to, grid);
+            */
+
+/*
+            H_[i][j] += TCH_ADD(state_from, state_to, grid);
+            //if (rank == 0)
+            //std::cout << rank << " " << i << " " << j << " " << H_[i][j] << ": " << state_from.to_string() << " -> " << state_to.to_string() << std::endl;
+            i++;
+        }
+
+        //if (rank == 0) {
+        //    std::cout << "COL: " << rank << " " << i << std::endl;
+        //    H_.show(config::WIDTH);
+        //}
+    }
+
+    //std::cout << "END: " << rank << " " << size << std::endl;
+    if (rank == mpi::ROOT_ID) {
+        size_t col_index = rank_map[mpi::ROOT_ID];
+        for (size_t i = mpi::ROOT_ID + 1; i < world_size; i++) {
+            for (size_t j = rank_map[i]; j != 0; j--) {
+                std::vector<COMPLEX> col(size);
+                //std::cout << i << " " << j << " " << col_index << std::endl;
+
+                MPI_Recv(col.data(), size, MPI_DOUBLE_COMPLEX, i, MPI_ANY_TAG, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+                //show_vector(col);
+                H_.modify_col(col_index, col);
+                col_index++;
+            }
+        }
+    } else {
+        for (size_t i = start_col; i < start_col + rank_map[rank]; i++) {
+            std::vector<COMPLEX> col = H_.col(i);
+
+            MPI_Send(col.data(), size, MPI_DOUBLE_COMPLEX, mpi::ROOT_ID, 0, MPI_COMM_WORLD);
+        }
+    }
+#else
+*/
+    size_t i = 0, j = 0;
+    for (const auto& state_from: basis_) {
+        for (const auto& state_to: basis_) {
+            /*
+            //std::cout << i << " " << j << ": " << state_from.to_string() << " -> " << state_to.to_string() << std::endl;
+            H_[i][j] += self_energy_atom(state_from, state_to);
+            //std::cout << "Energy_atom PASSED\n";
+            H_[i][j] += self_energy_photon(state_from, state_to);
+            //std::cout << "Energy_photon PASSED\n";
+            H_[i][j] += excitation_atom(state_from, state_to);
+            //std::cout << "excitation_atom PASSED\n";
+            H_[i][j] += de_excitation_atom(state_from, state_to);
+            //std::cout << "de_excitation_atom PASSED\n";
+            H_[i][j] += photon_exchange(state_from, state_to, grid);
+            */
+
+            H_[i][j] += TC_ADD(state_from, state_to, grid);
+            j++;
+        }
+        j = 0;
+        i++;
+    }
+//#endif
+}
+
+// --------------------------- H_TCH ------------------------------------
+
+H_TCH::H_TCH(const State& grid) {
+/*
+#ifdef ENABLE_MPI
+    int rank, world_size;
+    MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+    MPI_Comm_size(MPI_COMM_WORLD, &world_size);
+    if (rank == mpi::ROOT_ID) {
+        mpi::make_command(COMMAND::GENERATE_H);
+        mpi::bcast_state(grid);
+    }
+    MPI_Barrier(MPI_COMM_WORLD);
 #endif
+*/
+    grid_ = grid;
+
+    auto x_size = grid.x_size();
+    auto y_size = grid.y_size();
+    auto z_size = grid.z_size();
+
+    basis_ = define_basis_of_hamiltonian(grid);
+
+    size_t size = basis_.size();
+    std::cout << "Size - " << size << std::endl;
+    //show_basis(basis_);
+    H_ = Matrix<COMPLEX>(DEFAULT_MATRIX_STYLE, size, size, 0);
+
+    //std::cout << H_.is_c_style() << " " << H_.n() << " " << H_.m() << std::endl;
+/*
+#ifdef ENABLE_MPI
+    size_t start_col;
+    auto rank_map = make_rank_map(size, rank, world_size, start_col);
+
+    //if (rank == 0) {
+    //    std::cout << "rank_map: ";
+    //    show_vector(rank_map);
+    //}
+    //std::cout << "RANGE: " << rank << " -> " << start_col << " " << start_col + rank_map[rank] - 1 << std::endl;
+    for (size_t j = start_col; j < start_col + rank_map[rank]; j++) {
+        auto state_from = get_elem(basis_, j);
+        size_t i = 0;
+    //for (const auto& state_from: basis_) {
+        for (const auto& state_to: basis_) {
+            /*
+            //std::vector<COMPLEX> col(size, 0);
+            H_[i][j] += self_energy_atom(state_from, state_to);
+            //std::cout << "Energy_atom PASSED\n";
+            H_[i][j] += self_energy_photon(state_from, state_to);
+            //std::cout << "Energy_photon PASSED\n";
+            H_[i][j] += excitation_atom(state_from, state_to);
+            //std::cout << "excitation_atom PASSED\n";
+            H_[i][j] += de_excitation_atom(state_from, state_to);
+            //std::cout << "de_excitation_atom PASSED\n";
+            H_[i][j] += photon_exchange(state_from, state_to, grid);
+            */
+
+/*
+            H_[i][j] += TCH_ADD(state_from, state_to, grid);
+            //if (rank == 0)
+            //std::cout << rank << " " << i << " " << j << " " << H_[i][j] << ": " << state_from.to_string() << " -> " << state_to.to_string() << std::endl;
+            i++;
+        }
+
+        //if (rank == 0) {
+        //    std::cout << "COL: " << rank << " " << i << std::endl;
+        //    H_.show(config::WIDTH);
+        //}
+    }
+
+    //std::cout << "END: " << rank << " " << size << std::endl;
+    if (rank == mpi::ROOT_ID) {
+        size_t col_index = rank_map[mpi::ROOT_ID];
+        for (size_t i = mpi::ROOT_ID + 1; i < world_size; i++) {
+            for (size_t j = rank_map[i]; j != 0; j--) {
+                std::vector<COMPLEX> col(size);
+                //std::cout << i << " " << j << " " << col_index << std::endl;
+
+                MPI_Recv(col.data(), size, MPI_DOUBLE_COMPLEX, i, MPI_ANY_TAG, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+                //show_vector(col);
+                H_.modify_col(col_index, col);
+                col_index++;
+            }
+        }
+    } else {
+        for (size_t i = start_col; i < start_col + rank_map[rank]; i++) {
+            std::vector<COMPLEX> col = H_.col(i);
+
+            MPI_Send(col.data(), size, MPI_DOUBLE_COMPLEX, mpi::ROOT_ID, 0, MPI_COMM_WORLD);
+        }
+    }
+#else
+*/
+    size_t i = 0, j = 0;
+    for (const auto& state_from: basis_) {
+        for (const auto& state_to: basis_) {
+            /*
+            //std::cout << i << " " << j << ": " << state_from.to_string() << " -> " << state_to.to_string() << std::endl;
+            H_[i][j] += self_energy_atom(state_from, state_to);
+            //std::cout << "Energy_atom PASSED\n";
+            H_[i][j] += self_energy_photon(state_from, state_to);
+            //std::cout << "Energy_photon PASSED\n";
+            H_[i][j] += excitation_atom(state_from, state_to);
+            //std::cout << "excitation_atom PASSED\n";
+            H_[i][j] += de_excitation_atom(state_from, state_to);
+            //std::cout << "de_excitation_atom PASSED\n";
+            H_[i][j] += photon_exchange(state_from, state_to, grid);
+            */
+
+            H_[i][j] += TCH_ADD(state_from, state_to, grid);
+            j++;
+        }
+        j = 0;
+        i++;
+    }
+//#endif
 }
 
 } // namespace QComputations

@@ -11,8 +11,6 @@
 #include <map>
 #include <functional>
 
-namespace QComputations {
-
 namespace {
 #ifdef MKL_ILP64
     using ILP_TYPE = long long;
@@ -24,6 +22,8 @@ namespace {
 
     using COMPLEX = std::complex<double>;
 }
+
+namespace QComputations {
 
 // COMMAND LIST
 namespace COMMAND {
@@ -68,10 +68,10 @@ namespace mpi {
 
     // Печатает блок матрицы каждого процессора.
     template<typename T>
-    void print_distributed_matrix(const Matrix<T>& A, const std::string& matrix_name, MPI_Comm comm) {
+    void print_distributed_matrix(const Matrix<T>& A, const std::string& matrix_name, ILP_TYPE ctxt) {
         int myid, numproc;
-        MPI_Comm_rank(comm, &myid);
-        MPI_Comm_size(comm, &numproc);
+        MPI_Comm_rank(MPI_COMM_WORLD, &myid);
+        MPI_Comm_size(MPI_COMM_WORLD, &numproc);
 
         for (ILP_TYPE id = 0; id < numproc; ++id) {
             if (id == myid) {
@@ -89,8 +89,11 @@ namespace mpi {
     // ON BLACS GRID
     void init_grid(ILP_TYPE& ctxt);
     void blacs_gridinfo(ILP_TYPE& ctxt, ILP_TYPE& proc_rows, ILP_TYPE& proc_cols, ILP_TYPE& myrow, ILP_TYPE& mycol);
-    ILP_TYPE numroc(ILP_TYPE& N, ILP_TYPE& NB, ILP_TYPE& myindex, ILP_TYPE& ZERO, ILP_TYPE& size);
+    ILP_TYPE numroc(ILP_TYPE N, ILP_TYPE NB, ILP_TYPE myindex, ILP_TYPE ZERO, ILP_TYPE size);
+    ILP_TYPE indxl2g(ILP_TYPE N, ILP_TYPE NB, ILP_TYPE myindx, ILP_TYPE RSRC, ILP_TYPE dim_counts);
     void blacs_gridexit(ILP_TYPE& ctxt);
+    double pdelget(const Matrix<double>& A, ILP_TYPE i, ILP_TYPE j, const std::vector<ILP_TYPE>& desc);
+    COMPLEX pzelget(const Matrix<COMPLEX>& A, ILP_TYPE i, ILP_TYPE j, const std::vector<ILP_TYPE>& desc);
 
     // Распределяет по Blacs решётке блоки матрицы. Реализовано только для Matrix<double> и Matrix<std::complex<double>>
     template<typename T>
@@ -214,32 +217,53 @@ namespace mpi {
     */
 
 #ifdef ENABLE_CLUSTER
-    ILP_TYPE* descinit(ILP_TYPE& n, ILP_TYPE& m, ILP_TYPE& NB, ILP_TYPE& MB, ILP_TYPE& rsrc, ILP_TYPE& csrc, ILP_TYPE& ctxt, ILP_TYPE& LLD, ILP_TYPE& info);
+    std::vector<ILP_TYPE> descinit(ILP_TYPE n, ILP_TYPE m, ILP_TYPE NB,
+                                   ILP_TYPE MB, ILP_TYPE rsrc, ILP_TYPE csrc,
+                                   ILP_TYPE ctxt, ILP_TYPE LLD, ILP_TYPE info);
 
     // only for n x n matrix
     template<typename T>
-    std::vector<T> get_diagonal_elements(Matrix<T>& localA, ILP_TYPE* desca);
+    std::vector<T> get_diagonal_elements(Matrix<T>& localA, const std::vector<ILP_TYPE>& desca);
 
     template<>
-    std::vector<double> get_diagonal_elements<double>(Matrix<double>& localA, ILP_TYPE* desca);
+    std::vector<double> get_diagonal_elements<double>(Matrix<double>& localA, const std::vector<ILP_TYPE>& desca);
 
     template<>
-    std::vector<COMPLEX> get_diagonal_elements<COMPLEX>(Matrix<COMPLEX>& localA, ILP_TYPE* desca);
+    std::vector<COMPLEX> get_diagonal_elements<COMPLEX>(Matrix<COMPLEX>& localA, const std::vector<ILP_TYPE>& desca);
 
    // Parallel matrix computations
+   void parallel_dgeadd(const Matrix<double>& A, Matrix<double>& C,
+                       const std::vector<ILP_TYPE>& desca,
+                       const std::vector<ILP_TYPE>& descc,
+                       char op_A = 'N');
+
+   void parallel_zgeadd(const Matrix<COMPLEX>& A, Matrix<COMPLEX>& C,
+                       const std::vector<ILP_TYPE>& desca,
+                       const std::vector<ILP_TYPE>& descc,
+                       char op_A = 'N');
+
    void parallel_dgemm(const Matrix<double>& A, const Matrix<double>& B, Matrix<double>& C,
-                       bool is_distributed = false, ILP_TYPE* desca = NULL, ILP_TYPE* descb = NULL, ILP_TYPE* descc = NULL,
+                       const std::vector<ILP_TYPE>& desca,
+                       const std::vector<ILP_TYPE>& descb, const std::vector<ILP_TYPE>& descc,
                        char op_A = 'N', char op_B = 'N');
 
    void parallel_zgemm(const Matrix<COMPLEX>& A, const Matrix<COMPLEX>& B, Matrix<COMPLEX>& C,
-                       bool is_distributed = false, ILP_TYPE* desca = NULL, ILP_TYPE* descb = NULL, ILP_TYPE* descc = NULL,
+                       const std::vector<ILP_TYPE>& desca,
+                       const std::vector<ILP_TYPE>& descb, const std::vector<ILP_TYPE>& descc,
+                       char op_A = 'N', char op_B = 'N');
+    
+   void parallel_zhemm(char side, const Matrix<COMPLEX>& A, const Matrix<COMPLEX>& B, Matrix<COMPLEX>& C,
+                       const std::vector<ILP_TYPE>& desca,
+                       const std::vector<ILP_TYPE>& descb, const std::vector<ILP_TYPE>& descc,
                        char op_A = 'N', char op_B = 'N');
 
    void parallel_dgemv(const Matrix<double>& A, const std::vector<double>& x, std::vector<double>& y,
-                       bool is_distributed = false, ILP_TYPE* desca = NULL, ILP_TYPE* descx = NULL, ILP_TYPE* descy = NULL,
+                       const std::vector<ILP_TYPE>& desca,
+                       const std::vector<ILP_TYPE>& descx, const std::vector<ILP_TYPE>& descy,
                        char op_A = 'N');
    void parallel_zgemv(const Matrix<COMPLEX>& A, const std::vector<COMPLEX>& x, std::vector<COMPLEX>& y,
-                       bool is_distributed = false, ILP_TYPE* desca = NULL, ILP_TYPE* descx = NULL, ILP_TYPE* descy = NULL,
+                       const std::vector<ILP_TYPE>& desca,
+                       const std::vector<ILP_TYPE>& descx, const std::vector<ILP_TYPE>& descy,
                        char op_A = 'N');
 #endif
 }

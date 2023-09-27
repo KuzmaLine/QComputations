@@ -1,4 +1,5 @@
 #include "quantum_operators.hpp"
+#include "functions.hpp"
 
 namespace QComputations {
 
@@ -168,6 +169,49 @@ COMPLEX JC_addition(const State& state_from, const State& state_to, COMPLEX g) {
     } else {
         return 0;
     }
+}
+
+COMPLEX TCH_ADD(const State& state_from, const State& state_to, const State& grid) {
+    COMPLEX res(0);
+    res += self_energy_atom(state_from, state_to);
+    //std::cout << "Energy_atom PASSED\n";
+    res += self_energy_photon(state_from, state_to);
+    //std::cout << "Energy_photon PASSED\n";
+    res += excitation_atom(state_from, state_to);
+    //std::cout << "excitation_atom PASSED\n";
+    res += de_excitation_atom(state_from, state_to);
+    //std::cout << "de_excitation_atom PASSED\n";
+    res += photon_exchange(state_from, state_to, grid);
+
+    return res;
+}
+
+COMPLEX TC_ADD(const State& state_from, const State& state_to, const State& grid) {
+    COMPLEX res(0);
+    res += self_energy_atom(state_from, state_to);
+    //std::cout << "Energy_atom PASSED\n";
+    res += self_energy_photon(state_from, state_to);
+    //std::cout << "Energy_photon PASSED\n";
+    res += excitation_atom(state_from, state_to);
+    //std::cout << "excitation_atom PASSED\n";
+    res += de_excitation_atom(state_from, state_to);
+    //std::cout << "de_excitation_atom PASSED\n";
+
+    return res;
+}
+
+COMPLEX JC_ADD(const State& state_from, const State& state_to, const State& grid) {
+    COMPLEX res(0);
+    res += self_energy_atom(state_from, state_to);
+    //std::cout << "Energy_atom PASSED\n";
+    res += self_energy_photon(state_from, state_to);
+    //std::cout << "Energy_photon PASSED\n";
+    res += excitation_atom(state_from, state_to);
+    //std::cout << "excitation_atom PASSED\n";
+    res += de_excitation_atom(state_from, state_to);
+    //std::cout << "de_excitation_atom PASSED\n";
+
+    return res;
 }
 
 } // namespace QComputations

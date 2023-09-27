@@ -13,6 +13,8 @@ namespace {
     typedef std::complex<double> COMPLEX;
 }
 
+std::set<State> define_basis_of_hamiltonian(const State& grid);
+
 class Hamiltonian {
     public:
         Hamiltonian() {};
@@ -48,8 +50,6 @@ class H_by_Matrix : public Hamiltonian {
         H_by_Matrix(const Matrix<COMPLEX>& H) { H_ = H; }
         void set_basis(const std::set<State>& basis) { basis_ = basis; }
         void set_grid(const State& grid) { grid_ = grid; }
-    private:
-        std::function<COMPLEX(size_t, size_t)> func_;
 };
 
 // NEED UPDATE
@@ -57,8 +57,6 @@ class H_JC : public Hamiltonian {
     public:
         explicit H_JC(const State& state);  // Генерируется по умолчанию в RWA приближении
         void make_exact();                  // Делает гамильтониан точным
-    private:
-        size_t n_;
 };
 
 // NEED UPDATE

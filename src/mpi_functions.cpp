@@ -27,8 +27,9 @@ JC, int * DESCC );
 */
 
 extern "C" {
-    void pdelget_(char*, char*, double*, double*, int*, int*, int*);
-    void pzelget_(char*, char*, COMPLEX*, COMPLEX*, int*, int*, int*);
+    void pdelget_(char*, char*, double*, const double*, int*, int*, const int*);
+    void pzelget_(char*, char*, COMPLEX*, const COMPLEX*, int*, int*, const int*);
+    ILP_TYPE indxl2g_(ILP_TYPE*, ILP_TYPE*, ILP_TYPE*, ILP_TYPE*, ILP_TYPE*);
 }
 
 #endif
@@ -232,10 +233,10 @@ void mpi::run_mpi_slaves(const std::map<int, std::vector<MPI_Data>>& data) {
 
             if (datatype == MPI_Datatype_ID::DOUBLE_COMPLEX) {
                 Matrix<COMPLEX> tmp;
-                parallel_zgemm(tmp, tmp, tmp);
+                //parallel_zgemm(tmp, tmp, tmp);
             } else if (datatype == MPI_Datatype_ID::DOUBLE) {
                 Matrix<double> tmp;
-                parallel_dgemm(tmp, tmp, tmp);
+                //parallel_dgemm(tmp, tmp, tmp);
             } else {
                 MPI_Abort(MPI_COMM_WORLD, 6);
             }
@@ -739,9 +740,16 @@ namespace {
     }
 }
 
-ILP_TYPE* mpi::descinit(ILP_TYPE& n, ILP_TYPE& m, ILP_TYPE& NB, ILP_TYPE& MB, ILP_TYPE& rsrc, ILP_TYPE& csrc, ILP_TYPE& ctxt, ILP_TYPE& LLD, ILP_TYPE& info) {
-    ILP_TYPE* desc = new ILP_TYPE[9];
-    descinit_(desc, &n, &m, &NB, &MB, &rsrc, &csrc, &ctxt, &LLD, &info);
+ILP_TYPE mpi::indxl2g(ILP_TYPE n, ILP_TYPE NB, ILP_TYPE myindx, ILP_TYPE RSRC, ILP_TYPE dim_size) {
+    ILP_TYPE n_new = n + 1;
+    return indxl2g_(&n_new, &NB, &myindx, &RSRC, &dim_size) - 1;
+}
+
+std::vector<ILP_TYPE> mpi::descinit(ILP_TYPE n, ILP_TYPE m, ILP_TYPE NB,
+                                    ILP_TYPE MB, ILP_TYPE rsrc, ILP_TYPE csrc,
+                                    ILP_TYPE ctxt, ILP_TYPE LLD, ILP_TYPE info) {
+    std::vector<ILP_TYPE> desc(9);
+    descinit_(desc.data(), &n, &m, &NB, &MB, &rsrc, &csrc, &ctxt, &LLD, &info);
 
     return desc;
 }
@@ -750,12 +758,32 @@ void mpi::blacs_gridinfo(ILP_TYPE& ctxt, ILP_TYPE& proc_rows, ILP_TYPE& proc_col
     ::blacs_gridinfo(&ctxt, &proc_rows, &proc_cols, &myrow, &mycol);
 }
 
-ILP_TYPE mpi::numroc(ILP_TYPE& N, ILP_TYPE& NB, ILP_TYPE& myindex, ILP_TYPE& ZERO, ILP_TYPE& size) {
+ILP_TYPE mpi::numroc(ILP_TYPE N, ILP_TYPE NB, ILP_TYPE myindex, ILP_TYPE ZERO, ILP_TYPE size) {
     return ::numroc_(&N, &NB, &myindex, &ZERO, &size);
 }
 
 void mpi::blacs_gridexit(ILP_TYPE& ctxt) {
     ::blacs_gridexit(&ctxt);
+}
+
+double mpi::pdelget(const Matrix<double>& A, ILP_TYPE i, ILP_TYPE j, const std::vector<ILP_TYPE>& desc) {
+    char chA = 'A';
+    char TopI = 'I';
+    ILP_TYPE new_i = i + 1;
+    ILP_TYPE new_j = j + 1;
+    double res;
+    ::pdelget_(&chA, &TopI, &res, A.data(), &new_i, &new_j, desc.data());
+    return res;
+}
+
+COMPLEX mpi::pzelget(const Matrix<COMPLEX>& A, ILP_TYPE i, ILP_TYPE j, const std::vector<ILP_TYPE>& desc) {
+    char chA = 'A';
+    char TopI = 'I';
+    ILP_TYPE new_i = i + 1;
+    ILP_TYPE new_j = j + 1;
+    COMPLEX res;
+    ::pzelget_(&chA, &TopI, &res, A.data(), &new_i, &new_j, desc.data());
+    return res;
 }
 
 void mpi::init_grid(ILP_TYPE& ctxt) {
@@ -1290,47 +1318,48 @@ void mpi::gather_blacs_vector<COMPLEX>(const std::vector<COMPLEX>& local_y, std:
 }
 
 template<>
-std::vector<double> mpi::get_diagonal_elements<double>(Matrix<double>& localA, ILP_TYPE* desca) {
+std::vector<double> mpi::get_diagonal_elements<double>(Matrix<double>& localA, const std::vector<ILP_TYPE>& desca) {
     std::vector<double> res(desca[2]);
     char chA = 'A';
     char TopI = 'I';
     for (int i = 0; i < desca[2]; i++) {
         int index = i + 1;
-        pdelget_(&chA, &TopI, &res[i], localA.data(), &index, &index, desca);
+        pdelget_(&chA, &TopI, &res[i], localA.data(), &index, &index, desca.data());
     }
 
     return res;
 }
 
 template<>
-std::vector<COMPLEX> mpi::get_diagonal_elements<COMPLEX>(Matrix<COMPLEX>& localA, ILP_TYPE* desca) {
+std::vector<COMPLEX> mpi::get_diagonal_elements<COMPLEX>(Matrix<COMPLEX>& localA, const std::vector<ILP_TYPE>& desca) {
     std::vector<COMPLEX> res(desca[2]);
     char chA = 'A';
     char TopI = 'I';
     for (int i = 0; i < desca[2]; i++) {
         int index = i + 1;
-        pzelget_(&chA, &TopI, &res[i], localA.data(), &index, &index, desca);
+        pzelget_(&chA, &TopI, &res[i], localA.data(), &index, &index, desca.data());
     }
 
     return res;
 }
 
-void mpi::parallel_dgemm(const Matrix<double>& A, const Matrix<double>& B, Matrix<double>& C,
-                         bool is_distributed, ILP_TYPE* desca, ILP_TYPE* descb, ILP_TYPE* descc,
+void mpi::parallel_dgemm(const Matrix<double>& A, const Matrix<double>& B, Matrix<double>& C, const std::vector<ILP_TYPE>& desca,
+                         const std::vector<ILP_TYPE>& descb, const std::vector<ILP_TYPE>& descc,
                          char op_A, char op_B) {
-    ILP_TYPE iZERO = 0;
-    int rank, world_size;
-    MPI_Comm_rank(MPI_COMM_WORLD, &rank);
-    MPI_Comm_size(MPI_COMM_WORLD, &world_size);
+    //ILP_TYPE iZERO = 0;
+    //int rank, world_size;
+    //MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+    //MPI_Comm_size(MPI_COMM_WORLD, &world_size);
 
-    ILP_TYPE ctxt;
+    //ILP_TYPE ctxt;
     ILP_TYPE NA, MA, NB, MB, NB_A, MB_A, NB_B, MB_B;
-    ILP_TYPE LLD_A, LLD_B, LLD_C;
-    ILP_TYPE nrows_A, nrows_B, nrows_C, ncols_A, ncols_B, ncols_C;
-    ILP_TYPE proc_rows, proc_cols, myrow, mycol;
-    Matrix<double> localA;
-    Matrix<double> localB;
-    Matrix<double> localC;
+    //ILP_TYPE LLD_A, LLD_B, LLD_C;
+    //ILP_TYPE nrows_A, nrows_B, nrows_C, ncols_A, ncols_B, ncols_C;
+    //ILP_TYPE proc_rows, proc_cols, myrow, mycol;
+    //Matrix<double> localA;
+    //Matrix<double> localB;
+    //Matrix<double> localC;
+    /*
     if (!is_distributed) {
         init_grid(ctxt);
         blacs_gridinfo(ctxt, proc_rows, proc_cols, myrow, mycol);
@@ -1348,92 +1377,94 @@ void mpi::parallel_dgemm(const Matrix<double>& A, const Matrix<double>& B, Matri
         LLD_C = nrows_C;
 
         ILP_TYPE rsrc = 0, csrc = 0, info;
-        desca = new ILP_TYPE[9];
-        descb = new ILP_TYPE[9];
-        descc = new ILP_TYPE[9];
-        descinit_(desca, &NA, &MA, &NB_A, &MB_A, &rsrc, &csrc, &ctxt, &LLD_A, &info);
+        desca = descinit(NA, MA, NB_A, MB_A, rsrc, csrc, ctxt, LLD_A, info);
         if (info != 0) std::cout << "ERROR OF descinit__A: " << rank << " " << info << std::endl;
-        descinit_(descb, &NB, &MB, &NB_B, &MB_B, &rsrc, &csrc, &ctxt, &LLD_B, &info);
+        descb = descinit(NB, MB, NB_B, MB_B, rsrc, csrc, ctxt, LLD_B, info);
+        //descinit_(descb, &NB, &MB, &NB_B, &MB_B, &rsrc, &csrc, &ctxt, &LLD_B, &info);
         if (info != 0) std::cout << "ERROR OF descinit__B: " << rank << " " << info << std::endl;
-        descinit_(descc, &NA, &MB, &NB_A, &MB_B, &rsrc, &csrc, &ctxt, &LLD_C, &info);
+        descc = descinit(NA, MB, NB_A, MB_B, rsrc, csrc, ctxt, LLD_C, info);
+        //descinit_(descc, &NA, &MB, &NB_A, &MB_B, &rsrc, &csrc, &ctxt, &LLD_C, &info);
         if (info != 0) std::cout << "ERROR OF descinit__C: " << rank << " " << info << std::endl;
 
         
         //mpi::print_distributed_matrix<double>(localA, "A", MPI_COMM_WORLD);
         //mpi::print_distributed_matrix<double>(localB, "B", MPI_COMM_WORLD);
-    } else {
-        NA = desca[2];
-        MA = desca[3];
-        NB = descb[2];
-        MB = descb[3];
-    }
+    */
+    //} else {
+    NA = desca[2];
+    MA = desca[3];
+    NB = descb[2];
+    MB = descb[3];
+    //}
 
+    /*
     bool return_to_c_style = false;
 
-    if (!is_distributed and localA.is_c_style()) {
+    if (localA.is_c_style()) {
         return_to_c_style = true;
         localA.to_fortran_style();
     }
 
-    if (!is_distributed and localB.is_c_style()) {
+    if (!is_distributed andlocalB.is_c_style()) {
         localB.to_fortran_style();
     }
-
+    */
     char N = 'N';
     ILP_TYPE iONE = 1;
     double alpha = 1.0;
     double betta = 0;
 
-    if (!is_distributed) {
+    //if (!is_distributed) {
         //auto begin = std::chrono::steady_clock::now();
-        pdgemm_(&op_A, &op_B, &NA, &MB, &MA, &alpha, localA.data(), &iONE, &iONE, desca,
-                                        localB.data(), &iONE, &iONE, descb,
-                                        &betta, localC.data(), &iONE, &iONE, descc);
+    //    pdgemm_(&op_A, &op_B, &NA, &MB, &MA, &alpha, localA.data(), &iONE, &iONE, desca.data(),
+    //                                    localB.data(), &iONE, &iONE, descb.data(),
+    //                                    &betta, localC.data(), &iONE, &iONE, descc.data());
         //auto end = std::chrono::steady_clock::now();
         //if (rank == mpi::ROOT_ID) std::cout << "PDGEMM: " << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count() << std::endl;
-    } else {
+    //} else {
         //auto begin = std::chrono::steady_clock::now();
-        pdgemm_(&op_A, &op_B, &NA, &MB, &MA, &alpha, A.data(), &iONE, &iONE, desca,
-                                        B.data(), &iONE, &iONE, descb,
-                                        &betta, C.data(), &iONE, &iONE, descc);
+    pdgemm_(&op_A, &op_B, &NA, &MB, &MA, &alpha, A.data(), &iONE, &iONE, desca.data(),
+                                    B.data(), &iONE, &iONE, descb.data(),
+                                    &betta, C.data(), &iONE, &iONE, descc.data());
         //auto end = std::chrono::steady_clock::now();
         //if (rank == mpi::ROOT_ID) std::cout << "PDGEMM: " << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count() << std::endl;  
-    }
+    //}
 
-    if (return_to_c_style) {
-        localC.to_c_style();
-    }
+    //if (return_to_c_style) {
+    //    localC.to_c_style();
+    //}
 
     //print_distributed_matrix<double>(localC, "C", MPI_COMM_WORLD);
 
+    /*
     if (!is_distributed) {
         if (rank == mpi::ROOT_ID) C = Matrix<double>(localC.get_matrix_style(), NA, MB);
         gather_blacs_matrix<double>(localC, C, NA, MB, NB_A, MB_B, nrows_C, ncols_C, ctxt, mpi::ROOT_ID);
-        delete [] desca;
-        delete [] descb;
-        delete [] descc;
         blacs_gridexit(ctxt);
     }
+    */
     //blacs_exit(&iZERO);
 }
 
 void mpi::parallel_zgemm(const Matrix<COMPLEX>& A, const Matrix<COMPLEX>& B, Matrix<COMPLEX>& C,
-                         bool is_distributed, ILP_TYPE* desca, ILP_TYPE* descb, ILP_TYPE* descc,
+                        const std::vector<ILP_TYPE>& desca,
+                         const std::vector<ILP_TYPE>& descb, const std::vector<ILP_TYPE>& descc,
                          char op_A, char op_B) {
     ILP_TYPE iZERO = 0;
-    int rank, world_size;
-    MPI_Comm_rank(MPI_COMM_WORLD, &rank);
-    MPI_Comm_size(MPI_COMM_WORLD, &world_size);
+    //int rank, world_size;
+    //MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+    //MPI_Comm_size(MPI_COMM_WORLD, &world_size);
     //std::cout << rank << " HERE\n";
 
-    ILP_TYPE ctxt;
+    //ILP_TYPE ctxt;
     ILP_TYPE NA, MA, NB, MB, NB_A, MB_A, NB_B, MB_B;
-    ILP_TYPE LLD_A, LLD_B, LLD_C;
-    ILP_TYPE nrows_A, nrows_B, nrows_C, ncols_A, ncols_B, ncols_C;
-    ILP_TYPE proc_rows, proc_cols, myrow, mycol;
-    Matrix<COMPLEX> localA;
-    Matrix<COMPLEX> localB;
-    Matrix<COMPLEX> localC;
+    //ILP_TYPE LLD_A, LLD_B, LLD_C;
+    //ILP_TYPE nrows_A, nrows_B, nrows_C, ncols_A, ncols_B, ncols_C;
+    //ILP_TYPE proc_rows, proc_cols, myrow, mycol;
+    //Matrix<COMPLEX> localA;
+    //Matrix<COMPLEX> localB;
+    //Matrix<COMPLEX> localC;
+    /*
     if (!is_distributed) {
         init_grid(ctxt);
         blacs_gridinfo(ctxt, proc_rows, proc_cols, myrow, mycol);
@@ -1451,26 +1482,27 @@ void mpi::parallel_zgemm(const Matrix<COMPLEX>& A, const Matrix<COMPLEX>& B, Mat
         LLD_C = nrows_C;
 
         ILP_TYPE rsrc = 0, csrc = 0, info;
-        desca = new ILP_TYPE[9];
-        descb = new ILP_TYPE[9];
-        descc = new ILP_TYPE[9];
-        descinit_(desca, &NA, &MA, &NB_A, &MB_A, &rsrc, &csrc, &ctxt, &LLD_A, &info);
+        desca = descinit(NA, MA, NB_A, MB_A, rsrc, csrc, ctxt, LLD_A, info);
         if (info != 0) std::cout << "ERROR OF descinit__A: " << rank << " " << info << std::endl;
-        descinit_(descb, &NB, &MB, &NB_B, &MB_B, &rsrc, &csrc, &ctxt, &LLD_B, &info);
+        descb = descinit(NB, MB, NB_B, MB_B, rsrc, csrc, ctxt, LLD_B, info);
+        //descinit_(descb, &NB, &MB, &NB_B, &MB_B, &rsrc, &csrc, &ctxt, &LLD_B, &info);
         if (info != 0) std::cout << "ERROR OF descinit__B: " << rank << " " << info << std::endl;
-        descinit_(descc, &NA, &MB, &NB_A, &MB_B, &rsrc, &csrc, &ctxt, &LLD_C, &info);
+        descc = descinit(NA, MB, NB_A, MB_B, rsrc, csrc, ctxt, LLD_C, info);
+        //descinit_(descc, &NA, &MB, &NB_A, &MB_B, &rsrc, &csrc, &ctxt, &LLD_C, &info);
         if (info != 0) std::cout << "ERROR OF descinit__C: " << rank << " " << info << std::endl;
 
         
         //mpi::print_distributed_matrix<COMPLEX>(localA, "A", MPI_COMM_WORLD);
         //mpi::print_distributed_matrix<COMPLEX>(localB, "B", MPI_COMM_WORLD);
-    } else {
-        NA = desca[2];
-        MA = desca[3];
-        NB = descb[2];
-        MB = descb[3];
-    }
+    */
+    //} else {
+    NA = desca[2];
+    MA = desca[3];
+    NB = descb[2];
+    MB = descb[3];
+    //}
 
+    /*
     bool return_to_c_style = false;
 
     if (!is_distributed and localA.is_c_style()) {
@@ -1481,42 +1513,90 @@ void mpi::parallel_zgemm(const Matrix<COMPLEX>& A, const Matrix<COMPLEX>& B, Mat
     if (!is_distributed and localB.is_c_style()) {
         localB.to_fortran_style();
     }
+    */
+
 
     ILP_TYPE iONE = 1;
     COMPLEX alpha(1.0, 0);
     COMPLEX betta(0, 0);
 
-    if (!is_distributed) {
-        auto begin = std::chrono::steady_clock::now();
-        pzgemm_(&op_A, &op_B, &NA, &MB, &MA, &alpha, localA.data(), &iONE, &iONE, desca,
-                                        localB.data(), &iONE, &iONE, descb,
-                                        &betta, localC.data(), &iONE, &iONE, descc);
-        auto end = std::chrono::steady_clock::now();
+    //if (!is_distributed) {
+    //    auto begin = std::chrono::steady_clock::now();
+    //    pzgemm_(&op_A, &op_B, &NA, &MB, &MA, &alpha, localA.data(), &iONE, &iONE, desca.data(),
+    //                                    localB.data(), &iONE, &iONE, descb.data(),
+    //                                    &betta, localC.data(), &iONE, &iONE, descc.data());
+    //    auto end = std::chrono::steady_clock::now();
         //if (rank == mpi::ROOT_ID) std::cout << "PZGEMM: " << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count() << std::endl;
-    } else {
-        auto begin = std::chrono::steady_clock::now();
-        pzgemm_(&op_A, &op_B, &NA, &MB, &MA, &alpha, A.data(), &iONE, &iONE, desca,
-                                        B.data(), &iONE, &iONE, descb,
-                                        &betta, C.data(), &iONE, &iONE, descc);
-        auto end = std::chrono::steady_clock::now();
+    //} else {
+    //    auto begin = std::chrono::steady_clock::now();
+    pzgemm_(&op_A, &op_B, &NA, &MB, &MA, &alpha, A.data(), &iONE, &iONE, desca.data(),
+                                    B.data(), &iONE, &iONE, descb.data(),
+                                    &betta, C.data(), &iONE, &iONE, descc.data());
+    //    auto end = std::chrono::steady_clock::now();
         //if (rank == mpi::ROOT_ID) std::cout << "PZGEMM: " << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count() << std::endl;  
-    }
+    //}
 
-    if (!is_distributed and return_to_c_style) {
-        localC.to_c_style();
-    }
+    //if (!is_distributed and return_to_c_style) {
+    //    localC.to_c_style();
+    //}
 
     //print_distributed_matrix<COMPLEX>(localC, "C", MPI_COMM_WORLD);
 
+    /*
     if (!is_distributed) {
         if (rank == mpi::ROOT_ID) C = Matrix<COMPLEX>(localC.get_matrix_style(), NA, MB);
         gather_blacs_matrix<COMPLEX>(localC, C, NA, MB, NB_A, MB_B, nrows_C, ncols_C, ctxt, mpi::ROOT_ID);
-        delete [] desca;
-        delete [] descb;
-        delete [] descc;
         blacs_gridexit(ctxt);
     }
+    */
     //blacs_exit(&iZERO);
+}
+
+void mpi::parallel_zhemm(char side, const Matrix<COMPLEX>& A, const Matrix<COMPLEX>& B, Matrix<COMPLEX>& C,
+                    const std::vector<ILP_TYPE>& desca,
+                    const std::vector<ILP_TYPE>& descb, const std::vector<ILP_TYPE>& descc,
+                    char op_A, char op_B) {
+    ILP_TYPE NA, MA, NB, MB, NB_A, MB_A, NB_B, MB_B;
+
+    NA = desca[2];
+    MA = desca[3];
+    NB = descb[2];
+    MB = descb[3];
+
+    ILP_TYPE iONE = 1;
+    COMPLEX alpha(1.0, 0);
+    COMPLEX betta(0, 0);
+    char uplo = 'U';
+
+    pzhemm_(&side, &uplo, &NA, &MB, &alpha, A.data(), &iONE, &iONE, desca.data(),
+                                B.data(), &iONE, &iONE, descb.data(),
+                                &betta, C.data(), &iONE, &iONE, descc.data());
+}
+
+void mpi::parallel_dgeadd(const Matrix<double>& A, Matrix<double>& C,
+                    const std::vector<ILP_TYPE>& desca,
+                    const std::vector<ILP_TYPE>& descc,
+                    char op_A) {
+    ILP_TYPE iONE = 1;
+    double alpha = 1;
+    double betta = 1;
+    ILP_TYPE NA = desca[2];
+    ILP_TYPE MA = desca[3];
+
+    pdgeadd(&op_A, &NA, &MA, &alpha, A.data(), &iONE, &iONE, desca.data(), &betta, C.data(), &iONE, &iONE, descc.data());
+}
+
+void mpi::parallel_zgeadd(const Matrix<COMPLEX>& A, Matrix<COMPLEX>& C,
+                    const std::vector<ILP_TYPE>& desca,
+                    const std::vector<ILP_TYPE>& descc,
+                    char op_A) {
+    ILP_TYPE iONE = 1;
+    COMPLEX alpha(1.0, 0);
+    COMPLEX betta(1.0, 0);
+    ILP_TYPE NA = desca[2];
+    ILP_TYPE MA = desca[3];
+
+    pzgeadd(&op_A, &NA, &MA, &alpha, A.data(), &iONE, &iONE, desca.data(), &betta, C.data(), &iONE, &iONE, descc.data());
 }
 
 #endif // ENABLE_CLUSTER

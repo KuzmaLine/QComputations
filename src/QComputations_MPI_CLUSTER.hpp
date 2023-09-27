@@ -22,4 +22,6 @@
 #include "mpi_functions.hpp"
 #include "plot.hpp"
 #include "test.hpp"
+#include "blocked_matrix.hpp"
 #include <mpi.h>
+#include "hamiltonian_blocked.hpp"
