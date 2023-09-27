@@ -54,7 +54,7 @@ bool is_digit(char c) {
 
 void show_basis(const std::set<Cavity_State>& basis) {
     for (const auto& state: basis) {
-        std::cout << std::setw(config::WIDTH) << state.to_string() << " ";
+        std::cout << std::setw(QConfig::instance().width()) << state.to_string() << " ";
     }
 
     std::cout << std::endl;
@@ -62,7 +62,7 @@ void show_basis(const std::set<Cavity_State>& basis) {
 
 void show_basis(const std::set<State>& basis) {
     for (const auto& state: basis) {
-        std::cout << std::setw(config::WIDTH) << state.to_string() << " ";
+        std::cout << std::setw(QConfig::instance().width()) << state.to_string() << " ";
     }
 
     std::cout << std::endl;
@@ -151,7 +151,7 @@ std::function<double(double)> Cubic_Spline_Interpolate(const std::vector<double>
     */
     std::function<double(double)> res {
         [f, x, a, b, c, d](double t) {
-            if (t + config::eps < x[0] or t - config::eps > x[x.size() - 1]) {
+            if (t + QConfig::instance().eps() < x[0] or t - QConfig::instance().eps() > x[x.size() - 1]) {
                 std::cerr << "Not between x[0] and x[n - 1]" << std::endl;
                 return -1.0;
             }

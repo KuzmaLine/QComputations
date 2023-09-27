@@ -5,6 +5,8 @@
 
 int main(void) {
     using namespace QComputations;
+    QConfig::instance().set_h(0.1);
+    QConfig::instance().show();
     State grid("|0;11>");
     grid.set_max_N(2);
     grid.set_min_N(2);

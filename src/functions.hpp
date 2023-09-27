@@ -59,10 +59,10 @@ std::pair<std::vector<double>, Matrix<COMPLEX>> Hermit_Lanczos(const Matrix<COMP
 std::function<double(double)> Cubic_Spline_Interpolate(const std::vector<double>& x, const std::vector<double>& y);
 
 // Solve f(x) = target
-double fsolve(std::function<double(double)> f, double a, double b, double target = 0, double eps = config::eps);
+double fsolve(std::function<double(double)> f, double a, double b, double target = 0, double eps = QConfig::instance().eps());
 
 // f must be unimodal on [a, b]
-double fmin(std::function<double(double)> f, double a, double b, double eps = config::eps);
+double fmin(std::function<double(double)> f, double a, double b, double eps = QConfig::instance().eps());
 
 void show_basis(const std::set<Cavity_State>& basis);
 void show_basis(const std::set<State>& basis);
@@ -134,7 +134,7 @@ template<typename T>
 std::ostream& operator<<(std::ostream& out, const Matrix<T>& matrix) {
     for (size_t i = 0; i < matrix.n(); i++) {
         for (size_t j = 0; j < matrix.m(); j++) {
-            out << std::setw(config::WIDTH) << matrix[i][j] << " ";
+            out << std::setw(QConfig::instance().width()) << matrix[i][j] << " ";
         }
 
         out << std::endl;

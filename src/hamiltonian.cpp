@@ -39,7 +39,7 @@ namespace {
     Matrix<COMPLEX> E_photons(int n) {
         Matrix<COMPLEX> E(DEFAULT_MATRIX_STYLE, n, n, 0);
         for (int i = 0; i < n; i++) {
-            E[i][i] = i * config::h * config::w;
+            E[i][i] = i * QConfig::instance().h() * QConfig::instance().w();
         }
 
         return E;

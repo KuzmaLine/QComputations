@@ -22,7 +22,7 @@ class Hamiltonian {
         size_t size() const { return H_.size(); }
         std::set<State> get_basis() const { return basis_; }     // Return basis of Hamiltonian
         State get_grid() const { return grid_; }                 // Return grid (if it included)
-        void show(const size_t width = config::WIDTH) const;
+        void show(const size_t width = QConfig::instance().width()) const;
         Matrix<COMPLEX> get_matrix() const { return H_; }
         std::pair<std::vector<double>, Matrix<COMPLEX>> eigen(); // Find eigenvalues and eigenvectors (functions.hpp)
         COMPLEX get_leak(size_t cavity_id) { return grid_.get_leak_gamma(cavity_id); } // (state.hpp)
@@ -66,9 +66,6 @@ class H_TC : public Hamiltonian {
     private:
         size_t n_;
         size_t m_;
-        COMPLEX g(int atom_number) {
-            return config::g;
-        }
 };
 
 class H_TCH : public Hamiltonian {

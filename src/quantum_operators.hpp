@@ -2,7 +2,6 @@
 #include <complex>
 #include "state.hpp"
 #include "config.hpp"
-
 namespace QComputations {
 
 namespace {
@@ -10,12 +9,12 @@ namespace {
 }
 
 // (!!!) ADD DESCRIPTION
-COMPLEX self_energy_photon(const State& state_from, const State& state_to, COMPLEX hw = config::h * config::w);
-COMPLEX self_energy_atom(const State& state_from, const State& state_to, COMPLEX hw = config::h * config::w);
-COMPLEX excitation_atom(const State& state_from, const State& state_to, COMPLEX g = config::g);
-COMPLEX de_excitation_atom(const State& state_from, const State& state_to, COMPLEX g = config::g);
+COMPLEX self_energy_photon(const State& state_from, const State& state_to, COMPLEX hw = QConfig::instance().h() * QConfig::instance().w());
+COMPLEX self_energy_atom(const State& state_from, const State& state_to, COMPLEX hw = QConfig::instance().h() * QConfig::instance().w());
+COMPLEX excitation_atom(const State& state_from, const State& state_to, COMPLEX g = QConfig::instance().g());
+COMPLEX de_excitation_atom(const State& state_from, const State& state_to, COMPLEX g = QConfig::instance().g());
 COMPLEX photon_exchange(const State& state_from, const State& state_to, const State& grid);
-COMPLEX JC_addition(const State& state_from, const State& state_to, COMPLEX g = config::g);
+COMPLEX JC_addition(const State& state_from, const State& state_to, COMPLEX g = QConfig::instance().g());
 
 COMPLEX TCH_ADD(const State& state_from, const State& state_to, const State& grid);
 COMPLEX TC_ADD(const State& state_from, const State& state_to, const State& grid);

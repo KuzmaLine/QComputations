@@ -12,7 +12,7 @@ namespace {
     using COMPLEX = std::complex<double>;
 }
 
-#ifndef ENABLE_MPI
+//#ifndef ENABLE_MPI
 template<>
 Matrix<double> Matrix<double>::operator* (const Matrix<double>& A) const {
     assert(m_ == A.n_);
@@ -56,8 +56,8 @@ Matrix<COMPLEX> Matrix<COMPLEX>::operator* (const Matrix<COMPLEX>& A) const {
     return res;
 }
 
-#else
-
+//#else
+/*
 template<>
 Matrix<double> Matrix<double>::operator* (const Matrix<double>& A) const {
     assert(m_ == A.n_);
@@ -197,7 +197,7 @@ Matrix<double> Matrix<double>::operator* (const Matrix<double>& A) const {
             }
         }
         */
-
+       /*
         end = std::chrono::steady_clock::now();
         std::cout << "AFTER: " << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count() << std::endl;
     } else if (config::MULTIPLY_MODE == config::COMMON_MODE) {
@@ -381,6 +381,7 @@ Matrix<COMPLEX> Matrix<COMPLEX>::operator* (const Matrix<COMPLEX>& A) const {
         }
         */
 
+        /*
         end = std::chrono::steady_clock::now();
         std::cout << "AFTER: " << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count() << std::endl;
     } else if (config::MULTIPLY_MODE == config::COMMON_MODE) {
@@ -424,7 +425,7 @@ Matrix<COMPLEX> Matrix<COMPLEX>::operator* (const Matrix<COMPLEX>& A) const {
 }
 
 #endif
-
+*/
 /*
 template<>
 Matrix<COMPLEX> Matrix<COMPLEX>::operator* <COMPLEX>(const Matrix<COMPLEX>& A) const {

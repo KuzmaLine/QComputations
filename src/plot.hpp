@@ -17,7 +17,7 @@ namespace QComputations {
 // !!!!!!!!!!!!!! использовать только ДО ВЫЗОВА Parallel_QME, иначе free invalid pointer по причине - хз,
 // !!!!!!!!!!!!!! интерпретатор питона тупа шлёт нахер.
 namespace matplotlib {
-    void make_figure(size_t x = 0, size_t y = 0, size_t dpi = config::dpi);
+    void make_figure(size_t x = 0, size_t y = 0, size_t dpi = QConfig::instance().dpi());
     void probs_to_plot(const Evolution::Probs& probs,
                        const std::vector<double>& time_vec,
                        const std::set<State>& basis,
@@ -39,7 +39,7 @@ namespace matplotlib {
                              const std::set<State>& basis,
                              std::vector<std::map<std::string, std::string>> keywords = {});
     void show(bool is_block = true);
-    void savefig(const std::string& filename, size_t dpi = config::dpi);
+    void savefig(const std::string& filename, size_t dpi = QConfig::instance().dpi());
     void grid(bool is_enable = true);
 }
 

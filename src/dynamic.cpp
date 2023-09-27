@@ -112,7 +112,7 @@ Evolution::Probs Evolution::schrodinger(const std::vector<COMPLEX>& init_state, 
 
         for (size_t i = 0; i < eigen_values.size(); i++) {
             for (size_t j = 0; j < psi_t.size(); j++) {
-                psi_t[j] += lambda[i] * std::exp(COMPLEX(0, 1 / config::h * eigen_values[i] * t)) * eigen_vectors[i][j];
+                psi_t[j] += lambda[i] * std::exp(COMPLEX(0, 1 / QConfig::instance().h() * eigen_values[i] * t)) * eigen_vectors[i][j];
             }
         }
 
@@ -147,10 +147,11 @@ Evolution::Probs Evolution::schrodinger(const std::vector<COMPLEX>& init_state, 
 #else
     for (const auto& t: time_vec) {
         std::vector<COMPLEX> psi_t(eigen_values.size(), 0);
+        auto h = QConfig::instance().h();
 
         for (size_t i = 0; i < eigen_values.size(); i++) {
             for (size_t j = 0; j < psi_t.size(); j++) {
-                psi_t[j] += lambda[i] * std::exp(COMPLEX(0, 1 / config::h * eigen_values[i] * t)) * eigen_vectors[i][j];
+                psi_t[j] += lambda[i] * std::exp(COMPLEX(0, 1 / h * eigen_values[i] * t)) * eigen_vectors[i][j];
             }
         }
 
@@ -248,7 +249,7 @@ Evolution::Probs Evolution::quantum_master_equation(const std::vector<COMPLEX>& 
 
             //std::cout << t << " " << res << std::endl;
 
-            if (std::abs(res - 1) >= config::eps) {
+            if (std::abs(res - 1) >= QConfig::instance().eps()) {
                 //std::cout << t << " " << res << std::endl;
             }
         }
@@ -263,7 +264,7 @@ Evolution::Probs Evolution::quantum_master_equation(const std::vector<COMPLEX>& 
         for (size_t j = 0; j < dim; j++) {
             for (size_t t = 0; t < time_vec.size(); t++) {
                 probs[i * dim + j][t] = std::abs(rho_vec[t][i][j]);
-                if (probs[i * dim + j][t] >= config::eps) {
+                if (probs[i * dim + j][t] >= QConfig::instance().eps()) {
                     is_null = false;
                 }
             }
@@ -327,8 +328,6 @@ Evolution::Probs Evolution::Parallel_QME(const std::vector<COMPLEX>& init_state,
                                          Hamiltonian& H,
                                          const std::vector<double>& time_vec,
                                          bool is_full_rho) {
-    auto OLD_MULTIPLY_MODE = config::MULTIPLY_MODE;
-    config::MULTIPLY_MODE = config::P_GEMM_MODE;
     int rank, world_size;
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
     MPI_Comm_size(MPI_COMM_WORLD, &world_size);
@@ -502,7 +501,6 @@ Evolution::Probs Evolution::Parallel_QME(const std::vector<COMPLEX>& init_state,
     //std::cout << " c " << std::chrono::duration_cast<std::chrono::milliseconds>(end_c - begin_c).count() << std::endl;
     */
 
-    config::MULTIPLY_MODE = OLD_MULTIPLY_MODE;
     if (rank == mpi::ROOT_ID) {
         if (!is_full_rho) {
             Evolution::Probs probs(C_STYLE, dim, time_vec.size());
@@ -521,7 +519,7 @@ Evolution::Probs Evolution::Parallel_QME(const std::vector<COMPLEX>& init_state,
 
                 //std::cout << t << " " << res << std::endl;
 
-                if (std::abs(res - 1) >= config::eps) {
+                if (std::abs(res - 1) >= QConfig::instance().eps()) {
                     //std::cout << t << " " << res << std::endl;
                 }
             }
@@ -537,7 +535,7 @@ Evolution::Probs Evolution::Parallel_QME(const std::vector<COMPLEX>& init_state,
             for (size_t j = 0; j < dim; j++) {
                 for (size_t t = 0; t < time_vec.size(); t++) {
                     probs[i * dim + j][t] = std::abs(rho_vec[t][i][j]);
-                    if (probs[i * dim + j][t] >= config::eps) {
+                    if (probs[i * dim + j][t] >= QConfig::instance().eps()) {
                         is_null = false;
                     }
                 }

@@ -92,9 +92,9 @@ namespace printing {
     void probs_print(const Matrix<double>& probs, const std::set<State>& basis, const std::vector<double>& time_vec) {
         size_t index = 0;
         for (const auto& b: basis) {
-            std::cout << std::setw(config::WIDTH) << b.to_string() << " : ";
+            std::cout << std::setw(QConfig::instance().width()) << b.to_string() << " : ";
             for (size_t i = 0; i < time_vec.size(); i++) {
-                std::cout << std::setw(config::WIDTH) << probs[index][i] << " ";
+                std::cout << std::setw(QConfig::instance().width()) << probs[index][i] << " ";
             }
             std::cout << std::endl;
             index++;
@@ -109,7 +109,7 @@ namespace functions_testing {
 
         size_t index = 0;
         for (const auto& x: X) {
-            std::cout << std::setw(config::WIDTH) << x << " -> " << y[index++] << " | " << f_correct(x) << std::endl;
+            std::cout << std::setw(QConfig::instance().width()) << x << " -> " << y[index++] << " | " << f_correct(x) << std::endl;
         }
     }
 
