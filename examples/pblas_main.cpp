@@ -1,6 +1,16 @@
+/*
+
+Низкоуровневое использование библиотеки. Рекомендуется, только если требуется
+нестандартное распределение/поведение с памятью. Иначе рекомендуется использовать
+blocked_matrix.hpp
+
+( НЕ ГОТОВО! )
+
+*/
+
 #include <iostream>
 #include <chrono>
-#include "/home/kuzmaline/Quantum/diploma/src/QComputations_MPI_CLUSTER.hpp"
+#include "/home/kuzmaline/Quantum/diploma/src/QComputations_CPU_CLUSTER_NO_PLOTS.hpp"
 
 using COMPLEX = std::complex<double>;
 

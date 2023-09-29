@@ -1575,11 +1575,9 @@ void mpi::parallel_zhemm(char side, const Matrix<COMPLEX>& A, const Matrix<COMPL
 
 void mpi::parallel_dgeadd(const Matrix<double>& A, Matrix<double>& C,
                     const std::vector<ILP_TYPE>& desca,
-                    const std::vector<ILP_TYPE>& descc,
+                    const std::vector<ILP_TYPE>& descc, double alpha, double betta,
                     char op_A) {
     ILP_TYPE iONE = 1;
-    double alpha = 1;
-    double betta = 1;
     ILP_TYPE NA = desca[2];
     ILP_TYPE MA = desca[3];
 
@@ -1589,10 +1587,9 @@ void mpi::parallel_dgeadd(const Matrix<double>& A, Matrix<double>& C,
 void mpi::parallel_zgeadd(const Matrix<COMPLEX>& A, Matrix<COMPLEX>& C,
                     const std::vector<ILP_TYPE>& desca,
                     const std::vector<ILP_TYPE>& descc,
+                    COMPLEX alpha, COMPLEX betta,
                     char op_A) {
     ILP_TYPE iONE = 1;
-    COMPLEX alpha(1.0, 0);
-    COMPLEX betta(1.0, 0);
     ILP_TYPE NA = desca[2];
     ILP_TYPE MA = desca[3];
 

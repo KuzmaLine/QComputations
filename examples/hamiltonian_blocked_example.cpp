@@ -1,22 +1,23 @@
 #include <iostream>
 #include <chrono>
 #include <complex>
-#include "/home/kuzmaline/Quantum/diploma/src/QComputations_MPI_CLUSTER.hpp"
+#include "/home/kuzmaline/Quantum/diploma/src/QComputations_CPU_CLUSTER_NO_PLOTS.hpp"
 
 int main(int argc, char** argv) {
     using namespace QComputations;
+    QConfig::instance().set_h(0.1); // - изменение постояннной планка на 0.1
+    std::cout << QConfig::instance().h() << std::endl;
+
+    QConfig::instance().show(); // - вывод всех параметров внутри конфига
 
     int rank;
     MPI_Init(&argc, &argv);
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 
-    //if (rank == 0) QConfig::instance().show();
-
     std::vector<size_t> grid_config = {3};
     State grid(grid_config);
     grid.set_max_N(2);
     grid.set_min_N(2);
-    //std::cout << grid.to_string() << std::endl;
 
     int ctxt;
     mpi::init_grid(ctxt);

@@ -1,7 +1,17 @@
+/*
+
+Пример работы с blocked_matrix.hpp
+
+GE - general matrix
+HE - hermitian matrix (Внимание, в памяти нижняя треугольная часть матрицы не проинициализирована)
+SY - symmetric matrix (Аналогично HE)
+
+*/
+
 #include <iostream>
 #include <chrono>
 #include <complex>
-#include "/home/kuzmaline/Quantum/diploma/src/QComputations_MPI_CLUSTER.hpp"
+#include "/home/kuzmaline/Quantum/diploma/src/QComputations_CPU_CLUSTER_NO_PLOTS.hpp"
 
 using COMPLEX = std::complex<double>;
 
@@ -15,21 +25,21 @@ int main(int argc, char** argv) {
     MPI_Init(&argc, &argv);
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 
-    Matrix<COMPLEX> A(C_STYLE, n, m);
-    Matrix<COMPLEX> B(C_STYLE, m, k);
-    for (size_t i = 0; i < n; i++) {
-        for (size_t j = 0; j < m; j++) {
-            A[i][j] = i + j + i % 3 + j % 2 + 1;
-        }
-    }
-
-    for (size_t i = 0; i < m; i++) {
-        for (size_t j = 0; j < k; j++) {
-            B[i][j] = int(i) - int(j);
-        }
-    }
-
     if (rank == mpi::ROOT_ID) {
+        Matrix<COMPLEX> A(C_STYLE, n, m);
+        Matrix<COMPLEX> B(C_STYLE, m, k);
+        for (size_t i = 0; i < n; i++) {
+            for (size_t j = 0; j < m; j++) {
+                A[i][j] = i + j + i % 3 + j % 2 + 1;
+            }
+        }
+
+        for (size_t i = 0; i < m; i++) {
+            for (size_t j = 0; j < k; j++) {
+                B[i][j] = int(i) - int(j);
+            }
+        }
+
         A.show();
         B.show();
         auto C = A * B;
@@ -42,6 +52,8 @@ int main(int argc, char** argv) {
 
         std::cout << " ----------------------------------------- \n";
     }
+
+    MPI_Barrier(MPI_COMM_WORLD);
 
     std::function<COMPLEX(size_t i, size_t j)> func = {[](size_t i, size_t j){ return i + j + i % 3 + j % 2 + 1; }};
     std::function<COMPLEX(size_t i, size_t j)> func_2 = {[](size_t i, size_t j){ return int(i) - int(j); }};

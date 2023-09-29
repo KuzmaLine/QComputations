@@ -8,7 +8,7 @@ CFLAGS = -Werror -fopenmp \
 		 -DENABLE_MPI -DENABLE_CLUSTER
 LFLAGS = -Werror \
 		 -lmkl_intel_lp64 \
-		 -lmkl_scalapack_lp64 -lmkl_intel_thread -lmkl_core -lmkl_blacs_openmpi_lp64 \
+		 -lmkl_scalapack_lp64 -lmkl_intel_thread -lmkl_core -lmkl_blacs_intelmpi_lp64 \
 		 -lm -ldl \
 		 -liomp5 -lpthread \
 		 -DENABLE_MPI -DENABLE_CLUSTER

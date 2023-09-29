@@ -235,11 +235,13 @@ namespace mpi {
    void parallel_dgeadd(const Matrix<double>& A, Matrix<double>& C,
                        const std::vector<ILP_TYPE>& desca,
                        const std::vector<ILP_TYPE>& descc,
+                       double alpha = 1.0, double betta = 1.0,
                        char op_A = 'N');
 
    void parallel_zgeadd(const Matrix<COMPLEX>& A, Matrix<COMPLEX>& C,
                        const std::vector<ILP_TYPE>& desca,
                        const std::vector<ILP_TYPE>& descc,
+                       COMPLEX alpha = COMPLEX(1, 0), COMPLEX betta = COMPLEX(1, 0),
                        char op_A = 'N');
 
    void parallel_dgemm(const Matrix<double>& A, const Matrix<double>& B, Matrix<double>& C,

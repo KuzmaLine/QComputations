@@ -1,7 +1,7 @@
 #include <iostream>
 #include <chrono>
 #include <complex>
-#include "/home/kuzmaline/Quantum/diploma/src/QComputations.hpp"
+#include "/home/kuzmaline/Quantum/diploma/src/QComputations_NO_PLOTS.hpp"
 
 int main(void) {
     using namespace QComputations;
