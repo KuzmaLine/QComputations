@@ -18,7 +18,7 @@ namespace QComputations {
 namespace {
     template <typename T>
     bool is_close(T a, T b) {
-        return (std::abs(a - b) < config::eps);
+        return (std::abs(a - b) < QConfig::instance().eps());
     }
 
     size_t get_index_value(size_t row_index, const std::vector<size_t>& row_index_pointers) {
@@ -116,7 +116,7 @@ template<typename T>
 void CSR_Matrix<T>::show() const {
     for (size_t i = 0; i < n_; i++) {
         for (size_t j = 0; j < m_; j++) {
-            std::cout << std::setw(config::WIDTH) << (*this)(i, j) << " ";
+            std::cout << std::setw(QConfig::instance().width()) << (*this)(i, j) << " ";
         }
         std::cout << std::endl;
     }
