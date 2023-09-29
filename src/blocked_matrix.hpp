@@ -7,6 +7,7 @@
 #include "matrix.hpp"
 #include "functions.hpp"
 #include "mpi_functions.hpp"
+#include "config.hpp"
 #include <vector>
 #include <string>
 #include <complex>
@@ -29,6 +30,7 @@ template <typename T>
 class BLOCKED_Matrix {
     public:
         explicit BLOCKED_Matrix() = default;
+        explicit BLOCKED_Matrix(const BLOCKED_Matrix<T>& A, const Matrix<T>& local_matrix);
         explicit BLOCKED_Matrix(ILP_TYPE ctxt, MATRIX_TYPE type, size_t n, size_t m, std::function<T(size_t, size_t)> func);
         explicit BLOCKED_Matrix(ILP_TYPE ctxt, MATRIX_TYPE type, const Matrix<T>& A, ILP_TYPE root_id);
 
@@ -43,14 +45,17 @@ class BLOCKED_Matrix {
         std::vector<ILP_TYPE> desc() const;
 
         BLOCKED_Matrix<T> operator*(const BLOCKED_Matrix<T>& B) const;
-        BLOCKED_Matrix<T> operator*(T num) const;
         void operator*=(const BLOCKED_Matrix<T>& B);
+        BLOCKED_Matrix<T> operator*(T num) const;
+        void operator*=(T num);
         BLOCKED_Matrix<T> operator+(const BLOCKED_Matrix<T>& B) const;
-        BLOCKED_Matrix<T> operator+(T num) const;
         void operator+=(const BLOCKED_Matrix<T>& B);
+        BLOCKED_Matrix<T> operator+(T num) const;
+        void operator+=(T num);
         BLOCKED_Matrix<T> operator-(const BLOCKED_Matrix<T>& B) const;
-        BLOCKED_Matrix<T> operator-(T num) const;
         void operator-=(const BLOCKED_Matrix<T>& B);
+        BLOCKED_Matrix<T> operator-(T num) const;
+        void operator-=(T num);
         BLOCKED_Matrix<T> operator/(T num) const;
 
         size_t local_n() const { return local_matrix_.n(); }
@@ -67,7 +72,9 @@ class BLOCKED_Matrix {
         const T* data() const { return local_matrix_.data(); }
 
         void print_distributed(const std::string& name) const { mpi::print_distributed_matrix<T>(local_matrix_, name, ctxt_); }
-        void show(ILP_TYPE root_id, size_t width = 10) const;
+        void show(ILP_TYPE root_id, size_t width = QConfig::instance().width()) const;
+
+        void write_to_file(const std::string& filename);
     private:
         size_t get_global_index(size_t i, size_t j) { return j * n_ + i; }
         size_t get_local_index(size_t i, size_t j) { return j * local_matrix_.n() + i; }
@@ -82,7 +89,46 @@ class BLOCKED_Matrix {
 };
 
 template<typename T>
-BLOCKED_Matrix<T>::BLOCKED_Matrix<T>(const BLOCKED_Matrix<T>& A,
+BLOCKED_Matrix<T>::BLOCKED_Matrix(const BLOCKED_Matrix<T>& A, const Matrix<T>& local_matrix): matrix_type_(A.matrix_type_),
+                                     ctxt_(A.ctxt_), n_(A.n_), m_(A.m_), NB_(A.NB_), MB_(A.MB_), local_matrix_(local_matrix) {}
+
+template<typename T>
+BLOCKED_Matrix<T> BLOCKED_Matrix<T>::operator+(T num) const {
+    BLOCKED_Matrix<T> C(*this, local_matrix_ + num);
+    return C;
+}
+
+template<typename T>
+void BLOCKED_Matrix<T>::operator+=(T num) {
+    local_matrix_ += num;
+}
+
+template<typename T>
+BLOCKED_Matrix<T> BLOCKED_Matrix<T>::operator-(T num) const {
+    BLOCKED_Matrix<T> C(*this, local_matrix_ - num);
+
+    return C;
+}
+
+template<typename T>
+void BLOCKED_Matrix<T>::operator-=(T num) {
+    local_matrix_ -= num;
+}
+
+template<typename T>
+BLOCKED_Matrix<T> BLOCKED_Matrix<T>::operator*(T num) const {
+    BLOCKED_Matrix<T> C(*this, local_matrix_ * num);
+
+    return C;
+}
+
+template<typename T>
+void BLOCKED_Matrix<T>::operator*=(T num) {
+    local_matrix_ *= num;
+}
+
+template<typename T>
+BLOCKED_Matrix<T>::BLOCKED_Matrix(const BLOCKED_Matrix<T>& A,
                                      const BLOCKED_Matrix<T>& B): ctxt_(A.ctxt_), n_(A.n_),
                                                                   m_(B.m_), NB_(A.NB_), MB_(B.MB_) {
     ILP_TYPE iZERO = 0;
@@ -105,7 +151,12 @@ void BLOCKED_Matrix<T>::operator*=(const BLOCKED_Matrix<T>& B) {
 }
 
 template<typename T>
-BLOCKED_Matrix<T>::BLOCKED_Matrix<T>(ILP_TYPE ctxt, MATRIX_TYPE type,
+void BLOCKED_Matrix<T>::operator-=(const BLOCKED_Matrix<T>& B) {
+    *this = *this - B;
+}
+
+template<typename T>
+BLOCKED_Matrix<T>::BLOCKED_Matrix(ILP_TYPE ctxt, MATRIX_TYPE type,
                                      size_t n, size_t m,
                                      std::function<T(size_t, size_t)> func): ctxt_(ctxt), matrix_type_(type), n_(n), m_(m) {
     ILP_TYPE iZERO = 0;

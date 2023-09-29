@@ -35,8 +35,8 @@ endif
 main.o: matrix.hpp cavity_state.hpp graph.hpp big_uint.hpp state.hpp quantum_operators.hpp hamiltonian.hpp additional_operators.hpp mpi_functions.hpp functions.hpp dynamic.hpp plot.hpp blocked_matrix.hpp hamiltonian_blocked.hpp test.hpp config.hpp csr_matrix.hpp matplotlibcpp.hpp
 
 libmpi_cluster: ${OBJ_LIB}
-	${CC} -shared -o libQComputations_mpi_cluster.so ${OBJ_LIB} ${LFLAGS}
+	${CC} -shared -o libQComputations_cpu_cluster.so ${OBJ_LIB} ${LFLAGS}
 
 
 clean:
-	rm -rf *.o prog libQComputations_mpi_cluster.so
+	rm -rf *.o prog libQComputations_cpu_cluster.so
