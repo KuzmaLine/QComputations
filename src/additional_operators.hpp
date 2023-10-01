@@ -58,11 +58,8 @@ std::vector<T> operator*(const std::vector<T>& a, const std::vector<T>& b) {
     return answer;
 }
 
-namespace quantum {
 //   -------------------------------------- <a|b> ------------------------
-    COMPLEX operator | (const std::vector<COMPLEX>& a, const std::vector<COMPLEX>& b);
-
-}
+COMPLEX operator | (const std::vector<COMPLEX>& a, const std::vector<COMPLEX>& b);
 
 // vector / num
 template<typename T>

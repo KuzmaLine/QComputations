@@ -95,6 +95,32 @@ BLOCKED_Matrix<double>::BLOCKED_Matrix<double>(ILP_TYPE ctxt, size_t n, size_t m
 }
 */
 
+
+// --------------------------------------------- FUNCTIONS -------------------------------------------
+
+std::pair<std::vector<double>, BLOCKED_Matrix<COMPLEX>> mpi::Hermit_Lanzcos(BLOCKED_Matrix<COMPLEX>& A) {
+    lapack_complex_double* lapack_A = A.to_upper_lapack();
+    lapack_int n = A.size();
+    lapack_int res;
+    double *d, *e;
+
+    auto B = A;
+    auto lapack_B = B.to_lapack();
+    d = new double [m];
+    e = new double [n - 1];
+    // reduce to tridiagonal form -> lapack_A
+    res = LAPACKE_zhetrd(LAPACK_ROW_MAJOR, 'U', n, lapack_A, n, d, e, lapack_B);
+    if (res != 0) std::cout << "LAPACKE_zhetrd error = " << res << std::endl;
+
+    //find Q matrix for reducing matrix lapack_A -> lapack_A
+    res = LAPACKE_zungtr(LAPACK_ROW_MAJOR, 'U', n, lapack_A, n, lapack_B);
+    if (res != 0) std::cout << "LAPACKE_zungtr error = " << res << std::endl;
+
+    //find eigenvalues and eigenvectors with Q matrix of matrix lapack_A -> d, lapack_A
+    res = LAPACKE_zstedc(LAPACK_ROW_MAJOR, 'V', n, d, e, lapack_A, n); 
+    if (res != 0) std::cout << "LAPACKE_zstedc error = " << res << std::endl;
+}
+
 } // namespace QComputations
 
 #endif

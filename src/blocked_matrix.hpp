@@ -264,6 +264,10 @@ void BLOCKED_Matrix<T>::show(ILP_TYPE root_id, size_t width) const {
     if (rank == root_id) std::cout << std::endl;
 }
 
+// ------------------------------------------ FUNCTIONS ------------------------------------
+
+std::pair<std::vector<double>, BLOCKED_Matrix<COMPLEX>> Hermit_Lanzcos(BLOCKED_Matrix<COMPLEX>& A);
+
 } // namespace QComputations
 
 #endif

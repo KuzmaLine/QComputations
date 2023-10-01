@@ -324,6 +324,44 @@ std::vector<double> Evolution::scan_gamma(const std::vector<COMPLEX>& init_state
 #ifdef ENABLE_MPI
 #ifdef ENABLE_CLUSTER
 
+BLOCKED_Probs schrodinger(const std::vector<COMPLEX>& init_state, BLOCKED_Hamiltonian& H, const std::vector<double>& time_vec) {
+    std::vector<double> eigen_values;
+    Matrix<COMPLEX> eigen_vectors;
+    auto p = H.eigen();
+    eigen_values = p.first;
+    eigen_vectors = p.second;
+
+    std::vector<COMPLEX> lambda;
+    for (size_t i = 0; i < eigen_values.size(); i++) {
+        //std::cout << norm(eigen_vectors.col(i)) << std::endl;
+        lambda.emplace_back(eigen_vectors.col(i) | init_state); // <PHI_i|KSI(0)> 
+    }
+
+    //std::cout << "L - " << norm(lambda) << std::endl;
+    Probs probs(C_STYLE, eigen_values.size(), time_vec.size());
+    size_t time_index = 0;
+    eigen_vectors = eigen_vectors.transpose();
+    for (const auto& t: time_vec) {
+        std::vector<COMPLEX> psi_t(eigen_values.size(), 0);
+        auto h = QConfig::instance().h();
+
+        for (size_t i = 0; i < eigen_values.size(); i++) {
+            for (size_t j = 0; j < psi_t.size(); j++) {
+                psi_t[j] += lambda[i] * std::exp(COMPLEX(0, 1 / h * eigen_values[i] * t)) * eigen_vectors[i][j];
+            }
+        }
+
+        //std::cout << norm(psi_t) << std::endl;
+
+        for (size_t i = 0; i < eigen_values.size(); i++) {
+            double tmp = std::abs(psi_t[i]);
+            probs[i][time_index] = tmp * tmp;
+        }
+        time_index++;
+    }
+    return probs;
+}
+
 Evolution::Probs Evolution::Parallel_QME(const std::vector<COMPLEX>& init_state,
                                          Hamiltonian& H,
                                          const std::vector<double>& time_vec,

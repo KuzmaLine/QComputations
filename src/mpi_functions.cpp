@@ -1632,7 +1632,6 @@ void mpi::parallel_zgemv(const Matrix<COMPLEX>& A, const std::vector<COMPLEX>& x
                                    &betta, y.data(), &iONE, &iONE, descy.data(), &iONE);
 }
 
-
 #endif // ENABLE_CLUSTER
 
 } // namespace QComputations

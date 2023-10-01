@@ -7,7 +7,7 @@ extern "C"
 
 namespace QComputations {
 
-COMPLEX quantum::operator | (const std::vector<COMPLEX>& a, const std::vector<COMPLEX>& b) { 
+COMPLEX operator | (const std::vector<COMPLEX>& a, const std::vector<COMPLEX>& b) { 
     int size = a.size();
     int iONE = 1;
     COMPLEX res;
