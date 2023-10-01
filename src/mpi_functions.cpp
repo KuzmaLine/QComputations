@@ -754,7 +754,7 @@ std::vector<ILP_TYPE> mpi::descinit(ILP_TYPE n, ILP_TYPE m, ILP_TYPE NB,
     return desc;
 }
 
-void mpi::blacs_gridinfo(ILP_TYPE& ctxt, ILP_TYPE& proc_rows, ILP_TYPE& proc_cols, ILP_TYPE& myrow, ILP_TYPE& mycol) {
+void mpi::blacs_gridinfo(const ILP_TYPE& ctxt, ILP_TYPE& proc_rows, ILP_TYPE& proc_cols, ILP_TYPE& myrow, ILP_TYPE& mycol) {
     ::blacs_gridinfo(&ctxt, &proc_rows, &proc_cols, &myrow, &mycol);
 }
 
@@ -1595,6 +1595,43 @@ void mpi::parallel_zgeadd(const Matrix<COMPLEX>& A, Matrix<COMPLEX>& C,
 
     pzgeadd(&op_A, &NA, &MA, &alpha, A.data(), &iONE, &iONE, desca.data(), &betta, C.data(), &iONE, &iONE, descc.data());
 }
+
+// only for distributed version
+void mpi::parallel_dgemv(const Matrix<double>& A, const std::vector<double>& x, std::vector<double>& y,
+                    const std::vector<ILP_TYPE>& desca,
+                    const std::vector<ILP_TYPE>& descx, const std::vector<ILP_TYPE>& descy,
+                    char op_A) {
+    ILP_TYPE N_A, M_A;
+    N_A = desca[2];
+    M_A = desca[3];
+
+    int iONE = 1;
+    double alpha = 1.0;
+    double betta = 0;
+
+    pdgemv_(&op_A, &N_A, &M_A, &alpha, A.data(), &iONE, &iONE, desca.data(),
+                                   x.data(), &iONE, &iONE, descx.data(), &iONE,
+                                   &betta, y.data(), &iONE, &iONE, descy.data(), &iONE);
+}
+
+// only for distributed version
+void mpi::parallel_zgemv(const Matrix<COMPLEX>& A, const std::vector<COMPLEX>& x, std::vector<COMPLEX>& y,
+                    const std::vector<ILP_TYPE>& desca,
+                    const std::vector<ILP_TYPE>& descx, const std::vector<ILP_TYPE>& descy,
+                    char op_A) {
+    ILP_TYPE N_A, M_A;
+    N_A = desca[2];
+    M_A = desca[3];
+
+    int iONE = 1;
+    COMPLEX alpha (1.0, 0);
+    COMPLEX betta(0, 0);
+
+    pzgemv_(&op_A, &N_A, &M_A, &alpha, A.data(), &iONE, &iONE, desca.data(),
+                                   x.data(), &iONE, &iONE, descx.data(), &iONE,
+                                   &betta, y.data(), &iONE, &iONE, descy.data(), &iONE);
+}
+
 
 #endif // ENABLE_CLUSTER
 

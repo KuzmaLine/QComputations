@@ -75,6 +75,9 @@ class BLOCKED_Matrix {
         void show(ILP_TYPE root_id, size_t width = QConfig::instance().width()) const;
 
         void write_to_file(const std::string& filename);
+
+        ILP_TYPE get_global_row(size_t i) const;
+        ILP_TYPE get_global_col(size_t j) const;
     private:
         size_t get_global_index(size_t i, size_t j) { return j * n_ + i; }
         size_t get_local_index(size_t i, size_t j) { return j * local_matrix_.n() + i; }
@@ -87,6 +90,24 @@ class BLOCKED_Matrix {
         size_t MB_;
         Matrix<T> local_matrix_;
 };
+
+template<typename T>
+ILP_TYPE BLOCKED_Matrix<T>::get_global_row(size_t i) const {
+    ILP_TYPE iZERO = 0;
+    ILP_TYPE proc_rows, proc_cols, myrow, mycol;
+    mpi::blacs_gridinfo(ctxt_, proc_rows, proc_cols, myrow, mycol);
+
+    return mpi::indxl2g(i, NB_, myrow, iZERO, proc_rows);
+}
+
+template<typename T>
+ILP_TYPE BLOCKED_Matrix<T>::get_global_col(size_t j) const {
+    ILP_TYPE iZERO = 0;
+    ILP_TYPE proc_rows, proc_cols, myrow, mycol;
+    mpi::blacs_gridinfo(ctxt_, proc_rows, proc_cols, myrow, mycol);
+
+    return mpi::indxl2g(j, MB_, mycol, iZERO, proc_cols);
+}
 
 template<typename T>
 BLOCKED_Matrix<T>::BLOCKED_Matrix(const BLOCKED_Matrix<T>& A, const Matrix<T>& local_matrix): matrix_type_(A.matrix_type_),

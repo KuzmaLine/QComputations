@@ -4,6 +4,14 @@
 #include "state.hpp"
 #include "hamiltonian.hpp"
 
+#ifdef ENABLE_MPI
+#ifdef ENABLE_CLUSTER
+
+#include "hamiltonian_blocked.hpp"
+
+#endif
+#endif
+
 namespace QComputations {
 
 namespace Evolution {
@@ -42,6 +50,15 @@ namespace Evolution {
 
 #ifdef ENABLE_MPI
 #ifdef ENABLE_CLUSTER
+    using BLOCKED_Probs = BLOCKED_Matrix<double>;
+
+    BLOCKED_Probs schrodinger(const std::vector<COMPLEX>& init_state, BLOCKED_Hamiltonian& H, const std::vector<double>& time_vec);
+
+    BLOCKED_Probs quantum_master_equation(const std::vector<COMPLEX>& init_state,
+                                  BLOCKED_Hamiltonian& H,
+                                  const std::vector<double>& time_vec,
+                                  bool is_full_rho = false);
+
     Probs Parallel_QME(const std::vector<COMPLEX>& init_state,
                        Hamiltonian& H,
                        const std::vector<double>& time_vec,
