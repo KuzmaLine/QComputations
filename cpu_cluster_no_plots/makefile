@@ -1,8 +1,8 @@
 vpath %.cpp ../src
 vpath %.hpp ../src
-CC=mpicxx
+CC=mpiicpc
 
-CFLAGS = -Werror -fopenmp \
+CFLAGS = -Werror -fopenmp -diag-disable=10441\
 		 -I${MKL_INCLUDE_PATH} \
 		 -I${MPI_INCLUDE_PATH} \
 		 -DENABLE_MPI -DENABLE_CLUSTER

@@ -62,8 +62,6 @@ Evolution::Rho Evolution::create_init_rho(const std::vector<COMPLEX>& init_state
 
 // ON MPI NEEDED
 Evolution::Probs Evolution::schrodinger(const std::vector<COMPLEX>& init_state, Hamiltonian& H, const std::vector<double>& time_vec) {
-    using namespace quantum;
-
     std::vector<double> eigen_values;
     Matrix<COMPLEX> eigen_vectors;
 #ifdef ENABLE_MPI
@@ -324,6 +322,9 @@ std::vector<double> Evolution::scan_gamma(const std::vector<COMPLEX>& init_state
 #ifdef ENABLE_MPI
 #ifdef ENABLE_CLUSTER
 
+using BLOCKED_Probs = BLOCKED_Matrix<double>;
+
+/*
 BLOCKED_Probs schrodinger(const std::vector<COMPLEX>& init_state, BLOCKED_Hamiltonian& H, const std::vector<double>& time_vec) {
     std::vector<double> eigen_values;
     Matrix<COMPLEX> eigen_vectors;
@@ -361,6 +362,7 @@ BLOCKED_Probs schrodinger(const std::vector<COMPLEX>& init_state, BLOCKED_Hamilt
     }
     return probs;
 }
+*/
 
 Evolution::Probs Evolution::Parallel_QME(const std::vector<COMPLEX>& init_state,
                                          Hamiltonian& H,

@@ -25,7 +25,7 @@ class BLOCKED_Hamiltonian {
         //COMPLEX operator() (size_t i, size_t j) const { return H_(i, j); }
         void show(ILP_TYPE root_id = mpi::ROOT_ID, size_t width = QConfig::instance().width()) const { H_.show(root_id, width); }
         void print_distributed(const std::string& name) const { H_.print_distributed(name); }
-        BLOCKED_Matrix<COMPLEX> get_local_matrix() const { return H_.get_local_matrix(); }
+        Matrix<COMPLEX> get_local_matrix() const { return H_.get_local_matrix(); }
     protected:
         std::set<State> basis_;
         BLOCKED_Matrix<COMPLEX> H_;
