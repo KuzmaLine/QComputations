@@ -7,6 +7,16 @@
 
 namespace QComputations {
 
+extern "C" {
+    void pzheevx(char*, char*, char*, ILP_TYPE*, COMPLEX*, ILP_TYPE*, ILP_TYPE*, ILP_TYPE*,
+                 double*, double*, ILP_TYPE*, ILP_TYPE*, double*, ILP_TYPE*, ILP_TYPE*, double*, double*,
+                 COMPLEX*, ILP_TYPE*, ILP_TYPE*, ILP_TYPE*, COMPLEX*, ILP_TYPE*, double*, ILP_TYPE*, ILP_TYPE*, ILP_TYPE*,
+                 ILP_TYPE*, ILP_TYPE*, double*, ILP_TYPE*);
+    //void pzheevx(jobz, range, uplo, n, a, ia, ja, desca,
+    //             vl, vu, il, iu, abstol, m, nz, w, orfac,
+    //             z, iz, jz, descz, work, lwork, rwork, lrwork, iwork,
+    //             liwork, ifail, iclustr, gap, info)
+}
 
 template<>
 double BLOCKED_Matrix<double>::get(size_t i, size_t j) const {
@@ -98,30 +108,31 @@ BLOCKED_Matrix<double>::BLOCKED_Matrix<double>(ILP_TYPE ctxt, size_t n, size_t m
 
 // --------------------------------------------- FUNCTIONS -------------------------------------------
 
-/*
-std::pair<std::vector<double>, BLOCKED_Matrix<COMPLEX>> mpi::Hermit_Lanzcos(BLOCKED_Matrix<COMPLEX>& A) {
-    lapack_complex_double* lapack_A = A.to_upper_lapack();
-    lapack_int n = A.size();
-    lapack_int res;
-    double *d, *e;
 
-    auto B = A;
-    auto lapack_B = B.to_lapack();
-    d = new double [m];
-    e = new double [n - 1];
-    // reduce to tridiagonal form -> lapack_A
-    res = LAPACKE_zhetrd(LAPACK_ROW_MAJOR, 'U', n, lapack_A, n, d, e, lapack_B);
-    if (res != 0) std::cout << "LAPACKE_zhetrd error = " << res << std::endl;
+std::pair<std::vector<double>, BLOCKED_Matrix<COMPLEX>> mpi::Hermit_Lanzcos(const BLOCKED_Matrix<COMPLEX>& A) {
+    COMPLEX* lapack_A = new COMPLEX[A.local_n() * A.local_m()];
+    char jobz = 'V';
+    char range = 'A';
+    char uplo = 'U';
 
-    //find Q matrix for reducing matrix lapack_A -> lapack_A
-    res = LAPACKE_zungtr(LAPACK_ROW_MAJOR, 'U', n, lapack_A, n, lapack_B);
-    if (res != 0) std::cout << "LAPACKE_zungtr error = " << res << std::endl;
+    ILP_TYPE n = A.n();
+    ILP_TYPE iONE = 1;
+    auto desca = A.desc();
+    double vl, vu;
+    ILP_TYPE il, iu;
+    double abstol = -1, ofrac = -1;
+    ILP_TYPE m, nz;
 
-    //find eigenvalues and eigenvectors with Q matrix of matrix lapack_A -> d, lapack_A
-    res = LAPACKE_zstedc(LAPACK_ROW_MAJOR, 'V', n, d, e, lapack_A, n); 
-    if (res != 0) std::cout << "LAPACKE_zstedc error = " << res << std::endl;
+    std::vector<double>w(A.n());
+    BLOCKED_Matrix<COMPLEX> z(A.ctxt(), GE, A.n(), A.m(), A.NB(), A.MB());
+    pzheevx(&jobz, &range, &uplo, &n, lapack_A, &iONE, &iONE, desca.data(),
+            &vl, &vu, &il, &iu, &abstol, &m, &nz, w.data(), &ofrac, z.data(), )
+
+    delete [] lapack_A;
+
+    return std::make_pair()
 }
-*/
+
 
 } // namespace QComputations
 

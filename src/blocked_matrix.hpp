@@ -32,6 +32,7 @@ class BLOCKED_Matrix {
         explicit BLOCKED_Matrix() = default;
         explicit BLOCKED_Matrix(const BLOCKED_Matrix<T>& A, const Matrix<T>& local_matrix);
         explicit BLOCKED_Matrix(ILP_TYPE ctxt, MATRIX_TYPE type, size_t n, size_t m, std::function<T(size_t, size_t)> func);
+        explicit BLOCKED_Matrix(ILP_TYPE ctxt, MATRIX_TYPE type, size_t n, size_t m, size_t NB, size_t MB);
         explicit BLOCKED_Matrix(ILP_TYPE ctxt, MATRIX_TYPE type, const Matrix<T>& A, ILP_TYPE root_id);
 
         // Make dims for multiply matrix
@@ -90,6 +91,16 @@ class BLOCKED_Matrix {
         size_t MB_;
         Matrix<T> local_matrix_;
 };
+
+template<typename T>
+BLOCKED_Matrix<T>::BLOCKED_Matrix(ILP_TYPE ctxt, MATRIX_TYPE type, size_t n,
+                                  size_t m, size_t NB, size_t MB): n_(n), m_(m),
+                                  ctxt_(ctxt), matrix_type_(type), NB_(NB), MB_(MB) {
+    ILP_TYPE nrows = mpi::numroc(n, NB_, myrow, iZERO, proc_rows);
+    ILP_TYPE ncols = mpi::numroc(m, MB_, mycol, iZERO, proc_cols);
+
+    local_matrix_ = Matrix<T>(nrows, ncols);
+}
 
 template<typename T>
 ILP_TYPE BLOCKED_Matrix<T>::get_global_row(size_t i) const {
