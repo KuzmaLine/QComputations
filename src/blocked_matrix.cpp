@@ -8,10 +8,14 @@
 namespace QComputations {
 
 extern "C" {
-    void pzheevx(char*, char*, char*, ILP_TYPE*, COMPLEX*, ILP_TYPE*, ILP_TYPE*, ILP_TYPE*,
-                 double*, double*, ILP_TYPE*, ILP_TYPE*, double*, ILP_TYPE*, ILP_TYPE*, double*, double*,
-                 COMPLEX*, ILP_TYPE*, ILP_TYPE*, ILP_TYPE*, COMPLEX*, ILP_TYPE*, double*, ILP_TYPE*, ILP_TYPE*, ILP_TYPE*,
-                 ILP_TYPE*, ILP_TYPE*, double*, ILP_TYPE*);
+    void pzheev(char*, char*, ILP_TYPE*, COMPLEX*, ILP_TYPE*, ILP_TYPE*,
+                ILP_TYPE*, double*, COMPLEX*, ILP_TYPE*, ILP_TYPE*,
+                ILP_TYPE*, COMPLEX*, ILP_TYPE*, double*, ILP_TYPE*, ILP_TYPE*);
+    // CALL PZHEEV (jobz, uplo, n, a, ia, ja, desc_a, w, z, iz, jz, desc_z, work, lwork, rwork, lrwork, info)
+    //void pzheevx(char*, char*, char*, ILP_TYPE*, COMPLEX*, ILP_TYPE*, ILP_TYPE*, ILP_TYPE*,
+    //             double*, double*, ILP_TYPE*, ILP_TYPE*, double*, ILP_TYPE*, ILP_TYPE*, double*, double*,
+    //             COMPLEX*, ILP_TYPE*, ILP_TYPE*, ILP_TYPE*, COMPLEX*, ILP_TYPE*, double*, ILP_TYPE*, ILP_TYPE*, ILP_TYPE*,
+    //             ILP_TYPE*, ILP_TYPE*, double*, ILP_TYPE*);
     //void pzheevx(jobz, range, uplo, n, a, ia, ja, desca,
     //             vl, vu, il, iu, abstol, m, nz, w, orfac,
     //             z, iz, jz, descz, work, lwork, rwork, lrwork, iwork,
@@ -109,6 +113,7 @@ BLOCKED_Matrix<double>::BLOCKED_Matrix<double>(ILP_TYPE ctxt, size_t n, size_t m
 // --------------------------------------------- FUNCTIONS -------------------------------------------
 
 
+/*
 std::pair<std::vector<double>, BLOCKED_Matrix<COMPLEX>> mpi::Hermit_Lanzcos(const BLOCKED_Matrix<COMPLEX>& A) {
     COMPLEX* lapack_A = new COMPLEX[A.local_n() * A.local_m()];
     char jobz = 'V';
@@ -124,15 +129,15 @@ std::pair<std::vector<double>, BLOCKED_Matrix<COMPLEX>> mpi::Hermit_Lanzcos(cons
     ILP_TYPE m, nz;
 
     std::vector<double>w(A.n());
-    BLOCKED_Matrix<COMPLEX> z(A.ctxt(), GE, A.n(), A.m(), A.NB(), A.MB());
-    pzheevx(&jobz, &range, &uplo, &n, lapack_A, &iONE, &iONE, desca.data(),
-            &vl, &vu, &il, &iu, &abstol, &m, &nz, w.data(), &ofrac, z.data(), )
+    void pzheev(&jobz, char*, ILP_TYPE*, COMPLEX*, ILP_TYPE*, ILP_TYPE*,
+                ILP_TYPE*, double*, COMPLEX*, ILP_TYPE*, ILP_TYPE*,
+                ILP_TYPE*, COMPLEX*, ILP_TYPE*, double*, ILP_TYPE*, ILP_TYPE*);
 
     delete [] lapack_A;
 
     return std::make_pair()
 }
-
+*/
 
 } // namespace QComputations
 
