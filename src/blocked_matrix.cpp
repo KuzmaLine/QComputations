@@ -1,16 +1,19 @@
 #ifdef ENABLE_MPI
 #ifdef ENABLE_CLUSTER
+#define MKL_Complex16 std::complex<double>
 
 #include "blocked_matrix.hpp"
 //#include <mkl_blacs.h>
-//#include <mkl_pblas.h>
+// #include <mkl_pblas.h>
 
 namespace QComputations {
 
 extern "C" {
-    void pzheev(char*, char*, ILP_TYPE*, COMPLEX*, ILP_TYPE*, ILP_TYPE*,
-                ILP_TYPE*, double*, COMPLEX*, ILP_TYPE*, ILP_TYPE*,
-                ILP_TYPE*, COMPLEX*, ILP_TYPE*, double*, ILP_TYPE*, ILP_TYPE*);
+    void pzheev(char*, char*, ILP_TYPE*, const COMPLEX*, ILP_TYPE*, ILP_TYPE*,
+                const ILP_TYPE*, double*, COMPLEX*, ILP_TYPE*, ILP_TYPE*,
+                const ILP_TYPE*, COMPLEX*, ILP_TYPE*, double*, ILP_TYPE*, ILP_TYPE*);
+    void pztranc(ILP_TYPE*, ILP_TYPE*, const COMPLEX*, const COMPLEX*, ILP_TYPE*, ILP_TYPE*,
+                 ILP_TYPE*, COMPLEX*, COMPLEX*, ILP_TYPE*, ILP_TYPE*, ILP_TYPE*);
     // CALL PZHEEV (jobz, uplo, n, a, ia, ja, desc_a, w, z, iz, jz, desc_z, work, lwork, rwork, lrwork, info)
     //void pzheevx(char*, char*, char*, ILP_TYPE*, COMPLEX*, ILP_TYPE*, ILP_TYPE*, ILP_TYPE*,
     //             double*, double*, ILP_TYPE*, ILP_TYPE*, double*, ILP_TYPE*, ILP_TYPE*, double*, double*,
@@ -84,6 +87,23 @@ BLOCKED_Matrix<COMPLEX> BLOCKED_Matrix<COMPLEX>::operator*(const BLOCKED_Matrix<
 
     return C;
 }
+
+template<>
+BLOCKED_Matrix<COMPLEX> BLOCKED_Matrix<COMPLEX>::hermit() const {
+    if (matrix_type_ == GE) {
+        BLOCKED_Matrix<COMPLEX> A(ctxt_, GE, m_, n_);
+        COMPLEX alpha(1, 0);
+        COMPLEX betta(0, 0);
+        ILP_TYPE iONE = 1;
+        ILP_TYPE m = m_, n = n_;
+
+        pztranc(&m, &n, &alpha, this->data(),
+                &iONE, &iONE, (this->desc()).data(),
+                &betta, A.data(), &iONE, &iONE, A.desc().data());
+
+        return A;
+    }
+}
 /*
 template<>
 BLOCKED_Matrix<double>::BLOCKED_Matrix<double>(ILP_TYPE ctxt, size_t n, size_t m, std::functional<double(size_t, size_t)> func): n_(n), m_(m) {
@@ -113,31 +133,31 @@ BLOCKED_Matrix<double>::BLOCKED_Matrix<double>(ILP_TYPE ctxt, size_t n, size_t m
 // --------------------------------------------- FUNCTIONS -------------------------------------------
 
 
-/*
-std::pair<std::vector<double>, BLOCKED_Matrix<COMPLEX>> mpi::Hermit_Lanzcos(const BLOCKED_Matrix<COMPLEX>& A) {
-    COMPLEX* lapack_A = new COMPLEX[A.local_n() * A.local_m()];
+
+std::pair<std::vector<double>, BLOCKED_Matrix<COMPLEX>> Hermit_Lanzcos(const BLOCKED_Matrix<COMPLEX>& A) {
     char jobz = 'V';
     char range = 'A';
     char uplo = 'U';
 
     ILP_TYPE n = A.n();
     ILP_TYPE iONE = 1;
-    auto desca = A.desc();
-    double vl, vu;
-    ILP_TYPE il, iu;
-    double abstol = -1, ofrac = -1;
-    ILP_TYPE m, nz;
+    ILP_TYPE iMINUS = -1;
+    ILP_TYPE iZERO = 0;
+    ILP_TYPE info;
+    ILP_TYPE lwork = (A.local_n() + A.local_m() + A.NB()) * A.NB() + A.n() * 3 + A.n() * A.n();
+    ILP_TYPE lrwork = 2 * n + 2 *n - 2;
 
+    BLOCKED_Matrix<COMPLEX> Z(A.ctxt(), GE, A.n(), A.m(), A.NB(), A.MB());
     std::vector<double>w(A.n());
-    void pzheev(&jobz, char*, ILP_TYPE*, COMPLEX*, ILP_TYPE*, ILP_TYPE*,
-                ILP_TYPE*, double*, COMPLEX*, ILP_TYPE*, ILP_TYPE*,
-                ILP_TYPE*, COMPLEX*, ILP_TYPE*, double*, ILP_TYPE*, ILP_TYPE*);
+    std::vector<COMPLEX>work(lwork);
+    std::vector<double>rwork(lrwork);
+    pzheev(&jobz, &uplo, &n, A.data(), &iONE, &iONE,
+        A.desc().data(), w.data(), Z.data(), &iONE, &iONE,
+        Z.desc().data(), work.data(), &lwork, rwork.data(), &lrwork, &info);
 
-    delete [] lapack_A;
-
-    return std::make_pair()
+    return std::make_pair(w, Z);
 }
-*/
+
 
 } // namespace QComputations
 

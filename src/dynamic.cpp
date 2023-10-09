@@ -6,6 +6,15 @@
 
 #include "plot.hpp"
 
+#ifdef EMABLE_MPI
+#ifdef ENABLE_CLUSTER
+
+#include <mkl_pblas.h>
+#include <mkl_scalapack.h>>
+
+#endif
+#endif
+
 namespace QComputations {
 
 Matrix<COMPLEX> Evolution::create_A_destroy(const std::set<State>& basis, size_t cavity_id) {
@@ -322,17 +331,14 @@ std::vector<double> Evolution::scan_gamma(const std::vector<COMPLEX>& init_state
 #ifdef ENABLE_MPI
 #ifdef ENABLE_CLUSTER
 
-using BLOCKED_Probs = BLOCKED_Matrix<double>;
-
 /*
 BLOCKED_Probs schrodinger(const std::vector<COMPLEX>& init_state, BLOCKED_Hamiltonian& H, const std::vector<double>& time_vec) {
     std::vector<double> eigen_values;
-    Matrix<COMPLEX> eigen_vectors;
-    auto p = H.eigen();
-    eigen_values = p.first;
-    eigen_vectors = p.second;
+    BLOCKED_Matrix<COMPLEX> eigen_vectors;
+    eigen_values = H.eigenvalues();
+    eigen_vectors = H.eigenvectors();
 
-    std::vector<COMPLEX> lambda;
+    std::vector<COMPLEX> lambda(H.size());
     for (size_t i = 0; i < eigen_values.size(); i++) {
         //std::cout << norm(eigen_vectors.col(i)) << std::endl;
         lambda.emplace_back(eigen_vectors.col(i) | init_state); // <PHI_i|KSI(0)> 
@@ -364,6 +370,193 @@ BLOCKED_Probs schrodinger(const std::vector<COMPLEX>& init_state, BLOCKED_Hamilt
 }
 */
 
+Evolution::BLOCKED_Rho Evolution::create_BLOCKED_init_rho(ILP_TYPE ctxt, const std::vector<COMPLEX>& init_state) {
+    std::function<COMPLEX(size_t i, size_t j)> func = {
+        [&init_state](size_t i, size_t j) { return init_state[i] * std::conj(init_state[j]); }};
+    
+    size_t dim = init_state.size();
+    Evolution::BLOCKED_Rho rho(ctxt, GE, dim, dim, func);
+
+    return rho;
+}
+
+BLOCKED_Matrix<COMPLEX> create_BLOCKED_A_destroy(ILP_TYPE ctxt, const std::set<State>& basis, size_t cavity_id) {
+    size_t dim = basis.size();
+    BLOCKED_Matrix<COMPLEX> A(ctxt, GE, dim, dim, 0);
+    ILP_TYPE proc_rows, proc_cols, myrow, mycol;
+    mpi::blacs_gridinfo(ctxt, proc_rows, proc_cols, myrow, mycol);
+    ILP_TYPE iZERO = 0;
+
+    size_t index = 0;
+    for (size_t i = 0; i < A.local_m(); i++) {
+        //auto index_col = mpi::indxl2g(i, A.MB(), mycol, iZERO, proc_cols);
+        auto index_col = A.get_global_col(i);
+
+        auto state = get_elem_from_state<State>(basis, index_col);
+        auto n = state.n(cavity_id);
+        if (n != 0) {
+            auto tmp_state = state;
+            tmp_state.set_n(n - 1, cavity_id);
+
+            auto state_index = tmp_state.get_index(basis);
+            auto target_row = mpi::indxg2p(state_index, A.NB(), myrow, iZERO, proc_rows);
+            auto target_col = mpi::indxg2p(i, A.MB(), mycol, iZERO, proc_cols);
+
+            if (myrow == target_row and mycol == target_col) {
+                state_index = mpi::indxg2l(state_index, A.NB(), myrow, iZERO, proc_rows);
+                if (state_index != -1) A(state_index, i) = COMPLEX(std::sqrt(n));
+            }
+        }
+    }
+
+    return A;
+}
+
+BLOCKED_Matrix<COMPLEX> create_BLOCKED_A_create(ILP_TYPE ctxt, const std::set<State>& basis, size_t cavity_id) {
+    size_t dim = basis.size();
+    BLOCKED_Matrix<COMPLEX> A(ctxt, GE, dim, dim, 0);
+    ILP_TYPE proc_rows, proc_cols, myrow, mycol;
+    mpi::blacs_gridinfo(ctxt, proc_rows, proc_cols, myrow, mycol);
+    ILP_TYPE iZERO = 0;
+
+    size_t index = 0;
+    for (size_t i = 0; i < A.local_m(); i++) {
+        //auto index_col = mpi::indxl2g(i, A.MB(), mycol, iZERO, proc_cols);
+        auto index_col = A.get_global_col(i);
+
+        auto state = get_elem_from_state<State>(basis, index_col);
+        auto n = state.n(cavity_id);
+        if (n != 0) {
+            auto tmp_state = state;
+            tmp_state.set_n(n + 1, cavity_id);
+
+            auto state_index = tmp_state.get_index(basis);
+            auto target_row = mpi::indxg2p(state_index, A.NB(), myrow, iZERO, proc_rows);
+            auto target_col = mpi::indxg2p(i, A.MB(), mycol, iZERO, proc_cols);
+
+            if (myrow == target_row and mycol == target_col) {
+                state_index = mpi::indxg2l(state_index, A.NB(), myrow, iZERO, proc_rows);
+                if (state_index != -1) A(state_index, i) = COMPLEX(std::sqrt(n + 1));
+            }
+        }
+    }
+
+    return A;
+}
+
+Evolution::BLOCKED_Probs Evolution::quantum_master_equation(const std::vector<COMPLEX>& init_state,
+                                BLOCKED_Hamiltonian& H,
+                                const std::vector<double>& time_vec,
+                                bool is_full_rho) {
+    size_t dim = H.size();
+    auto grid = H.get_grid();
+    std::vector<std::function<Evolution::BLOCKED_Rho(const Evolution::BLOCKED_Rho& rho)>> lindblads;
+
+    auto cavities_with_leak = grid.get_cavities_with_leak();
+    auto cavities_with_gain = grid.get_cavities_with_gain();
+
+    //for (const auto& cavity_id: cavities_with_leak) {
+    for (size_t cavity_id = 0; cavity_id < grid.cavities_count(); cavity_id++) {
+        auto A = create_BLOCKED_A_destroy(H.ctxt(), H.get_basis(), cavity_id);
+        //A.show();
+        auto gamma = grid.get_leak_gamma(cavity_id);
+        if (!is_zero(gamma)) {
+            //std::cout << gamma << std::endl;
+            lindblads.push_back(std::function<Evolution::BLOCKED_Rho(const Evolution::BLOCKED_Rho& rho)> {
+                [A, gamma](const Evolution::BLOCKED_Rho& rho) {
+                    auto Aconj = A.hermit();
+                    auto AconjA = Aconj * A;
+                    return (A * rho * Aconj - (AconjA * rho + rho * AconjA) * COMPLEX(0.5)) * gamma;
+                }
+            }
+            );
+        }
+    }
+
+    //for (const auto& cavity_id: cavities_with_gain) {
+    for (size_t cavity_id = 0; cavity_id < grid.cavities_count(); cavity_id++) {
+        auto A = create_BLOCKED_A_create(H.ctxt(), H.get_basis(), cavity_id);
+        //A.show();
+        auto gamma = grid.get_gain_gamma(cavity_id);
+        if (!is_zero(gamma)) {
+            //std::cout << gamma << std::endl;
+            lindblads.push_back(std::function<Evolution::BLOCKED_Rho(const Evolution::BLOCKED_Rho& rho)> {
+                [A, gamma](const Evolution::BLOCKED_Rho& rho) {
+                    auto Aconj = A.hermit();
+                    auto AconjA = Aconj * A;
+                    return (A * rho * Aconj - (AconjA * rho + rho * AconjA) * COMPLEX(0.5)) * gamma;
+                }
+            }
+            );
+        }
+    }
+
+    auto H_matrix = H.get_blocked_matrix();
+    std::function<Evolution::BLOCKED_Rho(double t, const Evolution::BLOCKED_Rho&)> equation {[&H_matrix, &lindblads](double t, const Evolution::BLOCKED_Rho& rho) {
+        auto tmp = (H_matrix * rho - rho * H_matrix) * COMPLEX(0, -1);
+        for (const auto& lindblad: lindblads) {
+            tmp += lindblad(rho);
+        }
+
+        return tmp;
+    }};
+
+    auto rho_0 = Evolution::create_BLOCKED_init_rho(H.ctxt(), init_state);
+    //rho_0.show();
+    //auto begin_c = std::chrono::steady_clock::now();
+    auto rho_vec = Runge_Kutt_4<double, Evolution::BLOCKED_Rho>(time_vec, rho_0, equation);
+    //auto end_c = std::chrono::steady_clock::now();
+    //std::cout << " c " << std::chrono::duration_cast<std::chrono::milliseconds>(end_c - begin_c).count() << std::endl;
+    if (!is_full_rho) {
+        ILP_TYPE proc_rows, proc_cols, myrow, mycol;
+        mpi::blacs_gridinfo(H.ctxt(), proc_rows, proc_cols, myrow, mycol);
+        Evolution::BLOCKED_Probs probs(H.ctxt(), GE, dim, time_vec.size(), size_t(0), time_vec.size());
+
+        for (size_t t = 0; t < time_vec.size(); t++) {
+            auto probs_vec = mpi::get_diagonal_elements<COMPLEX>(rho_vec[t].get_local_matrix(), rho_vec[t].desc());
+            for (size_t i = 0; i < probs.local_n(); i++) {   
+                probs(i, t) = std::abs(probs_vec[i]);
+            }
+        }
+
+        /*
+        for (size_t t = 0; t < time_vec.size(); t++) {
+            double res = 0.0;
+            for (size_t i = 0; i < dim; i++) {
+                res += probs[i][t];
+            }
+
+            //std::cout << t << " " << res << std::endl;
+
+            if (std::abs(res - 1) >= QConfig::instance().eps()) {
+                //std::cout << t << " " << res << std::endl;
+            }
+        }
+        */
+        return probs;
+    }
+
+    /*
+    Evolution::BLOCKED_Probs probs(C_STYLE, dim * dim, time_vec.size());
+
+    bool is_null = true;
+
+    for (size_t i = 0; i < dim; i++) {
+        for (size_t j = 0; j < dim; j++) {
+            for (size_t t = 0; t < time_vec.size(); t++) {
+                probs[i * dim + j][t] = std::abs(rho_vec[t][i][j]);
+                if (probs[i * dim + j][t] >= QConfig::instance().eps()) {
+                    is_null = false;
+                }
+            }
+
+            if (is_null) probs[i * dim + j][0] = -1;
+            is_null = true;
+        }
+    }
+    return probs;
+    */
+}
 Evolution::Probs Evolution::Parallel_QME(const std::vector<COMPLEX>& init_state,
                                          Hamiltonian& H,
                                          const std::vector<double>& time_vec,

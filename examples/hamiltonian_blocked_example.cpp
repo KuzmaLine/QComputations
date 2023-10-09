@@ -28,9 +28,9 @@ int main(int argc, char** argv) {
     if (rank == 0) show_basis(H.get_basis());
     MPI_Barrier(MPI_COMM_WORLD);
 
-    H.show();
+    //H.show();
 
-    H.print_distributed("H_TCH");
+    //H.print_distributed("H_TCH");
 
     MPI_Finalize();
     return 0;

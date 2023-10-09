@@ -24,7 +24,7 @@ namespace Evolution {
     Matrix<COMPLEX> create_A_create(const std::set<State>& basis, size_t cavity_id);
 
     // Create rho of pure state (rho = |ksi><ksi|)
-    Rho create_init_rho(const std::vector<COMPLEX>& init_state); 
+    Rho create_init_rho(const std::vector<COMPLEX>& init_state);
 
     // Solve Schrodinger equation (dont't work with leaks or gains of photons in cavities)
     // Return Matrix<double> where row(i) - state(basis[i]), cols(j) - probability in time[j]
@@ -51,6 +51,9 @@ namespace Evolution {
 #ifdef ENABLE_MPI
 #ifdef ENABLE_CLUSTER
     using BLOCKED_Probs = BLOCKED_Matrix<double>;
+    using BLOCKED_Rho = BLOCKED_Matrix<COMPLEX>;
+
+    BLOCKED_Rho create_BLOCKED_init_rho(const std::vector<COMPLEX>& init_state);
 
     BLOCKED_Probs schrodinger(const std::vector<COMPLEX>& init_state, BLOCKED_Hamiltonian& H, const std::vector<double>& time_vec);
 

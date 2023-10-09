@@ -32,7 +32,8 @@ class BLOCKED_Matrix {
         explicit BLOCKED_Matrix() = default;
         explicit BLOCKED_Matrix(const BLOCKED_Matrix<T>& A, const Matrix<T>& local_matrix);
         explicit BLOCKED_Matrix(ILP_TYPE ctxt, MATRIX_TYPE type, size_t n, size_t m, std::function<T(size_t, size_t)> func);
-        explicit BLOCKED_Matrix(ILP_TYPE ctxt, MATRIX_TYPE type, size_t n, size_t m, size_t NB, size_t MB);
+        explicit BLOCKED_Matrix(ILP_TYPE ctxt, MATRIX_TYPE type, size_t n, size_t m, T value, size_t NB = 0, size_t MB = 0);
+        explicit BLOCKED_Matrix(ILP_TYPE ctxt, MATRIX_TYPE type, size_t n, size_t m, size_t NB = 0, size_t MB = 0);
         explicit BLOCKED_Matrix(ILP_TYPE ctxt, MATRIX_TYPE type, const Matrix<T>& A, ILP_TYPE root_id);
 
         // Make dims for multiply matrix
@@ -59,12 +60,20 @@ class BLOCKED_Matrix {
         void operator-=(T num);
         BLOCKED_Matrix<T> operator/(T num) const;
 
+        std::vector<T> operator*(const std::vector<T>& A) const;
+        void operator*=(const std::vector<T>& A);
+        std::vector<T> operator+(const std::vector<T>& A) const;
+        void operator+=(const std::vector<T>& A);
+        std::vector<T> operator-(const std::vector<T>& A) const;
+        void operator-=(const std::vector<T>& A);
+    
         size_t local_n() const { return local_matrix_.n(); }
         size_t local_m() const { return local_matrix_.m(); }
         size_t n() const { return n_; }
         size_t m() const { return m_; }
         size_t NB() const { return NB_; }
         size_t MB() const { return MB_; }
+        ILP_TYPE ctxt() const { return ctxt_; }
         MATRIX_TYPE matrix_type() const { return matrix_type_; }
         Matrix<T>& get_local_matrix() { return local_matrix_;}
         const Matrix<T>& get_local_matrix() const { return local_matrix_;}
@@ -72,13 +81,18 @@ class BLOCKED_Matrix {
         T* data() { return local_matrix_.data(); }
         const T* data() const { return local_matrix_.data(); }
 
-        void print_distributed(const std::string& name) const { mpi::print_distributed_matrix<T>(local_matrix_, name, ctxt_); }
+        T& operator()(size_t i, size_t j) { return local_matrix_(i, j); }
+        const T operator()(size_t i, size_t j) const { return local_matrix_(i, j); }
+
+        void print_distributed(const std::string& name) const;
         void show(ILP_TYPE root_id, size_t width = QConfig::instance().width()) const;
 
         void write_to_file(const std::string& filename);
 
         ILP_TYPE get_global_row(size_t i) const;
         ILP_TYPE get_global_col(size_t j) const;
+
+        BLOCKED_Matrix<T> hermit() const;
     private:
         size_t get_global_index(size_t i, size_t j) { return j * n_ + i; }
         size_t get_local_index(size_t i, size_t j) { return j * local_matrix_.n() + i; }
@@ -93,13 +107,59 @@ class BLOCKED_Matrix {
 };
 
 template<typename T>
+void BLOCKED_Matrix<T>::print_distributed(const std::string& name) const {
+    ILP_TYPE rank;
+    MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+    if (matrix_type_ == HE) {
+        if (rank == mpi::ROOT_ID) std::cout << "Hermit Matrix!" << std::endl;
+    }
+
+    mpi::print_distributed_matrix<T>(local_matrix_, name, ctxt_);
+}
+
+template<typename T>
 BLOCKED_Matrix<T>::BLOCKED_Matrix(ILP_TYPE ctxt, MATRIX_TYPE type, size_t n,
-                                  size_t m, size_t NB, size_t MB): n_(n), m_(m),
+                                  size_t m, T value, size_t NB, size_t MB): n_(n), m_(m),
                                   ctxt_(ctxt), matrix_type_(type), NB_(NB), MB_(MB) {
+    ILP_TYPE proc_rows, proc_cols, myrow, mycol;
+    mpi::blacs_gridinfo(ctxt_, proc_rows, proc_cols, myrow, mycol);
+    ILP_TYPE iZERO = 0;
+
+    if (NB == 0) {
+        NB_ = n / proc_rows;
+    }
+
+    if (MB == 0) {
+        MB_ = m / proc_cols;
+    }
+
     ILP_TYPE nrows = mpi::numroc(n, NB_, myrow, iZERO, proc_rows);
     ILP_TYPE ncols = mpi::numroc(m, MB_, mycol, iZERO, proc_cols);
 
-    local_matrix_ = Matrix<T>(nrows, ncols);
+    local_matrix_ = Matrix<T>(FORTRAN_STYLE, nrows, ncols, value);
+}
+
+
+template<typename T>
+BLOCKED_Matrix<T>::BLOCKED_Matrix(ILP_TYPE ctxt, MATRIX_TYPE type, size_t n,
+                                  size_t m, size_t NB, size_t MB): n_(n), m_(m),
+                                  ctxt_(ctxt), matrix_type_(type), NB_(NB), MB_(MB) {
+    ILP_TYPE proc_rows, proc_cols, myrow, mycol;
+    mpi::blacs_gridinfo(ctxt_, proc_rows, proc_cols, myrow, mycol);
+    ILP_TYPE iZERO = 0;
+
+    if (NB == 0) {
+        NB_ = n / proc_rows;
+    }
+
+    if (MB == 0) {
+        MB_ = m / proc_cols;
+    }
+
+    ILP_TYPE nrows = mpi::numroc(n, NB_, myrow, iZERO, proc_rows);
+    ILP_TYPE ncols = mpi::numroc(m, MB_, mycol, iZERO, proc_cols);
+
+    local_matrix_ = Matrix<T>(FORTRAN_STYLE, nrows, ncols);
 }
 
 template<typename T>
@@ -277,7 +337,7 @@ void BLOCKED_Matrix<T>::show(ILP_TYPE root_id, size_t width) const {
 
 // ------------------------------------------ FUNCTIONS ------------------------------------
 
-std::pair<std::vector<double>, BLOCKED_Matrix<COMPLEX>> Hermit_Lanzcos(BLOCKED_Matrix<COMPLEX>& A);
+std::pair<std::vector<double>, BLOCKED_Matrix<COMPLEX>> Hermit_Lanzcos(const BLOCKED_Matrix<COMPLEX>& A);
 
 } // namespace QComputations
 

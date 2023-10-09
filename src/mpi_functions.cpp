@@ -30,6 +30,8 @@ extern "C" {
     void pdelget_(char*, char*, double*, const double*, int*, int*, const int*);
     void pzelget_(char*, char*, COMPLEX*, const COMPLEX*, int*, int*, const int*);
     ILP_TYPE indxl2g_(ILP_TYPE*, ILP_TYPE*, ILP_TYPE*, ILP_TYPE*, ILP_TYPE*);
+    ILP_TYPE indxg2p_(ILP_TYPE*, ILP_TYPE*, ILP_TYPE*, ILP_TYPE*, ILP_TYPE*);
+    ILP_TYPE indxg2l_(ILP_TYPE*, ILP_TYPE*, ILP_TYPE*, ILP_TYPE*, ILP_TYPE*);
 }
 
 #endif
@@ -743,6 +745,16 @@ namespace {
 ILP_TYPE mpi::indxl2g(ILP_TYPE n, ILP_TYPE NB, ILP_TYPE myindx, ILP_TYPE RSRC, ILP_TYPE dim_size) {
     ILP_TYPE n_new = n + 1;
     return indxl2g_(&n_new, &NB, &myindx, &RSRC, &dim_size) - 1;
+}
+
+ILP_TYPE mpi::indxg2p(ILP_TYPE n, ILP_TYPE NB, ILP_TYPE myindx, ILP_TYPE RSRC, ILP_TYPE dim_size) {
+    ILP_TYPE n_new = n + 1;
+    return indxg2p_(&n_new, &NB, &myindx, &RSRC, &dim_size) - 1;
+}
+
+ILP_TYPE mpi::indxg2l(ILP_TYPE n, ILP_TYPE NB, ILP_TYPE myindx, ILP_TYPE RSRC, ILP_TYPE dim_size) {
+    ILP_TYPE n_new = n + 1;
+    return indxg2l_(&n_new, &NB, &myindx, &RSRC, &dim_size) - 1;
 }
 
 std::vector<ILP_TYPE> mpi::descinit(ILP_TYPE n, ILP_TYPE m, ILP_TYPE NB,

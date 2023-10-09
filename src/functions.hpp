@@ -145,7 +145,7 @@ std::ostream& operator<<(std::ostream& out, const Matrix<T>& matrix) {
 
 // Get elem from set by index
 template<typename T>
-T get_elem(const std::set<T>& st, size_t index) {
+T get_elem_from_state(const std::set<T>& st, size_t index) {
     auto it = st.begin();
     std::advance(it, index);
     return *it;
