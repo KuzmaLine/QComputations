@@ -36,6 +36,30 @@ COMPLEX BLOCKED_Matrix<COMPLEX>::get(size_t i, size_t j) const {
 }
 
 template<>
+BLOCKED_Matrix<double> BLOCKED_Matrix<double>::operator-(const BLOCKED_Matrix<double>& B) const {
+    assert(this->matrix_type_ == GE and B.matrix_type_ == GE);
+    assert(this->n_ == B.n_ and this->m_ == B.m_);
+
+    BLOCKED_Matrix<double> C(B);
+
+    mpi::parallel_dgeadd(this->get_local_matrix(), C.get_local_matrix(), this->desc(), C.desc(), double(1.0), double(-1.0));
+
+    return C;
+}
+
+template<>
+BLOCKED_Matrix<COMPLEX> BLOCKED_Matrix<COMPLEX>::operator-(const BLOCKED_Matrix<COMPLEX>& B) const {
+    assert(this->matrix_type_ == GE and B.matrix_type_ == GE);
+    assert(this->n_ == B.n_ and this->m_ == B.m_);
+
+    BLOCKED_Matrix<COMPLEX> C(B);
+
+    mpi::parallel_zgeadd(this->get_local_matrix(), C.get_local_matrix(), this->desc(), C.desc(), COMPLEX(1, 0), COMPLEX(-1, 0));
+
+    return C;
+}
+
+template<>
 BLOCKED_Matrix<double> BLOCKED_Matrix<double>::operator+(const BLOCKED_Matrix<double>& B) const {
     assert(this->matrix_type_ == GE and B.matrix_type_ == GE);
     assert(this->n_ == B.n_ and this->m_ == B.m_);

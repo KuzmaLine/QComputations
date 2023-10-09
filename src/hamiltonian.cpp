@@ -438,8 +438,6 @@ H_JC::H_JC(const State& grid) {
     basis_ = define_basis_of_hamiltonian(grid);
 
     size_t size = basis_.size();
-    std::cout << "Size - " << size << std::endl;
-    //show_basis(basis_);
     H_ = Matrix<COMPLEX>(DEFAULT_MATRIX_STYLE, size, size, 0);
 
     //std::cout << H_.is_c_style() << " " << H_.n() << " " << H_.m() << std::endl;
@@ -555,8 +553,6 @@ H_TC::H_TC(const State& grid) {
     basis_ = define_basis_of_hamiltonian(grid);
 
     size_t size = basis_.size();
-    std::cout << "Size - " << size << std::endl;
-    //show_basis(basis_);
     H_ = Matrix<COMPLEX>(DEFAULT_MATRIX_STYLE, size, size, 0);
 
     //std::cout << H_.is_c_style() << " " << H_.n() << " " << H_.m() << std::endl;
@@ -673,8 +669,6 @@ H_TCH::H_TCH(const State& grid) {
     basis_ = define_basis_of_hamiltonian(grid);
 
     size_t size = basis_.size();
-    std::cout << "Size - " << size << std::endl;
-    //show_basis(basis_);
     H_ = Matrix<COMPLEX>(DEFAULT_MATRIX_STYLE, size, size, 0);
 
     //std::cout << H_.is_c_style() << " " << H_.n() << " " << H_.m() << std::endl;

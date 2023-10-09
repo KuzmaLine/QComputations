@@ -247,6 +247,7 @@ void BLOCKED_Matrix<T>::operator-=(const BLOCKED_Matrix<T>& B) {
     *this = *this - B;
 }
 
+
 template<typename T>
 BLOCKED_Matrix<T>::BLOCKED_Matrix(ILP_TYPE ctxt, MATRIX_TYPE type,
                                      size_t n, size_t m,

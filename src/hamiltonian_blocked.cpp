@@ -18,8 +18,6 @@ BLOCKED_H_TCH::BLOCKED_H_TCH(ILP_TYPE ctxt, const State& grid) {
     basis_ = basis;
 
     size_t size = basis_.size();
-    std::cout << "Size - " << size << std::endl;
-    //show_basis(basis_);
 
     std::function<COMPLEX(size_t i, size_t j)> func = {
         [&basis, &grid](size_t i, size_t j) {
@@ -34,15 +32,13 @@ BLOCKED_H_TCH::BLOCKED_H_TCH(ILP_TYPE ctxt, const State& grid) {
 }
 
 BLOCKED_H_TC::BLOCKED_H_TC(ILP_TYPE ctxt, const State& grid) {
-    assert(grid_.cavities_count() == 1);
+    assert(grid.cavities_count() == 1);
 
     grid_ = grid;
     auto basis = define_basis_of_hamiltonian(grid);
     basis_ = basis;
 
     size_t size = basis_.size();
-    std::cout << "Size - " << size << std::endl;
-    //show_basis(basis_);
 
     std::function<COMPLEX(size_t i, size_t j)> func = {
         [&basis, &grid](size_t i, size_t j) {
@@ -57,15 +53,13 @@ BLOCKED_H_TC::BLOCKED_H_TC(ILP_TYPE ctxt, const State& grid) {
 }
 
 BLOCKED_H_JC::BLOCKED_H_JC(ILP_TYPE ctxt, const State& grid) {
-    assert(grid_.cavities_count() == 1);
+    assert(grid.cavities_count() == 1);
 
     grid_ = grid;
     auto basis = define_basis_of_hamiltonian(grid);
     basis_ = basis;
 
     size_t size = basis_.size();
-    std::cout << "Size - " << size << std::endl;
-    //show_basis(basis_);
 
     std::function<COMPLEX(size_t i, size_t j)> func = {
         [&basis, &grid](size_t i, size_t j) {
