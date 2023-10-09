@@ -392,7 +392,7 @@ BLOCKED_Matrix<COMPLEX> create_BLOCKED_A_destroy(ILP_TYPE ctxt, const std::set<S
         //auto index_col = mpi::indxl2g(i, A.MB(), mycol, iZERO, proc_cols);
         auto index_col = A.get_global_col(i);
 
-        auto state = get_elem_from_state<State>(basis, index_col);
+        auto state = get_elem_from_set<State>(basis, index_col);
         auto n = state.n(cavity_id);
         if (n != 0) {
             auto tmp_state = state;
@@ -424,7 +424,7 @@ BLOCKED_Matrix<COMPLEX> create_BLOCKED_A_create(ILP_TYPE ctxt, const std::set<St
         //auto index_col = mpi::indxl2g(i, A.MB(), mycol, iZERO, proc_cols);
         auto index_col = A.get_global_col(i);
 
-        auto state = get_elem_from_state<State>(basis, index_col);
+        auto state = get_elem_from_set<State>(basis, index_col);
         auto n = state.n(cavity_id);
         if (n != 0) {
             auto tmp_state = state;

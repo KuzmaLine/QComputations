@@ -79,11 +79,6 @@ std::vector<size_t> make_rank_map(size_t size, int rank, int world_size, size_t&
 // ------------------------------- template functions --------------------------------------
 
 template<typename T>
-T exp(T a, size_t order = 10) {
-    return a;
-}
-
-template<typename T>
 T read_number(const std::string& str, size_t& start_index = 0) {
     T n = T(0);
     size_t index = start_index;
@@ -145,7 +140,7 @@ std::ostream& operator<<(std::ostream& out, const Matrix<T>& matrix) {
 
 // Get elem from set by index
 template<typename T>
-T get_elem_from_state(const std::set<T>& st, size_t index) {
+T get_elem_from_set(const std::set<T>& st, size_t index) {
     auto it = st.begin();
     std::advance(it, index);
     return *it;

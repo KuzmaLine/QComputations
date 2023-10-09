@@ -21,8 +21,8 @@ BLOCKED_H_TCH::BLOCKED_H_TCH(ILP_TYPE ctxt, const State& grid) {
 
     std::function<COMPLEX(size_t i, size_t j)> func = {
         [&basis, &grid](size_t i, size_t j) {
-            auto state_from = get_elem_from_state(basis, i);
-            auto state_to = get_elem_from_state(basis, j);
+            auto state_from = get_elem_from_set(basis, i);
+            auto state_to = get_elem_from_set(basis, j);
 
             return TCH_ADD(state_from, state_to, grid);
         }
@@ -42,8 +42,8 @@ BLOCKED_H_TC::BLOCKED_H_TC(ILP_TYPE ctxt, const State& grid) {
 
     std::function<COMPLEX(size_t i, size_t j)> func = {
         [&basis, &grid](size_t i, size_t j) {
-            auto state_from = get_elem_from_state(basis, i);
-            auto state_to = get_elem_from_state(basis, j);
+            auto state_from = get_elem_from_set(basis, i);
+            auto state_to = get_elem_from_set(basis, j);
 
             return TC_ADD(state_from, state_to, grid);
         }
@@ -63,8 +63,8 @@ BLOCKED_H_JC::BLOCKED_H_JC(ILP_TYPE ctxt, const State& grid) {
 
     std::function<COMPLEX(size_t i, size_t j)> func = {
         [&basis, &grid](size_t i, size_t j) {
-            auto state_from = get_elem_from_state(basis, i);
-            auto state_to = get_elem_from_state(basis, j);
+            auto state_from = get_elem_from_set(basis, i);
+            auto state_to = get_elem_from_set(basis, j);
 
             return JC_ADD(state_from, state_to, grid);
         }

@@ -217,7 +217,7 @@ std::set<State> define_basis_of_hamiltonian(const State& grid) {
 
             do {
                 for (size_t i = 0; i < grid.cavities_count(); i++) {
-                    state.set_state(i, get_elem_from_state(cavity_bases[i], cavity_basis_index[i]));
+                    state.set_state(i, get_elem_from_set(cavity_bases[i], cavity_basis_index[i]));
                 }
         
                 basis.insert(state);

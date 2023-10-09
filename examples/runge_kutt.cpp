@@ -34,6 +34,10 @@ int main(int argc, char** argv) {
 
     if (rank == 0) H_single.show();
 
+    std::vector<COMPLEX> init_state(H.size(), 0);
+    init_state[State("|3;00>").get_index(H.get_basis())] = COMPLEX(1, 0);
+
+    if (rank == 0) std::cout << init_state << std::endl;
     //H.print_distributed("H_TCH");
 
     MPI_Finalize();
