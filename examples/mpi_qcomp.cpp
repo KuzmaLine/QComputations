@@ -20,25 +20,30 @@ std::string to_string_complex_with_precision(const COMPLEX& a_value, const int n
     return std::move(out).str();
 }
 
-void cwfpcsv(QComputations::BLOCKED_Matrix<COMPLEX> A, const std::string &filename, int num_accuracy = 21, int max_number_size = 50) {
+void cwfpcsv(QComputations::BLOCKED_Matrix<COMPLEX> A, const std::string &filename, char char_delimeter = '$', int start_row = 0, int start_col = 0, int num_accuracy = 21, int max_number_size = 50) {
   const char *charname = filename.c_str();
 
   remove(charname);
+
+  MPI_Offset row_offset = 0; // отступ для каждой строки до нужного столбца
+  MPI_Offset start_offset = 0; // отступ до 1 строки, в которую записываем
+  if (start_row != 0 or start_col != 0) {
+    // write here
+
+  }
 
   MPI_Offset offset;
   MPI_File file;
   MPI_Status status;
   MPI_File_open(MPI_COMM_WORLD, charname, MPI_MODE_CREATE | MPI_MODE_WRONLY,
                 MPI_INFO_NULL, &file);
-
   const int delimiter_size = 1;
   const int one_elem_size = 2 * max_number_size + 3;
-  const char char_delimiter = ',';
 
   for (size_t i = 0; i < A.local_n(); i++) {
     for (size_t j = 0; j < A.local_m(); j++) {
       auto cur_index = A.get_global_row(i) * A.m() + A.get_global_col(j);
-      offset = (one_elem_size + delimiter_size) * sizeof(char) * cur_index;
+      offset = start_offset + row_offset * (i + 1) + (one_elem_size + delimiter_size) * sizeof(char) * cur_index;
       MPI_File_seek(file, offset, MPI_SEEK_SET);
       if ((cur_index + 1) % A.m() != 0) {
         auto num_str = to_string_complex_with_precision(A.data()[j * A.local_n() + i], num_accuracy, max_number_size) + char_delimiter;

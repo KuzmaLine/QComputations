@@ -3,6 +3,7 @@
 #include <complex>
 #include <string>
 #include <iomanip>
+#include <chrono>
 #include "/home/kuzmaline/Quantum/diploma/src/QComputations_CPU_CLUSTER_NO_PLOTS.hpp"
 
 int main(int argc, char** argv) {
@@ -16,11 +17,11 @@ int main(int argc, char** argv) {
 
     if (rank == 0) QConfig::instance().show(); // - вывод всех параметров внутри конфига
 
-    std::vector<size_t> grid_config = {3};
+    std::vector<size_t> grid_config = {4};
     State grid(grid_config);
-    grid.set_max_N(2);
-    grid.set_min_N(2);
-    std::string init_state_str = "|0;101>";
+    grid.set_max_N(5);
+    grid.set_min_N(0);
+    std::string init_state_str = "|0;1111>";
 
     int ctxt;
     mpi::init_grid(ctxt);
@@ -48,17 +49,22 @@ int main(int argc, char** argv) {
 
     init_state[state_index] = COMPLEX(1, 0);
 
-    double eps = 1e-9;
+    double eps = 1e-5;
     //if (rank == 0) std::cout << init_state << std::endl;
     //H.print_distributed("H_TCH");
 
-    auto time_vec = linspace(0, 1000, 2000);
+    auto time_vec = linspace(0, 4000, 16000);
 
+    auto begin = std::chrono::steady_clock::now();
     auto probs_single = Evolution::quantum_master_equation(init_state, H_single, time_vec);
-
+    auto end = std::chrono::steady_clock::now();
+    if (rank == 0) std::cout << "SINGLE: " << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count() << std::endl;
     if (rank == 0) probs_testing::check_probs(probs_single, H_single.get_basis(), time_vec, eps);
 
+    begin = std::chrono::steady_clock::now();
     auto probs = Evolution::quantum_master_equation(init_state, H, time_vec);
+    end = std::chrono::steady_clock::now();
+    if (rank == 0) std::cout << "PARALLEL: " << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count() << std::endl;
 
     probs_testing::check_probs(probs, H.get_basis(), time_vec, eps);
 

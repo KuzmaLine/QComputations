@@ -457,10 +457,10 @@ Evolution::BLOCKED_Probs Evolution::quantum_master_equation(const std::vector<CO
 
     //for (const auto& cavity_id: cavities_with_leak) {
     for (size_t cavity_id = 0; cavity_id < grid.cavities_count(); cavity_id++) {
-        auto A = create_BLOCKED_A_destroy(H.ctxt(), H.get_basis(), cavity_id);
         //A.show();
         auto gamma = grid.get_leak_gamma(cavity_id);
         if (!is_zero(gamma)) {
+            auto A = create_BLOCKED_A_destroy(H.ctxt(), H.get_basis(), cavity_id);
             //std::cout << gamma << std::endl;
             lindblads.push_back(std::function<Evolution::BLOCKED_Rho(const Evolution::BLOCKED_Rho& rho)> {
                 [A, gamma](const Evolution::BLOCKED_Rho& rho) {
@@ -475,10 +475,10 @@ Evolution::BLOCKED_Probs Evolution::quantum_master_equation(const std::vector<CO
 
     //for (const auto& cavity_id: cavities_with_gain) {
     for (size_t cavity_id = 0; cavity_id < grid.cavities_count(); cavity_id++) {
-        auto A = create_BLOCKED_A_create(H.ctxt(), H.get_basis(), cavity_id);
         //A.show();
         auto gamma = grid.get_gain_gamma(cavity_id);
         if (!is_zero(gamma)) {
+            auto A = create_BLOCKED_A_create(H.ctxt(), H.get_basis(), cavity_id);
             //std::cout << gamma << std::endl;
             lindblads.push_back(std::function<Evolution::BLOCKED_Rho(const Evolution::BLOCKED_Rho& rho)> {
                 [A, gamma](const Evolution::BLOCKED_Rho& rho) {
