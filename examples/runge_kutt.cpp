@@ -45,6 +45,7 @@ int main(int argc, char** argv) {
 
         return 0;
     }
+
     init_state[state_index] = COMPLEX(1, 0);
 
     double eps = 1e-9;
