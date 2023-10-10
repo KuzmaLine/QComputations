@@ -504,18 +504,28 @@ Evolution::BLOCKED_Probs Evolution::quantum_master_equation(const std::vector<CO
     auto rho_0 = Evolution::create_BLOCKED_init_rho(H.ctxt(), init_state);
     //rho_0.show();
     //auto begin_c = std::chrono::steady_clock::now();
+    //std::cout << "HERE\n";
     auto rho_vec = Runge_Kutt_4<double, Evolution::BLOCKED_Rho>(time_vec, rho_0, equation);
     //auto end_c = std::chrono::steady_clock::now();
     //std::cout << " c " << std::chrono::duration_cast<std::chrono::milliseconds>(end_c - begin_c).count() << std::endl;
+    //std::cout << "HERE 2\n";
     if (!is_full_rho) {
+        ILP_TYPE world_size, rank;
+        MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+        MPI_Comm_size(MPI_COMM_WORLD, &world_size);
+        ILP_TYPE probs_ctxt;
+        mpi::init_grid(probs_ctxt, world_size, 1);
         ILP_TYPE proc_rows, proc_cols, myrow, mycol;
-        mpi::blacs_gridinfo(H.ctxt(), proc_rows, proc_cols, myrow, mycol);
-        Evolution::BLOCKED_Probs probs(H.ctxt(), GE, dim, time_vec.size(), size_t(0), time_vec.size());
+        mpi::blacs_gridinfo(probs_ctxt, proc_rows, proc_cols, myrow, mycol);
+        Evolution::BLOCKED_Probs probs(probs_ctxt, GE, dim, time_vec.size(), (H.size() >= world_size ? H.size() / world_size : 1), time_vec.size());
 
+        //std::cout << myrow << " " << mycol << " : " << probs.local_n() << " " << probs.local_m() << std::endl;
         for (size_t t = 0; t < time_vec.size(); t++) {
             auto probs_vec = mpi::get_diagonal_elements<COMPLEX>(rho_vec[t].get_local_matrix(), rho_vec[t].desc());
+            //if (rank == 0) std::cout << probs_vec << std::endl;
+            //std::cout << myrow << " " << mycol << " - " << start << std::endl;
             for (size_t i = 0; i < probs.local_n(); i++) {   
-                probs(i, t) = std::abs(probs_vec[i]);
+                probs(i, t) = std::abs(probs_vec[probs.get_global_row(i)]);
             }
         }
 

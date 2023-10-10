@@ -85,7 +85,7 @@ class BLOCKED_Matrix {
         const T operator()(size_t i, size_t j) const { return local_matrix_(i, j); }
 
         void print_distributed(const std::string& name) const;
-        void show(ILP_TYPE root_id, size_t width = QConfig::instance().width()) const;
+        void show(ILP_TYPE root_id = mpi::ROOT_ID, size_t width = QConfig::instance().width()) const;
 
         void write_to_file(const std::string& filename);
 

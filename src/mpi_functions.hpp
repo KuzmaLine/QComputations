@@ -87,7 +87,7 @@ namespace mpi {
     }
 
     // ON BLACS GRID
-    void init_grid(ILP_TYPE& ctxt);
+    void init_grid(ILP_TYPE& ctxt, ILP_TYPE proc_rows = 0, ILP_TYPE proc_cols = 0);
     void blacs_gridinfo(const ILP_TYPE& ctxt, ILP_TYPE& proc_rows, ILP_TYPE& proc_cols, ILP_TYPE& myrow, ILP_TYPE& mycol);
     ILP_TYPE numroc(ILP_TYPE N, ILP_TYPE NB, ILP_TYPE myindex, ILP_TYPE ZERO, ILP_TYPE size);
     ILP_TYPE indxl2g(ILP_TYPE N, ILP_TYPE NB, ILP_TYPE myindx, ILP_TYPE RSRC, ILP_TYPE dim_counts);

@@ -798,14 +798,17 @@ COMPLEX mpi::pzelget(const Matrix<COMPLEX>& A, ILP_TYPE i, ILP_TYPE j, const std
     return res;
 }
 
-void mpi::init_grid(ILP_TYPE& ctxt) {
+void mpi::init_grid(ILP_TYPE& ctxt, ILP_TYPE proc_rows, ILP_TYPE proc_cols) {
     ILP_TYPE iZERO = 0;
     int world_size;
     MPI_Comm_size(MPI_COMM_WORLD, &world_size);
 
     ILP_TYPE myid, numproc, myrow, mycol;
     char order = 'R';
-    ILP_TYPE proc_rows = std::sqrt(world_size), proc_cols = world_size / proc_rows;
+    if (proc_rows == 0 or proc_cols == 0) {
+        proc_rows = std::sqrt(world_size);
+        proc_cols = world_size / proc_rows;
+    }
     //std::cout << rank << " Here1\n";
     blacs_pinfo(&myid, &numproc);
     ILP_TYPE iMINUS = -1;

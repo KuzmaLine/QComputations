@@ -1,6 +1,8 @@
 #include <iostream>
 #include <chrono>
 #include <complex>
+#include <string>
+#include <iomanip>
 #include "/home/kuzmaline/Quantum/diploma/src/QComputations_CPU_CLUSTER_NO_PLOTS.hpp"
 
 int main(int argc, char** argv) {
@@ -14,10 +16,11 @@ int main(int argc, char** argv) {
 
     if (rank == 0) QConfig::instance().show(); // - вывод всех параметров внутри конфига
 
-    std::vector<size_t> grid_config = {2};
+    std::vector<size_t> grid_config = {3};
     State grid(grid_config);
-    grid.set_max_N(3);
-    grid.set_min_N(3);
+    grid.set_max_N(2);
+    grid.set_min_N(2);
+    std::string init_state_str = "|0;101>";
 
     int ctxt;
     mpi::init_grid(ctxt);
@@ -35,12 +38,19 @@ int main(int argc, char** argv) {
     if (rank == 0) H_single.show();
 
     std::vector<COMPLEX> init_state(H.size(), 0);
-    init_state[State("|3;00>").get_index(H.get_basis())] = COMPLEX(1, 0);
+    int state_index = State(init_state_str).get_index(H.get_basis());
+
+    if (state_index == -1) {
+        std::cerr << "Init State error!" << std::endl;
+
+        return 0;
+    }
+    init_state[state_index] = COMPLEX(1, 0);
 
     if (rank == 0) std::cout << init_state << std::endl;
     //H.print_distributed("H_TCH");
 
-    auto time_vec = linspace(0, 3, 3);
+    auto time_vec = linspace(0, 10, 10);
 
     auto probs_single = Evolution::quantum_master_equation(init_state, H_single, time_vec);
 
@@ -48,7 +58,7 @@ int main(int argc, char** argv) {
         size_t index = 0;
         for (const auto& state: H.get_basis()) {
             std::cout << state.to_string() << ": ";
-        
+
             for (size_t i = 0; i < time_vec.size(); i++) {
                 std::cout << probs_single[index][i] << " ";
             }
@@ -57,9 +67,24 @@ int main(int argc, char** argv) {
 
             index++;
         }
+        std::cout << std::endl;
     }
 
     auto probs = Evolution::quantum_master_equation(init_state, H, time_vec);
+
+    size_t index = 0;
+    for (const auto& state: H.get_basis()) {
+        if (rank == 0) std::cout << state.to_string() << ": ";
+
+        for (size_t i = 0; i < time_vec.size(); i++) {
+            auto elem = probs.get(index, i);
+            if (rank == 0) std::cout << elem << " ";
+        }
+
+        if (rank == 0) std::cout << std::endl;
+
+        index++;
+    }
 
     MPI_Finalize();
     return 0;
