@@ -59,6 +59,62 @@ void matplotlib::probs_to_plot(const Evolution::Probs& probs,
     plt::legend();
 }
 
+#ifdef ENABLE_MPI
+#ifdef ENABLE_CLUSTER
+
+
+// NOT READY!!!!!!!!!!!!!!
+void matplotlib::probs_to_plot(const Evolution::BLOCKED_Probs& probs, 
+                               const std::vector<double>& time_vec,
+                               const std::set<State>& basis,
+                               std::vector<std::map<std::string, std::string>> keywords) {
+    //std::cout << "HERE\n";
+    size_t index = 0;
+    for (const auto& state: basis) {
+        if (keywords.size() <= index) {
+            std::map<std::string, std::string> tmp;
+            keywords.emplace_back(tmp);
+        }
+        keywords[index]["label"] = state.to_string();
+        /*
+        for (const auto& p: keywords[index]) {
+            std::cout << p.first << " " << p.second << std::endl;
+        }
+        */
+        plt::plot(time_vec, probs.row(index), keywords[index]);
+        index++;
+        //plt::plot(time_vec, state_probs);
+    }
+    plt::legend();
+}
+
+void matplotlib::probs_to_plot(const Evolution::BLOCKED_Probs& probs, 
+                               const std::vector<double>& time_vec,
+                               const std::vector<std::string>& basis_str,
+                               std::vector<std::map<std::string, std::string>> keywords) {
+    //std::cout << "HERE\n";
+    size_t index = 0;
+    for (const auto& state_str: basis_str) {
+        if (keywords.size() <= index) {
+            std::map<std::string, std::string> tmp;
+            keywords.emplace_back(tmp);
+        }
+        keywords[index]["label"] = state_str;
+        /*
+        for (const auto& p: keywords[index]) {
+            std::cout << p.first << " " << p.second << std::endl;
+        }
+        */
+        plt::plot(time_vec, probs.row(index), keywords[index]);
+        index++;
+        //plt::plot(time_vec, state_probs);
+    }
+    plt::legend();
+}
+
+#endif
+#endif
+
 void matplotlib::rho_probs_to_plot(const Evolution::Probs& probs,
                        const std::vector<double>& time_vec,
                        const std::set<State>& basis,
