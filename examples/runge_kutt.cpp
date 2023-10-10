@@ -40,6 +40,27 @@ int main(int argc, char** argv) {
     if (rank == 0) std::cout << init_state << std::endl;
     //H.print_distributed("H_TCH");
 
+    auto time_vec = linspace(0, 3, 3);
+
+    auto probs_single = Evolution::quantum_master_equation(init_state, H_single, time_vec);
+
+    if (rank == 0) {
+        size_t index = 0;
+        for (const auto& state: H.get_basis()) {
+            std::cout << state.to_string() << ": ";
+        
+            for (size_t i = 0; i < time_vec.size(); i++) {
+                std::cout << probs_single[index][i] << " ";
+            }
+
+            std::cout << std::endl;
+
+            index++;
+        }
+    }
+
+    auto probs = Evolution::quantum_master_equation(init_state, H, time_vec);
+
     MPI_Finalize();
     return 0;
 }
