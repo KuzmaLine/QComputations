@@ -9,6 +9,15 @@
 #include <set>
 #include <complex>
 
+#ifdef ENABLE_MPI
+#ifdef ENABLE_CLUSTER
+
+#include "mpi_functions.hpp"
+#include "blocked_matrix.hpp"
+
+#endif
+#endif
+
 namespace QComputations {
 
 namespace matrix {
@@ -100,8 +109,80 @@ namespace printing {
             index++;
         }
     }
-}
 
+
+#ifdef ENABLE_MPI
+#ifdef ENABLE_CLUSTER
+    void probs_print(const BLOCKED_Matrix<double>& probs, const std::set<State>& basis, const std::vector<double>& time_vec) {
+        ILP_TYPE rank;
+        MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+        size_t index = 0;
+        for (const auto& b: basis) {
+            if (rank == mpi::ROOT_ID) std::cout << std::setw(QConfig::instance().width()) << b.to_string() << " : ";
+            for (size_t i = 0; i < time_vec.size(); i++) {
+                auto elem = probs.get(index, i);
+                if (rank == mpi::ROOT_ID) std::cout << std::setw(QConfig::instance().width()) << probs.get(index, i) << " ";
+            }
+            std::cout << std::endl;
+            index++;
+        }
+    }
+#endif
+#endif
+
+} // printing
+
+namespace probs_testing {
+    void check_probs(const Matrix<double>& probs, const std::set<State>& basis,
+                const std::vector<double>& time_vec, double eps = QConfig::instance().eps()) {
+        for (size_t i = 0; i < time_vec.size(); i++) {
+            size_t index = 0;
+            double sum = 0;
+            for (const auto& b: basis) {
+                //std::cout << std::setw(QConfig::instance().width()) << b.to_string() << " : ";
+                sum += probs[index++][i];
+                //std::cout << std::setw(QConfig::instance().width()) << probs[index][i] << " ";
+            }
+
+            if (std::abs(double(1) - sum) >= eps) {
+                std::cout << std::setw(QConfig::instance().width()) << time_vec[i] << " INCORRECT PROBS! SUM = " << sum << std::endl;
+            }
+        }
+
+        std::cout << std::endl;
+    }
+
+#ifdef ENABLE_MPI
+#ifdef ENABLE_CLUSTER
+
+    void check_probs(const BLOCKED_Matrix<double>& probs, const std::set<State>& basis,
+                const std::vector<double>& time_vec, double eps = QConfig::instance().eps()) {
+        ILP_TYPE rank;
+        MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+        for (size_t i = 0; i < time_vec.size(); i++) {
+            size_t index = 0;
+            double sum = 0;
+            for (const auto& b: basis) {
+                //std::cout << std::setw(QConfig::instance().width()) << b.to_string() << " : ";
+                auto elem = probs.get(index++, i);
+                sum += elem;
+                //std::cout << std::setw(QConfig::instance().width()) << probs[index][i] << " "
+            }
+
+            if (rank == mpi::ROOT_ID) {
+                if (std::abs(double(1) - sum) >= eps) {
+                    std::cout << std::setw(QConfig::instance().width()) << time_vec[i] << " INCORRECT PROBS! SUM = " << sum << std::endl;
+                }
+            }
+        }
+
+        if (rank == mpi::ROOT_ID) std::cout << std::endl;
+    }
+
+#endif
+#endif
+
+}
 namespace functions_testing {
     template<typename T, typename V>
     void check_runge_kutt(const std::vector<V>& X, const T& y0, std::function<T(V, T)> f, std::function<T(V)> f_correct) {

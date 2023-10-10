@@ -29,13 +29,13 @@ int main(int argc, char** argv) {
 
     H_TC H_single(grid);
 
-    if (rank == 0) show_basis(H.get_basis());
+    //if (rank == 0) show_basis(H.get_basis());
 
-    H.show();
+    //H.show();
 
-    if (rank == 0) show_basis(H_single.get_basis());
+    //if (rank == 0) show_basis(H_single.get_basis());
 
-    if (rank == 0) H_single.show();
+    //if (rank == 0) H_single.show();
 
     std::vector<COMPLEX> init_state(H.size(), 0);
     int state_index = State(init_state_str).get_index(H.get_basis());
@@ -47,44 +47,19 @@ int main(int argc, char** argv) {
     }
     init_state[state_index] = COMPLEX(1, 0);
 
-    if (rank == 0) std::cout << init_state << std::endl;
+    double eps = 1e-9;
+    //if (rank == 0) std::cout << init_state << std::endl;
     //H.print_distributed("H_TCH");
 
-    auto time_vec = linspace(0, 10, 10);
+    auto time_vec = linspace(0, 1000, 2000);
 
     auto probs_single = Evolution::quantum_master_equation(init_state, H_single, time_vec);
 
-    if (rank == 0) {
-        size_t index = 0;
-        for (const auto& state: H.get_basis()) {
-            std::cout << state.to_string() << ": ";
-
-            for (size_t i = 0; i < time_vec.size(); i++) {
-                std::cout << probs_single[index][i] << " ";
-            }
-
-            std::cout << std::endl;
-
-            index++;
-        }
-        std::cout << std::endl;
-    }
+    if (rank == 0) probs_testing::check_probs(probs_single, H_single.get_basis(), time_vec, eps);
 
     auto probs = Evolution::quantum_master_equation(init_state, H, time_vec);
 
-    size_t index = 0;
-    for (const auto& state: H.get_basis()) {
-        if (rank == 0) std::cout << state.to_string() << ": ";
-
-        for (size_t i = 0; i < time_vec.size(); i++) {
-            auto elem = probs.get(index, i);
-            if (rank == 0) std::cout << elem << " ";
-        }
-
-        if (rank == 0) std::cout << std::endl;
-
-        index++;
-    }
+    probs_testing::check_probs(probs, H.get_basis(), time_vec, eps);
 
     MPI_Finalize();
     return 0;
