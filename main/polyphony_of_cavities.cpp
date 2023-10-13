@@ -18,9 +18,9 @@ int main(int argc, char** argv) {
     mpi::init_grid(ctxt);
     BLOCKED_H_TCH H(ctxt, grid);
 
-    if (rank == 0) { show_basis(H.get_basis()); }
+    //if (rank == 0) { show_basis(H.get_basis()); }
 
-    H.show();
+    //H.show();
 
     MPI_Finalize();
     return 0;

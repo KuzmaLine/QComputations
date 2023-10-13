@@ -6,6 +6,7 @@
 #include "cavity_state.hpp"
 #include "additional_operators.hpp"
 #include "functions.hpp"
+#include "config.hpp"
 
 namespace {
     using E_LEVEL = int;
@@ -27,15 +28,40 @@ namespace {
 
 namespace QComputations {
 
-Cavity_State::Cavity_State(size_t n, size_t m, size_t state): n_(n), state_(index_to_state(m, state)) {}
+Cavity_State::Cavity_State(size_t n, size_t m, E_LEVEL e_levels_count): e_levels_count_(e_levels_count) {
+    w_ph_ = Matrix<double>(C_STYLE, e_levels_count_, e_levels_count_, QConfig::instance().w());
+    n_ = Matrix<size_t>(C_STYLE, e_levels_count_, e_levels_count_, 0);
+    n_[0][1] = n;
+    w_at_[0] = 0;
+    state_ = index_to_state(m, 0);
 
-Cavity_State::Cavity_State(size_t n, const std::vector<E_LEVEL>& state) : n_(n) {
+    max_energy_ = get_energy();
+}
+
+Cavity_State::Cavity_State(const Matrix<size_t>& n, const std::vector<E_LEVEL>& state, E_LEVEL e_levels_count): n_(n),
+                                    e_levels_count_(e_levels_count), w_at_(e_levels_count, QConfig::instance().w()) {
+    w_ph_ = Matrix<double>(C_STYLE, e_levels_count_, e_levels_count_, QConfig::instance().w());
+    w_at_[0] = 0;
     if (state.size() != 0) {
         state_ = state;
     }
+
+    max_energy_ = get_energy();
 }
 
-Cavity_State::Cavity_State(const std::string& str_state) {
+Cavity_State::Cavity_State(size_t n, const std::vector<E_LEVEL>& state, E_LEVEL e_levels_count): e_levels_count_(e_levels_count), w_at_(e_levels_count_, QConfig::instance().w()) {
+    w_ph_ = Matrix<double>(C_STYLE, e_levels_count_, e_levels_count_, QConfig::instance().w());
+    n_ = Matrix<size_t>(C_STYLE, e_levels_count_, e_levels_count_, 0);
+    n_[0][1] = n;
+    w_at_[0] = 0;
+    if (state.size() != 0) {
+        state_ = state;
+    }
+
+    max_energy_ = get_energy();
+}
+
+Cavity_State::Cavity_State(const std::string& str_state, E_LEVEL e_levels_count): e_levels_count_(e_levels_count) {
     int i = START_INDEX;
 
     size_t n = 0;
@@ -45,7 +71,8 @@ Cavity_State::Cavity_State(const std::string& str_state) {
         i++;
     }
 
-    n_ = n;
+    n_ = Matrix<size_t>(C_STYLE, 2, 2, 0);
+    n_[0][1] = n;
 
     if (i != str_state.length() - 1) {
         i += 2;
@@ -66,6 +93,10 @@ size_t Cavity_State::up_count() const {
     return res;
 }
 
+double w_ph(E_LEVEL level_from, E_LEVEL level_to) {
+
+}
+
 size_t Cavity_State::variants_of_state_count(size_t N) const {
     size_t m = this->m();
     size_t res = 0;
@@ -84,13 +115,21 @@ size_t Cavity_State::get_atoms_index() const {
 }
 
 size_t Cavity_State::get_energy() const {
-    return n_ + this->up_count();
+    size_t sum = 0;
+
+    for (size_t i = 0; i < e_levels_count_; i++) {
+        for (size_t j = i + 1; j < e_levels_count_; j++) {
+            sum += n_[i][j];
+        }
+    }
+    return sum + this->up_count();
 }
 
+// TMP
 size_t Cavity_State::get_index() const {
     auto max_num_atoms = std::pow(2, this->m());
 
-    return n_ * max_num_atoms + get_index_from_state(state_);
+    return n_[0][1] * max_num_atoms + get_index_from_state(state_);
 }
 
 size_t Cavity_State::get_index(const std::set<Cavity_State>& basis) const {
@@ -113,11 +152,19 @@ bool Cavity_State::is_in_basis(const std::set<Cavity_State>& basis) const {
 
 size_t Cavity_State::hash() const {
     std::hash<vec_levels> state_hash;
-    return state_hash(state_) ^ n_;
+    auto res = state_hash(state_);
+
+    for (size_t i = 0; i < e_levels_count_; i++) {
+        for (size_t j = i + 1; j < e_levels_count_; j++) {
+            res ^= n_[i][j];
+        }
+    }
+
+    return res;
 }
 
 std::string Cavity_State::to_string() const {
-    std::string str_state = "|" + std::to_string(n_) + ">";
+    std::string str_state = "|" + std::to_string(n_[0][1]) + ">";
 
     if (state_.size() != 0) {
         str_state += "|";

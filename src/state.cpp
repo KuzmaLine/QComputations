@@ -3,8 +3,53 @@
 
 
 namespace QComputations {
+
+namespace {
+    using CavityId = size_t;
+
+    std::vector<std::vector<CavityId>> update_neighbours(size_t x_size, size_t y_size, size_t z_size) {
+        std::vector<std::vector<CavityId>> res(x_size * y_size * z_size);
+
+        for (size_t z = 0; z < z_size; z++) {
+            for (size_t y = 0; y < y_size; y++) {
+                for (size_t x = 0; x < x_size; x++) {
+                    auto index = z * y_size * x_size + y * x_size + x;
+                    if ((x + 1) != x_size) {
+                        res[index].emplace_back(index + 1);
+                        res[index + 1].emplace_back(index);
+                    }
+
+                    if ((y + 1) != y_size) {
+                        res[index].emplace_back(index + x_size);
+                        res[index + x_size].emplace_back(index);
+                    }
+                    
+                    if ((z + 1) != z_size) {
+                        res[index].emplace_back(index + x_size * y_size);
+                        res[index + x_size * y_size].emplace_back(index);
+                    }
+                }
+            }
+        }
+
+        return res;
+    }
+}
+
+size_t State::hash() const {
+    std::hash<Cavity_State> state_hash;
+    auto res = state_hash(grid_states_[0]);
+
+    for (size_t i = 1; i < grid_states_.size(); i++) {
+        res ^= state_hash(grid_states_[i]);
+    }
+
+    return res;
+}
+
+
 // REWRITE TO REGEXP
-State::State(const std::string& grid_state, const std::string& format) : gamma_(C_STYLE, 0, 0, 0) {
+State::State(const std::string& grid_state, const std::string& format) : waveguides_length_(C_STYLE, 0, 0, QConfig::instance().waveguides_length()) {
     size_t format_index = 0;
     size_t left_length = 0, middle_length = 0, right_length = 0;
     while (format[format_index] != 'N') {
@@ -76,11 +121,30 @@ State::State(const std::string& grid_state, const std::string& format) : gamma_(
     }
 }
 
-State::State(const std::vector<size_t>& grid_config) : gamma_(C_STYLE, 0, 0, 0) {
+void State::reshape(size_t x_size, size_t y_size, size_t z_size) {
+    assert(x_size * y_size * z_size == grid_states_.size());
+
+    x_size_ = x_size;
+    y_size_ = y_size;
+    z_size_ = z_size;
+
+    waveguides_length_ = Matrix<double>(C_STYLE, grid_states_.size(), grid_states_.size(),
+            QConfig::instance().waveguides_length());
+
+    neighbours_ = update_neighbours(x_size_, y_size_, z_size_);
+}
+
+State::State(const std::vector<size_t>& grid_config, E_LEVEL e_levels_count): waveguides_length_(C_STYLE, 0, 0, QConfig::instance().waveguides_length()),
+                                                                              e_levels_count_(e_levels_count) {
     //std::cout << grid_config << std::endl;
+    x_size_ = grid_config.size();
+    y_size_ = 1;
+    z_size_ = 1;
+
+    neighbours_ = update_neighbours(x_size_, y_size_, z_size_);
     for (size_t i = 0; i < grid_config.size(); i++) {
         std::vector<int> m(grid_config[i], 0);
-        grid_states_.emplace_back(0, m);
+        grid_states_.emplace_back(0, m, e_levels_count);
         gamma_leak_cavities_.emplace_back(0);
         gamma_gain_cavities_.emplace_back(0);
     }
@@ -109,7 +173,7 @@ size_t State::get_max_size() const {
     return res;
 }
 
-size_t State::get_energy() const {
+size_t State::get_grid_energy() const {
     size_t res = 0;
 
     for (const auto& state: grid_states_) {
@@ -117,6 +181,10 @@ size_t State::get_energy() const {
     }
 
     return res;
+}
+
+size_t State::get_energy(CavityId cavity_id) const {
+    return grid_states_[cavity_id].get_energy();
 }
 
 void State::set_state(CavityId id, const Cavity_State& state) {
@@ -153,7 +221,7 @@ State::State(const Cavity_State& state) {
         cavities_with_atoms_.insert(0);
     }
 
-    gamma_ = Matrix<COMPLEX>(C_STYLE, 1, 1, 0);
+    waveguides_length_ = Matrix<double>(C_STYLE, 1, 1, 0);
 }
 
 // Рудимент

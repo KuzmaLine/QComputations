@@ -9,20 +9,23 @@
 
 
 namespace QComputations {
-// DON'T TOUCH
-// NEED REWORK
 
-// Рудимент
+#ifndef ENABLE_MPI
+
 class State_Graph {
     public:
-        explicit State_Graph(const Cavity_State& init_state, bool with_loss_photons = false, bool GAIN_PHOTONS = false, size_t N = 1);
+        explicit State_Graph(const State& init_state);
         void show() const;
 
-        std::set<Cavity_State> get_basis() const { return basis_; }
+        std::set<State> get_basis() const { return basis_; }
     private:
-        std::set<Cavity_State> basis_;
-        std::unordered_map<Cavity_State, std::unordered_set<Cavity_State>> to_;
-        std::unordered_map<Cavity_State, std::unordered_set<Cavity_State>> from_;
+        std::set<State> basis_;
+        std::unordered_map<State, std::unordered_set<State>> to_;
+        std::unordered_map<State, std::unordered_set<State>> from_;
 };
+
+#else
+
+#endif
 
 } // namespace QComputations

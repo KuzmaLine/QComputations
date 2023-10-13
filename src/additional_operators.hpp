@@ -93,7 +93,7 @@ std::vector<T> operator-(const std::vector<T>& a, const std::vector<T>& b) {
 
 } // namespace QComputations
 
-// hash functions for Cavity_State (cavity_state.hpp)
+// hash functions for Cavity_State and State (cavity_state.hpp and state.hpp)
 
 template<>
 struct std::hash<std::vector<COMPLEX>> {
@@ -145,6 +145,23 @@ template<>
 struct std::hash<std::pair<QComputations::Cavity_State, QComputations::Cavity_State>> {
     size_t operator()(const std::pair<QComputations::Cavity_State, QComputations::Cavity_State>& p) const {
         std::hash<QComputations::Cavity_State> state_hash;
+        size_t h1 = state_hash(p.first);
+        size_t h2 = state_hash(p.second);
+        return h1 ^ (h2 << 1);
+    }
+};
+
+template<>
+struct std::hash<QComputations::State> {
+    size_t operator()(const QComputations::State& state) const {
+        return state.hash();
+    }
+};
+
+template<>
+struct std::hash<std::pair<QComputations::State, QComputations::State>> {
+    size_t operator()(const std::pair<QComputations::State, QComputations::State>& p) const {
+        std::hash<QComputations::State> state_hash;
         size_t h1 = state_hash(p.first);
         size_t h2 = state_hash(p.second);
         return h1 ^ (h2 << 1);

@@ -63,53 +63,77 @@ void matplotlib::probs_to_plot(const Evolution::Probs& probs,
 #ifdef ENABLE_CLUSTER
 
 
+
 // NOT READY!!!!!!!!!!!!!!
 void matplotlib::probs_to_plot(const Evolution::BLOCKED_Probs& probs, 
                                const std::vector<double>& time_vec,
                                const std::set<State>& basis,
                                std::vector<std::map<std::string, std::string>> keywords) {
     //std::cout << "HERE\n";
+    ILP_TYPE rank;
+    MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+    
     size_t index = 0;
     for (const auto& state: basis) {
-        if (keywords.size() <= index) {
-            std::map<std::string, std::string> tmp;
-            keywords.emplace_back(tmp);
+        if (rank == mpi::ROOT_ID) {
+            if (keywords.size() <= index) {
+                std::map<std::string, std::string> tmp;
+                keywords.emplace_back(tmp);
+            }
+            keywords[index]["label"] = state.to_string();
+            /*
+            for (const auto& p: keywords[index]) {
+                std::cout << p.first << " " << p.second << std::endl;
+            }
+            */
         }
-        keywords[index]["label"] = state.to_string();
-        /*
-        for (const auto& p: keywords[index]) {
-            std::cout << p.first << " " << p.second << std::endl;
+
+        std::vector<double> probs_vec(time_vec.size());
+        for (size_t i = 0; i < time_vec.size(); i++) {
+            probs_vec[i] = probs.get(index, i);
         }
-        */
-        plt::plot(time_vec, probs.row(index), keywords[index]);
+
+        if (rank == mpi::ROOT_ID) plt::plot(time_vec, probs_vec, keywords[index]);
         index++;
         //plt::plot(time_vec, state_probs);
     }
-    plt::legend();
+    if (rank == 0) plt::legend();
 }
+
 
 void matplotlib::probs_to_plot(const Evolution::BLOCKED_Probs& probs, 
                                const std::vector<double>& time_vec,
                                const std::vector<std::string>& basis_str,
                                std::vector<std::map<std::string, std::string>> keywords) {
     //std::cout << "HERE\n";
+    ILP_TYPE rank;
+    MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+    
     size_t index = 0;
     for (const auto& state_str: basis_str) {
-        if (keywords.size() <= index) {
-            std::map<std::string, std::string> tmp;
-            keywords.emplace_back(tmp);
+        if (rank == mpi::ROOT_ID) {
+            if (keywords.size() <= index) {
+                std::map<std::string, std::string> tmp;
+                keywords.emplace_back(tmp);
+            }
+            keywords[index]["label"] = state_str;
+            /*
+            for (const auto& p: keywords[index]) {
+                std::cout << p.first << " " << p.second << std::endl;
+            }
+            */
         }
-        keywords[index]["label"] = state_str;
-        /*
-        for (const auto& p: keywords[index]) {
-            std::cout << p.first << " " << p.second << std::endl;
+
+        std::vector<double> probs_vec(time_vec.size());
+        for (size_t i = 0; i < time_vec.size(); i++) {
+            probs_vec[i] = probs.get(index, i);
         }
-        */
-        plt::plot(time_vec, probs.row(index), keywords[index]);
+
+        if (rank == mpi::ROOT_ID) plt::plot(time_vec, probs_vec, keywords[index]);
         index++;
         //plt::plot(time_vec, state_probs);
     }
-    plt::legend();
+    if (rank == 0) plt::legend();
 }
 
 #endif

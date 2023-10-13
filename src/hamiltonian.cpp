@@ -211,7 +211,7 @@ std::set<State> define_basis_of_hamiltonian(const State& grid) {
         while(true) {
             for (size_t i = 0; i < grid.cavities_count(); i++) {
                 //std::cout << energy_map[i] << " " << get_energy_state(energy_map[i], grid[i].m()).to_string() << std::endl;
-                cavity_bases[i] = State_Graph(get_energy_state(energy_map[i], grid[i].m()), false, false).get_basis();
+                //cavity_bases[i] = State_Graph(get_energy_state(energy_map[i], grid[i].m()), false, false).get_basis();
                 //show_basis(cavity_bases[i]);
             }
 

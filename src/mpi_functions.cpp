@@ -87,7 +87,7 @@ State mpi::bcast_state(const State& state) {
         data[1] = state.min_N();
         data[2] = state.cavities_count();
         //std::cout << data[2] << std::endl;
-        gamma = state.get_gamma().get_mass();
+        // !!!!!!!!!!!!!!!!!! gamma = state.get_waveguides().get_mass();
 
         for (size_t i = 0; i < data[2]; i++) {
             grid_config.emplace_back(state.m(i));
@@ -112,7 +112,7 @@ State mpi::bcast_state(const State& state) {
     State res(grid_config);
     res.set_max_N(data[0]);
     res.set_min_N(data[1]);
-    res.set_gamma(Matrix<COMPLEX>(gamma, cavities_count, cavities_count, C_STYLE)); // true - c_style
+    // !!!!!!!!!!! res.set_gamma(Matrix<COMPLEX>(gamma, cavities_count, cavities_count, C_STYLE)); // true - c_style
 
     std::vector<COMPLEX> leak_from_cavity(cavities_count, 0);
     std::vector<COMPLEX> gain_to_cavity(cavities_count, 0);

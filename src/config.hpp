@@ -41,6 +41,8 @@ namespace {
     constexpr double h_default = 1;
     constexpr double w_default = 1;
     constexpr double g_default = 0.01;
+    constexpr double waveguides_length_default = 0;
+    constexpr int E_LEVELS_COUNT_DEFAULT = 2;
 }
 
 class QConfig {
@@ -62,6 +64,8 @@ class QConfig {
         void set_multiply_mode(MULTIPLY_ALGS MULTIPLY_MODE) { MULTIPLY_MODE_ = MULTIPLY_MODE; }
         void set_eps(double eps) { eps_ = eps; }
         void set_width(int width) { width_ = width; }
+        void set_E_LEVELS_COUNT(int E_LEVELS_COUNT) { E_LEVELS_COUNT_ = E_LEVELS_COUNT; }
+        void set_waveguides_length(double waveguides_length) { wavegiudes_length_ = waveguides_length; }
 
         double h() const { return h_; }
         double w() const { return w_; }
@@ -72,6 +76,8 @@ class QConfig {
         MULTIPLY_ALGS MULTIPLY_MODE() const { return MULTIPLY_MODE_; }
         double eps() const { return eps_; }
         int width() const { return width_; }
+        int E_LEVELS_COUNT() const { return E_LEVELS_COUNT_; }
+        double waveguides_length() const { return wavegiudes_length_; }
 
         void show() const {
             std::cout << "CONFIG PARAMS: " << std::endl;
@@ -96,6 +102,9 @@ class QConfig {
         int width_ = 15;
 
         double eps_ = 1e-12;
+        
+        int E_LEVELS_COUNT_ = E_LEVELS_COUNT_DEFAULT;
+        double wavegiudes_length_ = waveguides_length_default;
         double h_ = h_default;
         double w_ = w_default;
         double g_ = g_default;

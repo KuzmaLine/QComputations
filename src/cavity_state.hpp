@@ -6,11 +6,12 @@
 #include <complex>
 #include <map>
 #include <set>
-
+#include <cassert>
+#include "matrix.hpp"
 
 namespace QComputations {
 
-// STATE IN CAVITIES
+// Состояния в полостях
 class Cavity_State {
     using COMPLEX = std::complex<double>;
     using vec_complex = std::vector<COMPLEX>;
@@ -22,16 +23,28 @@ class Cavity_State {
         explicit Cavity_State() {};
 
         // n - photons, m - num of atoms, state - vector of state in 2 numerical system
-        Cavity_State(size_t n, size_t m = 0, size_t state = 0);
-        Cavity_State(size_t n, const std::vector<E_LEVEL>& state);
+        Cavity_State(size_t n, size_t m = 0, E_LEVEL e_levels_count = QConfig::instance().E_LEVELS_COUNT());
+        Cavity_State(const Matrix<size_t>& n, const std::vector<E_LEVEL>& state, E_LEVEL e_levels_count = QConfig::instance().E_LEVELS_COUNT());
+        Cavity_State(size_t n, const std::vector<E_LEVEL>& state, E_LEVEL e_levels_count = QConfig::instance().E_LEVELS_COUNT());
 
         //format |n>|m> 
         // (!!!) NEED CHANGE TO |n;m>
-        explicit Cavity_State(const std::string&);
+        explicit Cavity_State(const std::string&, E_LEVEL e_levels_count = QConfig::instance().E_LEVELS_COUNT());
         Cavity_State(const Cavity_State&) = default;
 
-        size_t n() const { return n_; }
-        void set_n(size_t new_n) { n_ = new_n; }
+        size_t n(E_LEVEL level_from = 0, E_LEVEL level_to = 1) const { return n_[level_from][level_to]; }
+
+        void set_n(const Matrix<size_t>& n);
+        void set_n(size_t new_n, E_LEVEL level_from = 0, E_LEVEL level_to = 1) {
+            assert(level_from != level_to);
+            if (level_from > level_to) {
+                auto tmp = level_from;
+                level_from = level_to;
+                level_to = tmp;
+            }
+
+            n_[level_from][level_to] = new_n;
+        }
 
         // Num of atoms with state = 1
         size_t up_count() const;
@@ -59,14 +72,46 @@ class Cavity_State {
 
         // return sum of n_ and ones in state_
         size_t get_energy() const;
+        
+        double w_at(E_LEVEL e_level = 1) const { return w_at_[e_level]; }
+        void set_w_at(double w_at, E_LEVEL e_level = 1) { w_at_[e_level] = w_at; }
+
+        double w_ph(E_LEVEL level_from = 0, E_LEVEL level_to = 1) const {
+            assert(level_from != level_to);
+            if (level_from > level_to) {
+                auto tmp = level_from;
+                level_from = level_to;
+                level_to = tmp;
+            }
+
+            return w_ph_[level_from][level_to];
+        }
+
+        void set_w_ph(double w_ph, E_LEVEL level_from = 0, E_LEVEL level_to = 1) {
+            assert(level_from != level_to);
+            if (level_from > level_to) {
+                auto tmp = level_from;
+                level_from = level_to;
+                level_to = tmp;
+            }
+
+            w_ph_[level_from][level_to] = w_ph;
+        }
+
+        size_t get_max_energy() const { return max_energy_; }
 
         bool operator==(const Cavity_State& other) const { return state_ == other.state_ and n_ == other.n_; }
         //bool operator<(const Cavity_State& other) const { return n_ > other.n_ or get_index_from_state(state_) < get_index_from_state(other.state_); }
         bool operator<(const Cavity_State& other) const { return this->to_string() > other.to_string(); }
         size_t hash() const;
     private:
-        size_t n_;
+        E_LEVEL e_levels_count_ = QConfig::instance().E_LEVELS_COUNT();
+        Matrix<size_t> n_;
+        std::vector<double> w_at_;
+        Matrix<double> w_ph_;
         std::vector<E_LEVEL> state_;
+
+        size_t max_energy_;
 };
 
 } // namespace QComputations
