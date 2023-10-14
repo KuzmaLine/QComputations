@@ -216,7 +216,7 @@ State::State(size_t x_size, size_t y_size, size_t z_size) {
 State::State(const Cavity_State& state) {
     grid_states_.emplace_back(state);
     x_size_ = y_size_ = z_size_ = 1;
-    max_N_ = state.n() + state.up_count();
+    max_N_ = state.get_energy();
     if (state.m() != 0) {
         cavities_with_atoms_.insert(0);
     }

@@ -29,6 +29,8 @@ JC, int * DESCC );
 extern "C" {
     void pdelget_(char*, char*, double*, const double*, int*, int*, const int*);
     void pzelget_(char*, char*, COMPLEX*, const COMPLEX*, int*, int*, const int*);
+    void pdelset_(double*, int*, int*, double*, const int*);
+    void pzelset_(COMPLEX*, int*, int*, COMPLEX*, const int*);
     ILP_TYPE indxl2g_(ILP_TYPE*, ILP_TYPE*, ILP_TYPE*, ILP_TYPE*, ILP_TYPE*);
     ILP_TYPE indxg2p_(ILP_TYPE*, ILP_TYPE*, ILP_TYPE*, ILP_TYPE*, ILP_TYPE*);
     ILP_TYPE indxg2l_(ILP_TYPE*, ILP_TYPE*, ILP_TYPE*, ILP_TYPE*, ILP_TYPE*);
@@ -796,6 +798,18 @@ COMPLEX mpi::pzelget(const Matrix<COMPLEX>& A, ILP_TYPE i, ILP_TYPE j, const std
     COMPLEX res;
     ::pzelget_(&chA, &TopI, &res, A.data(), &new_i, &new_j, desc.data());
     return res;
+}
+
+void mpi::pdelset(Matrix<double>& A, ILP_TYPE i, ILP_TYPE j, double num, const std::vector<ILP_TYPE>& desc) {
+    ILP_TYPE new_i = i + 1;
+    ILP_TYPE new_j = j + 1;
+    ::pdelset_(A.data(), &new_i, &new_j, &num, desc.data());
+}
+
+void mpi::pzelset(Matrix<COMPLEX>& A, ILP_TYPE i, ILP_TYPE j, COMPLEX num, const std::vector<ILP_TYPE>& desc) {
+    ILP_TYPE new_i = i + 1;
+    ILP_TYPE new_j = j + 1;
+    ::pzelset_(A.data(), &new_i, &new_j, &num, desc.data());
 }
 
 void mpi::init_grid(ILP_TYPE& ctxt, ILP_TYPE proc_rows, ILP_TYPE proc_cols) {

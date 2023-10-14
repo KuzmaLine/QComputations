@@ -5,8 +5,6 @@
 
 namespace QComputations {
 
-#ifndef ENABLE_MPI
-
 State_Graph::State_Graph(const State& init_state) {
     basis_.insert(init_state);
     std::queue<State> state_queue_;
@@ -113,9 +111,5 @@ void State_Graph::show() const {
         std::cout << std::endl;
     }
 }
-
-#else
-
-#endif
 
 } // namespace QComputations

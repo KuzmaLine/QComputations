@@ -435,7 +435,7 @@ H_JC::H_JC(const State& grid) {
     auto y_size = grid.y_size();
     auto z_size = grid.z_size();
 
-    basis_ = define_basis_of_hamiltonian(grid);
+    basis_ = State_Graph(grid).get_basis();
 
     size_t size = basis_.size();
     H_ = Matrix<COMPLEX>(DEFAULT_MATRIX_STYLE, size, size, 0);
@@ -550,7 +550,8 @@ H_TC::H_TC(const State& grid) {
     auto y_size = grid.y_size();
     auto z_size = grid.z_size();
 
-    basis_ = define_basis_of_hamiltonian(grid);
+    //basis_ = define_basis_of_hamiltonian(grid);
+    basis_ = State_Graph(grid).get_basis();
 
     size_t size = basis_.size();
     H_ = Matrix<COMPLEX>(DEFAULT_MATRIX_STYLE, size, size, 0);
@@ -666,7 +667,7 @@ H_TCH::H_TCH(const State& grid) {
     auto y_size = grid.y_size();
     auto z_size = grid.z_size();
 
-    basis_ = define_basis_of_hamiltonian(grid);
+    basis_ = State_Graph(grid).get_basis();
 
     size_t size = basis_.size();
     H_ = Matrix<COMPLEX>(DEFAULT_MATRIX_STYLE, size, size, 0);

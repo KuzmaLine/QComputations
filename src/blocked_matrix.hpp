@@ -40,7 +40,7 @@ class BLOCKED_Matrix {
         explicit BLOCKED_Matrix(const BLOCKED_Matrix<T>& A, const BLOCKED_Matrix<T>& B);
 
         T get(size_t i, size_t j) const;
-        void set(T num, size_t i, size_t j);
+        void set(size_t i, size_t j, T num);
 
         Matrix<T> Gather(ILP_TYPE root_row, ILP_TYPE root_col) const;
 
@@ -91,6 +91,9 @@ class BLOCKED_Matrix {
 
         ILP_TYPE get_global_row(size_t i) const;
         ILP_TYPE get_global_col(size_t j) const;
+
+        ILP_TYPE get_row_proc(size_t i) const;
+        ILP_TYPE get_col_proc(size_t i) const;
 
         BLOCKED_Matrix<T> hermit() const;
     private:

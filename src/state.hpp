@@ -80,6 +80,8 @@ class State {
         // Return state vector from cavity
         Cavity_State get_state_in_pol(CavityId pol_id) const { return grid_states_[pol_id]; }
         Cavity_State operator[](CavityId pol_id) const { return grid_states_[pol_id]; }
+
+        CavityId get_index_of_pol(size_t x, size_t y = 0, size_t z = 0) const { return z * y_size_ * x_size_ + y * x_size_ + x; }
         
         // Рудимент
         size_t get_index() const;

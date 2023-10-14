@@ -10,8 +10,6 @@
 
 namespace QComputations {
 
-#ifndef ENABLE_MPI
-
 class State_Graph {
     public:
         explicit State_Graph(const State& init_state);
@@ -23,9 +21,5 @@ class State_Graph {
         std::unordered_map<State, std::unordered_set<State>> to_;
         std::unordered_map<State, std::unordered_set<State>> from_;
 };
-
-#else
-
-#endif
 
 } // namespace QComputations

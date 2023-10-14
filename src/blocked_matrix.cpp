@@ -36,6 +36,16 @@ COMPLEX BLOCKED_Matrix<COMPLEX>::get(size_t i, size_t j) const {
 }
 
 template<>
+void BLOCKED_Matrix<double>::set(size_t i, size_t j, double num) {
+    mpi::pdelset(local_matrix_, i, j, num, this->desc());
+}
+
+template<>
+void BLOCKED_Matrix<COMPLEX>::set(size_t i, size_t j, COMPLEX num) {
+    mpi::pzelset(local_matrix_, i, j, num, this->desc());
+}
+
+template<>
 BLOCKED_Matrix<double> BLOCKED_Matrix<double>::operator-(const BLOCKED_Matrix<double>& B) const {
     assert(this->matrix_type_ == GE and B.matrix_type_ == GE);
     assert(this->n_ == B.n_ and this->m_ == B.m_);

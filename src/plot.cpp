@@ -62,9 +62,45 @@ void matplotlib::probs_to_plot(const Evolution::Probs& probs,
 #ifdef ENABLE_MPI
 #ifdef ENABLE_CLUSTER
 
+void matplotlib::probs_in_cavity_to_plot(const Evolution::BLOCKED_Probs& probs_start,
+                                const std::vector<double>& time_vec,
+                                const std::set<State>& basis_start,
+                                size_t cavity_id,
+                                std::vector<std::map<std::string, std::string>> keywords) {
+    ILP_TYPE rank;
+    MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 
+    auto p = Evolution::probs_to_cavity_probs(probs_start, basis_start, cavity_id);
+    auto probs = p.first;
+    auto basis = p.second;
 
-// NOT READY!!!!!!!!!!!!!!
+    size_t index = 0;
+    for (const auto& state: basis) {
+        if (rank == mpi::ROOT_ID) {
+            if (keywords.size() <= index) {
+                std::map<std::string, std::string> tmp;
+                keywords.emplace_back(tmp);
+            }
+            keywords[index]["label"] = state.to_string();
+            /*
+            for (const auto& p: keywords[index]) {
+                std::cout << p.first << " " << p.second << std::endl;
+            }
+            */
+        }
+
+        std::vector<double> probs_vec(time_vec.size());
+        for (size_t i = 0; i < time_vec.size(); i++) {
+            probs_vec[i] = probs.get(index, i);
+        }
+
+        if (rank == mpi::ROOT_ID) plt::plot(time_vec, probs_vec, keywords[index]);
+        index++;
+        //plt::plot(time_vec, state_probs);
+    }
+    if (rank == 0) plt::legend();
+}
+
 void matplotlib::probs_to_plot(const Evolution::BLOCKED_Probs& probs, 
                                const std::vector<double>& time_vec,
                                const std::set<State>& basis,
@@ -254,9 +290,7 @@ void matplotlib::show(bool is_block) {
 void matplotlib::make_figure(size_t x, size_t y, size_t dpi) {
     if (x == 0 or y == 0) plt::figure();
     else {
-        std::cout << "START_MAKE_FIGURE\n";
         plt::figure_size(x, y, dpi);
-        std::cout << "END_MAKE_FIGURE\n";
     }
 }
 

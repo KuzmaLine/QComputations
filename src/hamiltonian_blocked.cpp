@@ -5,6 +5,7 @@
 #include "quantum_operators.hpp"
 #include "hamiltonian.hpp"
 #include <cassert>
+#include "graph.hpp"
 
 namespace QComputations {
 
@@ -14,7 +15,8 @@ namespace {
 
 BLOCKED_H_TCH::BLOCKED_H_TCH(ILP_TYPE ctxt, const State& grid) {
     grid_ = grid;
-    auto basis = define_basis_of_hamiltonian(grid);
+    //auto basis = define_basis_of_hamiltonian(grid);
+    auto basis = State_Graph(grid).get_basis();
     basis_ = basis;
 
     size_t size = basis_.size();
@@ -35,7 +37,8 @@ BLOCKED_H_TC::BLOCKED_H_TC(ILP_TYPE ctxt, const State& grid) {
     assert(grid.cavities_count() == 1);
 
     grid_ = grid;
-    auto basis = define_basis_of_hamiltonian(grid);
+    //auto basis = define_basis_of_hamiltonian(grid);
+    auto basis = State_Graph(grid).get_basis();
     basis_ = basis;
 
     size_t size = basis_.size();
@@ -56,7 +59,8 @@ BLOCKED_H_JC::BLOCKED_H_JC(ILP_TYPE ctxt, const State& grid) {
     assert(grid.cavities_count() == 1);
 
     grid_ = grid;
-    auto basis = define_basis_of_hamiltonian(grid);
+    //auto basis = define_basis_of_hamiltonian(grid);
+    auto basis = State_Graph(grid).get_basis();
     basis_ = basis;
 
     size_t size = basis_.size();

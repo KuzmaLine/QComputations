@@ -96,6 +96,8 @@ namespace mpi {
     void blacs_gridexit(ILP_TYPE& ctxt);
     double pdelget(const Matrix<double>& A, ILP_TYPE i, ILP_TYPE j, const std::vector<ILP_TYPE>& desc);
     COMPLEX pzelget(const Matrix<COMPLEX>& A, ILP_TYPE i, ILP_TYPE j, const std::vector<ILP_TYPE>& desc);
+    void pdelset(Matrix<double>& A, ILP_TYPE i, ILP_TYPE j, double num, const std::vector<ILP_TYPE>& desc);
+    void pzelset(Matrix<COMPLEX>& A, ILP_TYPE i, ILP_TYPE j, COMPLEX num, const std::vector<ILP_TYPE>& desc);
 
     // Распределяет по Blacs решётке блоки матрицы. Реализовано только для Matrix<double> и Matrix<std::complex<double>>
     template<typename T>
