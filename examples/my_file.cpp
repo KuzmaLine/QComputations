@@ -72,6 +72,16 @@ void cwfippcsv(QComputations::BLOCKED_Matrix<COMPLEX> A,
 
   std::string str_delimiter = ",", vector_string;
 
+///////////////////////
+
+    std::vector<size_t> left_offset(A.n());
+    std::vector<size_t> left_length(A.n());
+    std::vector<size_t> right_offset(A.n());
+    std::vector<size_t> right_length(A.n());
+    std::vector<char> delims(A.n(), str_delimiter[0]);
+
+////////////////////
+
   if (rank == root_id) {
     std::ifstream file_ending(filename, std::ifstream::ate);
     if (file_ending) {
@@ -109,13 +119,18 @@ void cwfippcsv(QComputations::BLOCKED_Matrix<COMPLEX> A,
       std::string next_line;
       std::ifstream target_file(filename);
 
-      for (int i = 0; i < row_place; ++i)
+    for (int i = 0; i < row_place; ++i) {
         if (!std::getline(target_file, next_line)) {
           printf("Bad number of row during writing to file!\n\n");
           assert(false);
           return;
         }
+
+        std::cout << "NEXT - " << next_line << std::endl;
+    }
+
       global_offset = target_file.tellg();
+      std::cout << "GLOBAL_OFFSET - " << global_offset << std::endl;
 
       // num_lines = A.n(); // TODO only modyfying lines now
       // IF GETLINE WILL PERFORM AFTER I < NUM_LINES, IT WILL LOOSE ONE LINE!
@@ -124,11 +139,11 @@ void cwfippcsv(QComputations::BLOCKED_Matrix<COMPLEX> A,
         lines_read[i] = next_line;
         if (i == 0) {
           mas_offsets[i * 4] = 0;
-          mas_offsets[i * 4 + 2] = next_line.length();
+          mas_offsets[i * 4 + 2] = next_line.length() + 1;
         } else {
           mas_offsets[i * 4] = mas_offsets[(i - 1) * 4 + 2];
           mas_offsets[i * 4 + 2] =
-              mas_offsets[(i - 1) * 4 + 2] + next_line.length();
+              mas_offsets[(i - 1) * 4 + 2] + next_line.length() + 1;
         }
 
         int delim_number = col_place;
