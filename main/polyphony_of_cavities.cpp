@@ -35,9 +35,14 @@ int main(int argc, char** argv) {
 
     auto probs = Evolution::quantum_master_equation(init_state, H, time_vec);
 
-    if(rank == 0) matplotlib::make_figure(1200, 720);
+    MPI_Barrier(MPI_COMM_WORLD);
+    if(rank == 0) {
+        matplotlib::make_figure(1200, 720);
+        std::cout << "END OF CALCULATIONS!\n";
+    }
 
-    matplotlib::probs_to_plot(probs, time_vec, H.get_basis());
+    //matplotlib::probs_to_plot(probs, time_vec, H.get_basis());
+    matplotlib::probs_in_cavity_to_plot(probs, time_vec, H.get_basis(), 0);
     if (rank == 0) {
         matplotlib::grid();
         matplotlib::show();
