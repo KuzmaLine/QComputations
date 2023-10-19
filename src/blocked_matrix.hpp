@@ -127,13 +127,21 @@ BLOCKED_Matrix<T>::BLOCKED_Matrix(ILP_TYPE ctxt, MATRIX_TYPE type, size_t n,
     ILP_TYPE proc_rows, proc_cols, myrow, mycol;
     mpi::blacs_gridinfo(ctxt_, proc_rows, proc_cols, myrow, mycol);
     ILP_TYPE iZERO = 0;
-
+ 
     if (NB == 0) {
         NB_ = n / proc_rows;
     }
 
     if (MB == 0) {
         MB_ = m / proc_cols;
+    }
+
+    if (NB_ == 0) {
+        NB_ = 1;
+    }
+
+    if (MB_ == 0) {
+        MB_ = 1;
     }
 
     ILP_TYPE nrows = mpi::numroc(n, NB_, myrow, iZERO, proc_rows);
@@ -157,6 +165,14 @@ BLOCKED_Matrix<T>::BLOCKED_Matrix(ILP_TYPE ctxt, MATRIX_TYPE type, size_t n,
 
     if (MB == 0) {
         MB_ = m / proc_cols;
+    }
+
+    if (NB_ == 0) {
+        NB_ = 1;
+    }
+
+    if (MB_ == 0) {
+        MB_ = 1;
     }
 
     ILP_TYPE nrows = mpi::numroc(n, NB_, myrow, iZERO, proc_rows);
@@ -297,7 +313,8 @@ template<typename T>
 std::vector<ILP_TYPE> BLOCKED_Matrix<T>::desc() const {
     ILP_TYPE iZERO = 0;
     ILP_TYPE info;
-    return mpi::descinit(n_, m_, NB_, MB_, iZERO, iZERO, ctxt_, local_matrix_.n(), info);
+    ILP_TYPE LLD = std::max(1, ILP_TYPE(local_matrix_.n()));
+    return mpi::descinit(n_, m_, NB_, MB_, iZERO, iZERO, ctxt_, LLD, info);
 }
 
 template<typename T>

@@ -49,7 +49,7 @@ size_t State::hash() const {
 
 
 // REWRITE TO REGEXP
-State::State(const std::string& grid_state, const std::string& format) : waveguides_length_(C_STYLE, 0, 0, QConfig::instance().waveguides_length()) {
+State::State(const std::string& grid_state, const std::string& format) : waveguides_(C_STYLE, 0, 0, std::make_pair(QConfig::instance().waveguides_amplitude(), QConfig::instance().waveguides_length())) {
     size_t format_index = 0;
     size_t left_length = 0, middle_length = 0, right_length = 0;
     while (format[format_index] != 'N') {
@@ -121,6 +121,18 @@ State::State(const std::string& grid_state, const std::string& format) : wavegui
     }
 }
 
+void State::set_waveguide(double amplitude, double length) {
+    waveguides_ = Matrix<std::pair<double, double>>(C_STYLE, grid_states_.size(), grid_states_.size(),
+        std::make_pair(0, 0));
+    for (size_t from_id = 0; from_id < grid_states_.size(); from_id++) {
+        auto neighbours = neighbours_[from_id];
+
+        for (const auto to_id: neighbours) {
+            waveguides_[from_id][to_id] = std::make_pair(amplitude, length);
+        }
+    }
+}
+
 void State::reshape(size_t x_size, size_t y_size, size_t z_size) {
     assert(x_size * y_size * z_size == grid_states_.size());
 
@@ -128,13 +140,15 @@ void State::reshape(size_t x_size, size_t y_size, size_t z_size) {
     y_size_ = y_size;
     z_size_ = z_size;
 
-    waveguides_length_ = Matrix<double>(C_STYLE, grid_states_.size(), grid_states_.size(),
-            QConfig::instance().waveguides_length());
+    waveguides_ = Matrix<std::pair<double, double>>(C_STYLE, grid_states_.size(), grid_states_.size(),
+            std::make_pair(QConfig::instance().waveguides_amplitude(), QConfig::instance().waveguides_length()));
 
     neighbours_ = update_neighbours(x_size_, y_size_, z_size_);
 }
 
-State::State(const std::vector<size_t>& grid_config, E_LEVEL e_levels_count): waveguides_length_(C_STYLE, 0, 0, QConfig::instance().waveguides_length()),
+State::State(const std::vector<size_t>& grid_config, E_LEVEL e_levels_count): waveguides_(C_STYLE, grid_config.size(),
+                                                                              grid_config.size(),
+                                                                              std::make_pair(QConfig::instance().waveguides_amplitude(), QConfig::instance().waveguides_length())),
                                                                               e_levels_count_(e_levels_count) {
     //std::cout << grid_config << std::endl;
     x_size_ = grid_config.size();
@@ -221,7 +235,7 @@ State::State(const Cavity_State& state) {
         cavities_with_atoms_.insert(0);
     }
 
-    waveguides_length_ = Matrix<double>(C_STYLE, 1, 1, 0);
+    waveguides_ = Matrix<std::pair<double, double>>(C_STYLE, 1, 1, std::make_pair(QConfig::instance().waveguides_amplitude(), QConfig::instance().waveguides_length()));
 }
 
 // Рудимент

@@ -70,6 +70,7 @@ void matplotlib::probs_in_cavity_to_plot(const Evolution::BLOCKED_Probs& probs_s
     ILP_TYPE rank;
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 
+    MPI_Barrier(MPI_COMM_WORLD);
     auto p = Evolution::probs_to_cavity_probs(probs_start, basis_start, cavity_id);
     auto probs = p.first;
     auto basis = p.second;

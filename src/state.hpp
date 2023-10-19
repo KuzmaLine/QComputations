@@ -11,8 +11,8 @@
 namespace QComputations {
 
 namespace {
-    std::complex<double> gamma(double length, double w_ph) {
-        return std::exp(std::complex<double>(0, -1) * length * w_ph / QConfig::instance().h());
+    std::complex<double> gamma(double amplitude, double length, double w_ph) {
+        return amplitude * std::exp(std::complex<double>(0, -1) * length * w_ph / QConfig::instance().h());
     }
 }
 
@@ -46,11 +46,9 @@ class State {
         void reshape(size_t x_size, size_t y_size, size_t z_size);
 
         // TMP realizations
-        void set_waveguide(double length) { waveguides_length_ = Matrix<double>(C_STYLE, grid_states_.size(),
-                                                                 grid_states_.size(),
-                                                                 length); }
-        void set_waveguide(const Matrix<double>& A) {waveguides_length_ = A;}
-        void set_waveguide(size_t from_cavity_id, size_t to_cavity_id, double waveguide_length) { waveguides_length_[from_cavity_id][to_cavity_id] = waveguide_length; }
+        void set_waveguide(double amplitude, double length);
+        void set_waveguide(const Matrix<std::pair<double, double>>& A) {waveguides_ = A;}
+        void set_waveguide(size_t from_cavity_id, size_t to_cavity_id, double amplitude, double length = 0) { waveguides_[from_cavity_id][to_cavity_id] = std::make_pair(amplitude, length); }
 
         // get qubit in cavity with atom_index
         E_LEVEL get_qubit(CavityId pol_id, AtomId atom_index) const { return grid_states_[pol_id].get_qubit(atom_index); }
@@ -108,7 +106,12 @@ class State {
 
         // Matrix<COMPLEX> get_gamma() const { return gamma_; }
         COMPLEX get_gamma(CavityId from_id, CavityId to_id, E_LEVEL e_from = 0, E_LEVEL e_to = 1) const {
-            return gamma(waveguides_length_[from_id][to_id], grid_states_[from_id].w_ph(e_from, e_to));
+            if (from_id > to_id) {
+                auto tmp = from_id;
+                from_id = to_id;
+                to_id = tmp;
+            }
+            return gamma(waveguides_[from_id][to_id].first, waveguides_[from_id][to_id].second, grid_states_[from_id].w_ph(e_from, e_to));
         }
         std::set<CavityId> get_cavities_with_atoms() const { return cavities_with_atoms_; }
 
@@ -133,7 +136,7 @@ class State {
 
         std::set<CavityId> cavities_with_atoms_;
         std::vector<Cavity_State> grid_states_;
-        Matrix<double> waveguides_length_;
+        Matrix<std::pair<double, double>> waveguides_;
         std::vector<std::vector<CavityId>> neighbours_;
         std::vector<COMPLEX> gamma_leak_cavities_;
         std::vector<COMPLEX> gamma_gain_cavities_;

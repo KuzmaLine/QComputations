@@ -42,6 +42,7 @@ namespace {
     constexpr double w_default = 1;
     constexpr double g_default = 0.01;
     constexpr double waveguides_length_default = 0;
+    constexpr double waveguides_amplitude_default = 0;
     constexpr int E_LEVELS_COUNT_DEFAULT = 2;
 }
 
@@ -78,6 +79,7 @@ class QConfig {
         int width() const { return width_; }
         int E_LEVELS_COUNT() const { return E_LEVELS_COUNT_; }
         double waveguides_length() const { return wavegiudes_length_; }
+        double waveguides_amplitude() const { return wavegiudes_amplitude_; }
 
         void show() const {
             std::cout << "CONFIG PARAMS: " << std::endl;
@@ -105,6 +107,7 @@ class QConfig {
         
         int E_LEVELS_COUNT_ = E_LEVELS_COUNT_DEFAULT;
         double wavegiudes_length_ = waveguides_length_default;
+        double wavegiudes_amplitude_ = waveguides_amplitude_default;
         double h_ = h_default;
         double w_ = w_default;
         double g_ = g_default;
