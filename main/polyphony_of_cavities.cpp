@@ -12,6 +12,7 @@ int main(int argc, char** argv) {
     MPI_Comm_size(MPI_COMM_WORLD, &world_size);
     QConfig::instance().set_width(20);
 
+    auto 
     std::vector<size_t> grid_config = {1, 0, 0, 1};
     State grid(grid_config);
     //grid.reshape(2, 2, 1);
