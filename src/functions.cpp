@@ -14,9 +14,6 @@ extern "C"
 namespace QComputations {
 
 namespace {
-    constexpr double eps = 1e-12;
-    const double EPS = eps;
-
     void BP_Mult(Matrix<double>& B, size_t p, size_t q, double c, double s) {
         size_t n = B.size();
         for (size_t i = 0; i < n; i++) {
@@ -40,11 +37,42 @@ namespace {
     }
 }
 
-bool is_zero(double a) {
+std::string to_string_complex_with_precision(const COMPLEX a_value,
+                                             const int n, int max_number_size) {
+  std::ostringstream out;
+  out.precision(n);
+  out << ((a_value.real() >= 0) ? "+" : "-") << std::setfill('0')
+      << std::setw(max_number_size) << std::fixed << std::abs(a_value.real());
+  out << ((a_value.imag() >= 0) ? "+" : "-") << std::setfill('0')
+      << std::setw(max_number_size) << std::fixed << std::abs(a_value.imag());
+  out << "j";
+  return std::move(out).str();
+}
+
+std::string to_string_double_with_precision(const double a_value,
+                                             const int n, int max_number_size) {
+  std::ostringstream out;
+  out.precision(n);
+  out << ((a_value >= 0) ? "+" : "-") << std::setfill('0')
+      << std::setw(max_number_size) << std::fixed << std::abs(a_value);
+  return std::move(out).str();
+}
+
+std::string vector_to_string(const std::vector<std::string>& inp) {
+  std::ostringstream out;
+  for (auto i : inp) {
+    if (i.empty())
+      break;
+    out << i << '\n';
+  }
+  return std::move(out).str();
+}
+
+bool is_zero(double a, double eps) {
     return std::abs(a) < eps;
 }
 
-bool is_zero(COMPLEX a) {
+bool is_zero(COMPLEX a, double eps) {
     return std::abs(a) < eps;
 }
 
@@ -428,7 +456,7 @@ matrix multiply(const matrix& A, const matrix& B) {
 */
 
 
-std::pair<double, double> givens(double a, double b) {
+std::pair<double, double> givens(double a, double b, double eps) {
     if (std::abs(b) < eps) return std::make_pair(1, 0);
 
     double c, s;
@@ -490,7 +518,7 @@ void tridiagonal_QR(Matrix<double>& T) {
 }
 
 // Modified Gramm Schmidt
-Matrix<double> MGS (const Matrix<COMPLEX>& A) {
+Matrix<double> MGS (const Matrix<COMPLEX>& A, double eps = QConfig::instance().eps()) {
     auto m = A.size();
     //std::cout << "HERE 1\n";
     Matrix<COMPLEX> v(C_STYLE, m, m, 0);
@@ -518,7 +546,7 @@ Matrix<double> MGS (const Matrix<COMPLEX>& A) {
             //show_vector(w);
         }
 
-        if (norm(w) < EPS)  {
+        if (norm(w) < eps)  {
             //std::cout << "EPS\n";
             return H;
         }
@@ -536,7 +564,7 @@ Matrix<double> MGS (const Matrix<COMPLEX>& A) {
 
 // ONLY FOR REAL MATRIX. FOR COMPLEX - Hermit_Lanczos
 // Not effective - replace
-std::pair<std::vector<double>, Matrix<double>> jacobi(const Matrix<double>& A) {
+std::pair<std::vector<double>, Matrix<double>> jacobi(const Matrix<double>& A, double eps = QConfig::instance().eps()) {
     int n = A.size();
     Matrix<double> eigenvectors(C_STYLE, n, n);
     std::vector<double> eigenvalues(n);
@@ -557,7 +585,7 @@ std::pair<std::vector<double>, Matrix<double>> jacobi(const Matrix<double>& A) {
 
         if (iter == max_iter) break;
         if (iter % 1000 == 0) {
-            if (off(B) < EPS) break;
+            if (off(B) < eps) break;
         }
         // находим максимальный недиагональный элемент
         double max_element = 0;
@@ -572,7 +600,7 @@ std::pair<std::vector<double>, Matrix<double>> jacobi(const Matrix<double>& A) {
                 }
             }
         }
-        if (max_element < EPS) break;
+        if (max_element < eps) break;
 
         // вычисляем угол поворота
         //double theta = arg(B[p][q] / (B[q][q] - B[p][p])) / 2.0;

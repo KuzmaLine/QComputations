@@ -12,12 +12,12 @@
 using COMPLEX = std::complex<double>;
 
 // Сдвиги внутри матрицы офсетов.
-  namespace of {
-    int ns = 0, // Номер строки.
+namespace of {
+int ns = 0, // Номер строки.
     bg = 1, // Офсет начала строки.
-    md = 2, // Офсет места, куда писать матрицу.
+    md = 2, // Локальный офсет места, куда писать матрицу.
     en = 3; // Офсет конца строки.
-  }
+}
 
 std::string to_string_complex_with_precision(const COMPLEX &a_value,
                                              const int n, int max_number_size) {
@@ -31,7 +31,16 @@ std::string to_string_complex_with_precision(const COMPLEX &a_value,
   return std::move(out).str();
 }
 
-std::string vector_to_string(std::vector<std::string> inp) {
+std::string to_string_double_with_precision(const double a_value,
+                                             const int n, int max_number_size) {
+  std::ostringstream out;
+  out.precision(n);
+  out << ((a_value >= 0) ? "+" : "-") << std::setfill('0')
+      << std::setw(max_number_size) << std::fixed << std::abs(a_value);
+  return std::move(out).str();
+}
+
+std::string vector_to_string(const std::vector<std::string>& inp) {
   std::ostringstream out;
   for (auto i : inp) {
     if (i.empty())
@@ -42,7 +51,7 @@ std::string vector_to_string(std::vector<std::string> inp) {
 }
 
 void cwfippcsv(QComputations::BLOCKED_Matrix<COMPLEX> A,
-               const std::string &filename, int row_place, int col_place,
+               const std::string &filename, int row_place = 0, int col_place = 0,
                int num_accuracy = 21, int max_number_size = 50) {
   const char *charname = filename.c_str();
 
@@ -53,8 +62,7 @@ void cwfippcsv(QComputations::BLOCKED_Matrix<COMPLEX> A,
   MPI_Status status;
   MPI_Comm_rank(MPI_COMM_WORLD, &rank);
   MPI_Comm_size(MPI_COMM_WORLD, &size);
-  MPI_Offset global_offset =
-                 0, // Офсет от начала до 1 строки, в которую писать.
+  MPI_Offset global_offset = 0, // Офсет от начала до 1 строки, в которую писать.
       num_lines = 0, // Число всех строк файла.
       num_lines_left = 0, // Число строк после начала записи матрицы.
       num_elems_to_mod = 0, // Число элементов в строках, в которые пишем.
@@ -85,6 +93,7 @@ void cwfippcsv(QComputations::BLOCKED_Matrix<COMPLEX> A,
     } else {
       file_exists = 0;
     }
+    num_lines = A_n;
   }
   MPI_Bcast(&file_exists, 1, MPI_INT, root_id, MPI_COMM_WORLD);
   MPI_Bcast(&num_lines, 1, MPI_INT, root_id, MPI_COMM_WORLD);
@@ -111,7 +120,6 @@ void cwfippcsv(QComputations::BLOCKED_Matrix<COMPLEX> A,
 
   if (file_exists == 1) {
     if (rank == root_id) {
-      num_lines = A_n;
       std::string next_line;
       std::ifstream target_file(filename);
 
@@ -147,6 +155,7 @@ void cwfippcsv(QComputations::BLOCKED_Matrix<COMPLEX> A,
             if (--delim_number == 0)
               break;
           }
+        // end_not_empty = 1;
         if (next_index != std::string::npos)
           end_not_empty = 1;
         else
@@ -158,18 +167,18 @@ void cwfippcsv(QComputations::BLOCKED_Matrix<COMPLEX> A,
         line_begin_size[i] = index;
         line_others_offset[i] = mas_offsets[i * 4 + of::bg];
       }
-      for (int i = 0; i < num_lines; ++i)
+      /* for (int i = 0; i < num_lines; ++i)
         printf("Line: %s[end]\n\n", lines_read[i].c_str());
 
       for (int i = 0; i < num_lines * 4; i += 4)
         printf("From %lld through %lld to %lld\n", mas_offsets[i + of::bg],
-               mas_offsets[i + of::md], mas_offsets[i + of::en]);
+               mas_offsets[i + of::md], mas_offsets[i + of::en]); */
       vector_string = vector_to_string(lines_read);
-      printf("\n%s\n", vector_string.c_str());
+      // printf("\n%s\n", vector_string.c_str());
 
       for (int i = 0; std::getline(target_file, next_line); ++i) {
         chunk[i] = next_line;
-        printf("%s\n", next_line.c_str());
+        // printf("%s\n", next_line.c_str());
       }
 
       target_file.close();
@@ -181,8 +190,8 @@ void cwfippcsv(QComputations::BLOCKED_Matrix<COMPLEX> A,
     MPI_Bcast(&line_begin_size, A_n, MPI_LONG_LONG, root_id, MPI_COMM_WORLD);
     MPI_Bcast(&line_others_offset, A_n, MPI_LONG_LONG, root_id, MPI_COMM_WORLD);
 
-    num_lines_to_mod = (num_lines) / size;
-    num_lines_to_mod += (rank == size - 1) ? (num_lines % size) : 0;
+    num_lines_to_mod = num_lines / size;
+    num_lines_to_mod += (rank < num_lines % size) ? 1 : 0;
 
     // Разбиваем массивы офсетов и строк для рассылки.
     int send_counts[size], offset_offsets[size], offset_counts[size],
@@ -191,8 +200,7 @@ void cwfippcsv(QComputations::BLOCKED_Matrix<COMPLEX> A,
     int cur_line = 0;
     long long send_offset = 0;
     for (int i = 0; i < size; ++i) {
-      send_counts[i] =
-          num_lines / size + ((i == size - 1) ? num_lines % size : 0);
+      send_counts[i] = num_lines / size + ((i < num_lines % size) ? 1 : 0);
       offset_counts[i] = send_counts[i] * 4;
       if (i == 0)
         local_offset = 0;
@@ -209,7 +217,7 @@ void cwfippcsv(QComputations::BLOCKED_Matrix<COMPLEX> A,
           ++cur_line;
           --lines_num;
         }
-        send_offset = mas_offsets[(cur_line) * 4 + of::bg];
+        send_offset = mas_offsets[(cur_line)*4 + of::bg];
 
         if (i != size - 1)
           string_offsets[i + 1] = send_offset;
@@ -223,11 +231,11 @@ void cwfippcsv(QComputations::BLOCKED_Matrix<COMPLEX> A,
               send_offset - (string_offsets[i - 1] + string_counts[i - 1]);
       }
     }
-    for (int i = 0; rank == root_id && i < size; ++i) {
+    /* for (int i = 0; rank == root_id && i < size; ++i) {
       printf("%d: Send %d chars from %d, and %d offsets from %d\n", rank,
              string_counts[i], string_offsets[i], offset_counts[i],
              offset_offsets[i]);
-    }
+    } */
     long long local_offsets[offset_counts[rank]];
 
     MPI_Bcast(&string_counts, size, MPI_LONG_LONG, root_id, MPI_COMM_WORLD);
@@ -241,16 +249,16 @@ void cwfippcsv(QComputations::BLOCKED_Matrix<COMPLEX> A,
                  &local_offsets, num_lines * 4, MPI_LONG_LONG, root_id,
                  MPI_COMM_WORLD);
 
-    /*for (int i = 0; i < num_lines_to_mod * 4; i += 4)
+    /* for (int i = 0; i < num_lines_to_mod * 4; i += 4)
       printf("Offset %d: %lld + %lld\n", rank, global_offset,
-      local_offsets[i]);*/
+             local_offsets[i + of::bg]); */
 
     MPI_Scatterv(mas_char_string, string_counts, string_offsets, MPI_CHAR,
                  &local_lines, num_elems_to_mod, MPI_CHAR, root_id,
                  MPI_COMM_WORLD);
     local_lines[string_counts[rank]] = '\0';
 
-    printf("Str %d: %s[end]\n\n", rank, local_lines);
+    // printf("Str %d: %s[end]\n\n", rank, local_lines);
 
     // Добавляем свободное место в файле под строки матрицы.
     MPI_File_open(MPI_COMM_WORLD, charname, MPI_MODE_WRONLY, MPI_INFO_NULL,
@@ -263,10 +271,8 @@ void cwfippcsv(QComputations::BLOCKED_Matrix<COMPLEX> A,
       MPI_File_seek(file, offset, MPI_SEEK_SET);
       // printf("%d - %lld\n", str_num, offset);
       if (local_offsets[i + of::md] != 0) {
-        MPI_File_write(file, local_lines + line_offset, local_offsets[i + of::md],
-                       MPI_CHAR, &status);
-        if (end_not_empty == 0)
-          MPI_File_write(file, &char_delimiter, 1, MPI_CHAR, &status);
+        MPI_File_write(file, local_lines + line_offset,
+                       local_offsets[i + of::md], MPI_CHAR, &status);
       }
       MPI_File_seek(file,
                     offset + local_offsets[i + of::md] +
@@ -274,9 +280,10 @@ void cwfippcsv(QComputations::BLOCKED_Matrix<COMPLEX> A,
                     MPI_SEEK_SET);
       // printf("ELEMPLACE: %lld > %lld\n", local_offsets[i + of::md],
       // (one_elem_size + delimiter_size) * A_m);
-      MPI_File_write(file, local_lines + line_offset + local_offsets[i + of::md],
-                     local_offsets[i + of::en] -
-                         (local_offsets[i + of::bg] + local_offsets[i + of::md]),
+      MPI_File_write(file,
+                     local_lines + line_offset + local_offsets[i + of::md],
+                     local_offsets[i + of::en] - (local_offsets[i + of::bg] +
+                                                  local_offsets[i + of::md]),
                      MPI_CHAR, &status);
       line_offset += (local_offsets[i + of::en] - local_offsets[i + of::bg]);
     }
@@ -315,19 +322,19 @@ void cwfippcsv(QComputations::BLOCKED_Matrix<COMPLEX> A,
       } else if (cur_index + 1 == A_m * A_n) {
         auto num_str = to_string_complex_with_precision(
             A.data()[j * A.local_n() + i], num_accuracy, max_number_size);
-        if (!file_exists)
-          num_str += "\n";
-        else if (end_not_empty)
+        if (end_not_empty)
           num_str += char_delimiter;
+        else
+          num_str += "\n";
         MPI_File_write(file, num_str.c_str(), num_str.length(), MPI_CHAR,
                        &status);
       } else {
         auto num_str = to_string_complex_with_precision(
             A.data()[j * A.local_n() + i], num_accuracy, max_number_size);
-        if (!file_exists)
-          num_str += "\n";
-        else if (end_not_empty)
+        if (end_not_empty)
           num_str += char_delimiter;
+        else
+          num_str += "\n";
         MPI_File_write(file, num_str.c_str(), num_str.length(), MPI_CHAR,
                        &status);
       }
@@ -337,15 +344,13 @@ void cwfippcsv(QComputations::BLOCKED_Matrix<COMPLEX> A,
     // Записываем концовку файла.
     MPI_Offset written_elems =
         A_n * A_m * (one_elem_size + delimiter_size) * sizeof(char);
-    std::ofstream out_file(filename, std::ios::app);
-    out_file.seekp(written_elems + num_elems_to_mod + global_offset,
-                   std::ios_base::beg);
 
+    MPI_File_seek(file, written_elems + num_elems_to_mod + global_offset,
+                  MPI_SEEK_SET);
     for (int i = 0; i < chunk.size(); ++i) {
-      out_file << chunk[i];
-      out_file << '\n';
+      MPI_File_write(file, (chunk[i] + "\n").c_str(), chunk[i].length() + 1,
+                     MPI_CHAR, &status);
     }
-    out_file.close();
   }
   MPI_File_close(&file);
 }
@@ -353,10 +358,10 @@ void cwfippcsv(QComputations::BLOCKED_Matrix<COMPLEX> A,
 int main(int argc, char **argv) {
   using namespace QComputations;
   MPI::Init(argc, argv);
-  const std::string filename = "matrix_2.csv";
-  const int n = 4;
-  const int m = 6;
-  const int k = 4;
+  const std::string filename = "matrix.csv";
+  const int n = 20;
+  const int m = 100;
+  const int k = 100;
   int ctxt;
   mpi::init_grid(ctxt);
 

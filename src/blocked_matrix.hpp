@@ -87,7 +87,9 @@ class BLOCKED_Matrix {
         void print_distributed(const std::string& name) const;
         void show(ILP_TYPE root_id = mpi::ROOT_ID, size_t width = QConfig::instance().width()) const;
 
-        void write_to_file(const std::string& filename);
+        void write_to_csv_file(const std::string& filename, ILP_TYPE row = 0, ILP_TYPE col = 0,
+                               ILP_TYPE num_accuracy = QConfig::instance().csv_num_accuracy(),
+                               ILP_TYPE max_number_size = QConfig::instance().csv_max_number_size());
 
         ILP_TYPE get_global_row(size_t i) const;
         ILP_TYPE get_global_col(size_t j) const;
@@ -277,6 +279,14 @@ BLOCKED_Matrix<T>::BLOCKED_Matrix(ILP_TYPE ctxt, MATRIX_TYPE type,
     NB_ = n / proc_rows;
     MB_ = m / proc_cols;
 
+    if (NB_ == 0) {
+        NB_ = 1;
+    }
+
+    if (MB_ == 0) {
+        MB_ = 1;
+    }
+
     ILP_TYPE nrows = mpi::numroc(n, NB_, myrow, iZERO, proc_rows);
     ILP_TYPE ncols = mpi::numroc(m, MB_, mycol, iZERO, proc_cols);
 
@@ -298,7 +308,6 @@ BLOCKED_Matrix<T>::BLOCKED_Matrix(ILP_TYPE ctxt, MATRIX_TYPE type,
             for (size_t j = 0; j < ncols; j++) {
                 auto index_row = mpi::indxl2g(i, NB_, myrow, iZERO, proc_rows);
                 auto index_col = mpi::indxl2g(j, MB_, mycol, iZERO, proc_cols);
-
                 if (index_col >= index_row) local_matrix_(i, j) = func(index_row, index_col);
             }
         }

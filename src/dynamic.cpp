@@ -381,9 +381,6 @@ BLOCKED_Probs schrodinger(const std::vector<COMPLEX>& init_state, BLOCKED_Hamilt
         basis_res.insert(State(cur_state[cavity_id]));
     }
 
-    if (rank == 0) {
-        show_basis(basis_res);
-    }
     size_t m = probs.m();
     size_t NB = basis_res.size() / world_size;
 
@@ -398,15 +395,10 @@ BLOCKED_Probs schrodinger(const std::vector<COMPLEX>& init_state, BLOCKED_Hamilt
         for (size_t i = 0; i < probs.n(); i++) {
             size_t res_index = State(get_elem_from_set(basis, i).get_state_in_pol(cavity_id)).get_index(basis_res);
 
-            MPI_Barrier(MPI_COMM_WORLD);
             auto cur = res.get(res_index, t);
-            MPI_Barrier(MPI_COMM_WORLD);
             auto prob = probs.get(i, t);
+            MPI_Barrier(MPI_COMM_WORLD);
             res.set(res_index, t, cur + prob);
-            auto tmp = res.get(res_index, t);
-            if (rank == 0) {
-                //std::cout << res_index << " - " << cur << " + " << prob << " | " << tmp << std::endl;
-            }
         }
     }
 

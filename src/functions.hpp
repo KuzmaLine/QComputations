@@ -26,6 +26,14 @@ namespace {
     using vec_levels = std::vector<E_LEVEL>;
 }
 
+std::string to_string_complex_with_precision(const COMPLEX a_value,
+                                             const int n, int max_number_size);
+
+std::string to_string_double_with_precision(const double a_value,
+                                             const int n, int max_number_size);
+
+std::string vector_to_string(const std::vector<std::string>& inp);
+
 void print_state_biguint(const State& state);
 
 std::vector<double> FROM_double_TO_vector(double* A, lapack_int n);
@@ -40,8 +48,8 @@ std::vector<double> linspace(double start, double end, double npoints);
 // Convert state to 10 numerical system
 size_t get_index_from_state(vec_levels state);
 
-bool is_zero(double a);
-bool is_zero(COMPLEX a);
+bool is_zero(double a, double eps = QConfig::instance().eps());
+bool is_zero(COMPLEX a, double eps = QConfig::instance().eps());
 bool is_digit(char c);
 size_t Ck_n(size_t k, size_t n);
 
@@ -49,7 +57,7 @@ std::set<State> Cavity_State_to_State(const std::set<Cavity_State>& st);
 
 // Eigen Problem
 double off(const Matrix<double>& A);
-std::pair<double, double> givens(double a, double b);
+std::pair<double, double> givens(double a, double b, double eps = QConfig::instance().eps());
 void tridiagonal_QR(Matrix<double>& T);
 Matrix<double> MGS(const Matrix<COMPLEX>& A);
 

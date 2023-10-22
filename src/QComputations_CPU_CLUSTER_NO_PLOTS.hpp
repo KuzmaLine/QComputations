@@ -17,6 +17,7 @@
 #include "dynamic.hpp"
 #include "mpi_functions.hpp"
 #include "test.hpp"
+#include "graph.hpp"
 #include "blocked_matrix.hpp"
 #include <mpi.h>
 #include "hamiltonian_blocked.hpp"

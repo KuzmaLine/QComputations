@@ -43,7 +43,11 @@ namespace {
     constexpr double g_default = 0.01;
     constexpr double waveguides_length_default = 0;
     constexpr double waveguides_amplitude_default = 0;
+    constexpr double eps_default = 1e-12;
+    constexpr int width_default = 15;
     constexpr int E_LEVELS_COUNT_DEFAULT = 2;
+    constexpr int csv_max_number_size_default = 21;
+    constexpr int csv_num_accuracy_default = 18;
 }
 
 class QConfig {
@@ -67,6 +71,8 @@ class QConfig {
         void set_width(int width) { width_ = width; }
         void set_E_LEVELS_COUNT(int E_LEVELS_COUNT) { E_LEVELS_COUNT_ = E_LEVELS_COUNT; }
         void set_waveguides_length(double waveguides_length) { wavegiudes_length_ = waveguides_length; }
+        void set_csv_max_number_size(int csv_max_number_size) { csv_max_number_size_ = csv_max_number_size; }
+        void set_csv_num_accuracy(int csv_num_accuracy) { csv_num_accuracy_ = csv_num_accuracy; }
 
         double h() const { return h_; }
         double w() const { return w_; }
@@ -80,6 +86,8 @@ class QConfig {
         int E_LEVELS_COUNT() const { return E_LEVELS_COUNT_; }
         double waveguides_length() const { return wavegiudes_length_; }
         double waveguides_amplitude() const { return wavegiudes_amplitude_; }
+        int csv_max_number_size() const { return csv_max_number_size_; }
+        int csv_num_accuracy() const { return csv_num_accuracy_; }
 
         void show() const {
             std::cout << "CONFIG PARAMS: " << std::endl;
@@ -101,9 +109,12 @@ class QConfig {
         int fig_height_ = int(FIG_HEIGHT);
         int dpi_ = int(DPI);
         
-        int width_ = 15;
+        int csv_max_number_size_ = csv_max_number_size_default;
+        int csv_num_accuracy_ = csv_num_accuracy_default;
 
-        double eps_ = 1e-12;
+        int width_ = width_default;
+
+        double eps_ = eps_default;
         
         int E_LEVELS_COUNT_ = E_LEVELS_COUNT_DEFAULT;
         double wavegiudes_length_ = waveguides_length_default;

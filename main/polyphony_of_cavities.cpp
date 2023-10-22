@@ -11,26 +11,41 @@ int main(int argc, char** argv) {
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
     MPI_Comm_size(MPI_COMM_WORLD, &world_size);
     QConfig::instance().set_width(30);
-    //QConfig::instance().set_g(0.001);
+    //QConfig::instance().set_g(0.005);
 
-    std::vector<size_t> grid_config = {3, 3};
+    size_t grid_size = 15;
+    size_t atoms_num = 2;
+    std::vector<size_t> grid_config;
+
+    for (size_t i = 0; i < grid_size; i++) {
+        if (i == 0 or i == grid_size - 1) {
+            grid_config.emplace_back(atoms_num);
+        } else {
+            grid_config.emplace_back(0);
+        }
+    }
+
     State grid(grid_config);
     //grid.reshape(2, 1, 1);
-    grid.set_waveguide(0.0015, 1);
+    grid.set_waveguide(0.5, 1);
     //grid.set_waveguide(0, 1);
     grid.set_qubit(0, 0, 1);
     grid.set_qubit(0, 1, 1);
-    grid.set_qubit(0, 2, 1);
+    //grid.set_qubit(0, 2, 0);
+    //grid.set_n(2);
+    //grid.set_qubit(0, 3, 1);
+    //grid.set_qubit(0, 1, 1);
+    //grid.set_qubit(0, 2, 1);
     //grid.set_n(1, 0);
     //grid.set_qubit(1, 0, 1);
 
     State grid_copy(grid);
     grid_copy.set_qubit(0, 0, 0);
     grid_copy.set_qubit(0, 1, 0);
-    grid_copy.set_qubit(0, 2, 0);
+    //grid_copy.set_qubit(0, 2, 0);
     grid_copy.set_qubit(grid_config.size() - 1, 0, 1);
     grid_copy.set_qubit(grid_config.size() - 1, 1, 1);
-    grid_copy.set_qubit(grid_config.size() - 1, 2, 1);
+    //grid_copy.set_qubit(grid_config.size() - 1, 2, 1);
 
     int ctxt;
     mpi::init_grid(ctxt);
@@ -48,10 +63,13 @@ int main(int argc, char** argv) {
     size_t target_index = grid_copy.get_index(H.get_basis());
     //target_state[grid_copy.get_index(H.get_basis())] = COMPLEX(1, 0);
 
-    auto time_vec = linspace(0, 10000, 15000);
+    auto time_vec = linspace(0, 5, 5);
 
     auto probs = Evolution::quantum_master_equation(init_state, H, time_vec);
     
+    probs.show();
+    probs.write_to_csv_file("probs.csv");
+
     double max_prob = 0;
     size_t t_max = 0;
     QConfig::instance().set_eps(1e-1);
