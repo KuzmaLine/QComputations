@@ -24,5 +24,8 @@ runge_kutt:
 rho_dynamic:
 	 mpiicpc -I${MKL_INCLUDE_PATH} -I${MPI_INCLUDE_PATH} -o rho_dynamic rho_dynamic.cpp -lQComputations_cpu_cluster_no_plots
 
+stocks:
+	 mpiicpc -I${MKL_INCLUDE_PATH} -I${MPI_INCLUDE_PATH} -o stocks stocks.cpp -lQComputations_cpu_cluster_no_plots
+
 clean:
-	rm -rf pblas_main blocked_matrix hamiltonian_single_example hamiltonian_blocked_example mpi_qcomp runge_kutt rho_dynamic my_file
+	rm -rf pblas_main blocked_matrix hamiltonian_single_example stocks hamiltonian_blocked_example mpi_qcomp runge_kutt rho_dynamic my_file

@@ -9,4 +9,4 @@ periods:
 	-I${PYTHON_H_INCLUDE_PATH} \-o periods periods.cpp -lQComputations_cpu_cluster
 
 clean:
-	rm -rf polyphony_of_cavities
+	rm -rf polyphony_of_cavities periods

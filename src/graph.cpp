@@ -21,7 +21,7 @@ State_Graph::State_Graph(const State& init_state) {
             for (size_t e_from = 0; e_from < e_levels_count; e_from++) {
                 for (size_t e_to = e_from + 1; e_to < e_levels_count; e_to++) {
                     auto cur_n = cur_state.n(cavity_id, e_from, e_to);
-                    if ((!is_zero(cur_state.get_leak_gamma(cavity_id))) and cur_n != 0) {
+                    if ((!is_zero(cur_state.get_leak_gamma(cavity_id))) and cur_n != 0 and cur_state.get_grid_energy() > cur_state.min_N()) {
                         tmp_state.set_n(cur_n - 1, cavity_id, e_from, e_to);
                         if (std::find(basis_.begin(), basis_.end(), tmp_state) == basis_.end()) {
                             basis_.insert(tmp_state);

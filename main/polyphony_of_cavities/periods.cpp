@@ -13,7 +13,7 @@ int main(int argc, char** argv) {
     QConfig::instance().set_width(30);
     //QConfig::instance().set_g(0.005);
 
-    size_t grid_size = 15;
+    size_t grid_size = 1;
     size_t atoms_num = 2;
     std::vector<size_t> grid_config;
 
@@ -67,16 +67,17 @@ int main(int argc, char** argv) {
     size_t target_index = grid_copy.get_index(H.get_basis());
     //target_state[grid_copy.get_index(H.get_basis())] = COMPLEX(1, 0);
 
-    auto time_vec = linspace(0, 5, 5);
+    auto time_vec = linspace(0, 1000, 2000);
 
     auto probs = Evolution::quantum_master_equation(init_state, H, time_vec);
     
-    probs.show();
+    //probs.show();
     probs.write_to_csv_file("probs.csv");
 
     double max_prob = 0;
     size_t t_max = 0;
     QConfig::instance().set_eps(1e-1);
+    /*
     for (size_t t = 0; t < time_vec.size(); t++) {
         auto prob = probs.get(target_index, t);
         //if (rank == mpi::ROOT_ID and time_vec[t] >= 9300 and time_vec[t] <= 9450) {
@@ -99,6 +100,7 @@ int main(int argc, char** argv) {
             }
         }
     }
+    */
 
     if (rank == 0) {
         matplotlib::make_figure(1920, 1080);

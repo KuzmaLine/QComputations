@@ -128,7 +128,7 @@ class State {
         size_t hash() const;
     private:
         size_t max_N_;
-        size_t min_N_;
+        size_t min_N_ = 0;
         size_t x_size_;
         size_t y_size_;
         size_t z_size_;

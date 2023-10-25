@@ -417,7 +417,18 @@ Evolution::BLOCKED_Rho Evolution::create_BLOCKED_init_rho(ILP_TYPE ctxt, const s
 
 BLOCKED_Matrix<COMPLEX> create_BLOCKED_A_destroy(ILP_TYPE ctxt, const std::set<State>& basis, size_t cavity_id) {
     size_t dim = basis.size();
-    BLOCKED_Matrix<COMPLEX> A(ctxt, GE, dim, dim, 0);
+
+    std::function<COMPLEX(size_t i, size_t j)> func = {
+    [&basis](size_t i, size_t j) {
+        auto state_from = get_elem_from_set(basis, j);
+        auto state_to = get_elem_from_set(basis, i);
+
+        return photon_destroy(state_from, state_to);
+    }};
+
+    BLOCKED_Matrix<COMPLEX> A(ctxt, GE, dim, dim, func);
+
+    /*
     ILP_TYPE proc_rows, proc_cols, myrow, mycol;
     mpi::blacs_gridinfo(ctxt, proc_rows, proc_cols, myrow, mycol);
     ILP_TYPE iZERO = 0;
@@ -444,6 +455,7 @@ BLOCKED_Matrix<COMPLEX> create_BLOCKED_A_destroy(ILP_TYPE ctxt, const std::set<S
         }
     }
 
+    */
     return A;
 }
 
@@ -496,7 +508,6 @@ Evolution::BLOCKED_Probs Evolution::quantum_master_equation(const std::vector<CO
         auto gamma = grid.get_leak_gamma(cavity_id);
         if (!is_zero(gamma)) {
             auto A = create_BLOCKED_A_destroy(H.ctxt(), H.get_basis(), cavity_id);
-            //std::cout << gamma << std::endl;
             lindblads.push_back(std::function<Evolution::BLOCKED_Rho(const Evolution::BLOCKED_Rho& rho)> {
                 [A, gamma](const Evolution::BLOCKED_Rho& rho) {
                     auto Aconj = A.hermit();
