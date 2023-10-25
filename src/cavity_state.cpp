@@ -93,10 +93,6 @@ size_t Cavity_State::up_count() const {
     return res;
 }
 
-double w_ph(E_LEVEL level_from, E_LEVEL level_to) {
-
-}
-
 size_t Cavity_State::variants_of_state_count(size_t N) const {
     size_t m = this->m();
     size_t res = 0;

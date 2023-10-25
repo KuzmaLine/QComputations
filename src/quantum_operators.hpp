@@ -9,8 +9,8 @@ namespace {
 }
 
 // (!!!) ADD DESCRIPTION
-COMPLEX self_energy_photon(const State& state_from, const State& state_to, COMPLEX hw = QConfig::instance().h() * QConfig::instance().w());
-COMPLEX self_energy_atom(const State& state_from, const State& state_to, COMPLEX hw = QConfig::instance().h() * QConfig::instance().w());
+COMPLEX self_energy_photon(const State& state_from, const State& state_to, COMPLEX h = QConfig::instance().h());
+COMPLEX self_energy_atom(const State& state_from, const State& state_to, COMPLEX h = QConfig::instance().h());
 COMPLEX excitation_atom(const State& state_from, const State& state_to, COMPLEX g = QConfig::instance().g());
 COMPLEX de_excitation_atom(const State& state_from, const State& state_to, COMPLEX g = QConfig::instance().g());
 COMPLEX photon_exchange(const State& state_from, const State& state_to, const State& grid);

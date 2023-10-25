@@ -3,29 +3,29 @@
 
 namespace QComputations {
 
-COMPLEX self_energy_photon(const State& state_from, const State& state_to, COMPLEX hw) {
+COMPLEX self_energy_photon(const State& state_from, const State& state_to, COMPLEX h) {
     if (state_from == state_to) {
         COMPLEX res(0);
 
         for (size_t i = 0; i < state_from.cavities_count(); i++) {
-            res += COMPLEX(state_from.n(i));
+            res += COMPLEX(state_from.n(i)) * state_from[i].w_ph();
         }
 
-        return res * hw;
+        return res * h;
     } else {
         return 0;
     }
 }
 
-COMPLEX self_energy_atom(const State& state_from, const State& state_to, COMPLEX hw) {
+COMPLEX self_energy_atom(const State& state_from, const State& state_to, COMPLEX h) {
     if (state_from == state_to) {
         COMPLEX res(0);
 
         for (size_t i = 0; i < state_from.cavities_count(); i++) {
-            res += COMPLEX(state_from[i].up_count());
+            res += COMPLEX(state_from[i].up_count()) * state_from[i].w_at();
         }
 
-        return res * hw;
+        return res * h;
     } else {
         return 0;
     }

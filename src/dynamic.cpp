@@ -108,7 +108,7 @@ Evolution::Probs Evolution::schrodinger(const std::vector<COMPLEX>& init_state, 
     //std::cout << "L - " << norm(lambda) << std::endl;
     Probs probs(C_STYLE, eigen_values.size(), time_vec.size());
     size_t time_index = 0;
-    eigen_vectors = eigen_vectors.transpose();
+    //eigen_vectors = eigen_vectors.transpose();
 #ifdef ENABLE_MPI
     size_t start_col;
     auto rank_map = make_rank_map(time_vec.size(), rank, world_size, start_col);
@@ -119,7 +119,7 @@ Evolution::Probs Evolution::schrodinger(const std::vector<COMPLEX>& init_state, 
 
         for (size_t i = 0; i < eigen_values.size(); i++) {
             for (size_t j = 0; j < psi_t.size(); j++) {
-                psi_t[j] += lambda[i] * std::exp(COMPLEX(0, 1 / QConfig::instance().h() * eigen_values[i] * t)) * eigen_vectors[i][j];
+                psi_t[j] += lambda[i] * std::exp(COMPLEX(0, -1 / QConfig::instance().h() * eigen_values[i] * t)) * eigen_vectors[i][j];
             }
         }
 
@@ -154,11 +154,19 @@ Evolution::Probs Evolution::schrodinger(const std::vector<COMPLEX>& init_state, 
 #else
     for (const auto& t: time_vec) {
         std::vector<COMPLEX> psi_t(eigen_values.size(), 0);
+        std::vector<COMPLEX> tmp(eigen_values.size(), 0);
         auto h = QConfig::instance().h();
 
         for (size_t i = 0; i < eigen_values.size(); i++) {
+            std::cout << (-1 / h) * eigen_values[i] * t / M_PI << " - " << lambda[i] * std::exp(COMPLEX(0, -1 / QConfig::instance().h() * eigen_values[i] * t)) << std::endl;
             for (size_t j = 0; j < psi_t.size(); j++) {
-                psi_t[j] += lambda[i] * std::exp(COMPLEX(0, 1 / h * eigen_values[i] * t)) * eigen_vectors[i][j];
+                tmp[j] += lambda[i] * std::exp(COMPLEX(0, -1 / h * eigen_values[i] * t)) * eigen_vectors[j][i];
+                psi_t[j] += lambda[i] * std::exp(COMPLEX(0, -1 / h * eigen_values[i] * t)) * eigen_vectors[j][i];
+            }
+
+            std::cout << tmp << std::endl;
+            for (size_t j = 0; j < psi_t.size(); j++) {
+                tmp[j] = 0;
             }
         }
 

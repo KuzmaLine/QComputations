@@ -10,7 +10,8 @@ hamiltonian_blocked_example:
 	 mpiicpc -I${MKL_INCLUDE_PATH} -I${MPI_INCLUDE_PATH} -o hamiltonian_blocked_example hamiltonian_blocked_example.cpp -lQComputations_cpu_cluster_no_plots
 
 hamiltonian_single_example:
-	 g++ -I${MKL_INCLUDE_PATH} -o hamiltonian_single_example hamiltonian_single_example.cpp -lQComputations_single_no_plots
+	 icpc -I${MKL_INCLUDE_PATH} -I/opt/intel/oneapi/intelpython/python3.9/lib/python3.9/site-packages/numpy/core/include \
+	-I${PYTHON_H_INCLUDE_PATH} -o hamiltonian_single_example hamiltonian_single_example.cpp -lQComputations_single
 
 mpi_qcomp:
 	 mpiicpc -I${MKL_INCLUDE_PATH} -I${MPI_INCLUDE_PATH} -o mpi_qcomp mpi_qcomp.cpp -lQComputations_cpu_cluster_no_plots

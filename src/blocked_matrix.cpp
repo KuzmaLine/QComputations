@@ -791,10 +791,12 @@ void BLOCKED_Matrix<double>::write_to_csv_file(const std::string& filename, ILP_
 // --------------------------------------------- FUNCTIONS -------------------------------------------
 
 
-std::pair<std::vector<double>, BLOCKED_Matrix<COMPLEX>> Hermit_Lanzcos(const BLOCKED_Matrix<COMPLEX>& A) {
+std::pair<std::vector<double>, BLOCKED_Matrix<COMPLEX>> Hermit_Lanzcos(const BLOCKED_Matrix<COMPLEX>& M) {
     char jobz = 'V';
     char range = 'A';
     char uplo = 'U';
+
+    auto A = M;
 
     ILP_TYPE n = A.n();
     ILP_TYPE iONE = 1;

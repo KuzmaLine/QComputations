@@ -10,10 +10,12 @@ int main(int argc, char** argv) {
     int rank, world_size;
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
     MPI_Comm_size(MPI_COMM_WORLD, &world_size);
-    QConfig::instance().set_width(30);
-    //QConfig::instance().set_g(0.005);
+    QConfig::instance().set_width(20);
+    //QConfig::instance().set_h(0.1);
+    //QConfig::instance().set_w(2);
+    //QConfig::instance().set_g(0.001);
 
-    size_t grid_size = 1;
+    size_t grid_size = 2;
     size_t atoms_num = 2;
     std::vector<size_t> grid_config;
 
@@ -27,19 +29,19 @@ int main(int argc, char** argv) {
 
     State grid(grid_config);
     //grid.reshape(2, 1, 1);
-    //grid.set_waveguide(0.5, 1);
+    grid.set_waveguide(0.005, 1);
     //grid.set_waveguide(0, 1);
-    grid.set_qubit(0, 0, 1);
+    //grid.set_qubit(0, 0, 1);
     //grid.set_qubit(0, 1, 1);
     //grid.set_qubit(0, 2, 0);
-    //grid.set_n(2);
+    grid.set_n(1);
     //grid.set_qubit(0, 3, 1);
     //grid.set_qubit(0, 1, 1);
     //grid.set_qubit(0, 2, 1);
     //grid.set_n(1, 0);
     //grid.set_qubit(1, 0, 1);
 
-    State grid_copy(grid);
+    //State grid_copy(grid);
     //grid_copy.set_qubit(0, 0, 0);
     //grid_copy.set_qubit(0, 1, 0);
     //grid_copy.set_qubit(0, 2, 0);
@@ -59,24 +61,77 @@ int main(int argc, char** argv) {
 
     auto eigenvalues = H.eigenvalues();
 
+    auto periods = eigenvalues;
+
     if (rank == mpi::ROOT_ID) std::cout << "EIGEN: " << eigenvalues << std::endl;
+
+    if (rank == mpi::ROOT_ID) {
+        std::vector<double> periods;
+        double res_freq = 1;
+        double freq;
+        double res_period = 1;
+        //for (int i = 0; i < eigenvalues.size() - 1; i++) {
+        for (int i = eigenvalues.size() - 1; i >= 0; i--) {
+            for (int j = i - 1; j >= 0; j--) {
+                freq = eigenvalues[i] - eigenvalues[j];
+                //freq = eigenvalues[eigenvalues.size() - 1] - eigenvalues[eigenvalues.size() - 2 - i];
+                periods.emplace_back(2 * M_PI / freq);
+                res_freq *= freq;
+            }
+        }
+
+
+        QConfig::instance().set_eps(1e-10);
+
+        std::vector<double> inserted_periods;
+        /*
+        for (int i = 0; i < periods.size(); i++) {
+            auto p_del = res_period / periods[i];
+
+            //std::cout << p_del << std::endl;
+            std::cout << "RES - " << res_period << std::endl;
+            if (!is_zero(std::abs(double(std::round(p_del) - p_del)))) {
+                bool is_del = false;
+                for (auto val: inserted_periods) {
+                    std::cout << p_del << " " << val << std::endl;
+                    if (is_zero(std::abs(p_del - val))) {
+                        is_del = true;
+                        break;
+                    }
+                }
+
+                if (!is_del) {
+                    res_period *= periods[i];
+                    inserted_periods.emplace_back(periods[i]);
+                }
+            } else {
+                res_period /= p_del;
+            }
+        }
+        */
+
+        std::cout << "PERIODS: " << periods << std::endl;
+
+        std::cout << "PERIOD: " << res_period << std::endl;
+    }
 
     std::vector<COMPLEX> init_state(H.size(), 0);
     //std::vector<COMPLEX> target_state(H.size(), 0);
     init_state[grid.get_index(H.get_basis())] = COMPLEX(1, 0);
-    size_t target_index = grid_copy.get_index(H.get_basis());
+    //size_t target_index = grid_copy.get_index(H.get_basis());
     //target_state[grid_copy.get_index(H.get_basis())] = COMPLEX(1, 0);
 
-    auto time_vec = linspace(0, 1000, 2000);
+    //auto time_vec = linspace(0, 500, 2000);
+    auto time_vec = linspace(0, 20000, 40000);
 
     auto probs = Evolution::quantum_master_equation(init_state, H, time_vec);
     
     //probs.show();
-    probs.write_to_csv_file("probs.csv");
+    //probs.write_to_csv_file("probs.csv");
 
     double max_prob = 0;
     size_t t_max = 0;
-    QConfig::instance().set_eps(1e-1);
+    //QConfig::instance().set_eps(1e-1);
     /*
     for (size_t t = 0; t < time_vec.size(); t++) {
         auto prob = probs.get(target_index, t);
@@ -110,13 +165,15 @@ int main(int argc, char** argv) {
     //matplotlib::probs_in_cavity_to_plot(probs, time_vec, H.get_basis(), 0);
     if (rank == 0) {
         matplotlib::grid();
-        matplotlib::show(false);
+        matplotlib::show();
     }
 
     if (rank == 0) {
         matplotlib::make_figure(1920, 1080);
     }
 
+
+    /*
     //matplotlib::probs_to_plot(probs, time_vec, H.get_basis());
     matplotlib::probs_in_cavity_to_plot(probs, time_vec, H.get_basis(), 0);
     if (rank == 0) {
@@ -134,7 +191,7 @@ int main(int argc, char** argv) {
         matplotlib::grid();
         matplotlib::show();
     }
-
+    */
     MPI_Finalize();
     return 0;
 }
