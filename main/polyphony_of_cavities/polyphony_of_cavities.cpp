@@ -14,7 +14,7 @@ int main(int argc, char** argv) {
     //QConfig::instance().set_g(0.005);
 
     size_t grid_size = 2;
-    size_t atoms_num = 1;
+    size_t atoms_num = 2;
     std::vector<size_t> grid_config;
 
     for (size_t i = 0; i < grid_size; i++) {
@@ -63,7 +63,7 @@ int main(int argc, char** argv) {
     size_t target_index = grid_copy.get_index(H.get_basis());
     //target_state[grid_copy.get_index(H.get_basis())] = COMPLEX(1, 0);
 
-    auto time_vec = linspace(0, 8000, 8000);
+    auto time_vec = linspace(0, 16000, 16000);
 
     auto probs = Evolution::quantum_master_equation(init_state, H, time_vec);
     

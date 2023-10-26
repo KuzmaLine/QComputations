@@ -66,20 +66,19 @@ int main(int argc, char** argv) {
     if (rank == mpi::ROOT_ID) std::cout << "EIGEN: " << eigenvalues << std::endl;
 
     if (rank == mpi::ROOT_ID) {
+        assert(eigenvalues.size() > 1);
         std::vector<double> periods;
         double res_freq = 1;
-        double freq;
-        double res_period = 1;
+        double freq = (eigenvalues[eigenvalues.size() - 1] + eigenvalues[eigenvalues.size() - 2]) / 2.0;
+        //double res_period = 1;
         //for (int i = 0; i < eigenvalues.size() - 1; i++) {
-        for (int i = eigenvalues.size() - 1; i >= 0; i--) {
-            for (int j = i - 1; j >= 0; j--) {
-                freq = eigenvalues[i] - eigenvalues[j];
-                //freq = eigenvalues[eigenvalues.size() - 1] - eigenvalues[eigenvalues.size() - 2 - i];
-                periods.emplace_back(2 * M_PI / freq);
-                res_freq *= freq;
-            }
+        for (int i = eigenvalues.size() - 3; i >= 1; i--) {
+            freq = (freq + eigenvalues[i]) / 2.0;
         }
 
+        res_freq = (freq - eigenvalues[0]);
+
+        if (eigenvalues.size() > 2) freq = (freq + eigenvalues[0]) / 2.0;
 
         QConfig::instance().set_eps(1e-10);
 
@@ -112,7 +111,15 @@ int main(int argc, char** argv) {
 
         std::cout << "PERIODS: " << periods << std::endl;
 
-        std::cout << "PERIOD: " << res_period << std::endl;
+        double res_period = M_PI / res_freq;
+
+        std::cout << "PERIOD B: " << res_period << std::endl;
+
+        res_period = 2 * M_PI / freq;
+
+        std::cout << "PERIOD A: " << res_period << std::endl;
+
+        std::cout << "PERIOD A: " << 2 * M_PI / (eigenvalues[eigenvalues.size() - 1] - eigenvalues[eigenvalues.size() - 2]) << std::endl;
     }
 
     std::vector<COMPLEX> init_state(H.size(), 0);
@@ -122,7 +129,7 @@ int main(int argc, char** argv) {
     //target_state[grid_copy.get_index(H.get_basis())] = COMPLEX(1, 0);
 
     //auto time_vec = linspace(0, 500, 2000);
-    auto time_vec = linspace(0, 20000, 40000);
+    auto time_vec = linspace(0, 8000, 16000);
 
     auto probs = Evolution::quantum_master_equation(init_state, H, time_vec);
     
