@@ -9,6 +9,7 @@
 #ifdef EMABLE_MPI
 #ifdef ENABLE_CLUSTER
 
+#include "blocked_vector.hpp"
 #include <mkl_pblas.h>
 #include <mkl_scalapack.h>>
 
@@ -69,10 +70,10 @@ Evolution::Rho Evolution::create_init_rho(const std::vector<COMPLEX>& init_state
     return rho;
 }
 
-// ON MPI NEEDED
 Evolution::Probs Evolution::schrodinger(const std::vector<COMPLEX>& init_state, Hamiltonian& H, const std::vector<double>& time_vec) {
     std::vector<double> eigen_values;
     Matrix<COMPLEX> eigen_vectors;
+/*
 #ifdef ENABLE_MPI
     int rank, world_size;
     MPI_Comm_size(MPI_COMM_WORLD, &world_size);
@@ -83,10 +84,12 @@ Evolution::Probs Evolution::schrodinger(const std::vector<COMPLEX>& init_state, 
         mpi::bcast_vector_complex(init_state);
         mpi::bcast_vector_double(time_vec);
 #endif
+*/
     auto p = H.eigen();
     eigen_values = p.first;
     eigen_vectors = p.second;
 
+/*
 #ifdef ENABLE_MPI
     }
 
@@ -99,6 +102,7 @@ Evolution::Probs Evolution::schrodinger(const std::vector<COMPLEX>& init_state, 
         eigen_vectors = Matrix<COMPLEX>(mpi::bcast_vector_complex(), eigen_values.size(), eigen_values.size(), C_STYLE); // c_style
     }
 #endif
+*/
     std::vector<COMPLEX> lambda;
     for (size_t i = 0; i < eigen_values.size(); i++) {
         //std::cout << norm(eigen_vectors.col(i)) << std::endl;
@@ -109,6 +113,7 @@ Evolution::Probs Evolution::schrodinger(const std::vector<COMPLEX>& init_state, 
     Probs probs(C_STYLE, eigen_values.size(), time_vec.size());
     size_t time_index = 0;
     //eigen_vectors = eigen_vectors.transpose();
+/*
 #ifdef ENABLE_MPI
     size_t start_col;
     auto rank_map = make_rank_map(time_vec.size(), rank, world_size, start_col);
@@ -152,21 +157,15 @@ Evolution::Probs Evolution::schrodinger(const std::vector<COMPLEX>& init_state, 
         }
     }
 #else
+*/
     for (const auto& t: time_vec) {
         std::vector<COMPLEX> psi_t(eigen_values.size(), 0);
         std::vector<COMPLEX> tmp(eigen_values.size(), 0);
         auto h = QConfig::instance().h();
 
         for (size_t i = 0; i < eigen_values.size(); i++) {
-            std::cout << (-1 / h) * eigen_values[i] * t / M_PI << " - " << lambda[i] * std::exp(COMPLEX(0, -1 / QConfig::instance().h() * eigen_values[i] * t)) << std::endl;
             for (size_t j = 0; j < psi_t.size(); j++) {
-                tmp[j] += lambda[i] * std::exp(COMPLEX(0, -1 / h * eigen_values[i] * t)) * eigen_vectors[j][i];
                 psi_t[j] += lambda[i] * std::exp(COMPLEX(0, -1 / h * eigen_values[i] * t)) * eigen_vectors[j][i];
-            }
-
-            std::cout << tmp << std::endl;
-            for (size_t j = 0; j < psi_t.size(); j++) {
-                tmp[j] = 0;
             }
         }
 
@@ -178,11 +177,59 @@ Evolution::Probs Evolution::schrodinger(const std::vector<COMPLEX>& init_state, 
         }
         time_index++;
     }
-#endif
+//#endif
     return probs;
 }
 
-// ON MPI NEEDED
+#ifdef ENABLE_MPI
+#ifdef ENABLE_CLUSTER
+
+Evolution::Probs Evolution::schrodinger(const std::vector<COMPLEX>& init_state, BLOCKED_Hamiltonian& H, const std::vector<double>& time_vec) {
+    auto eigen_values = H.eigenvalues();
+    auto eigen_vectors = H.eigenvectors();
+
+    ILP_TYPE vector_ctxt;
+    mpi::init_vector_grid(vector_ctxt);
+    BLOCKED_Vector<COMPLEX> blocked_init_state(vector_ctxt, init_state);
+
+    std::vector<COMPLEX> lambda;
+    for (size_t i = 0; i < eigen_values.size(); i++) {
+        //std::cout << norm(eigen_vectors.col(i)) << std::endl;
+        lambda.emplace_back(scalar_product(blocked_init_state, blocked_matrix_get_col(eigen_vectors, i))); // <PHI_i|KSI(0)> 
+    }
+
+    auto ctxt = H.ctxt();
+    //std::cout << "L - " << norm(lambda) << std::endl;
+    BLOCKED_Probs probs(vector_ctxt, eigen_values.size(), time_vec.size());
+    size_t time_index = 0;
+    //eigen_vectors = eigen_vectors.transpose();
+
+    ////////////////////////////////////////////////
+    for (const auto& t: time_vec) {
+        std::vector<COMPLEX> psi_t(eigen_values.size(), 0);
+        std::vector<COMPLEX> tmp(eigen_values.size(), 0);
+        auto h = QConfig::instance().h();
+
+        for (size_t i = 0; i < eigen_values.size(); i++) {
+            for (size_t j = 0; j < psi_t.size(); j++) {
+                psi_t[j] += lambda[i] * std::exp(COMPLEX(0, -1 / h * eigen_values[i] * t)) * eigen_vectors[j][i];
+            }
+        }
+
+        //std::cout << norm(psi_t) << std::endl;
+
+        for (size_t i = 0; i < eigen_values.size(); i++) {
+            double tmp = std::abs(psi_t[i]);
+            probs[i][time_index] = tmp * tmp;
+        }
+        time_index++;
+    }
+    return probs;
+}
+
+#endif
+#endif
+
 Evolution::Probs Evolution::quantum_master_equation(const std::vector<COMPLEX>& init_state,
                                                     Hamiltonian& H,
                                                     const std::vector<double>& time_vec,

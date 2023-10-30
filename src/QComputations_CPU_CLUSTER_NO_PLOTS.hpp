@@ -20,4 +20,5 @@
 #include "graph.hpp"
 #include "blocked_matrix.hpp"
 #include <mpi.h>
+#include "blocked_vector.hpp"
 #include "hamiltonian_blocked.hpp"

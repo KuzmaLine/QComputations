@@ -31,10 +31,11 @@ class BLOCKED_Matrix {
     public:
         explicit BLOCKED_Matrix() = default;
         explicit BLOCKED_Matrix(const BLOCKED_Matrix<T>& A, const Matrix<T>& local_matrix);
-        explicit BLOCKED_Matrix(ILP_TYPE ctxt, MATRIX_TYPE type, size_t n, size_t m, std::function<T(size_t, size_t)> func);
+        explicit BLOCKED_Matrix(ILP_TYPE ctxt, MATRIX_TYPE type, size_t n, size_t m, std::function<T(size_t, size_t)> func, size_t NB = 0, size_t MB = 0);
         explicit BLOCKED_Matrix(ILP_TYPE ctxt, MATRIX_TYPE type, size_t n, size_t m, T value, size_t NB = 0, size_t MB = 0);
         explicit BLOCKED_Matrix(ILP_TYPE ctxt, MATRIX_TYPE type, size_t n, size_t m, size_t NB = 0, size_t MB = 0);
-        explicit BLOCKED_Matrix(ILP_TYPE ctxt, MATRIX_TYPE type, const Matrix<T>& A, ILP_TYPE root_id);
+        explicit BLOCKED_Matrix(ILP_TYPE ctxt, MATRIX_TYPE type, const Matrix<T>& A, size_t NB = 0, size_t MB = 0);
+        //explicit BLOCKED_Matrix(ILP_TYPE ctxt, MATRIX_TYPE type, const Matrix<T>& A, ILP_TYPE root_id, ILP_TYPE NB);
 
         // Make dims for multiply matrix
         explicit BLOCKED_Matrix(const BLOCKED_Matrix<T>& A, const BLOCKED_Matrix<T>& B);
@@ -98,6 +99,9 @@ class BLOCKED_Matrix {
         ILP_TYPE get_col_proc(size_t i) const;
 
         BLOCKED_Matrix<T> hermit() const;
+
+        std::vector<T> col(size_t i) const;
+        std::vector<T> row(size_t j) const;
     private:
         size_t get_global_index(size_t i, size_t j) { return j * n_ + i; }
         size_t get_local_index(size_t i, size_t j) { return j * local_matrix_.n() + i; }
@@ -110,6 +114,60 @@ class BLOCKED_Matrix {
         size_t MB_;
         Matrix<T> local_matrix_;
 };
+
+template<typename T>
+BLOCKED_Matrix<T>::BLOCKED_Matrix(ILP_TYPE ctxt, MATRIX_TYPE type, const Matrix<T>& A): ctxt_(ctxt), matrix_type_(type),
+                                                                                    n_(A.n()), m_(A.m()) {
+    ILP_TYPE iZERO = 0;
+    ILP_TYPE proc_rows, proc_cols, myrow, mycol;
+    mpi::blacs_gridinfo(ctxt_, proc_rows, proc_cols, myrow, mycol);
+    
+    if (NB == 0) {
+        NB_ = n / proc_rows;
+    }
+
+    if (MB == 0) {
+        MB_ = m / proc_cols;
+    }
+
+    if (NB_ == 0) {
+        NB_ = 1;
+    }
+
+    if (MB_ == 0) {
+        MB_ = 1;
+    }
+
+    ILP_TYPE nrows = mpi::numroc(n, NB_, myrow, iZERO, proc_rows);
+    ILP_TYPE ncols = mpi::numroc(m, MB_, mycol, iZERO, proc_cols);
+
+    if (matrix_type_ == GE) {
+        local_matrix_ = Matrix<T>(FORTRAN_STYLE, nrows, ncols);
+
+        for (size_t i = 0; i < nrows; i++) {
+            for (size_t j = 0; j < ncols; j++) {
+                auto index_row = mpi::indxl2g(i, NB_, myrow, iZERO, proc_rows);
+                auto index_col = mpi::indxl2g(j, MB_, mycol, iZERO, proc_cols);
+
+                local_matrix_(i, j) = A.elem(index_row, index_col);
+            }
+        }
+    } else if (matrix_type_ == HE) {
+        local_matrix_ = Matrix<T>(FORTRAN_STYLE, nrows, ncols);
+
+        for (size_t i = 0; i < nrows; i++) {
+            for (size_t j = 0; j < ncols; j++) {
+                auto index_row = mpi::indxl2g(i, NB_, myrow, iZERO, proc_rows);
+                auto index_col = mpi::indxl2g(j, MB_, mycol, iZERO, proc_cols);
+                if (index_col >= index_row) local_matrix_(i, j) = A.elem(index_row, index_col);
+            }
+        }
+    } else if (matrix_type_ == SY) {
+
+    } else {
+        std::cerr << "Incorrect matrix type!" << std::endl;
+    }
+}
 
 template<typename T>
 void BLOCKED_Matrix<T>::print_distributed(const std::string& name) const {
@@ -272,12 +330,18 @@ void BLOCKED_Matrix<T>::operator-=(const BLOCKED_Matrix<T>& B) {
 template<typename T>
 BLOCKED_Matrix<T>::BLOCKED_Matrix(ILP_TYPE ctxt, MATRIX_TYPE type,
                                      size_t n, size_t m,
-                                     std::function<T(size_t, size_t)> func): ctxt_(ctxt), matrix_type_(type), n_(n), m_(m) {
+                                     std::function<T(size_t, size_t)> func, size_t NB, size_t MB): ctxt_(ctxt), matrix_type_(type), n_(n), m_(m) {
     ILP_TYPE iZERO = 0;
     ILP_TYPE proc_rows, proc_cols, myrow, mycol;
     mpi::blacs_gridinfo(ctxt_, proc_rows, proc_cols, myrow, mycol);
-    NB_ = n / proc_rows;
-    MB_ = m / proc_cols;
+    if (NB == 0) {
+        NB_ = n / proc_rows;
+    }
+
+    if (MB == 0) {
+        MB_ = m / proc_cols;
+    }
+
 
     if (NB_ == 0) {
         NB_ = 1;

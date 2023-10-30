@@ -1661,6 +1661,65 @@ void mpi::parallel_zgemv(const Matrix<COMPLEX>& A, const std::vector<COMPLEX>& x
                                    &betta, y.data(), &iONE, &iONE, descy.data(), &iONE);
 }
 
+COMPLEX mpi::parallel_zdotu(const std::vector<COMPLEX>& x, std::vector<COMPLEX>& y,
+                    const std::vector<ILP_TYPE>& descx, ILP_TYPE incx,
+                    const std::vector<ILP_TYPE>& descy, ILP_TYPE incy) {
+    ILP_TYPE n = descx[2];
+    int iONE = 1;
+    COMPLEX dotu;
+
+    pzdotu(&n, &dotu, x.data(), &iONE, &iONE, descx.data(), &incx, y.data(), &iONE, &iONE, descy.data(), &incy);
+
+    return dotu;
+}
+
+COMPLEX mpi::parallel_zdotc(const std::vector<COMPLEX>& x, std::vector<COMPLEX>& y,
+                    const std::vector<ILP_TYPE>& descx, ILP_TYPE incx,
+                    const std::vector<ILP_TYPE>& descy, ILP_TYPE incy) {
+    ILP_TYPE n = descx[2];
+    int iONE = 1;
+    COMPLEX dotc;
+
+    pzdotc(&n, &dotu, x.data(), &iONE, &iONE, descx.data(), &incx, y.data(), &iONE, &iONE, descy.data(), &incy);
+
+    return dotc;
+}
+
+
+double mpi::parallel_ddot(const std::vector<double>& x, std::vector<double>& y,
+                    const std::vector<ILP_TYPE>& descx, ILP_TYPE incx,
+                    const std::vector<ILP_TYPE>& descy, ILP_TYPE incy) {
+    ILP_TYPE n = descx[2];
+    int iONE = 1;
+    double dotu;
+
+    pddot(&n, &dotu, x.data(), &iONE, &iONE, descx.data(), &incx, y.data(), &iONE, &iONE, descy.data(), &incy);
+
+    return dotu;
+}
+
+COMPLEX mpi::parallel_zscal(const std::vector<COMPLEX>& x, COMPLEX a,
+                const std::vector<ILP_TYPE>& descx, ILP_TYPE incx) {
+    ILP_TYPE n = descx[2];
+    int iONE = 1;
+    COMPLEX a;
+
+    pzscal(&n, &a, x.data(), &iONE, &iONE, descx.data(), &incx);
+
+    return a;
+}
+
+double mpi::parallel_dscal(const std::vector<double>& x, double a,
+                const std::vector<ILP_TYPE>& descx, ILP_TYPE incx) {
+    ILP_TYPE n = descx[2];
+    int iONE = 1;
+    double a;
+
+    pdscal(&n, &a, x.data(), &iONE, &iONE, descx.data(), &incx);
+
+    return a;
+}
+
 #endif // ENABLE_CLUSTER
 
 } // namespace QComputations

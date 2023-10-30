@@ -236,41 +236,54 @@ namespace mpi {
     std::vector<COMPLEX> get_diagonal_elements<COMPLEX>(Matrix<COMPLEX>& localA, const std::vector<ILP_TYPE>& desca);
 
    // Parallel matrix computations
-   void parallel_dgeadd(const Matrix<double>& A, Matrix<double>& C,
-                       const std::vector<ILP_TYPE>& desca,
-                       const std::vector<ILP_TYPE>& descc,
-                       double alpha = 1.0, double betta = 1.0,
-                       char op_A = 'N');
+    void parallel_dgeadd(const Matrix<double>& A, Matrix<double>& C,
+                        const std::vector<ILP_TYPE>& desca,
+                        const std::vector<ILP_TYPE>& descc,
+                        double alpha = 1.0, double betta = 1.0,
+                        char op_A = 'N');
 
-   void parallel_zgeadd(const Matrix<COMPLEX>& A, Matrix<COMPLEX>& C,
-                       const std::vector<ILP_TYPE>& desca,
-                       const std::vector<ILP_TYPE>& descc,
-                       COMPLEX alpha = COMPLEX(1, 0), COMPLEX betta = COMPLEX(1, 0),
-                       char op_A = 'N');
+    void parallel_zgeadd(const Matrix<COMPLEX>& A, Matrix<COMPLEX>& C,
+                        const std::vector<ILP_TYPE>& desca,
+                        const std::vector<ILP_TYPE>& descc,
+                        COMPLEX alpha = COMPLEX(1, 0), COMPLEX betta = COMPLEX(1, 0),
+                        char op_A = 'N');
 
-   void parallel_dgemm(const Matrix<double>& A, const Matrix<double>& B, Matrix<double>& C,
-                       const std::vector<ILP_TYPE>& desca,
-                       const std::vector<ILP_TYPE>& descb, const std::vector<ILP_TYPE>& descc,
-                       char op_A = 'N', char op_B = 'N');
+    void parallel_dgemm(const Matrix<double>& A, const Matrix<double>& B, Matrix<double>& C,
+                        const std::vector<ILP_TYPE>& desca,
+                        const std::vector<ILP_TYPE>& descb, const std::vector<ILP_TYPE>& descc,
+                        char op_A = 'N', char op_B = 'N');
 
-   void parallel_zgemm(const Matrix<COMPLEX>& A, const Matrix<COMPLEX>& B, Matrix<COMPLEX>& C,
-                       const std::vector<ILP_TYPE>& desca,
-                       const std::vector<ILP_TYPE>& descb, const std::vector<ILP_TYPE>& descc,
-                       char op_A = 'N', char op_B = 'N');
-    
-   void parallel_zhemm(char side, const Matrix<COMPLEX>& A, const Matrix<COMPLEX>& B, Matrix<COMPLEX>& C,
-                       const std::vector<ILP_TYPE>& desca,
-                       const std::vector<ILP_TYPE>& descb, const std::vector<ILP_TYPE>& descc,
-                       char op_A = 'N', char op_B = 'N');
+    void parallel_zgemm(const Matrix<COMPLEX>& A, const Matrix<COMPLEX>& B, Matrix<COMPLEX>& C,
+                        const std::vector<ILP_TYPE>& desca,
+                        const std::vector<ILP_TYPE>& descb, const std::vector<ILP_TYPE>& descc,
+                        char op_A = 'N', char op_B = 'N');
+        
+    void parallel_zhemm(char side, const Matrix<COMPLEX>& A, const Matrix<COMPLEX>& B, Matrix<COMPLEX>& C,
+                        const std::vector<ILP_TYPE>& desca,
+                        const std::vector<ILP_TYPE>& descb, const std::vector<ILP_TYPE>& descc,
+                        char op_A = 'N', char op_B = 'N');
 
-   void parallel_dgemv(const Matrix<double>& A, const std::vector<double>& x, std::vector<double>& y,
-                       const std::vector<ILP_TYPE>& desca,
-                       const std::vector<ILP_TYPE>& descx, const std::vector<ILP_TYPE>& descy,
-                       char op_A = 'N');
-   void parallel_zgemv(const Matrix<COMPLEX>& A, const std::vector<COMPLEX>& x, std::vector<COMPLEX>& y,
-                       const std::vector<ILP_TYPE>& desca,
-                       const std::vector<ILP_TYPE>& descx, const std::vector<ILP_TYPE>& descy,
-                       char op_A = 'N');
+    void parallel_dgemv(const Matrix<double>& A, const std::vector<double>& x, std::vector<double>& y,
+                        const std::vector<ILP_TYPE>& desca,
+                        const std::vector<ILP_TYPE>& descx, const std::vector<ILP_TYPE>& descy,
+                        char op_A = 'N');
+    void parallel_zgemv(const Matrix<COMPLEX>& A, const std::vector<COMPLEX>& x, std::vector<COMPLEX>& y,
+                        const std::vector<ILP_TYPE>& desca,
+                        const std::vector<ILP_TYPE>& descx, const std::vector<ILP_TYPE>& descy,
+                        char op_A = 'N');
+    COMPLEX parallel_zdotu(const std::vector<COMPLEX>& x, std::vector<COMPLEX>& y,
+                        const std::vector<ILP_TYPE>& descx, ILP_TYPE incx,
+                        const std::vector<ILP_TYPE>& descy, ILP_TYPE incy);
+    COMPLEX parallel_zdotc(const std::vector<COMPLEX>& x, std::vector<COMPLEX>& y,
+                    const std::vector<ILP_TYPE>& descx, ILP_TYPE incx,
+                    const std::vector<ILP_TYPE>& descy, ILP_TYPE incy);
+    double parallel_ddot(const std::vector<double>& x, std::vector<double>& y,
+                        const std::vector<ILP_TYPE>& descx, ILP_TYPE incx,
+                        const std::vector<ILP_TYPE>& descy, ILP_TYPE incy)
+    COMPLEX parallel_zscal(const std::vector<COMPLEX>& x, COMPLEX a,
+                    const std::vector<ILP_TYPE>& descx, ILP_TYPE incx);
+    double parallel_dscal(const std::vector<double>& x, double a,
+                const std::vector<ILP_TYPE>& descx, ILP_TYPE incx);
 #endif
 }
 
