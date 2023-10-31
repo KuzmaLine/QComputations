@@ -15,8 +15,8 @@ int main(int argc, char** argv) {
     //QConfig::instance().set_w(2);
     //QConfig::instance().set_g(0.001);
 
-    size_t grid_size = 2;
-    size_t atoms_num = 2;
+    size_t grid_size = 1;
+    size_t atoms_num = 1;
     std::vector<size_t> grid_config;
 
     for (size_t i = 0; i < grid_size; i++) {
@@ -29,7 +29,7 @@ int main(int argc, char** argv) {
 
     State grid(grid_config);
     //grid.reshape(2, 1, 1);
-    grid.set_waveguide(0.005, 1);
+    //grid.set_waveguide(0.001, 1);
     //grid.set_waveguide(0, 1);
     //grid.set_qubit(0, 0, 1);
     //grid.set_qubit(0, 1, 1);
@@ -70,6 +70,8 @@ int main(int argc, char** argv) {
         std::vector<double> periods;
         double res_freq = 1;
         double freq = (eigenvalues[eigenvalues.size() - 1] + eigenvalues[eigenvalues.size() - 2]) / 2.0;
+        periods.emplace_back(eigenvalues[eigenvalues.size() - 1] - eigenvalues[eigenvalues.size() - 2]);
+        std::cout << eigenvalues[eigenvalues.size() - 1] / periods[0] << " " << eigenvalues[eigenvalues.size() - 2] / periods[0] << std::endl;
         //double res_period = 1;
         //for (int i = 0; i < eigenvalues.size() - 1; i++) {
         for (int i = eigenvalues.size() - 3; i >= 1; i--) {
@@ -82,7 +84,7 @@ int main(int argc, char** argv) {
 
         QConfig::instance().set_eps(1e-10);
 
-        std::vector<double> inserted_periods;
+        //std::vector<double> inserted_periods;
         /*
         for (int i = 0; i < periods.size(); i++) {
             auto p_del = res_period / periods[i];
@@ -129,7 +131,7 @@ int main(int argc, char** argv) {
     //target_state[grid_copy.get_index(H.get_basis())] = COMPLEX(1, 0);
 
     //auto time_vec = linspace(0, 500, 2000);
-    auto time_vec = linspace(0, 8000, 16000);
+    auto time_vec = linspace(0, 1000, 2000);
 
     auto probs = Evolution::quantum_master_equation(init_state, H, time_vec);
     

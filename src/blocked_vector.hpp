@@ -24,7 +24,7 @@ void init_vector_grid(ILP_TYPE& ctxt, ILP_TYPE proc_rows = 0, ILP_TYPE proc_cols
 }
 
 template<typename T>
-class BLOCKED_Vector : public BLOCKED_Matrix {
+class BLOCKED_Vector: public BLOCKED_Matrix<T> {
     public:
         explicit BLOCKED_Vector() = default;
         explicit BLOCKED_Vector(ILP_TYPE ctxt, const std::vector<T>& x): BLOCKED_Matrix<T>(ctxt, GE, Matrix<T>(x, x.size(), 1, FORTRAN_STYLE)) {};
@@ -49,7 +49,9 @@ class BLOCKED_Vector : public BLOCKED_Matrix {
 
         BLOCKED_Vector<T> operator*(const BLOCKED_Matrix<T>& A) const;
         BLOCKED_Vector<T> operator+(const BLOCKED_Vector<T>& x) const;
+        void operator+=(const BLOCKED_Vector<T>& x);
         BLOCKED_Vector<T> operator-(const BLOCKED_Vector<T>& x) const;
+        void operator-=(const BLOCKED_Vector<T>& x);
         BLOCKED_Vector<T> operator*(const BLOCKED_Vector<T>& x) const;
         BLOCKED_Vector<T> operator/(const BLOCKED_Vector<T>& x) const;
 
@@ -87,10 +89,12 @@ BLOCKED_Vector<T> BLOCKED_Vector<T>::operator/(T num) const {
 
 // ----------------------------------------- FUNCTIONS --------------------------------------
 
-double scalar_product(const BLOCKED_Vector<double> a, const BLOCKED_Vector<double>& b);
-COMPLEX scalar_product(const BLOCKED_Vector<COMPLEX> a, const BLOCKED_Vector<COMPLEX>& b);
+double scalar_product(const BLOCKED_Vector<double>& a, const BLOCKED_Vector<double>& b);
+COMPLEX scalar_product(const BLOCKED_Vector<COMPLEX>& a, const BLOCKED_Vector<COMPLEX>& b);
 BLOCKED_Vector<double> blocked_matrix_get_col(ILP_TYPE ctxt, const BLOCKED_Matrix<double>& A, size_t col);
 BLOCKED_Vector<COMPLEX> blocked_matrix_get_col(ILP_TYPE ctxt, const BLOCKED_Matrix<COMPLEX>& A, size_t col);
+std::vector<BLOCKED_Vector<double>> blocked_matrix_to_blocked_vectors(ILP_TYPE ctxt, const BLOCKED_Matrix<double>& A);
+std::vector<BLOCKED_Vector<COMPLEX>> blocked_matrix_to_blocked_vectors(ILP_TYPE ctxt, const BLOCKED_Matrix<COMPLEX>& A);
 
 } // namespace QComputations
 

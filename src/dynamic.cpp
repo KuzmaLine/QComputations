@@ -11,7 +11,7 @@
 
 #include "blocked_vector.hpp"
 #include <mkl_pblas.h>
-#include <mkl_scalapack.h>>
+#include <mkl_scalapack.h>
 
 #endif
 #endif
@@ -184,12 +184,14 @@ Evolution::Probs Evolution::schrodinger(const std::vector<COMPLEX>& init_state, 
 #ifdef ENABLE_MPI
 #ifdef ENABLE_CLUSTER
 
-Evolution::Probs Evolution::schrodinger(const std::vector<COMPLEX>& init_state, BLOCKED_Hamiltonian& H, const std::vector<double>& time_vec) {
+Evolution::BLOCKED_Probs Evolution::schrodinger(const std::vector<COMPLEX>& init_state, BLOCKED_Hamiltonian& H,
+                                                const std::vector<double>& time_vec) {
     auto eigen_values = H.eigenvalues();
     auto eigen_vectors = H.eigenvectors();
 
     ILP_TYPE vector_ctxt;
     mpi::init_vector_grid(vector_ctxt);
+    auto vector_of_eigen_vectors = blocked_matrix_to_blocked_vectors(vector_ctxt, eigen_vectors);
     BLOCKED_Vector<COMPLEX> blocked_init_state(vector_ctxt, init_state);
 
     std::vector<COMPLEX> lambda;
@@ -200,30 +202,28 @@ Evolution::Probs Evolution::schrodinger(const std::vector<COMPLEX>& init_state, 
 
     auto ctxt = H.ctxt();
     //std::cout << "L - " << norm(lambda) << std::endl;
-    BLOCKED_Probs probs(vector_ctxt, eigen_values.size(), time_vec.size());
+    Evolution::BLOCKED_Probs probs(probs_ctxt, GE, eigen_values.size(), time_vec.size(), blocked_init_state.NB(), time_vec.size());
     size_t time_index = 0;
     //eigen_vectors = eigen_vectors.transpose();
 
-    ////////////////////////////////////////////////
     for (const auto& t: time_vec) {
-        std::vector<COMPLEX> psi_t(eigen_values.size(), 0);
+        BLOCKED_Vector<COMPLEX> psi_t(vector_ctxt, eigen_values.size(), 0, 0);
         std::vector<COMPLEX> tmp(eigen_values.size(), 0);
         auto h = QConfig::instance().h();
 
         for (size_t i = 0; i < eigen_values.size(); i++) {
-            for (size_t j = 0; j < psi_t.size(); j++) {
-                psi_t[j] += lambda[i] * std::exp(COMPLEX(0, -1 / h * eigen_values[i] * t)) * eigen_vectors[j][i];
-            }
+            psi_t += lambda[i] * std::exp(COMPLEX(0, -1 / h * eigen_values[i] * t)) * vector_of_eigen_vectors[i];
         }
 
         //std::cout << norm(psi_t) << std::endl;
 
-        for (size_t i = 0; i < eigen_values.size(); i++) {
+        for (size_t i = 0; i < probs.local_n(); i++) {
             double tmp = std::abs(psi_t[i]);
-            probs[i][time_index] = tmp * tmp;
+            probs(i, time_index) = tmp * tmp;
         }
         time_index++;
     }
+
     return probs;
 }
 

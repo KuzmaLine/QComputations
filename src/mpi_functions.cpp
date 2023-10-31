@@ -34,6 +34,7 @@ extern "C" {
     ILP_TYPE indxl2g_(ILP_TYPE*, ILP_TYPE*, ILP_TYPE*, ILP_TYPE*, ILP_TYPE*);
     ILP_TYPE indxg2p_(ILP_TYPE*, ILP_TYPE*, ILP_TYPE*, ILP_TYPE*, ILP_TYPE*);
     ILP_TYPE indxg2l_(ILP_TYPE*, ILP_TYPE*, ILP_TYPE*, ILP_TYPE*, ILP_TYPE*);
+    //void pdscal_(ILP_TYPE*, double*, double*, ILP_TYPE*, ILP_TYPE*, ILP_TYPE*, ILP_TYPE*);
 }
 
 #endif
@@ -1680,7 +1681,7 @@ COMPLEX mpi::parallel_zdotc(const std::vector<COMPLEX>& x, std::vector<COMPLEX>&
     int iONE = 1;
     COMPLEX dotc;
 
-    pzdotc(&n, &dotu, x.data(), &iONE, &iONE, descx.data(), &incx, y.data(), &iONE, &iONE, descy.data(), &incy);
+    pzdotc(&n, &dotc, x.data(), &iONE, &iONE, descx.data(), &incx, y.data(), &iONE, &iONE, descy.data(), &incy);
 
     return dotc;
 }
@@ -1698,26 +1699,39 @@ double mpi::parallel_ddot(const std::vector<double>& x, std::vector<double>& y,
     return dotu;
 }
 
-COMPLEX mpi::parallel_zscal(const std::vector<COMPLEX>& x, COMPLEX a,
+COMPLEX mpi::parallel_zscal(std::vector<COMPLEX>& x, COMPLEX a,
                 const std::vector<ILP_TYPE>& descx, ILP_TYPE incx) {
     ILP_TYPE n = descx[2];
     int iONE = 1;
-    COMPLEX a;
 
     pzscal(&n, &a, x.data(), &iONE, &iONE, descx.data(), &incx);
 
     return a;
 }
 
-double mpi::parallel_dscal(const std::vector<double>& x, double a,
+double mpi::parallel_dscal(std::vector<double>& x, double a,
                 const std::vector<ILP_TYPE>& descx, ILP_TYPE incx) {
     ILP_TYPE n = descx[2];
     int iONE = 1;
-    double a;
 
     pdscal(&n, &a, x.data(), &iONE, &iONE, descx.data(), &incx);
 
     return a;
+}
+
+void mpi::parallel_daxpy(const std::vector<double>& x, std::vector<double>& y,
+                        const std::vector<ILP_TYPE>& descx, ILP_TYPE incx,
+                        const std::vector<ILP_TYPE>& descy, ILP_TYPE incy, double alpha) {
+    ILP_TYPE iONE = 1;
+    ILP_TYPE n = descx[2];
+    pdaxpy(&n, &alpha, x.data(), &iONE, &iONE, descx.data(), &incx, y.data(), &iONE, &iONE, descy.data(), &incy);
+}
+void mpi::parallel_zaxpy(const std::vector<COMPLEX>& x, std::vector<COMPLEX>& y,
+                    const std::vector<ILP_TYPE>& descx, ILP_TYPE incx,
+                    const std::vector<ILP_TYPE>& descy, ILP_TYPE incy, COMPLEX alpha) {
+    ILP_TYPE iONE = 1;
+    ILP_TYPE n = descx[2];
+    pzaxpy(&n, &alpha, x.data(), &iONE, &iONE, descx.data(), &incx, y.data(), &iONE, &iONE, descy.data(), &incy);
 }
 
 #endif // ENABLE_CLUSTER

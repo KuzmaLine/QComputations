@@ -116,8 +116,9 @@ class BLOCKED_Matrix {
 };
 
 template<typename T>
-BLOCKED_Matrix<T>::BLOCKED_Matrix(ILP_TYPE ctxt, MATRIX_TYPE type, const Matrix<T>& A): ctxt_(ctxt), matrix_type_(type),
-                                                                                    n_(A.n()), m_(A.m()) {
+BLOCKED_Matrix<T>::BLOCKED_Matrix(ILP_TYPE ctxt, MATRIX_TYPE type, const Matrix<T>& A,
+                                size_t NB, size_t MB): ctxt_(ctxt), matrix_type_(type),
+                                                               n_(A.n()), m_(A.m()) {
     ILP_TYPE iZERO = 0;
     ILP_TYPE proc_rows, proc_cols, myrow, mycol;
     mpi::blacs_gridinfo(ctxt_, proc_rows, proc_cols, myrow, mycol);

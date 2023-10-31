@@ -279,11 +279,17 @@ namespace mpi {
                     const std::vector<ILP_TYPE>& descy, ILP_TYPE incy);
     double parallel_ddot(const std::vector<double>& x, std::vector<double>& y,
                         const std::vector<ILP_TYPE>& descx, ILP_TYPE incx,
-                        const std::vector<ILP_TYPE>& descy, ILP_TYPE incy)
-    COMPLEX parallel_zscal(const std::vector<COMPLEX>& x, COMPLEX a,
+                        const std::vector<ILP_TYPE>& descy, ILP_TYPE incy);
+    COMPLEX parallel_zscal(std::vector<COMPLEX>& x, COMPLEX a,
                     const std::vector<ILP_TYPE>& descx, ILP_TYPE incx);
-    double parallel_dscal(const std::vector<double>& x, double a,
+    double parallel_dscal(std::vector<double>& x, double a,
                 const std::vector<ILP_TYPE>& descx, ILP_TYPE incx);
+    void parallel_daxpy(const std::vector<double>& x, std::vector<double>& y,
+                        const std::vector<ILP_TYPE>& descx, ILP_TYPE incx,
+                        const std::vector<ILP_TYPE>& descy, ILP_TYPE incy, double alpha = 1.0);
+    void parallel_zaxpy(const std::vector<COMPLEX>& x, std::vector<COMPLEX>& y,
+                        const std::vector<ILP_TYPE>& descx, ILP_TYPE incx,
+                        const std::vector<ILP_TYPE>& descy, ILP_TYPE incy, COMPLEX alpha = COMPLEX(1, 0));
 #endif
 }
 

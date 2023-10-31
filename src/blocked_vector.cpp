@@ -17,7 +17,7 @@ void mpi::init_vector_grid(ILP_TYPE& ctxt, ILP_TYPE proc_rows, ILP_TYPE proc_col
 
     ILP_TYPE myid, numproc, myrow, mycol;
     char order = 'R';
-    if (proc_rows == 0 or proc_cols == 0) {
+    if (proc_rows == 0 and proc_cols == 0) {
         proc_rows = world_size;
         proc_cols = 1;
     }
@@ -65,13 +65,41 @@ BLOCKED_Vector<double> BLOCKED_Vector<double>::operator*(double num) const {
     return res;
 }
 
+template<>
+BLOCKED_Vector<double> BLOCKED_Vector<double>::operator+(const BLOCKED_Vector<double>& x) const {
+    BLOCKED_Vector<double> res(*this);
+
+    mpi::parallel_daxpy(x.data(), res.data(), x.desc(), x.inc(), res.desc(), res.inc(), 1.0);
+
+    return res;
+}
+
+template<>
+void BLOCKED_Vector<double>::operator+=(const BLOCKED_Vector<double>& x) {
+    mpi::parallel_daxpy(x.data(), this->data(), x.desc(), x.inc(), this->desc(), this->inc(), 1.0);
+}
+
+template<>
+BLOCKED_Vector<COMPLEX> BLOCKED_Vector<COMPLEX>::operator+(const BLOCKED_Vector<COMPLEX>& x) const {
+    BLOCKED_Vector<COMPLEX> res(*this);
+
+    mpi::parallel_zaxpy(x.data(), res.data(), x.desc(), x.inc(), res.desc(), res.inc(), 1.0);
+
+    return res;
+}
+
+template<>
+void BLOCKED_Vector<COMPLEX>::operator+=(const BLOCKED_Vector<COMPLEX>& x) {
+    mpi::parallel_zaxpy(x.data(), this->data(), x.desc(), x.inc(), this->desc(), this->inc(), COMPLEX(1.0, 0));
+}
+
 // ------------------------------ FUNCTIONS -------------------------------------
 
-COMPLEX scalar_produc t(const BLOCKED_Vector<COMPLEX>& a, const BLOCKED_Vector<COMPLEX>& b) const {
+COMPLEX scalar_product (const BLOCKED_Vector<COMPLEX>& a, const BLOCKED_Vector<COMPLEX>& b) {
     return mpi::parallel_zdotu(a.data(), b.data(), a.desc(), a.inc(), b.desc(), b.inc());
 }
 
-double scalar_product (const BLOCKED_Vector<COMPLEX>& a, const BLOCKED_Vector<double>& b) const {
+double scalar_product (const BLOCKED_Vector<double>& a, const BLOCKED_Vector<double>& b) {
     return mpi::parallel_dot(a.data(), b.data(), a.desc(), a.inc(), b.desc(), b.inc());
 }
 
@@ -95,6 +123,23 @@ BLOCKED_Vector<double> blocked_matrix_get_col(ILP_TYPE ctxt, const BLOCKED_Matri
     return res;
 }
 
+std::vector<BLOCKED_Vector<double>> blocked_matrix_to_blocked_vectors(ILP_TYPE ctxt, const BLOCKED_Matrix<double>& A) {
+    std::vector<BLOCKED_Vector<double>> res;
+
+    for (size_t i = 0; i < A.m(); i++) {
+        res.emplace_back(blocked_matrix_get_col(ctxt, A, i));
+    }
+
+    return res;
+}
+std::vector<BLOCKED_Vector<COMPLEX>> blocked_matrix_to_blocked_vectors(ILP_TYPE ctxt, const BLOCKED_Matrix<COMPLEX>& A);
+    std::vector<BLOCKED_Vector<double>> res;
+
+    for (size_t i = 0; i < A.m(); i++) {
+        res.emplace_back(blocked_matrix_get_col(ctxt, A, i));
+    }
+
+    return res;
 } // namespace QComputations
 
 #endif
