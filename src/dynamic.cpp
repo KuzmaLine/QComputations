@@ -9,7 +9,6 @@
 #ifdef EMABLE_MPI
 #ifdef ENABLE_CLUSTER
 
-#include "blocked_vector.hpp"
 #include <mkl_pblas.h>
 #include <mkl_scalapack.h>
 
@@ -197,12 +196,12 @@ Evolution::BLOCKED_Probs Evolution::schrodinger(const std::vector<COMPLEX>& init
     std::vector<COMPLEX> lambda;
     for (size_t i = 0; i < eigen_values.size(); i++) {
         //std::cout << norm(eigen_vectors.col(i)) << std::endl;
-        lambda.emplace_back(scalar_product(blocked_init_state, blocked_matrix_get_col(eigen_vectors, i))); // <PHI_i|KSI(0)> 
+        lambda.emplace_back(scalar_product(blocked_init_state, blocked_matrix_get_col(blocked_init_state.ctxt(), eigen_vectors, i))); // <PHI_i|KSI(0)> 
     }
 
     auto ctxt = H.ctxt();
     //std::cout << "L - " << norm(lambda) << std::endl;
-    Evolution::BLOCKED_Probs probs(probs_ctxt, GE, eigen_values.size(), time_vec.size(), blocked_init_state.NB(), time_vec.size());
+    Evolution::BLOCKED_Probs probs(vector_ctxt, GE, eigen_values.size(), time_vec.size(), blocked_init_state.NB(), time_vec.size());
     size_t time_index = 0;
     //eigen_vectors = eigen_vectors.transpose();
 
@@ -212,7 +211,7 @@ Evolution::BLOCKED_Probs Evolution::schrodinger(const std::vector<COMPLEX>& init
         auto h = QConfig::instance().h();
 
         for (size_t i = 0; i < eigen_values.size(); i++) {
-            psi_t += lambda[i] * std::exp(COMPLEX(0, -1 / h * eigen_values[i] * t)) * vector_of_eigen_vectors[i];
+            psi_t += vector_of_eigen_vectors[i] *  lambda[i] * std::exp(COMPLEX(0, -1 / h * eigen_values[i] * t));
         }
 
         //std::cout << norm(psi_t) << std::endl;

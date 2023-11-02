@@ -88,6 +88,7 @@ namespace mpi {
 
     // ON BLACS GRID
     void init_grid(ILP_TYPE& ctxt, ILP_TYPE proc_rows = 0, ILP_TYPE proc_cols = 0);
+    void init_vector_grid(ILP_TYPE& ctxt, ILP_TYPE proc_rows = 0, ILP_TYPE proc_cols = 0);
     void blacs_gridinfo(const ILP_TYPE& ctxt, ILP_TYPE& proc_rows, ILP_TYPE& proc_cols, ILP_TYPE& myrow, ILP_TYPE& mycol);
     ILP_TYPE numroc(ILP_TYPE N, ILP_TYPE NB, ILP_TYPE myindex, ILP_TYPE ZERO, ILP_TYPE size);
     ILP_TYPE indxl2g(ILP_TYPE N, ILP_TYPE NB, ILP_TYPE myindx, ILP_TYPE RSRC, ILP_TYPE dim_counts);
@@ -271,13 +272,13 @@ namespace mpi {
                         const std::vector<ILP_TYPE>& desca,
                         const std::vector<ILP_TYPE>& descx, const std::vector<ILP_TYPE>& descy,
                         char op_A = 'N');
-    COMPLEX parallel_zdotu(const std::vector<COMPLEX>& x, std::vector<COMPLEX>& y,
+    COMPLEX parallel_zdotu(const std::vector<COMPLEX>& x, const std::vector<COMPLEX>& y,
                         const std::vector<ILP_TYPE>& descx, ILP_TYPE incx,
                         const std::vector<ILP_TYPE>& descy, ILP_TYPE incy);
-    COMPLEX parallel_zdotc(const std::vector<COMPLEX>& x, std::vector<COMPLEX>& y,
+    COMPLEX parallel_zdotc(const std::vector<COMPLEX>& x, const std::vector<COMPLEX>& y,
                     const std::vector<ILP_TYPE>& descx, ILP_TYPE incx,
                     const std::vector<ILP_TYPE>& descy, ILP_TYPE incy);
-    double parallel_ddot(const std::vector<double>& x, std::vector<double>& y,
+    double parallel_ddot(const std::vector<double>& x, const std::vector<double>& y,
                         const std::vector<ILP_TYPE>& descx, ILP_TYPE incx,
                         const std::vector<ILP_TYPE>& descy, ILP_TYPE incy);
     COMPLEX parallel_zscal(std::vector<COMPLEX>& x, COMPLEX a,

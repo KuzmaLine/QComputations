@@ -813,6 +813,25 @@ void mpi::pzelset(Matrix<COMPLEX>& A, ILP_TYPE i, ILP_TYPE j, COMPLEX num, const
     ::pzelset_(A.data(), &new_i, &new_j, desc.data(), &num);
 }
 
+void mpi::init_vector_grid(ILP_TYPE& ctxt, ILP_TYPE proc_rows, ILP_TYPE proc_cols) {
+    ILP_TYPE iZERO = 0;
+    int world_size;
+    MPI_Comm_size(MPI_COMM_WORLD, &world_size);
+
+    ILP_TYPE myid, numproc, myrow, mycol;
+    char order = 'R';
+    if (proc_rows == 0 and proc_cols == 0) {
+        proc_rows = world_size;
+        proc_cols = 1;
+    }
+    //std::cout << rank << " Here1\n";
+    blacs_pinfo(&myid, &numproc);
+    ILP_TYPE iMINUS = -1;
+    blacs_get(&iMINUS, &iZERO, &ctxt);
+    //std::cout << rank << " Here3\n";
+    blacs_gridinit(&ctxt, &order, &proc_rows, &proc_cols);
+}
+
 void mpi::init_grid(ILP_TYPE& ctxt, ILP_TYPE proc_rows, ILP_TYPE proc_cols) {
     ILP_TYPE iZERO = 0;
     int world_size;
@@ -1662,7 +1681,7 @@ void mpi::parallel_zgemv(const Matrix<COMPLEX>& A, const std::vector<COMPLEX>& x
                                    &betta, y.data(), &iONE, &iONE, descy.data(), &iONE);
 }
 
-COMPLEX mpi::parallel_zdotu(const std::vector<COMPLEX>& x, std::vector<COMPLEX>& y,
+COMPLEX mpi::parallel_zdotu(const std::vector<COMPLEX>& x, const std::vector<COMPLEX>& y,
                     const std::vector<ILP_TYPE>& descx, ILP_TYPE incx,
                     const std::vector<ILP_TYPE>& descy, ILP_TYPE incy) {
     ILP_TYPE n = descx[2];
@@ -1674,7 +1693,7 @@ COMPLEX mpi::parallel_zdotu(const std::vector<COMPLEX>& x, std::vector<COMPLEX>&
     return dotu;
 }
 
-COMPLEX mpi::parallel_zdotc(const std::vector<COMPLEX>& x, std::vector<COMPLEX>& y,
+COMPLEX mpi::parallel_zdotc(const std::vector<COMPLEX>& x, const std::vector<COMPLEX>& y,
                     const std::vector<ILP_TYPE>& descx, ILP_TYPE incx,
                     const std::vector<ILP_TYPE>& descy, ILP_TYPE incy) {
     ILP_TYPE n = descx[2];
@@ -1687,7 +1706,7 @@ COMPLEX mpi::parallel_zdotc(const std::vector<COMPLEX>& x, std::vector<COMPLEX>&
 }
 
 
-double mpi::parallel_ddot(const std::vector<double>& x, std::vector<double>& y,
+double mpi::parallel_ddot(const std::vector<double>& x, const std::vector<double>& y,
                     const std::vector<ILP_TYPE>& descx, ILP_TYPE incx,
                     const std::vector<ILP_TYPE>& descy, ILP_TYPE incy) {
     ILP_TYPE n = descx[2];

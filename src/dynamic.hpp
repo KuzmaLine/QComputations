@@ -8,6 +8,7 @@
 #ifdef ENABLE_CLUSTER
 
 #include "hamiltonian_blocked.hpp"
+#include "blocked_vector.hpp"
 
 #endif
 #endif

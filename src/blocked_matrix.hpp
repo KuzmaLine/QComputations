@@ -102,7 +102,7 @@ class BLOCKED_Matrix {
 
         std::vector<T> col(size_t i) const;
         std::vector<T> row(size_t j) const;
-    private:
+    protected:
         size_t get_global_index(size_t i, size_t j) { return j * n_ + i; }
         size_t get_local_index(size_t i, size_t j) { return j * local_matrix_.n() + i; }
 
@@ -124,11 +124,11 @@ BLOCKED_Matrix<T>::BLOCKED_Matrix(ILP_TYPE ctxt, MATRIX_TYPE type, const Matrix<
     mpi::blacs_gridinfo(ctxt_, proc_rows, proc_cols, myrow, mycol);
     
     if (NB == 0) {
-        NB_ = n / proc_rows;
+        NB_ = n_ / proc_rows;
     }
 
     if (MB == 0) {
-        MB_ = m / proc_cols;
+        MB_ = m_ / proc_cols;
     }
 
     if (NB_ == 0) {
@@ -139,8 +139,8 @@ BLOCKED_Matrix<T>::BLOCKED_Matrix(ILP_TYPE ctxt, MATRIX_TYPE type, const Matrix<
         MB_ = 1;
     }
 
-    ILP_TYPE nrows = mpi::numroc(n, NB_, myrow, iZERO, proc_rows);
-    ILP_TYPE ncols = mpi::numroc(m, MB_, mycol, iZERO, proc_cols);
+    ILP_TYPE nrows = mpi::numroc(n_, NB_, myrow, iZERO, proc_rows);
+    ILP_TYPE ncols = mpi::numroc(m_, MB_, mycol, iZERO, proc_cols);
 
     if (matrix_type_ == GE) {
         local_matrix_ = Matrix<T>(FORTRAN_STYLE, nrows, ncols);

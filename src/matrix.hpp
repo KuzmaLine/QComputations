@@ -108,6 +108,7 @@ template<typename T> class Matrix {
 
         bool operator==(const Matrix<T>& A) const;
 
+        std::vector<T>& get_mass() { return mass_; }
         std::vector<T> get_mass() const { return mass_; }
         T* data() { return mass_.data(); }
         const T* data() const { return mass_.data(); }
