@@ -13,6 +13,10 @@ hamiltonian_single_example:
 	 icpc -I${MKL_INCLUDE_PATH} -I/opt/intel/oneapi/intelpython/python3.9/lib/python3.9/site-packages/numpy/core/include \
 	-I${PYTHON_H_INCLUDE_PATH} -o hamiltonian_single_example hamiltonian_single_example.cpp -lQComputations_single
 
+schrodinger:
+	 mpiicpc -I${MKL_INCLUDE_PATH} -I${MPI_INCLUDE_PATH} -I/opt/intel/oneapi/intelpython/python3.9/lib/python3.9/site-packages/numpy/core/include \
+	-I${PYTHON_H_INCLUDE_PATH} -o schrodinger schrodinger.cpp -lQComputations_cpu_cluster
+
 mpi_qcomp:
 	 mpiicpc -I${MKL_INCLUDE_PATH} -I${MPI_INCLUDE_PATH} -o mpi_qcomp mpi_qcomp.cpp -lQComputations_cpu_cluster_no_plots
 
@@ -29,4 +33,4 @@ stocks:
 	 mpiicpc -I${MKL_INCLUDE_PATH} -I${MPI_INCLUDE_PATH} -o stocks stocks.cpp -lQComputations_cpu_cluster_no_plots
 
 clean:
-	rm -rf pblas_main blocked_matrix hamiltonian_single_example stocks hamiltonian_blocked_example mpi_qcomp runge_kutt rho_dynamic my_file
+	rm -rf pblas_main schrodinger blocked_matrix hamiltonian_single_example stocks hamiltonian_blocked_example mpi_qcomp runge_kutt rho_dynamic my_file

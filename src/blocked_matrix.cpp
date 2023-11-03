@@ -796,7 +796,8 @@ std::pair<std::vector<double>, BLOCKED_Matrix<COMPLEX>> Hermit_Lanzcos(const BLO
     char range = 'A';
     char uplo = 'U';
 
-    auto A = M;
+    BLOCKED_Matrix<COMPLEX> A(M);
+    A.show();
 
     ILP_TYPE n = A.n();
     ILP_TYPE iONE = 1;
@@ -814,6 +815,7 @@ std::pair<std::vector<double>, BLOCKED_Matrix<COMPLEX>> Hermit_Lanzcos(const BLO
         A.desc().data(), w.data(), Z.data(), &iONE, &iONE,
         Z.desc().data(), work.data(), &lwork, rwork.data(), &lrwork, &info);
 
+    std::cout << info << std::endl;
     return std::make_pair(w, Z);
 }
 
