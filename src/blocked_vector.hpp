@@ -33,13 +33,13 @@ class BLOCKED_Vector: public BLOCKED_Matrix<T> {
 
         ILP_TYPE inc() const { return INC; }
 
-        T get(size_t i) const { return this->BLOCKED_Matrix<T>::get(i, 1); }
-        void set(size_t i, T num) { this->BLOCKED_Matrix<T>::set(i, 1, num); }
+        T get(size_t i) const { return this->BLOCKED_Matrix<T>::get(i, 0); }
+        void set(size_t i, T num) { this->BLOCKED_Matrix<T>::set(i, 0, num); }
 
-        T& operator[](size_t i) { return BLOCKED_Matrix<T>::local_matrix_(i, 1); }
-        const T& operator[](size_t i) const { return BLOCKED_Matrix<T>::local_matrix_(i, 1); }
-        T& operator()(size_t i) { return BLOCKED_Matrix<T>::local_matrix_(i, 1); }
-        const T& operator()(size_t i) const { return BLOCKED_Matrix<T>::local_matrix_(i, 1); }
+        T& operator[](size_t i) { return BLOCKED_Matrix<T>::local_matrix_(i, 0); }
+        const T& operator[](size_t i) const { return BLOCKED_Matrix<T>::local_matrix_(i, 0); }
+        T& operator()(size_t i) { return BLOCKED_Matrix<T>::local_matrix_(i, 0); }
+        const T& operator()(size_t i) const { return BLOCKED_Matrix<T>::local_matrix_(i, 0); }
 
         BLOCKED_Vector<T> operator*(const BLOCKED_Matrix<T>& A) const;
         BLOCKED_Vector<T> operator+(const BLOCKED_Vector<T>& x) const;
@@ -56,12 +56,15 @@ class BLOCKED_Vector: public BLOCKED_Matrix<T> {
 };
 
 template<typename T>
-BLOCKED_Vector<T>::BLOCKED_Vector<T>(const BLOCKED_Vector<T>& A, const Matrix<T>& x): ctxt_(A.ctxt()), matrix_type_(A.get_matrix_type()),
-                                                                        n_(A.n()), m_(A.m_), NB_(A.NB()), MB_(A.MB_), local_matrix_(x) {}
+BLOCKED_Vector<T>::BLOCKED_Vector(const BLOCKED_Vector<T>& A, const Matrix<T>& x): BLOCKED_Matrix<T>::ctxt_(A.ctxt()),
+                                                                        BLOCKED_Matrix<T>::matrix_type_(A.get_matrix_type()),
+                                                                        BLOCKED_Matrix<T>::n_(A.n()), BLOCKED_Matrix<T>::m_(A.m_),
+                                                                        BLOCKED_Matrix<T>::NB_(A.NB()), BLOCKED_Matrix<T>::MB_(A.MB_),
+                                                                        BLOCKED_Matrix<T>::local_matrix_(x) {}
 
 template<typename T>
 BLOCKED_Vector<T> BLOCKED_Vector<T>::operator+(T num) const {
-    BLOCKED_Vector<T> res(*this, local_matrix_ + num);
+    BLOCKED_Vector<T> res(*this, BLOCKED_Matrix<T>::local_matrix_ + num);
 
     return res;
 }
@@ -69,14 +72,14 @@ BLOCKED_Vector<T> BLOCKED_Vector<T>::operator+(T num) const {
 
 template<typename T>
 BLOCKED_Vector<T> BLOCKED_Vector<T>::operator-(T num) const {
-    BLOCKED_Vector<T> res(*this, local_matrix_ - num);
+    BLOCKED_Vector<T> res(*this, BLOCKED_Matrix<T>::local_matrix_ - num);
 
     return res;
 }
 
 template<typename T>
 BLOCKED_Vector<T> BLOCKED_Vector<T>::operator/(T num) const {
-    BLOCKED_Vector<T> res(*this, local_matrix_ / num);
+    BLOCKED_Vector<T> res(*this, BLOCKED_Matrix<T>::local_matrix_ / num);
 
     return res;
 }

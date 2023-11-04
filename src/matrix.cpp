@@ -188,16 +188,15 @@ Matrix<double> Matrix<double>::operator* (const Matrix<double>& A) const {
             res.remove_cols(remove_cols);
         }
 
-        /*
-        if (m != n) {
-            if (n < m) {
-                res.remove_rows(m - n);
-            } else {
-                res.remove_cols(n - m);
-            }
-        }
-        */
-       /*
+        
+        //if (m != n) {
+        //    if (n < m) {
+        //        res.remove_rows(m - n);
+        //    } else {
+        //        res.remove_cols(n - m);
+        //    }
+        //}
+
         end = std::chrono::steady_clock::now();
         std::cout << "AFTER: " << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count() << std::endl;
     } else if (config::MULTIPLY_MODE == config::COMMON_MODE) {
@@ -371,17 +370,15 @@ Matrix<COMPLEX> Matrix<COMPLEX>::operator* (const Matrix<COMPLEX>& A) const {
             res.remove_cols(remove_cols);
         }
 
-        /*
-        if (m != n) {
-            if (n < m) {
-                res.remove_rows(m - n);
-            } else {
-                res.remove_cols(n - m);
-            }
-        }
-        */
 
-        /*
+        //if (m != n) {
+        //    if (n < m) {
+        //        res.remove_rows(m - n);
+        //    } else {
+        //        res.remove_cols(n - m);
+        //    }
+        //}
+
         end = std::chrono::steady_clock::now();
         std::cout << "AFTER: " << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count() << std::endl;
     } else if (config::MULTIPLY_MODE == config::COMMON_MODE) {
@@ -426,6 +423,7 @@ Matrix<COMPLEX> Matrix<COMPLEX>::operator* (const Matrix<COMPLEX>& A) const {
 
 #endif
 */
+
 /*
 template<>
 Matrix<COMPLEX> Matrix<COMPLEX>::operator* <COMPLEX>(const Matrix<COMPLEX>& A) const {

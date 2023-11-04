@@ -57,7 +57,7 @@ namespace Evolution {
     std::pair<BLOCKED_Probs, std::set<State>> probs_to_cavity_probs(const BLOCKED_Probs& probs,
                                                 const std::set<State>& basis, size_t cavity_id) ;
 
-    BLOCKED_Rho create_BLOCKED_init_rho(const std::vector<COMPLEX>& init_state);
+    BLOCKED_Rho create_BLOCKED_init_rho(ILP_TYPE ctxt, const std::vector<COMPLEX>& init_state);
 
     BLOCKED_Probs schrodinger(const std::vector<COMPLEX>& init_state, BLOCKED_Hamiltonian& H, const std::vector<double>& time_vec);
 

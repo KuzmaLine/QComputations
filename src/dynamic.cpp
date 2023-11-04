@@ -206,8 +206,7 @@ Evolution::BLOCKED_Probs Evolution::schrodinger(const std::vector<COMPLEX>& init
     //eigen_vectors = eigen_vectors.transpose();
 
     for (const auto& t: time_vec) {
-        BLOCKED_Vector<COMPLEX> psi_t(vector_ctxt, eigen_values.size(), 0, 0);
-        std::vector<COMPLEX> tmp(eigen_values.size(), 0);
+        BLOCKED_Vector<COMPLEX> psi_t(vector_ctxt, eigen_values.size(), 0, blocked_init_state.NB());
         auto h = QConfig::instance().h();
 
         for (size_t i = 0; i < eigen_values.size(); i++) {
@@ -645,6 +644,12 @@ Evolution::BLOCKED_Probs Evolution::quantum_master_equation(const std::vector<CO
         */
         return probs;
     }
+
+
+    ILP_TYPE world_size, rank;
+    MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+    MPI_Comm_size(MPI_COMM_WORLD, &world_size);
+    return Evolution::BLOCKED_Probs(H.ctxt(), GE, dim, time_vec.size(), (H.size() >= world_size ? H.size() / world_size : 1), time_vec.size());
 
     /*
     Evolution::BLOCKED_Probs probs(C_STYLE, dim * dim, time_vec.size());

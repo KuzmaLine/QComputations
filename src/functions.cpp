@@ -592,7 +592,7 @@ std::pair<std::vector<double>, Matrix<double>> jacobi(const Matrix<double>& A, d
         int p = 0, q = 0;
         for (int i = 0; i < n-1; i++) {
             for (int j = i + 1; j < n; j++) {
-                double element = abs(B[i][j]);
+                double element = std::abs(B[i][j]);
                 if (element > max_element) {
                     max_element = element;
                     p = i;

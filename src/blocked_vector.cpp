@@ -78,11 +78,11 @@ void BLOCKED_Vector<COMPLEX>::operator+=(const BLOCKED_Vector<COMPLEX>& x) {
 
 // ------------------------------ FUNCTIONS -------------------------------------
 
-COMPLEX scalar_product (const BLOCKED_Vector<COMPLEX>& a, const BLOCKED_Vector<COMPLEX>& b) {
-    return mpi::parallel_zdotu(a.get_local_matrix().get_mass(), b.get_local_matrix().get_mass(), a.desc(), a.inc(), b.desc(), b.inc());
+COMPLEX scalar_product(const BLOCKED_Vector<COMPLEX>& b, const BLOCKED_Vector<COMPLEX>& a) {
+    return mpi::parallel_zdotc(a.get_local_matrix().get_mass(), b.get_local_matrix().get_mass(), a.desc(), a.inc(), b.desc(), b.inc());
 }
 
-double scalar_product (const BLOCKED_Vector<double>& a, const BLOCKED_Vector<double>& b) {
+double scalar_product(const BLOCKED_Vector<double>& a, const BLOCKED_Vector<double>& b) {
     return mpi::parallel_ddot(a.get_local_matrix().get_mass(), b.get_local_matrix().get_mass(), a.desc(), a.inc(), b.desc(), b.inc());
 }
 
@@ -110,7 +110,7 @@ std::vector<BLOCKED_Vector<double>> blocked_matrix_to_blocked_vectors(ILP_TYPE c
     std::vector<BLOCKED_Vector<double>> res;
 
     for (size_t i = 0; i < A.m(); i++) {
-        res.emplace_back(blocked_matrix_get_col(ctxt, A, i));
+        res.push_back(blocked_matrix_get_col(ctxt, A, i));
     }
 
     return res;
@@ -119,7 +119,7 @@ std::vector<BLOCKED_Vector<COMPLEX>> blocked_matrix_to_blocked_vectors(ILP_TYPE 
     std::vector<BLOCKED_Vector<COMPLEX>> res;
 
     for (size_t i = 0; i < A.m(); i++) {
-        res.emplace_back(blocked_matrix_get_col(ctxt, A, i));
+        res.push_back(blocked_matrix_get_col(ctxt, A, i));
     }
 
     return res;

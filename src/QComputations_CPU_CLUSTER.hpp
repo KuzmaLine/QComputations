@@ -18,6 +18,7 @@
 #include "hamiltonian.hpp"
 #include "state.hpp"
 #include "config.hpp"
+#include "graph.hpp"
 #include "dynamic.hpp"
 #include "mpi_functions.hpp"
 #include "plot.hpp"
@@ -25,3 +26,4 @@
 #include "blocked_matrix.hpp"
 #include <mpi.h>
 #include "hamiltonian_blocked.hpp"
+#include "quantum_operators.hpp"

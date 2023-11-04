@@ -6,13 +6,14 @@
 #include <fstream>
 //#include <mkl_blacs.h>
 // #include <mkl_pblas.h>
+#include <mkl_scalapack.h>
 
 namespace QComputations {
 
 extern "C" {
-    void pzheev(char*, char*, ILP_TYPE*, const COMPLEX*, ILP_TYPE*, ILP_TYPE*,
-                const ILP_TYPE*, double*, COMPLEX*, ILP_TYPE*, ILP_TYPE*,
-                const ILP_TYPE*, COMPLEX*, ILP_TYPE*, double*, ILP_TYPE*, ILP_TYPE*);
+    //void pzheev(char*, char*, ILP_TYPE*, COMPLEX*, ILP_TYPE*, ILP_TYPE*,
+    //            const ILP_TYPE*, double*, COMPLEX*, ILP_TYPE*, ILP_TYPE*,
+    //            const ILP_TYPE*, COMPLEX*, ILP_TYPE*, double*, ILP_TYPE*, ILP_TYPE*);
     void pztranc(ILP_TYPE*, ILP_TYPE*, const COMPLEX*, const COMPLEX*, ILP_TYPE*, ILP_TYPE*,
                  ILP_TYPE*, COMPLEX*, COMPLEX*, ILP_TYPE*, ILP_TYPE*, ILP_TYPE*);
     // CALL PZHEEV (jobz, uplo, n, a, ia, ja, desc_a, w, z, iz, jz, desc_z, work, lwork, rwork, lrwork, info)
@@ -147,6 +148,8 @@ BLOCKED_Matrix<COMPLEX> BLOCKED_Matrix<COMPLEX>::hermit() const {
 
         return A;
     }
+
+    return *this;
 }
 /*
 template<>
@@ -173,6 +176,7 @@ BLOCKED_Matrix<double>::BLOCKED_Matrix<double>(ILP_TYPE ctxt, size_t n, size_t m
 }
 */
 
+/*
 template<>
 void BLOCKED_Matrix<COMPLEX>::write_to_csv_file(const std::string& filename, ILP_TYPE row_place, ILP_TYPE col_place,
                                                 ILP_TYPE num_accuracy, ILP_TYPE max_number_size) {
@@ -292,12 +296,14 @@ void BLOCKED_Matrix<COMPLEX>::write_to_csv_file(const std::string& filename, ILP
         line_begin_size[i] = index;
         line_others_offset[i] = mas_offsets[i * 4 + of::bg];
       }
-      /* for (int i = 0; i < num_lines; ++i)
+      #ifdef 0
+      for (int i = 0; i < num_lines; ++i)
         printf("Line: %s[end]\n\n", lines_read[i].c_str());
 
       for (int i = 0; i < num_lines * 4; i += 4)
         printf("From %lld through %lld to %lld\n", mas_offsets[i + of::bg],
-               mas_offsets[i + of::md], mas_offsets[i + of::en]); */
+               mas_offsets[i + of::md], mas_offsets[i + of::en]);
+      #endif
       vector_string = vector_to_string(lines_read);
       // printf("\n%s\n", vector_string.c_str());
 
@@ -356,11 +362,13 @@ void BLOCKED_Matrix<COMPLEX>::write_to_csv_file(const std::string& filename, ILP
               send_offset - (string_offsets[i - 1] + string_counts[i - 1]);
       }
     }
-    /* for (int i = 0; rank == root_id && i < size; ++i) {
+    #ifdef 0
+    for (int i = 0; rank == root_id && i < size; ++i) {
       printf("%d: Send %d chars from %d, and %d offsets from %d\n", rank,
              string_counts[i], string_offsets[i], offset_counts[i],
              offset_offsets[i]);
-    } */
+    }
+    #endif
     long long local_offsets[offset_counts[rank]];
 
     MPI_Bcast(&string_counts, size, MPI_LONG_LONG, root_id, MPI_COMM_WORLD);
@@ -374,9 +382,11 @@ void BLOCKED_Matrix<COMPLEX>::write_to_csv_file(const std::string& filename, ILP
                  &local_offsets, num_lines * 4, MPI_LONG_LONG, root_id,
                  MPI_COMM_WORLD);
 
-    /* for (int i = 0; i < num_lines_to_mod * 4; i += 4)
+    #ifdef 0 
+    for (int i = 0; i < num_lines_to_mod * 4; i += 4)
       printf("Offset %d: %lld + %lld\n", rank, global_offset,
-             local_offsets[i + of::bg]); */
+             local_offsets[i + of::bg]);
+    #endif
 
     MPI_Scatterv(mas_char_string, string_counts, string_offsets, MPI_CHAR,
                  &local_lines, num_elems_to_mod, MPI_CHAR, root_id,
@@ -600,12 +610,14 @@ void BLOCKED_Matrix<double>::write_to_csv_file(const std::string& filename, ILP_
         line_begin_size[i] = index;
         line_others_offset[i] = mas_offsets[i * 4 + of::bg];
       }
-      /* for (int i = 0; i < num_lines; ++i)
+      #ifdef 0
+      for (int i = 0; i < num_lines; ++i)
         printf("Line: %s[end]\n\n", lines_read[i].c_str());
 
       for (int i = 0; i < num_lines * 4; i += 4)
         printf("From %lld through %lld to %lld\n", mas_offsets[i + of::bg],
-               mas_offsets[i + of::md], mas_offsets[i + of::en]); */
+               mas_offsets[i + of::md], mas_offsets[i + of::en]);
+      #endif
       vector_string = vector_to_string(lines_read);
       // printf("\n%s\n", vector_string.c_str());
 
@@ -664,11 +676,13 @@ void BLOCKED_Matrix<double>::write_to_csv_file(const std::string& filename, ILP_
               send_offset - (string_offsets[i - 1] + string_counts[i - 1]);
       }
     }
-    /* for (int i = 0; rank == root_id && i < size; ++i) {
+    #ifdef 0
+    for (int i = 0; rank == root_id && i < size; ++i) {
       printf("%d: Send %d chars from %d, and %d offsets from %d\n", rank,
              string_counts[i], string_offsets[i], offset_counts[i],
              offset_offsets[i]);
-    } */
+    }
+    #endif
     long long local_offsets[offset_counts[rank]];
 
     MPI_Bcast(&string_counts, size, MPI_LONG_LONG, root_id, MPI_COMM_WORLD);
@@ -682,9 +696,11 @@ void BLOCKED_Matrix<double>::write_to_csv_file(const std::string& filename, ILP_
                  &local_offsets, num_lines * 4, MPI_LONG_LONG, root_id,
                  MPI_COMM_WORLD);
 
-    /* for (int i = 0; i < num_lines_to_mod * 4; i += 4)
+    #ifdef 0
+    for (int i = 0; i < num_lines_to_mod * 4; i += 4)
       printf("Offset %d: %lld + %lld\n", rank, global_offset,
-             local_offsets[i + of::bg]); */
+             local_offsets[i + of::bg]);
+    #endif
 
     MPI_Scatterv(mas_char_string, string_counts, string_offsets, MPI_CHAR,
                  &local_lines, num_elems_to_mod, MPI_CHAR, root_id,
@@ -787,38 +803,49 @@ void BLOCKED_Matrix<double>::write_to_csv_file(const std::string& filename, ILP_
   }
   MPI_File_close(&file);
 }
+*/
 
 // --------------------------------------------- FUNCTIONS -------------------------------------------
 
-
-std::pair<std::vector<double>, BLOCKED_Matrix<COMPLEX>> Hermit_Lanzcos(const BLOCKED_Matrix<COMPLEX>& M) {
+// DON'T WORK WITH 2 PROCESS
+std::pair<std::vector<double>, BLOCKED_Matrix<COMPLEX>> Hermit_Lanczos(const BLOCKED_Matrix<COMPLEX>& M) {
     char jobz = 'V';
     char range = 'A';
     char uplo = 'U';
 
     BLOCKED_Matrix<COMPLEX> A(M);
-    A.show();
 
     ILP_TYPE n = A.n();
     ILP_TYPE iONE = 1;
     ILP_TYPE iMINUS = -1;
     ILP_TYPE iZERO = 0;
     ILP_TYPE info;
-    ILP_TYPE lwork = (A.local_n() + A.local_m() + A.NB()) * A.NB() + A.n() * 3 + A.n() * A.n();
-    ILP_TYPE lrwork = 2 * n + 2 *n - 2;
+    //ILP_TYPE lwork = 2 * (A.local_n() + A.local_m() + A.NB()) * A.NB() + A.n() * 3 + A.n() * A.n();
+    //ILP_TYPE lwork = n + std::max(std::max(A.MB()*(A.local_n() + 1), 3 * A.MB(), );
+    //ILP_TYPE lrwork = 2 * n + std::max(2 *n - 2, 1);
+    //ILP_TYPE lrwork = 1 + 2 * n + 7 * n + 3 * A.local_n() * A.local_m();
+    //ILP_TYPE liwork = 7 * n + 8 * A.local_m() + 2;
 
     BLOCKED_Matrix<COMPLEX> Z(A.ctxt(), GE, A.n(), A.m(), A.NB(), A.MB());
     std::vector<double>w(A.n());
-    std::vector<COMPLEX>work(lwork);
-    std::vector<double>rwork(lrwork);
-    pzheev(&jobz, &uplo, &n, A.data(), &iONE, &iONE,
+    std::vector<COMPLEX>work(1);
+    std::vector<double>rwork(1);
+    std::vector<ILP_TYPE>iwork(1);
+    pzheevd(&jobz, &uplo, &n, A.data(), &iONE, &iONE,
         A.desc().data(), w.data(), Z.data(), &iONE, &iONE,
-        Z.desc().data(), work.data(), &lwork, rwork.data(), &lrwork, &info);
+        Z.desc().data(), work.data(), &iMINUS, rwork.data(), &iMINUS, iwork.data(), &iMINUS, &info);
+    ILP_TYPE lwork = work[0].real();
+    ILP_TYPE lrwork = rwork[0];
+    ILP_TYPE liwork = iwork[0];
+    work.resize(lwork);
+    rwork.resize(lrwork);
+    iwork.resize(liwork);
+    pzheevd(&jobz, &uplo, &n, A.data(), &iONE, &iONE,
+        A.desc().data(), w.data(), Z.data(), &iONE, &iONE,
+        Z.desc().data(), work.data(), &lwork, rwork.data(), &lrwork, iwork.data(), &liwork, &info);
 
-    std::cout << info << std::endl;
     return std::make_pair(w, Z);
 }
-
 
 } // namespace QComputations
 

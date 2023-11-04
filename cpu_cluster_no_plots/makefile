@@ -1,12 +1,12 @@
 vpath %.cpp ../src
 vpath %.hpp ../src
-CC=mpiicpc
+CC=mpiicpx
 
-CFLAGS = -Werror -fopenmp -diag-disable=10441\
+CFLAGS = -Werror -fopenmp -qmkl=parallel \
 		 -I${MKL_INCLUDE_PATH} \
 		 -I${MPI_INCLUDE_PATH} \
 		 -DENABLE_MPI -DENABLE_CLUSTER
-LFLAGS = -Werror \
+LFLAGS = -Werror -qmkl=parallel \
 		 -lmkl_intel_lp64 \
 		 -lmkl_scalapack_lp64 -lmkl_intel_thread -lmkl_core -lmkl_blacs_intelmpi_lp64 \
 		 -lm -ldl \
@@ -24,9 +24,9 @@ prog:
 
 .cpp.o:
 ifeq (${is_lib},"YES")
-	${CC} -g -c -fPIC $< ${CFLAGS} -o $@
+	${CC} ${CFLAGS} -c -fPIC $< -o $@
 else
-	${CC} -g -c $< ${CFLAGS} -o $@
+	${CC} -c $< ${CFLAGS} -o $@
 endif
 
 main.o: matrix.hpp cavity_state.hpp graph.hpp big_uint.hpp state.hpp quantum_operators.hpp hamiltonian.hpp additional_operators.hpp mpi_functions.hpp functions.hpp dynamic.hpp blocked_matrix.hpp blocked_vector.hpp hamiltonian_blocked.hpp test.hpp config.hpp csr_matrix.hpp matplotlibcpp.hpp

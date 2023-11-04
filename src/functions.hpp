@@ -87,7 +87,7 @@ std::vector<size_t> make_rank_map(size_t size, int rank, int world_size, size_t&
 // ------------------------------- template functions --------------------------------------
 
 template<typename T>
-T read_number(const std::string& str, size_t& start_index = 0) {
+T read_number(const std::string& str, size_t& start_index) {
     T n = T(0);
     size_t index = start_index;
 

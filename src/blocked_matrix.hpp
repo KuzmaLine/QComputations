@@ -86,7 +86,7 @@ class BLOCKED_Matrix {
         const T operator()(size_t i, size_t j) const { return local_matrix_(i, j); }
 
         void print_distributed(const std::string& name) const;
-        void show(ILP_TYPE root_id = mpi::ROOT_ID, size_t width = QConfig::instance().width()) const;
+        void show(size_t width = QConfig::instance().width(), ILP_TYPE root_id = mpi::ROOT_ID) const;
 
         void write_to_csv_file(const std::string& filename, ILP_TYPE row = 0, ILP_TYPE col = 0,
                                ILP_TYPE num_accuracy = QConfig::instance().csv_num_accuracy(),
@@ -335,6 +335,7 @@ BLOCKED_Matrix<T>::BLOCKED_Matrix(ILP_TYPE ctxt, MATRIX_TYPE type,
     ILP_TYPE iZERO = 0;
     ILP_TYPE proc_rows, proc_cols, myrow, mycol;
     mpi::blacs_gridinfo(ctxt_, proc_rows, proc_cols, myrow, mycol);
+
     if (NB == 0) {
         NB_ = n / proc_rows;
     }
@@ -342,7 +343,6 @@ BLOCKED_Matrix<T>::BLOCKED_Matrix(ILP_TYPE ctxt, MATRIX_TYPE type,
     if (MB == 0) {
         MB_ = m / proc_cols;
     }
-
 
     if (NB_ == 0) {
         NB_ = 1;
@@ -392,7 +392,7 @@ std::vector<ILP_TYPE> BLOCKED_Matrix<T>::desc() const {
 }
 
 template<typename T>
-void BLOCKED_Matrix<T>::show(ILP_TYPE root_id, size_t width) const {
+void BLOCKED_Matrix<T>::show(size_t width, ILP_TYPE root_id) const {
     ILP_TYPE rank;
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 
@@ -432,7 +432,7 @@ void BLOCKED_Matrix<T>::show(ILP_TYPE root_id, size_t width) const {
 
 // ------------------------------------------ FUNCTIONS ------------------------------------
 
-std::pair<std::vector<double>, BLOCKED_Matrix<COMPLEX>> Hermit_Lanzcos(const BLOCKED_Matrix<COMPLEX>& A);
+std::pair<std::vector<double>, BLOCKED_Matrix<COMPLEX>> Hermit_Lanczos(const BLOCKED_Matrix<COMPLEX>& A);
 
 } // namespace QComputations
 

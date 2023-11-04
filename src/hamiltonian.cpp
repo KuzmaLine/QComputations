@@ -317,7 +317,7 @@ H_TC::H_TC(const State& init_state) {
     basis_ = H.get_basis();
     grid_ = init_state;
     H_ = H.get_matrix();
-    /*
+
     auto size_m_ = std::pow(2, init_state.m(0));
     assert(init_state.cavities_count() == 1);
     State_Graph graph(init_state[0], (std::abs(init_state.get_leak_gamma(0)) >= config::eps) ? true : false, false);
@@ -456,7 +456,7 @@ H_JC::H_JC(const State& grid) {
         size_t i = 0;
     //for (const auto& state_from: basis_) {
         for (const auto& state_to: basis_) {
-            /*
+            #ifdef 0
             //std::vector<COMPLEX> col(size, 0);
             H_[i][j] += self_energy_atom(state_from, state_to);
             //std::cout << "Energy_atom PASSED\n";
@@ -467,9 +467,8 @@ H_JC::H_JC(const State& grid) {
             H_[i][j] += de_excitation_atom(state_from, state_to);
             //std::cout << "de_excitation_atom PASSED\n";
             H_[i][j] += photon_exchange(state_from, state_to, grid);
-            */
+            #endif
 
-/*
             H_[i][j] += TCH_ADD(state_from, state_to, grid);
             //if (rank == 0)
             //std::cout << rank << " " << i << " " << j << " " << H_[i][j] << ": " << state_from.to_string() << " -> " << state_to.to_string() << std::endl;
@@ -572,7 +571,7 @@ H_TC::H_TC(const State& grid) {
         size_t i = 0;
     //for (const auto& state_from: basis_) {
         for (const auto& state_to: basis_) {
-            /*
+            #ifdef 0
             //std::vector<COMPLEX> col(size, 0);
             H_[i][j] += self_energy_atom(state_from, state_to);
             //std::cout << "Energy_atom PASSED\n";
@@ -583,9 +582,8 @@ H_TC::H_TC(const State& grid) {
             H_[i][j] += de_excitation_atom(state_from, state_to);
             //std::cout << "de_excitation_atom PASSED\n";
             H_[i][j] += photon_exchange(state_from, state_to, grid);
-            */
+            #endif
 
-/*
             H_[i][j] += TCH_ADD(state_from, state_to, grid);
             //if (rank == 0)
             //std::cout << rank << " " << i << " " << j << " " << H_[i][j] << ": " << state_from.to_string() << " -> " << state_to.to_string() << std::endl;
@@ -688,7 +686,7 @@ H_TCH::H_TCH(const State& grid) {
         size_t i = 0;
     //for (const auto& state_from: basis_) {
         for (const auto& state_to: basis_) {
-            /*
+            #ifdef 0
             //std::vector<COMPLEX> col(size, 0);
             H_[i][j] += self_energy_atom(state_from, state_to);
             //std::cout << "Energy_atom PASSED\n";
@@ -699,9 +697,8 @@ H_TCH::H_TCH(const State& grid) {
             H_[i][j] += de_excitation_atom(state_from, state_to);
             //std::cout << "de_excitation_atom PASSED\n";
             H_[i][j] += photon_exchange(state_from, state_to, grid);
-            */
+            #endif
 
-/*
             H_[i][j] += TCH_ADD(state_from, state_to, grid);
             //if (rank == 0)
             //std::cout << rank << " " << i << " " << j << " " << H_[i][j] << ": " << state_from.to_string() << " -> " << state_to.to_string() << std::endl;

@@ -13,7 +13,7 @@ int main(int argc, char** argv) {
     QConfig::instance().set_width(30);
 
     size_t grid_size = 1;
-    size_t atoms_num = 2;
+    size_t atoms_num = 3;
     std::vector<size_t> grid_config;
 
     for (size_t i = 0; i < grid_size; i++) {
@@ -25,7 +25,9 @@ int main(int argc, char** argv) {
     }
 
     State grid(grid_config);
-    grid.set_qubit(0, 0, 1);
+    //grid.set_qubit(0, 0, 1);
+    //grid.set_qubit(0, 1, 1);
+    grid.set_n(1);
 
     int ctxt;
     mpi::init_grid(ctxt);
@@ -38,9 +40,10 @@ int main(int argc, char** argv) {
     std::vector<COMPLEX> init_state(H.size(), 0);
     init_state[grid.get_index(H.get_basis())] = COMPLEX(1, 0);
 
-    auto time_vec = linspace(0, 16000, 16000);
+    auto time_vec = linspace(0, 1000, 2000);
 
     auto probs = Evolution::schrodinger(init_state, H, time_vec);
+    //auto probs = Evolution::quantum_master_equation(init_state, H, time_vec);
 
     if (rank == 0) {
         matplotlib::make_figure(1920, 1080);
@@ -49,7 +52,7 @@ int main(int argc, char** argv) {
     matplotlib::probs_to_plot(probs, time_vec, H.get_basis());
     if (rank == 0) {
         matplotlib::grid();
-        matplotlib::show(false);
+        matplotlib::show();
     }
 
     MPI_Finalize();

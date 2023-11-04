@@ -364,7 +364,7 @@ BigUInt::NumType BigUInt::get_bit(size_t id) const {
     auto num_id = id / BITS_COUNT;
     id %= BITS_COUNT;
 
-    return ((num_[num_id] & (NumType(1) << id) == 0) ? 0 : 1);
+    return (((num_[num_id] & (NumType(1) << id)) == 0) ? 0 : 1);
 }
 
 BigUInt BigUInt::operator&(const BigUInt& num) const {

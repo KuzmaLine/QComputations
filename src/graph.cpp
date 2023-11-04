@@ -5,6 +5,10 @@
 
 namespace QComputations {
 
+bool is_in_basis(const std::set<State>& basis, const State& state) {
+    return std::find(basis.begin(), basis.end(), state) != basis.end();
+}
+
 State_Graph::State_Graph(const State& init_state) {
     basis_.insert(init_state);
     std::queue<State> state_queue_;

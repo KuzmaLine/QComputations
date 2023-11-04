@@ -26,21 +26,24 @@ class BLOCKED_Hamiltonian {
         State get_grid() const { return grid_; }
         ILP_TYPE ctxt() const { return H_.ctxt(); }
         std::set<State> get_basis() const { return basis_; }
-        void eigen() {
+
+// !!!!!!!!  MKL не идеален. На 2 процессорах параллельное спектральное разложение не работает. !!!!!
+// !!!!!!!!  Выдаёт невозможную ошибку !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        void virtual eigen() {
             if (!is_calculated_eigen_) {
-                auto p = Hermit_Lanzcos(H_);
+                auto p = Hermit_Lanczos(H_);
                 eigenvalues_ = p.first;
                 eigenvectors_ = p.second;
                 is_calculated_eigen_ = true;
             }
         }
 
-        std::vector<double> eigenvalues() {
+        std::vector<double> virtual eigenvalues() {
             this->eigen();
             return eigenvalues_;
         }
 
-        BLOCKED_Matrix<COMPLEX> eigenvectors() {
+        BLOCKED_Matrix<COMPLEX> virtual eigenvectors() {
             this->eigen();
             return eigenvectors_;
         }

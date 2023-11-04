@@ -60,7 +60,7 @@ int main(int argc, char** argv) {
     H.show();
 
     auto eigenvalues = H.eigenvalues();
-
+    //std::vector<double> eigenvalues = {1, 2};
     auto periods = eigenvalues;
 
     if (rank == mpi::ROOT_ID) std::cout << "EIGEN: " << eigenvalues << std::endl;
@@ -134,6 +134,7 @@ int main(int argc, char** argv) {
     auto time_vec = linspace(0, 1000, 2000);
 
     auto probs = Evolution::quantum_master_equation(init_state, H, time_vec);
+    //auto probs = Evolution::schrodinger(init_state, H, time_vec);
     
     //probs.show();
     //probs.write_to_csv_file("probs.csv");
