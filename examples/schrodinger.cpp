@@ -42,6 +42,8 @@ int main(int argc, char** argv) {
 
     auto time_vec = linspace(0, 1000, 2000);
 
+    std::cout << "0\u2082\u2083\u29FD" << std::endl;
+
     auto probs = Evolution::schrodinger(init_state, H, time_vec);
     //auto probs = Evolution::quantum_master_equation(init_state, H, time_vec);
 

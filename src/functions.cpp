@@ -5,6 +5,7 @@
 #include <iostream>
 #include "config.hpp"
 #include <cassert>
+#include <regexp.h>
 
 extern "C"
 {
@@ -78,6 +79,10 @@ bool is_zero(COMPLEX a, double eps) {
 
 bool is_digit(char c) {
     return '0' <= c and c <= '9';
+}
+
+std::string make_state_regexp_pattern(const std::string& format) {
+    const regex r(R"$N
 }
 
 void show_basis(const std::set<Cavity_State>& basis) {

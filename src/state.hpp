@@ -14,7 +14,32 @@ namespace {
     std::complex<double> gamma(double amplitude, double length, double w_ph) {
         return amplitude * std::exp(std::complex<double>(0, -1) * length * w_ph / QConfig::instance().h());
     }
+
+    const std::vector<std::string> subscript_numbers = {
+        "\u2080", "\u2081", "\u2082", "\u2083", "\u2084", "\u2085", "\u2086",
+        "\u2087", "\u2088", "\u2089"};
 }
+
+/*
+Инструкция к строковому формату.
+$N - место задания фотонов
+$M - место задания атомов
+$W - место отображения частот перехода с 1 уровня на другой, если QConfig::instance().is_freq_display() == true
+$! - разделитель, между состояниями фотонов и атомами (смысл см. в примерах)
+
+Пример:
+Для формата |$N>$W$!|$M> примером состояние будет
+|0>01|1>12|2>02|0112>, то есть,
+0 фотонов для переход с 0 уровня на 1
+1 -''- с 1 на 2
+2 -''- с 0 на 2
+и состояния атомов 0112
+
+$W можно опустить, если QConfig::instance().is_freq_display() == false
+
+В последствии метод to_string() числа переходов с уровня на уровень переделает их в нижние индексы.
+Метод find_states_in_string() - будет согласно формату искать в строке состояния.
+*/
 
 class State {
     using COMPLEX = std::complex<double>;
@@ -27,7 +52,9 @@ class State {
         State(const Cavity_State& state);
         State(const State& state) = default;
         State(const std::vector<size_t>& grid_config, E_LEVEL e_levels_count = 2);
-        explicit State(const std::string&, const std::string& format = "|N;M>");
+        explicit State(const std::string&, const std::string& format = QConfig::instance().state_format(),
+                       const std::string& del = QConfig::instance().state_delimeter(),
+                       bool is_freq_display = QConfig::instance().is_freq_display());
 
         size_t x_size() const { return x_size_; }
         size_t y_size() const { return y_size_; }

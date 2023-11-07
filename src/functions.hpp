@@ -84,6 +84,8 @@ double norm(const std::vector<COMPLEX>& v);
 
 std::vector<size_t> make_rank_map(size_t size, int rank, int world_size, size_t& start_col);
 
+std::string make_state_regexp_pattern(const std::string& format);
+
 // ------------------------------- template functions --------------------------------------
 
 template<typename T>

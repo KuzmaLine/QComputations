@@ -1,7 +1,6 @@
 #include "state.hpp"
 #include "functions.hpp"
 
-
 namespace QComputations {
 
 namespace {
@@ -49,7 +48,10 @@ size_t State::hash() const {
 
 
 // REWRITE TO REGEXP
-State::State(const std::string& grid_state, const std::string& format) : waveguides_(C_STYLE, 0, 0, std::make_pair(QConfig::instance().waveguides_amplitude(), QConfig::instance().waveguides_length())) {
+State::State(const std::string& grid_state, const std::string& format,
+             const std::string& del, bool is_freq_display) : waveguides_(C_STYLE, 0, 0,
+                                                                        std::make_pair(QConfig::instance().waveguides_amplitude(),
+                                                                        QConfig::instance().waveguides_length())) {
     size_t format_index = 0;
     size_t left_length = 0, middle_length = 0, right_length = 0;
     while (format[format_index] != 'N') {
