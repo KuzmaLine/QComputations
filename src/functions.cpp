@@ -5,7 +5,7 @@
 #include <iostream>
 #include "config.hpp"
 #include <cassert>
-#include <regexp.h>
+#include <regex>
 
 extern "C"
 {
@@ -81,8 +81,18 @@ bool is_digit(char c) {
     return '0' <= c and c <= '9';
 }
 
-std::string make_state_regexp_pattern(const std::string& format) {
-    const regex r(R"$N
+std::string make_state_regex_pattern(const std::string& format, bool is_freq_display, bool is_sequence) {
+    std::regex format_regex("($[N,W,M])");
+
+    auto regex_begin = std::sregex_iterator(format.begin(), format.end(), format_regex);
+    auto regex_end = std::sregex_iterator();
+
+    for (std::sregex_iterator i = regex_begin; i != regex_end; ++i) {
+        std::smatch match = *i;
+        std::cout << match.str() << std::endl;
+    }
+
+    return regex_begin->str();
 }
 
 void show_basis(const std::set<Cavity_State>& basis) {

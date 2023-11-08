@@ -1,8 +1,34 @@
 #include "/home/kuzmaline/Quantum/diploma/src/QComputations_CPU_CLUSTER.hpp"
 #include <iostream>
+#include <regex>
 #include <complex>
 
 using COMPLEX = std::complex<double>;
+
+std::string make_state_regex_pattern(const std::string& format, bool is_freq_display, bool is_sequence) {
+    std::string res;
+    std::regex format_regex("(\\$[N,W,\\!,M])");
+
+    auto regex_begin = std::sregex_iterator(format.begin(), format.end(), format_regex);
+    auto regex_end = std::sregex_iterator();
+
+    std::smatch match;
+    bool is_first = true;
+    for (std::sregex_iterator i = regex_begin; i != regex_end; ++i) {
+        match = *i;
+        if (match.str() == PHOTONS_STR) {
+            if (is_first) {
+                is_first = false;
+                continue;
+            }
+        }
+        std::cout << match.str(0) << " # " << match.prefix() << std::endl;
+    }
+
+    std::cout << match.suffix() << std::endl;
+
+    return regex_begin->str();
+}
 
 int main(int argc, char** argv) {
     using namespace QComputations;
@@ -43,7 +69,10 @@ int main(int argc, char** argv) {
     auto time_vec = linspace(0, 1000, 2000);
 
     std::cout << "0\u2082\u2083\u29FD" << std::endl;
+    std::cout << make_state_regex_pattern(QConfig::instance().state_format(), true, false) << std::endl;
 
+    MPI_Finalize();
+    return 0;
     auto probs = Evolution::schrodinger(init_state, H, time_vec);
     //auto probs = Evolution::quantum_master_equation(init_state, H, time_vec);
 

@@ -84,7 +84,9 @@ double norm(const std::vector<COMPLEX>& v);
 
 std::vector<size_t> make_rank_map(size_t size, int rank, int world_size, size_t& start_col);
 
-std::string make_state_regexp_pattern(const std::string& format);
+//std::string make_state_regex_pattern(const std::string& format,
+//                                     bool is_freq_display = QConfig::instance().is_freq_display(),
+//                                     bool is_sequence = QConfig::instance().is_sequence_state());
 
 // ------------------------------- template functions --------------------------------------
 

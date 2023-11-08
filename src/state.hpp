@@ -20,6 +20,11 @@ namespace {
         "\u2087", "\u2088", "\u2089"};
 }
 
+const std::string PHOTONS_STR = "$N";
+const std::string ATOMS_STR = "$M";
+const std::string FREQ_STR = "$W";
+const std::string DEL_STR = "$!";
+
 /*
 Инструкция к строковому формату.
 $N - место задания фотонов
