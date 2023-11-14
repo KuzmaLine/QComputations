@@ -1,5 +1,6 @@
 #include "state.hpp"
 #include "functions.hpp"
+#include <regex>
 
 namespace QComputations {
 
@@ -52,6 +53,31 @@ State::State(const std::string& grid_state, const std::string& format,
              const std::string& del, bool is_freq_display) : waveguides_(C_STYLE, 0, 0,
                                                                         std::make_pair(QConfig::instance().waveguides_amplitude(),
                                                                         QConfig::instance().waveguides_length())) {
+    std::regex format_reg("\\$[N,W,!,M]");
+    std::vector<std::string> prefixes;
+    std::vector<std::string> obj_sequence;
+
+    auto regex_begin = std::sregex_iterator(format.begin(), format.end(), format_regex);
+    auto regex_end = std::sregex_iterator();
+
+    std::smatch match;
+    bool is_sep = false;
+    for (std::sregex_iterator i = regex_begin; i != regex_end; i++) {
+        match = *i;
+        if (is_sep) {
+            is_sep = false;
+            prefixes[prefixes.size() - 1] += match.prefix();
+            obj_sequence.emplace_back(match.str())
+        } else {
+            if (QConfig::is_sequence_state() and match.str() == "$!") {
+                is_sep = true;
+                prefixes.emplace_back(match.prefix())
+            } else {
+                prefixes.emplace_back(match.prefix())
+                obj_sequence.emplace_back(match.str())
+            }
+        }
+    }
     size_t format_index = 0;
     size_t left_length = 0, middle_length = 0, right_length = 0;
     while (format[format_index] != 'N') {
