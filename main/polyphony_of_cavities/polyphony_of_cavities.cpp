@@ -13,10 +13,14 @@ int main(int argc, char** argv) {
     QConfig::instance().set_width(30);
     //QConfig::instance().set_g(0.005);
 
-    size_t grid_size = 2;
+    size_t grid_size = 4;
     size_t atoms_num = 2;
-    std::vector<size_t> grid_config;
+    int second_pol = 3;
+    std::vector<size_t> grid_config(grid_size, 0);
+    grid_config[0] = atoms_num;
+    grid_config[second_pol] = atoms_num;
 
+    /*
     for (size_t i = 0; i < grid_size; i++) {
         if (i == 0 or i == grid_size - 1) {
             grid_config.emplace_back(atoms_num);
@@ -24,12 +28,13 @@ int main(int argc, char** argv) {
             grid_config.emplace_back(0);
         }
     }
-
+    */
     State grid(grid_config);
-    //grid.reshape(2, 1, 1);
-    grid.set_waveguide(0.0005, 1);
+    grid.reshape(2, 2, 1);
+    grid.set_waveguide(0.0025/std::sqrt(2), 1);
     //grid.set_waveguide(0, 1);
     grid.set_qubit(0, 0, 1);
+    grid.set_qubit(0, 1, 1);
     //grid.set_qubit(0, 1, 1);
     //grid.set_qubit(0, 2, 0);
     //grid.set_n(2);
@@ -39,11 +44,11 @@ int main(int argc, char** argv) {
     //grid.set_n(1, 0);
     //grid.set_qubit(1, 0, 1);
 
-    State grid_copy(grid);
-    grid_copy.set_qubit(0, 0, 0);
+    //State grid_copy(grid);
+    //grid_copy.set_qubit(0, 0, 0);
     //grid_copy.set_qubit(0, 1, 0);
     //grid_copy.set_qubit(0, 2, 0);
-    grid_copy.set_qubit(grid_config.size() - 1, 0, 1);
+    //grid_copy.set_qubit(1, 0, 1);
     //grid_copy.set_qubit(grid_config.size() - 1, 1, 1);
     //grid_copy.set_qubit(grid_config.size() - 1, 2, 1);
 
@@ -60,12 +65,12 @@ int main(int argc, char** argv) {
     std::vector<COMPLEX> init_state(H.size(), 0);
     //std::vector<COMPLEX> target_state(H.size(), 0);
     init_state[grid.get_index(H.get_basis())] = COMPLEX(1, 0);
-    size_t target_index = grid_copy.get_index(H.get_basis());
+    //size_t target_index = grid_copy.get_index(H.get_basis());
     //target_state[grid_copy.get_index(H.get_basis())] = COMPLEX(1, 0);
 
-    auto time_vec = linspace(0, 16000, 16000);
+    auto time_vec = linspace(0, 32000, 32000);
 
-    auto probs = Evolution::quantum_master_equation(init_state, H, time_vec);
+    auto probs = Evolution::schrodinger(init_state, H, time_vec);
     
     //probs.show();
     //probs.write_to_csv_file("probs.csv");
@@ -73,7 +78,7 @@ int main(int argc, char** argv) {
     double max_prob = 0;
     size_t t_max = 0;
     QConfig::instance().set_eps(1e-1);
-    for (size_t t = 0; t < time_vec.size(); t++) {
+    /**    for (size_t t = 0; t < time_vec.size(); t++) {
         auto prob = probs.get(target_index, t);
         //if (rank == mpi::ROOT_ID and time_vec[t] >= 9300 and time_vec[t] <= 9450) {
         //    usleep(1000);
@@ -95,6 +100,7 @@ int main(int argc, char** argv) {
             }
         }
     }
+    */
 
     if (rank == 0) {
         matplotlib::make_figure(1920, 1080);
@@ -123,7 +129,7 @@ int main(int argc, char** argv) {
     }
 
     //matplotlib::probs_to_plot(probs, time_vec, H.get_basis());
-    matplotlib::probs_in_cavity_to_plot(probs, time_vec, H.get_basis(), grid_config.size() - 1);
+    matplotlib::probs_in_cavity_to_plot(probs, time_vec, H.get_basis(), second_pol);
     if (rank == 0) {
         matplotlib::grid();
         matplotlib::show();

@@ -1,6 +1,4 @@
-all: $1
-
-MPIICC = mpiicpx
+MPICC = mpiicpx
 
 polyphony_of_cavities:
 	 ${MPICC} -I${MKL_INCLUDE_PATH} -I${MPI_INCLUDE_PATH} -I/opt/intel/oneapi/intelpython/python3.9/lib/python3.9/site-packages/numpy/core/include \

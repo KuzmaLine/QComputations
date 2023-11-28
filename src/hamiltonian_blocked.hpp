@@ -49,7 +49,7 @@ class BLOCKED_Hamiltonian {
         }
 
         //COMPLEX operator() (size_t i, size_t j) const { return H_(i, j); }
-        void show(ILP_TYPE root_id = mpi::ROOT_ID, size_t width = QConfig::instance().width()) const { H_.show(root_id, width); }
+        void show(size_t width = QConfig::instance().width(), ILP_TYPE root_id = mpi::ROOT_ID) const { H_.show(width, root_id); }
         void print_distributed(const std::string& name) const { H_.print_distributed(name); }
         Matrix<COMPLEX> get_local_matrix() const { return H_.get_local_matrix(); }
         BLOCKED_Matrix<COMPLEX> get_blocked_matrix() const { return H_; }
@@ -82,6 +82,11 @@ class BLOCKED_H_by_func: public BLOCKED_Hamiltonian {
         explicit BLOCKED_H_by_func(ILP_TYPE ctxt, size_t n, std::function<COMPLEX(size_t, size_t)> func);
     private:
         std::function<COMPLEX(size_t, size_t)> func_;
+};
+
+class BLOCKED_H_TCH_EXC: BLOCKED_Hamiltonian {
+    public:
+        explicit BLOCKED_H_TCH_EXC(ILP_TYPE ctxt, const EXC_State& state);
 };
 
 } // namespace QComputations

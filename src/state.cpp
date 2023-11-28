@@ -53,6 +53,7 @@ State::State(const std::string& grid_state, const std::string& format,
              const std::string& del, bool is_freq_display) : waveguides_(C_STYLE, 0, 0,
                                                                         std::make_pair(QConfig::instance().waveguides_amplitude(),
                                                                         QConfig::instance().waveguides_length())) {
+    /*
     std::regex format_reg("\\$[N,W,!,M]");
     std::vector<std::string> prefixes;
     std::vector<std::string> obj_sequence;
@@ -78,6 +79,7 @@ State::State(const std::string& grid_state, const std::string& format,
             }
         }
     }
+    */
     size_t format_index = 0;
     size_t left_length = 0, middle_length = 0, right_length = 0;
     while (format[format_index] != 'N') {
