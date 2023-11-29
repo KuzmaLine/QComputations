@@ -158,17 +158,16 @@ int main(int argc, char** argv) {
         }
     }
 
-    /*
     State grid(grid_config);
-    //grid.set_qubit(0, 0, 1);
+    grid.set_qubit(0, 0, 1);
     //grid.set_qubit(0, 1, 1);
     grid.set_n(1);
 
     int ctxt;
     mpi::init_grid(ctxt);
     BLOCKED_H_TCH H(ctxt, grid);
-    */
 
+    /*
     double g_tun = 0.01;
     double g_cov = 0.05;
     double T = 2;
@@ -198,6 +197,7 @@ int main(int argc, char** argv) {
     //st.set_leak_for_cavity(0, 0.01);
     H.set_basis(basis);
     H.set_grid(st);
+    */
     if (rank == 0) { show_basis(H.get_basis()); }
 
     H.show();
@@ -205,8 +205,9 @@ int main(int argc, char** argv) {
     std::vector<COMPLEX> init_state(H.size(), 0);
     init_state[1] = COMPLEX(1, 0);
 
-    auto time_vec = linspace(0, 1000, 2000);
+    auto time_vec = linspace(0, 1000, 200000);
 
+    H.print_distributed("H_TCH");
     /*
     QConfig::instance().set_state_format("|$N$!;$M>");
     std::cout << "0\u2082\u2083\u29FD" << std::endl;

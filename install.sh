@@ -1,6 +1,11 @@
 #!/usr/bin/sh
 
-./install_single.sh $1
-./install_single_no_plots.sh $1
-./install_cpu_cluster.sh $1
-./install_cpu_cluster_no_plots.sh $1
+cd cpu_cluster
+cmake -DCMAKE_CXX_COMPILER=mpiicpx -B .
+make -j4 -B
+sudo mv ./*.so $1/.
+
+cd ../single
+cmake -DCMAKE_CXX_COMPILER=icpx -B .
+make -j4 -B
+sudo mv ./*.so $1/.
