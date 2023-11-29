@@ -143,9 +143,11 @@ int main(int argc, char** argv) {
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
     MPI_Comm_size(MPI_COMM_WORLD, &world_size);
     QConfig::instance().set_width(30);
+    double h = QConfig::instance().h();
+    double w = QConfig::instance().w();
 
     size_t grid_size = 1;
-    size_t atoms_num = 3;
+    size_t atoms_num = 2;
     std::vector<size_t> grid_config;
 
     for (size_t i = 0; i < grid_size; i++) {
@@ -156,6 +158,7 @@ int main(int argc, char** argv) {
         }
     }
 
+    /*
     State grid(grid_config);
     //grid.set_qubit(0, 0, 1);
     //grid.set_qubit(0, 1, 1);
@@ -164,16 +167,47 @@ int main(int argc, char** argv) {
     int ctxt;
     mpi::init_grid(ctxt);
     BLOCKED_H_TCH H(ctxt, grid);
+    */
 
+    double g_tun = 0.01;
+    double g_cov = 0.05;
+    double T = 2;
+    double k = 1;
+    double n_mid = double(1) / (std::exp(h * w / (k * T)) - 1);
+    double new_g_cov = g_cov * std::sqrt(n_mid);
+    //Matrix<COMPLEX> H_m({{0, 0, 0, 0}, {0, h*w, g_tun, g_cov}, {0, g_tun, h*w, 0}, {0, g_cov, 0, h * w}});
+    Matrix<COMPLEX> H_m({{h*w*n_mid, new_g_cov, 0}, {new_g_cov, h * w * n_mid, g_tun}, {0, g_tun, h * w * n_mid}});
+    H_by_Matrix H(H_m);
+
+    State st(grid_config);
+    st.set_n(0);
+    st.set_qubit(0, 0, 1);
+    st.set_qubit(0, 1, 1);
+    std::set<State> basis;
+    basis.insert(st);
+    st.set_n(0);
+    st.set_qubit(0, 0, 1);
+    st.set_qubit(0, 1, 0);
+    basis.insert(st);
+    st.set_n(0);
+    st.set_qubit(0, 0, 0);
+    st.set_qubit(0, 1, 0);
+    basis.insert(st);
+    //st.set_n(0);
+    //basis.insert(st);
+    //st.set_leak_for_cavity(0, 0.01);
+    H.set_basis(basis);
+    H.set_grid(st);
     if (rank == 0) { show_basis(H.get_basis()); }
 
     H.show();
 
     std::vector<COMPLEX> init_state(H.size(), 0);
-    init_state[grid.get_index(H.get_basis())] = COMPLEX(1, 0);
+    init_state[1] = COMPLEX(1, 0);
 
     auto time_vec = linspace(0, 1000, 2000);
 
+    /*
     QConfig::instance().set_state_format("|$N$!;$M>");
     std::cout << "0\u2082\u2083\u29FD" << std::endl;
     std::cout << QConfig::instance().state_format() << std::endl;
@@ -195,6 +229,7 @@ int main(int argc, char** argv) {
 
     MPI_Finalize();
     return 0;
+    */
     auto probs = Evolution::schrodinger(init_state, H, time_vec);
     //auto probs = Evolution::quantum_master_equation(init_state, H, time_vec);
 
