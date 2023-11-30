@@ -338,10 +338,14 @@ BLOCKED_Matrix<T>::BLOCKED_Matrix(ILP_TYPE ctxt, MATRIX_TYPE type,
 
     if (NB == 0) {
         NB_ = n / proc_rows;
+    } else {
+        NB_ = NB;
     }
 
     if (MB == 0) {
         MB_ = m / proc_cols;
+    } else {
+        MB_ = MB;
     }
 
     if (NB_ == 0) {

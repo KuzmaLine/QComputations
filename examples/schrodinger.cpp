@@ -207,6 +207,7 @@ int main(int argc, char** argv) {
 
     auto time_vec = linspace(0, 1000, 200000);
 
+    std::cout << rank << ": " << H.get_blocked_matrix().desc() << std::endl;
     H.print_distributed("H_TCH");
     /*
     QConfig::instance().set_state_format("|$N$!;$M>");
