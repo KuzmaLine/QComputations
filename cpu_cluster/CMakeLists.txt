@@ -23,7 +23,7 @@ set(MPI_INCLUDE_DIRS "${ONEAPI_ROOT}/mpi/latest/include")
 set(MPI_LIBRARIES "${ONEAPI_ROOT}/mpi/latest/lib/release/libmpi.so")
 
 # Add source files to be compiled
-file(GLOB SOURCE_FILES "../src/*.cpp")
+file(GLOB SOURCE_FILES "../src/QComputations/*.cpp")
 
 # Function to create custom build targets for the given options
 function(create_build_target TARGET_NAME PYTHON_FLAG)

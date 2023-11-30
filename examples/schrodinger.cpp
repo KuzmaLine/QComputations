@@ -1,4 +1,4 @@
-#include "/home/kuzmaline/Quantum/diploma/src/QComputations_CPU_CLUSTER.hpp"
+#include "QComputations_CPU_CLUSTER.hpp"
 #include <iostream>
 #include <regex>
 #include <complex>
