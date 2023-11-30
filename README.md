@@ -24,31 +24,20 @@
 2. Intel OneApi DPCPP++ - wget https://registrationcenter-download.intel.com/akdlm/IRC_NAS/ebf5d9aa-17a7-46a4-b5df-ace004227c0e/l_dpcpp-cpp-compiler_p_2023.2.1.8_offline.sh
 3. Intel Python (Если требуются графики) - wget https://registrationcenter-download.intel.com/akdlm/IRC_NAS/03aae3a8-623a-47cf-9655-5dd8fcf86430/l_pythoni39_oneapi_p_2023.2.0.49422_offline.sh
 
-Перед компиляцией библиотеки необходимо установить пару переменных окружений.
-
-Для версии single:
-1. MKL_INCLUDE_PATH - директория с заголовочными файлами Intel MKL. (Установка - sudo apt install intel-mkl (Работает только для версий без графиков (4 не проверена), поэтому рекомендация установить OneApi))
-2. PYTHON_H_INCLUDE_PATH (Если требуются графики) - путь к директории, где лежит Python.h от вашего текущего интерпретатора Python 3.9
-3. PYTHON_LIB_PATH (Если требуются графики) - путь к директории с динамическими библиотеками от этого Python-а. В первую очередь libpython(что-то там).so
-
-Для версии cpu_cluster:
-1. Всё тоже самое, что и для 1 ядра.
-2. MPI_INCLUDE_PATH - директория с заголовочным файлом mpi.h (для версии с графиками обязательно Intel MPI + Intel Python)
+ПЕРЕД КОМПИЛЯЦИЕЙ НЕОБХОДИМО ПРОГНАТЬ ФАЙЛ setvars.sh ВНУТРИ ПАКЕТА OneApi С АРГУМЕНТОМ intel64!!! 
 
 -------------------------------------------------
 # Компиляция библиотек
 
-Заголовочные файлы лежат в папке src. Для 1-6 версий использовать заголовочные файлы QComputations.hpp, QComputations_NO_PLOTS.hpp, QComputations_CPU_CLUSTER.hpp, QComputations_CPU_CLUSTER_NO_PLOTS.hpp, QComputations_CUDA_CLUSTER.hpp, QComputations_CUDA_CLUSTER_NO_PLOTS.hpp соответственно.
+./install.sh "<путь, для заголовочных файлов>" "<путь для диманических библиотек>"
 
-install.sh запускает 6 (сейчас 4!) скрипта:
-1. Для одного ядра (install_single.sh) - libQComputations_single.so (Требуется Intel MKL + Python3.9)
-2. Для одного ядра без графиков (install_single_no_plots.sh) - libQComputations_single_no_plots.so (Требуется Intel MKL)
-3. Для cpu_cluster (install_cpu_cluster.sh) - libQComputations_mpi.so (Требуется Intel MKL, IntelMPI, IntelPython)
-4. Для cpu_cluster без графиков (install_cpu_cluster_no_plots.sh) - libQComputations_cpu_cluster_no_plots.so (Intel MKL, OpenMPI или IntelMPI)
+Сами библиотеки:
+    libQComputations_CPU_CLUSTER.so
+    libQComputations_CPU_CLUSTER_NO_PLOTS.so
+    libQComputations_SINGLE.so
+    libQComputations_SINGLE_NO_PLOTS.so
 
-Все эти библиотеки, с добавкой sudo, переносятся в директорию, указанную в качестве аргумента скрипту install.sh. (То есть, если написать ./install.sh "/usr/lib", то все библиотеки перенесутся в /usr/lib)
-
-Примеры их компиляций описаны в makefile в папке examples.
+Все эти библиотеки, с добавкой sudo, переносятся в директорию, указанную в качестве аргумента скрипту install.sh. (То есть, если написать ./install.sh "/usr/include" "/usr/lib", то заголовочные файлы перенесутся в "/usr/include", а все библиотеки перенесутся в /usr/lib)
 
 --------------------------------------------------
 # Описание структуры программы
