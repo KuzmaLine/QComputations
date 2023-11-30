@@ -2,25 +2,24 @@ cmake_minimum_required(VERSION 3.12)
 project(MyProject)
 
 # Set Intel OneAPI installation path
-set(ONEAPI_ROOT "/opt/intel/oneapi/")
 set(LIB_ROOT "/usr/lib/x86_64-linux-gnu/lib")
 
 # Set Intel MKL variables
-set(MKL_INCLUDE_DIRS "${ONEAPI_ROOT}/mkl/latest/include")
-set(MKL_LIBRARIES "${ONEAPI_ROOT}/mkl/latest/lib/intel64")
+set(MKL_INCLUDE_DIRS "$ENV{ONEAPI_ROOT}/mkl/latest/include")
+set(MKL_LIBRARIES "$ENV{ONEAPI_ROOT}/mkl/latest/lib/intel64")
 
 # Set BLACS and ScaLAPACK variables
-set(SCALAPACK_INCLUDE_DIRS "${ONEAPI_ROOT}/mkl/latest/include")
-set(SCALAPACK_LIBRARIES "${ONEAPI_ROOT}/mkl/latest/lib/intel64/libmkl_scalapack_lp64.so")
-set(BLACS_LIBRARIES "${ONEAPI_ROOT}/mkl/latest/lib/intel64/libmkl_blacs_intelmpi_lp64.so")
+set(SCALAPACK_INCLUDE_DIRS "$ENV{ONEAPI_ROOT}/mkl/latest/include")
+set(SCALAPACK_LIBRARIES "$ENV{ONEAPI_ROOT}/mkl/latest/lib/intel64/libmkl_scalapack_lp64.so")
+set(BLACS_LIBRARIES "$ENV{ONEAPI_ROOT}/mkl/latest/lib/intel64/libmkl_blacs_intelmpi_lp64.so")
 
 # Set Intel Python variables
-set(INTEL_PYTHON_INCLUDE_DIRS "${ONEAPI_ROOT}/intelpython/latest/include/python3.9" "${ONEAPI_ROOT}/intelpython/python3.9/lib/python3.9/site-packages/numpy/core/include")
-set(INTEL_PYTHON_LIBRARIES "${ONEAPI_ROOT}/intelpython/latest/lib")
+set(INTEL_PYTHON_INCLUDE_DIRS "$ENV{ONEAPI_ROOT}/intelpython/latest/include/python3.9" "$ENV{ONEAPI_ROOT}/intelpython/python3.9/lib/python3.9/site-packages/numpy/core/include")
+set(INTEL_PYTHON_LIBRARIES "$ENV{ONEAPI_ROOT}/intelpython/latest/lib")
 
 # Set Intel MPI variables
-set(MPI_INCLUDE_DIRS "${ONEAPI_ROOT}/mpi/latest/include")
-set(MPI_LIBRARIES "${ONEAPI_ROOT}/mpi/latest/lib/release/libmpi.so")
+set(MPI_INCLUDE_DIRS "$ENV{ONEAPI_ROOT}/mpi/latest/include")
+set(MPI_LIBRARIES "$ENV{ONEAPI_ROOT}/mpi/latest/lib/release/libmpi.so")
 
 # Add source files to be compiled
 file(GLOB SOURCE_FILES "../src/QComputations/*.cpp")

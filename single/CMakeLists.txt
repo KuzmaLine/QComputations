@@ -2,16 +2,15 @@ cmake_minimum_required(VERSION 3.12)
 project(MyProject)
 
 # Set Intel OneAPI installation path
-set(ONEAPI_ROOT "/opt/intel/oneapi/")
 set(LIB_ROOT "/usr/lib/x86_64-linux-gnu/lib")
 
 # Set Intel MKL variables
-set(MKL_INCLUDE_DIRS "${ONEAPI_ROOT}/mkl/latest/include")
-set(MKL_LIBRARIES "${ONEAPI_ROOT}/mkl/latest/lib/intel64")
+set(MKL_INCLUDE_DIRS "$ENV{ONEAPI_ROOT}/mkl/latest/include")
+set(MKL_LIBRARIES "$ENV{ONEAPI_ROOT}/mkl/latest/lib/intel64")
 
 # Set Intel Python variables
-set(INTEL_PYTHON_INCLUDE_DIRS "${ONEAPI_ROOT}/intelpython/latest/include/python3.9" "${ONEAPI_ROOT}/intelpython/python3.9/lib/python3.9/site-packages/numpy/core/include")
-set(INTEL_PYTHON_LIBRARIES "${ONEAPI_ROOT}/intelpython/latest/lib")
+set(INTEL_PYTHON_INCLUDE_DIRS "$ENV{ONEAPI_ROOT}/intelpython/latest/include/python3.9" "$ENV{ONEAPI_ROOT}/intelpython/python3.9/lib/python3.9/site-packages/numpy/core/include")
+set(INTEL_PYTHON_LIBRARIES "$ENV{ONEAPI_ROOT}/intelpython/latest/lib")
 
 # Add source files to be compiled
 file(GLOB SOURCE_FILES "../src/QComputations/*.cpp")
