@@ -17,8 +17,7 @@ hamiltonian_single_example:
 	-I${PYTHON_H_INCLUDE_PATH} -o hamiltonian_single_example hamiltonian_single_example.cpp -lQComputations_single
 
 schrodinger:
-	 ${MPICC} -I/opt/intel/oneapi/intelpython/python3.9/lib/python3.9/site-packages/numpy/core/include \
-	-I${PYTHON_H_INCLUDE_PATH} -o schrodinger schrodinger.cpp -ldl -lQComputations_CPU_CLUSTER
+	 ${MPICC} -o schrodinger schrodinger.cpp -ldl -lQComputations_CPU_CLUSTER
 
 exprtk_test:
 	 ${MPICC} -I${MKL_INCLUDE_PATH} -I${MPI_INCLUDE_PATH} -I/opt/intel/oneapi/intelpython/python3.9/lib/python3.9/site-packages/numpy/core/include \

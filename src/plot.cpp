@@ -1,15 +1,16 @@
 #include "plot.hpp"
 #include "functions.hpp"
 
+#ifdef ENABLE_MATPLOTLIB
+#include "matplotlibcpp.hpp"
+#endif
+
 namespace QComputations {
 
+#ifdef ENABLE_MATPLOTLIB
 namespace {
-#ifdef ENABLE_MATPLOTLIB
     namespace plt = matplotlibcpp;
-#endif
 }
-
-#ifdef ENABLE_MATPLOTLIB
 
 void matplotlib::probs_to_plot(const Evolution::Probs& probs, 
                                const std::vector<double>& time_vec,

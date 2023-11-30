@@ -5,11 +5,9 @@
 #include <map>
 #include <algorithm>
 
-#ifdef ENABLE_MATPLOTLIB
-
-#include "matplotlibcpp.hpp"
-
 namespace QComputations {
+
+#ifdef ENABLE_MATPLOTLIB
 
 // NEED REWORK
 
@@ -66,11 +64,7 @@ namespace matplotlib {
     void grid(bool is_enable = true);
 }
 
-} // namespace QComputations
-
 #endif
-
-namespace QComputations {
 
 namespace plotly {
 

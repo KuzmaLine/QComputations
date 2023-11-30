@@ -1,4 +1,4 @@
-#!/usr/bin/sh
+#!/usr/bin/bash
 
 cd cpu_cluster
 cmake -DCMAKE_CXX_COMPILER=mpiicpx -B .
