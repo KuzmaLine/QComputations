@@ -20,24 +20,31 @@
 В силу сложности, и плохой переносимости Intel-овских библиотек, принято решение ручного прописывания путей к заголовочным файлам и к динамическим библиотекам через переменные окружения. (Рекомендация - поставить Intel OneApi BaseToolkit)
 
 Команды для установки пакетов (для каждого далее sudo ./исполняемый_файл):
-1. Intel OneApi BaseToolkit - wget https://registrationcenter-download.intel.com/akdlm/IRC_NAS/992857b9-624c-45de-9701-f6445d845359/l_BaseKit_p_2023.2.0.49397_offline.sh
-2. Intel OneApi DPCPP++ - wget https://registrationcenter-download.intel.com/akdlm/IRC_NAS/ebf5d9aa-17a7-46a4-b5df-ace004227c0e/l_dpcpp-cpp-compiler_p_2023.2.1.8_offline.sh
-3. Intel Python (Если требуются графики) - wget https://registrationcenter-download.intel.com/akdlm/IRC_NAS/03aae3a8-623a-47cf-9655-5dd8fcf86430/l_pythoni39_oneapi_p_2023.2.0.49422_offline.sh
+1. Intel OneApi BaseToolkit
+
+    ```wget https://registrationcenter-download.intel.com/akdlm/IRC_NAS/992857b9-624c-45de-9701-f6445d845359/l_BaseKit_p_2023.2.0.49397_offline.sh```
+2. Intel OneApi DPCPP++
+    
+    ```wget https://registrationcenter-download.intel.com/akdlm/IRC_NAS/ebf5d9aa-17a7-46a4-b5df-ace004227c0e/l_dpcpp-cpp-compiler_p_2023.2.1.8_offline.sh```
+
+3. Intel Python 
+    
+    ```wget https://registrationcenter-download.intel.com/akdlm/IRC_NAS/03aae3a8-623a-47cf-9655-5dd8fcf86430/l_pythoni39_oneapi_p_2023.2.0.49422_offline.sh```
 
 ПЕРЕД КОМПИЛЯЦИЕЙ НЕОБХОДИМО ПРОГНАТЬ ФАЙЛ setvars.sh ВНУТРИ ПАКЕТА OneApi С АРГУМЕНТОМ intel64!!! 
 
 -------------------------------------------------
 # Компиляция библиотек
 
-./install.sh "<путь, для заголовочных файлов>" "<путь для диманических библиотек>"
+```./install.sh "<путь, для заголовочных файлов>" "<путь для диманических библиотек>"```
 
 Сами библиотеки:
-    libQComputations_CPU_CLUSTER.so
-    libQComputations_CPU_CLUSTER_NO_PLOTS.so
-    libQComputations_SINGLE.so
-    libQComputations_SINGLE_NO_PLOTS.so
+* libQComputations_CPU_CLUSTER.so
+* libQComputations_CPU_CLUSTER_NO_PLOTS.so
+* libQComputations_SINGLE.so
+* libQComputations_SINGLE_NO_PLOTS.so
 
-Все эти библиотеки, с добавкой sudo, переносятся в директорию, указанную в качестве аргумента скрипту install.sh. (То есть, если написать ./install.sh "/usr/include" "/usr/lib", то заголовочные файлы перенесутся в "/usr/include", а все динамические библиотеки перенесутся в /usr/lib)
+Все эти библиотеки, с добавкой sudo, переносятся в директорию, указанную в качестве аргумента скрипту install.sh. (То есть, если написать ```./install.sh "/usr/include" "/usr/lib"```, то заголовочные файлы перенесутся в "/usr/include", а все динамические библиотеки перенесутся в /usr/lib)
 
 --------------------------------------------------
 # Описание структуры программы
