@@ -43,4 +43,4 @@ taylor_dynamics:
 	-I${PYTHON_H_INCLUDE_PATH} -o taylor_dynamics taylor_dynamics.cpp -lQComputations_cpu_cluster_no_plots
 
 clean:
-	rm -rf taylor_dynamics exprtk_test pblas_main schrodinger blocked_matrix hamiltonian_single_example stocks hamiltonian_blocked_example mpi_qcomp runge_kutt rho_dynamic my_file
+	rm -rf taylor_dynamics exprtk_test pblas_main schrodinger blocked_matrix hamiltonian_single_example stocks hamiltonian_blocked_example mpi_qcomp runge_kutt rho_dynamic my_file a.out
