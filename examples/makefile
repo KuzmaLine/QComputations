@@ -39,8 +39,7 @@ stocks:
 	 ${MPICC} -I${MKL_INCLUDE_PATH} -I${MPI_INCLUDE_PATH} -o stocks stocks.cpp -lQComputations_cpu_cluster_no_plots
 
 taylor_dynamics:
-	 ${MPICC} -I${MKL_INCLUDE_PATH} -I${MPI_INCLUDE_PATH} -I/opt/intel/oneapi/intelpython/python3.9/lib/python3.9/site-packages/numpy/core/include \
-	-I${PYTHON_H_INCLUDE_PATH} -o taylor_dynamics taylor_dynamics.cpp -lQComputations_cpu_cluster_no_plots
+	 ${MPICC} -o taylor_dynamics taylor_dynamics.cpp -lQComputations_CPU_CLUSTER_NO_PLOTS
 
 clean:
 	rm -rf taylor_dynamics exprtk_test pblas_main schrodinger blocked_matrix hamiltonian_single_example stocks hamiltonian_blocked_example mpi_qcomp runge_kutt rho_dynamic my_file a.out

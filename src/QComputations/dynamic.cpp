@@ -472,11 +472,12 @@ BLOCKED_Matrix<COMPLEX> create_BLOCKED_A_destroy(ILP_TYPE ctxt, const std::set<S
     size_t dim = basis.size();
 
     std::function<COMPLEX(size_t i, size_t j)> func = {
-    [&basis](size_t i, size_t j) {
+    [&basis, &cavity_id](size_t i, size_t j) {
         auto state_from = get_elem_from_set(basis, j);
         auto state_to = get_elem_from_set(basis, i);
 
-        return photon_destroy(state_from, state_to);
+        if (state_from.n(cavity_id) != 0) return photon_destroy(state_from, state_to);
+        else return COMPLEX(0);
     }};
 
     BLOCKED_Matrix<COMPLEX> A(ctxt, GE, dim, dim, func);

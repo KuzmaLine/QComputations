@@ -125,7 +125,7 @@ BLOCKED_Matrix<COMPLEX> BLOCKED_Matrix<COMPLEX>::operator*(const BLOCKED_Matrix<
     } else if (this->matrix_type_ == HE and B.matrix_type_ == GE) {
         mpi::parallel_zhemm('L', this->get_local_matrix(), B.get_local_matrix(), C.get_local_matrix(), this->desc(), B.desc(), C.desc());
     } else if (this->matrix_type_ == GE and B.matrix_type_ == HE) {
-        mpi::parallel_zhemm('R', B.get_local_matrix(), this->get_local_matrix(), C.get_local_matrix(), this->desc(), B.desc(), C.desc());
+        mpi::parallel_zhemm('R', B.get_local_matrix(), this->get_local_matrix(), C.get_local_matrix(), B.desc(), this->desc(), C.desc());
     } else {
         std::cerr << "Matrix types error!" << std::endl;
     }

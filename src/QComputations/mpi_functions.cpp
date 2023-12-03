@@ -841,6 +841,13 @@ void mpi::init_grid(ILP_TYPE& ctxt, ILP_TYPE proc_rows, ILP_TYPE proc_cols) {
     char order = 'R';
     if (proc_rows == 0 or proc_cols == 0) {
         proc_rows = std::sqrt(world_size);
+        for (ILP_TYPE i = proc_rows; i <= world_size; i++) {
+            proc_rows = i;
+
+            if (world_size % proc_rows == 0) {
+                break;
+            }
+        }
         proc_cols = world_size / proc_rows;
     }
     //std::cout << rank << " Here1\n";

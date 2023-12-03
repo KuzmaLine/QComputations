@@ -9,8 +9,8 @@ int main(int argc, char** argv) {
 
     size_t cavity_counts = 3; // число полостей
     std::vector<size_t> grid_atoms; // задаёт количество частиц в каждой полости, у нас везде будут 0
-    std::pair<double, double> gamma = std::make_pair(0.01, 1); // амплитуда перехода из полости в полости
-    std::pair<double, double> pair_zero = std::make_pair(0, 0); // длина волновода
+    std::pair<double, double> gamma = std::make_pair(0.01, 1); // амплитуда с длиной волновода перехода из полости в полости
+    std::pair<double, double> pair_zero = std::make_pair(0, 0); // нет перехода
     Matrix<std::pair<double, double>> waveguides_parametrs({{pair_zero, gamma, pair_zero}, {gamma, pair_zero, gamma}, {pair_zero, gamma, pair_zero}}); // матрица параметров
     for (size_t i = 0; i < cavity_counts; i++){
         grid_atoms.emplace_back(0);
@@ -34,6 +34,8 @@ int main(int argc, char** argv) {
     auto time_vec = linspace(0, 100000, 100000);
 
     auto probs = Evolution::quantum_master_equation(init_state, H, time_vec);
+
+    //probs.show();
 
     if (rank == 0) {
         matplotlib::make_figure(1920, 1080);

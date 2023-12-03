@@ -249,7 +249,7 @@ int main(int argc, char** argv) {
     //P std::vector<size_t> grid_config = {3}; 
     //P State new_state(grid_config);
     //P new_state.set_n(1);
-    C_State state(1, {0, 0, 0});
+    C_State state(1, {0, 0, 1});
 
 
     //P auto basis = State_Graph(new_state).get_basis();
