@@ -39,12 +39,12 @@
 ```./install.sh "<путь, для заголовочных файлов>" "<путь для диманических библиотек>"```
 
 Сами библиотеки:
-    libQComputations_CPU_CLUSTER.so
-    libQComputations_CPU_CLUSTER_NO_PLOTS.so
-    libQComputations_SINGLE.so
-    libQComputations_SINGLE_NO_PLOTS.so
+    - libQComputations_CPU_CLUSTER.so
+    - libQComputations_CPU_CLUSTER_NO_PLOTS.so
+    - libQComputations_SINGLE.so
+    - libQComputations_SINGLE_NO_PLOTS.so
 
-Все эти библиотеки, с добавкой sudo, переносятся в директорию, указанную в качестве аргумента скрипту install.sh. (То есть, если написать ./install.sh "/usr/include" "/usr/lib", то заголовочные файлы перенесутся в "/usr/include", а все динамические библиотеки перенесутся в /usr/lib)
+Все эти библиотеки, с добавкой sudo, переносятся в директорию, указанную в качестве аргумента скрипту install.sh. (То есть, если написать ```./install.sh "/usr/include" "/usr/lib"```, то заголовочные файлы перенесутся в "/usr/include", а все динамические библиотеки перенесутся в /usr/lib)
 
 --------------------------------------------------
 # Описание структуры программы
