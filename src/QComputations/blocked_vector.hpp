@@ -89,6 +89,7 @@ BLOCKED_Vector<T> BLOCKED_Vector<T>::operator/(T num) const {
 double scalar_product(const BLOCKED_Vector<double>& a, const BLOCKED_Vector<double>& b);
 COMPLEX scalar_product(const BLOCKED_Vector<COMPLEX>& a, const BLOCKED_Vector<COMPLEX>& b);
 BLOCKED_Vector<double> blocked_matrix_get_col(ILP_TYPE ctxt, const BLOCKED_Matrix<double>& A, size_t col);
+BLOCKED_Vector<double> blocked_matrix_get_row(ILP_TYPE ctxt, const BLOCKED_Matrix<double>& A, size_t row);
 BLOCKED_Vector<COMPLEX> blocked_matrix_get_col(ILP_TYPE ctxt, const BLOCKED_Matrix<COMPLEX>& A, size_t col);
 std::vector<BLOCKED_Vector<double>> blocked_matrix_to_blocked_vectors(ILP_TYPE ctxt, const BLOCKED_Matrix<double>& A);
 std::vector<BLOCKED_Vector<COMPLEX>> blocked_matrix_to_blocked_vectors(ILP_TYPE ctxt, const BLOCKED_Matrix<COMPLEX>& A);

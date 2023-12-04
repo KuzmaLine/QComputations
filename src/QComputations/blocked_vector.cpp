@@ -86,6 +86,16 @@ double scalar_product(const BLOCKED_Vector<double>& a, const BLOCKED_Vector<doub
     return mpi::parallel_ddot(a.get_local_matrix().get_mass(), b.get_local_matrix().get_mass(), a.desc(), a.inc(), b.desc(), b.inc());
 }
 
+BLOCKED_Vector<double> blocked_matrix_get_row(ILP_TYPE ctxt, const BLOCKED_Matrix<double>& A, size_t row) {
+    BLOCKED_Vector<double> res(ctxt, A.m());
+
+    for (size_t i = 0; i < A.m(); i++) {
+        res.set(i, A.get(row, i));
+    }
+
+    return res;
+}
+
 BLOCKED_Vector<COMPLEX> blocked_matrix_get_col(ILP_TYPE ctxt, const BLOCKED_Matrix<COMPLEX>& A, size_t col) {
     BLOCKED_Vector<COMPLEX> res(ctxt, A.n());
 

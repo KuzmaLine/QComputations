@@ -31,11 +31,16 @@ int main(int argc, char** argv) {
 
     std::vector<COMPLEX> init_state(H.get_basis().size(), 0);
     init_state[state.get_index(H.get_basis())] = COMPLEX(1, 0);
-    auto time_vec = linspace(0, 100000, 100000);
+    auto time_vec = linspace(0, 10000, 10000);
 
     auto probs = Evolution::quantum_master_equation(init_state, H, time_vec);
 
-    //probs.show();
+    state.set_n(0, 0);
+    auto global_row = state.get_index(H.get_basis());
+
+    auto zero_state_probs = blocked_matrix_get_row(probs.ctxt(), probs, global_row);
+
+    //zero_state_probs.print_distributed("ZERO_STATE");
 
     if (rank == 0) {
         matplotlib::make_figure(1920, 1080);
