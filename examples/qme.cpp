@@ -347,7 +347,8 @@ int main(int argc, char** argv) {
     MPI_Comm_size(MPI_COMM_WORLD, &world_size);
     size_t width = 17;
     double dt = 1e-3;
-    double gamma_leak = 0.005;
+    double gamma_leak = 0.005; // интенсивность утечки фотонов
+    double gamma_gain = 0;  // интенсивность притока фотонов
     size_t steps_count = 1e7;
     size_t cout_delay = 100;
 
@@ -359,6 +360,8 @@ int main(int argc, char** argv) {
     //P new_state.set_n(1);
     C_State state(1, {0, 0});
     state.set_leak(gamma_leak);
+
+    state.set_gain(gamma_gain); // для притока фотонов
 
 
     //P auto basis = State_Graph(new_state).get_basis();
