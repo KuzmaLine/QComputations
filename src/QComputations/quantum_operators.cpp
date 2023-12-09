@@ -187,6 +187,32 @@ COMPLEX photon_destroy(const State& state_from, const State& state_to, COMPLEX g
     return 0;
 }
 
+COMPLEX photon_create(const State& state_from, const State& state_to, COMPLEX gamma) {
+    auto tmp_state = state_from;
+
+    bool is_founded = false;
+
+    for (size_t i = 0; i < tmp_state.cavities_count(); i++) {
+        tmp_state.set_n(tmp_state.n(i) + 1, i);
+
+        if (tmp_state == state_to) {
+            if (!is_founded) {
+                is_founded = true;
+            } else {
+                return 0;
+            }
+        }
+
+        tmp_state.set_n(tmp_state.n(i) - 1, i);   
+    }
+
+    if (is_founded) {
+        return gamma;
+    }
+
+    return 0;
+}
+
 COMPLEX JC_addition(const State& state_from, const State& state_to, COMPLEX g) {
     if (state_from.n(0) - 1 == state_to.n(0) and state_from.get_qubit(0, 0) == 1 and state_to.get_qubit(0, 0) == 0) {
         return g * sqrt(state_from.n(0));
