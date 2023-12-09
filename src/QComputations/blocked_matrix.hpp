@@ -116,6 +116,13 @@ class BLOCKED_Matrix {
 };
 
 template<typename T>
+BLOCKED_Matrix<T> BLOCKED_Matrix<T>::operator/(T num) const {
+    BLOCKED_Matrix<T> A(*this);
+    A.local_matrix_ /= num;
+    return A;
+}
+
+template<typename T>
 BLOCKED_Matrix<T>::BLOCKED_Matrix(ILP_TYPE ctxt, MATRIX_TYPE type, const Matrix<T>& A,
                                 size_t NB, size_t MB): ctxt_(ctxt), matrix_type_(type),
                                                                n_(A.n()), m_(A.m()) {

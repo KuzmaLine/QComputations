@@ -101,6 +101,7 @@ template<typename T> class Matrix {
         Matrix<T> operator+ (const T& num) const;
         Matrix<T> operator- (const T& num) const;
         Matrix<T> operator/ (const T& num) const;
+        void operator/= (const T& num);
 
         Matrix<T>& operator+=(const Matrix<T>& A);
         Matrix<T>& operator-=(const Matrix<T>& A);
@@ -348,6 +349,15 @@ Matrix<T> Matrix<T>::operator/ (const T& num) const {
     }
 
     return res;
+}
+
+template<typename T>
+void Matrix<T>::operator/= (const T& num) {
+    for (size_t i = 0; i < n_; i++) {
+        for (size_t j = 0; j < m_; j++) {
+            this->mass_[this->get_index(i, j)] /= num;
+        }
+    }
 }
 
 template<typename T>
