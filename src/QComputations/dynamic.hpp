@@ -66,10 +66,19 @@ namespace Evolution {
                                   const std::vector<double>& time_vec,
                                   bool is_full_rho = false);
 
+    // РУДИМЕНТ
     Probs Parallel_QME(const std::vector<COMPLEX>& init_state,
                        Hamiltonian& H,
                        const std::vector<double>& time_vec,
                        bool is_full_rho = false);
+
+    std::vector<double> scan_gamma(const std::vector<COMPLEX>& init_state,
+                            BLOCKED_Hamiltonian& H,
+                            size_t cavity_id,
+                            const std::vector<double>& time_vec,
+                            const std::vector<double>& gamma_vec,
+                            double target);
+
 #endif
 #endif
     // TO BE CONTINUED...

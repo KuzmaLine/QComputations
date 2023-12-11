@@ -24,6 +24,10 @@ namespace matplotlib {
                        const std::vector<double>& time_vec,
                        const std::vector<std::string>& basis_str,
                        std::vector<std::map<std::string, std::string>> keywords = {});
+    template<typename T, typename V>
+    void plot(const std::vector<T>& x,
+              const std::vector<V>& y,
+              std::map<std::string, std::string> keywords = {});
  #ifdef ENABLE_MPI
  #ifdef ENABLE_CLUSTER
     void probs_to_plot(const Evolution::BLOCKED_Probs& probs,

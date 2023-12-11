@@ -24,6 +24,7 @@ class BLOCKED_Hamiltonian {
         size_t m_loc() const { return H_.local_m(); }
         State grid() const { return grid_; }
         State get_grid() const { return grid_; }
+        void set_grid(const State& grid) { grid_ = grid; }
         ILP_TYPE ctxt() const { return H_.ctxt(); }
         std::set<State> get_basis() const { return basis_; }
 

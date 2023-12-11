@@ -673,6 +673,64 @@ Evolution::BLOCKED_Probs Evolution::quantum_master_equation(const std::vector<CO
     return probs;
     */
 }
+
+std::vector<double> Evolution::scan_gamma(const std::vector<COMPLEX>& init_state,
+                                          BLOCKED_Hamiltonian& H,
+                                          size_t cavity_id,
+                                          const std::vector<double>& time_vec,
+                                          const std::vector<double>& gamma_vec,
+                                          double target) {
+    auto basis = H.get_basis();
+
+    bool zero_state_in_basis = false;
+    size_t index = 0;
+    for (const auto& state: basis) {
+        zero_state_in_basis = true;
+
+        for (size_t i = 0; i < state.cavities_count(); i++) {
+            if (state.n(i) != 0) {
+                zero_state_in_basis = false;
+                break;
+            }
+
+            for (size_t j = 0; j < state[i].size(); j++) {
+                if (state[i].get_qubit(j) != 0) {
+                    zero_state_in_basis = false;
+                    break;
+                }
+            }
+        }
+
+        if (zero_state_in_basis) break;
+        index++;
+    }
+
+    assert(zero_state_in_basis);
+    auto begin = std::chrono::steady_clock::now();
+    auto end = std::chrono::steady_clock::now();
+    std::vector<double> tau_vec;
+    for (size_t i = 0; i < gamma_vec.size(); i++) {
+        double gamma = gamma_vec[i];
+        auto grid = H.get_grid();
+        grid.set_leak_for_cavity(cavity_id, gamma);
+        H.set_grid(grid);
+        //begin = std::chrono::steady_clock::now();
+        auto probs = quantum_master_equation(init_state, H, time_vec);
+        //end = std::chrono::steady_clock::now();
+        //std::cout << i << " " << gamma_vec.size() << " " << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count() << std::endl;
+        auto func = Cubic_Spline_Interpolate(time_vec, probs.row(index));
+        //begin = std::chrono::steady_clock::now();
+        //std::cout << " interp " << std::chrono::duration_cast<std::chrono::milliseconds>(begin - end).count() << std::endl;
+        double tau = fsolve(func, time_vec[0], time_vec[time_vec.size() - 1], target);
+        //end = std::chrono::steady_clock::now();
+        //std::cout << " fsolve " << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count() << std::endl;
+        //std::cout << tau << " " << target << std::endl;
+        tau_vec.emplace_back(tau);
+    }
+
+    return tau_vec;
+}
+
 Evolution::Probs Evolution::Parallel_QME(const std::vector<COMPLEX>& init_state,
                                          Hamiltonian& H,
                                          const std::vector<double>& time_vec,

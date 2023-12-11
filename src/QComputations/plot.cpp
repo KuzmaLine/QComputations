@@ -12,6 +12,17 @@ namespace {
     namespace plt = matplotlibcpp;
 }
 
+template<>
+void matplotlib::plot<double, double>(const std::vector<double>& x,
+                                      const std::vector<double>& y,
+                                      std::map<std::string, std::string> keywords) {
+    plt::plot(x, y, keywords);
+
+    if (keywords.find("label") != keywords.end()) {
+        plt::legend();
+    }
+}
+
 void matplotlib::probs_to_plot(const Evolution::Probs& probs, 
                                const std::vector<double>& time_vec,
                                const std::set<State>& basis,

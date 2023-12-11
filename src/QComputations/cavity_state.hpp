@@ -57,6 +57,7 @@ class Cavity_State {
         std::string to_string() const;
 
         size_t m() const { return state_.size(); }
+        size_t size() const { return state_.size(); }
 
         // Return count of every possible states of cavity with max energy = n_max
         size_t variants_of_state_count(size_t n_max) const;
