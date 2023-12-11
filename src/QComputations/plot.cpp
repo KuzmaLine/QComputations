@@ -23,6 +23,33 @@ void matplotlib::plot<double, double>(const std::vector<double>& x,
     }
 }
 
+void matplotlib::title(const std::string& name) {
+    plt::title(name);
+}
+
+void matplotlib::xlabel(const std::string& name) {
+    plt::xlabel(name);
+}
+
+void matplotlib::ylabel(const std::string& name) {
+    plt::ylabel(name);
+}
+
+void matplotlib::zlabel(const std::string& name) {
+    plt::set_zlabel(name);
+}
+
+void matplotlib::surface(const std::vector<std::vector<double>>& x,
+            const std::vector<std::vector<double>>& y,
+            const std::vector<std::vector<double>>& z,
+            std::map<std::string, std::string> keywords) {
+    plt::plot_surface(x, y, z, keywords);
+
+    if (keywords.find("label") != keywords.end()) {
+        plt::legend();
+    }
+}
+
 void matplotlib::probs_to_plot(const Evolution::Probs& probs, 
                                const std::vector<double>& time_vec,
                                const std::set<State>& basis,

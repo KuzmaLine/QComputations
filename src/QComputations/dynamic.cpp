@@ -513,6 +513,33 @@ BLOCKED_Matrix<COMPLEX> create_BLOCKED_A_destroy(ILP_TYPE ctxt, const std::set<S
     return A;
 }
 
+BLOCKED_Matrix<COMPLEX> create_A_term(ILP_TYPE ctxt, const std::set<State>& basis) {
+    size_t dim = basis.size();
+
+    std::function<COMPLEX(size_t i, size_t j)> func = {
+    [&basis](size_t i, size_t j) {
+        auto state_from = get_elem_from_set(basis, j);
+        auto state_to = get_elem_from_set(basis, i);
+
+        if (state_from == state_to) {
+            COMPLEX res = COMPLEX(0);
+            for (size_t i = 0; i < state_from.cavities_count(); i++) {
+                for (size_t j = 0; j < state_from[i].size(); j++) {
+                    res += state_from.get_term(j, i);
+                }
+            }
+
+            return res;
+        } else {
+            return COMPLEX(0);
+        }
+    }};
+
+    BLOCKED_Matrix<COMPLEX> A(ctxt, GE, dim, dim, func);
+
+    return A;
+}
+
 BLOCKED_Matrix<COMPLEX> create_BLOCKED_A_create(ILP_TYPE ctxt, const std::set<State>& basis, size_t cavity_id) {
     size_t dim = basis.size();
     BLOCKED_Matrix<COMPLEX> A(ctxt, GE, dim, dim, 0);
@@ -588,6 +615,32 @@ Evolution::BLOCKED_Probs Evolution::quantum_master_equation(const std::vector<CO
                 }
             }
             );
+        }
+    }
+
+    for (size_t cavity_id = 0; cavity_id < grid.cavities_count(); cavity_id++) {
+        bool is_term_enable = false;
+        for (size_t atom_index = 0; atom_index < grid[cavity_id].size(); atom_index++) {
+            if (!is_zero(grid.get_term(atom_index, cavity_id))) {
+                is_term_enable = true;
+                break;
+            }
+        }
+
+        if (is_term_enable) {
+            auto A = create_A_term(H.ctxt(), H.get_basis());
+            A.show();
+            //std::cout << gamma << std::endl;
+            lindblads.push_back(std::function<Evolution::BLOCKED_Rho(const Evolution::BLOCKED_Rho& rho)> {
+                [A](const Evolution::BLOCKED_Rho& rho) {
+                    auto Aconj = A.hermit();
+                    auto AconjA = Aconj * A;
+                    return (A * rho * Aconj - (AconjA * rho + rho * AconjA) * COMPLEX(0.5));
+                }
+            }
+            );
+
+            break;
         }
     }
 
@@ -718,7 +771,7 @@ std::vector<double> Evolution::scan_gamma(const std::vector<COMPLEX>& init_state
         auto probs = quantum_master_equation(init_state, H, time_vec);
         //end = std::chrono::steady_clock::now();
         //std::cout << i << " " << gamma_vec.size() << " " << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count() << std::endl;
-        auto func = Cubic_Spline_Interpolate(time_vec, probs.row(index));
+        auto func = Cubic_Spline_Interpolate(time_vec, blocked_matrix_get_row(probs.ctxt(), probs, index).get_vector());
         //begin = std::chrono::steady_clock::now();
         //std::cout << " interp " << std::chrono::duration_cast<std::chrono::milliseconds>(begin - end).count() << std::endl;
         double tau = fsolve(func, time_vec[0], time_vec[time_vec.size() - 1], target);

@@ -48,6 +48,7 @@ class BLOCKED_Vector: public BLOCKED_Matrix<T> {
         void operator-=(const BLOCKED_Vector<T>& x);
         BLOCKED_Vector<T> operator*(const BLOCKED_Vector<T>& x) const;
         BLOCKED_Vector<T> operator/(const BLOCKED_Vector<T>& x) const;
+        std::vector<T> get_vector() const;
 
         BLOCKED_Vector<T> operator+(T x) const;
         BLOCKED_Vector<T> operator-(T x) const;
@@ -65,6 +66,17 @@ BLOCKED_Vector<T>::BLOCKED_Vector(const BLOCKED_Vector<T>& A, const Matrix<T>& x
 template<typename T>
 BLOCKED_Vector<T> BLOCKED_Vector<T>::operator+(T num) const {
     BLOCKED_Vector<T> res(*this, BLOCKED_Matrix<T>::local_matrix_ + num);
+
+    return res;
+}
+
+template<typename T>
+std::vector<T> BLOCKED_Vector<T>::get_vector() const {
+    std::vector<T> res(this->n());
+
+    for (size_t i = 0; i < this->n(); i++) {
+        res[i] = this->get(i);
+    }
 
     return res;
 }

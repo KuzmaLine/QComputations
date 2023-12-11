@@ -28,7 +28,7 @@ namespace {
 
 namespace QComputations {
 
-Cavity_State::Cavity_State(size_t n, size_t m, E_LEVEL e_levels_count): e_levels_count_(e_levels_count) {
+Cavity_State::Cavity_State(size_t n, size_t m, E_LEVEL e_levels_count): term_(m, 0), e_levels_count_(e_levels_count) {
     w_ph_ = Matrix<double>(C_STYLE, e_levels_count_, e_levels_count_, QConfig::instance().w());
     n_ = Matrix<size_t>(C_STYLE, e_levels_count_, e_levels_count_, 0);
     n_[0][1] = n;

@@ -68,6 +68,10 @@ class Cavity_State {
         size_t get_index(const std::set<Cavity_State>& basis) const;
         bool is_in_basis(const std::set<Cavity_State>& basis) const;
 
+        void set_term(size_t atom_index, double term) { term_[atom_index] = term; }
+        double get_term(size_t atom_index) const { return term_[atom_index]; }
+
+
         // Return state_ (converted from 2 numerical system)
         size_t get_atoms_index() const;
 
@@ -106,6 +110,7 @@ class Cavity_State {
         bool operator<(const Cavity_State& other) const { return this->to_string() > other.to_string(); }
         size_t hash() const;
     private:
+        std::vector<double> term_;
         E_LEVEL e_levels_count_ = QConfig::instance().E_LEVELS_COUNT();
         Matrix<size_t> n_;
         std::vector<double> w_at_;

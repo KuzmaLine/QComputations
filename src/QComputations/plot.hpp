@@ -28,6 +28,15 @@ namespace matplotlib {
     void plot(const std::vector<T>& x,
               const std::vector<V>& y,
               std::map<std::string, std::string> keywords = {});
+    void title(const std::string& name);
+    void xlabel(const std::string& name);
+    void ylabel(const std::string& name);
+    void zlabel(const std::string& name);
+
+    void surface(const std::vector<std::vector<double>>& x,
+                const std::vector<std::vector<double>>& y,
+                const std::vector<std::vector<double>>& z,
+                std::map<std::string, std::string> keywords = {});
  #ifdef ENABLE_MPI
  #ifdef ENABLE_CLUSTER
     void probs_to_plot(const Evolution::BLOCKED_Probs& probs,
