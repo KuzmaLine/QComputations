@@ -14,13 +14,14 @@ int main(int argc, char** argv) {
     QConfig::instance().set_width(30);
     double h = QConfig::instance().h();
     double w = QConfig::instance().w();
+    QConfig::instance().set_g(2);
 
     std::vector<size_t> grid_config = {1, 1};
 
     State grid(grid_config);
     grid.set_n(1, 0);
-    grid.set_waveguide(0, 1, 0.01, 1);
-    grid.set_leak_for_cavity(1, 0.1);
+    grid.set_waveguide(0, 1, 1, 1);
+    grid.set_leak_for_cavity(1, 20);
 
     int ctxt;
     mpi::init_grid(ctxt);
@@ -33,23 +34,31 @@ int main(int argc, char** argv) {
     std::vector<COMPLEX> init_state(H.size(), 0);
     init_state[grid.get_index(H.get_basis())] = COMPLEX(1, 0);
 
-    auto time_vec = linspace(0, 5000, 5000);
+    auto time_vec = linspace(0, 20, 16000);
 
-    std::vector<double> gamma_vec = linspace(0.001, 0.1, 200);
+    matplotlib::make_figure(1920, 1080);
 
-    for (size_t i = 0; i < 10; i++) {
-        gamma_vec.emplace_back(0.1 + (i + 1) * 0.01);
+    //std::vector<double> terms = {0, 0.05, 0.1, 0.15, 0.25, 0.5};
+    std::vector<double> terms = {0, 15, 30, 40, 60};
+    for (auto term: terms) {
+        std::map<std::string, std::string> keywords;
+        keywords["label"] = "gamma = " + std::to_string(term);
+        grid.set_term(0, term, 0);
+        grid.set_term(0, term, 1);
+        H.set_grid(grid);
+        auto probs = Evolution::quantum_master_equation(init_state, H, time_vec);
+        auto prob_sink = blocked_matrix_get_row(probs.ctxt(), probs, H.get_basis().size() - 1).get_vector();
+
+        if (rank == 0) {
+            matplotlib::plot(time_vec, prob_sink, keywords);
+        }
     }
 
-    auto tau_vec = Evolution::scan_gamma(init_state, H, 1, time_vec, gamma_vec, 0.9);
-
     if (rank == 0) {
-        matplotlib::make_figure(1920, 1080);
-        matplotlib::plot(gamma_vec, tau_vec);
-        matplotlib::xlabel("gamma");
-        matplotlib::ylabel("time");
+        matplotlib::xlabel("time");
+        matplotlib::ylabel("p_sink");
         matplotlib::grid();
-        matplotlib::savefig("leak_first_example.png");
+        matplotlib::savefig("DAT.png");
         matplotlib::show();
     }
 

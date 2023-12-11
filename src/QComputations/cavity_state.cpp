@@ -39,7 +39,7 @@ Cavity_State::Cavity_State(size_t n, size_t m, E_LEVEL e_levels_count): term_(m,
 }
 
 Cavity_State::Cavity_State(const Matrix<size_t>& n, const std::vector<E_LEVEL>& state, E_LEVEL e_levels_count): n_(n),
-                                    e_levels_count_(e_levels_count), w_at_(e_levels_count, QConfig::instance().w()) {
+                                    term_(state.size(), 0), e_levels_count_(e_levels_count), w_at_(e_levels_count, QConfig::instance().w()) {
     w_ph_ = Matrix<double>(C_STYLE, e_levels_count_, e_levels_count_, QConfig::instance().w());
     w_at_[0] = 0;
     if (state.size() != 0) {
@@ -49,7 +49,7 @@ Cavity_State::Cavity_State(const Matrix<size_t>& n, const std::vector<E_LEVEL>& 
     max_energy_ = get_energy();
 }
 
-Cavity_State::Cavity_State(size_t n, const std::vector<E_LEVEL>& state, E_LEVEL e_levels_count): e_levels_count_(e_levels_count), w_at_(e_levels_count_, QConfig::instance().w()) {
+Cavity_State::Cavity_State(size_t n, const std::vector<E_LEVEL>& state, E_LEVEL e_levels_count): term_(state.size(), 0), e_levels_count_(e_levels_count), w_at_(e_levels_count_, QConfig::instance().w()) {
     w_ph_ = Matrix<double>(C_STYLE, e_levels_count_, e_levels_count_, QConfig::instance().w());
     n_ = Matrix<size_t>(C_STYLE, e_levels_count_, e_levels_count_, 0);
     n_[0][1] = n;

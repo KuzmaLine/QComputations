@@ -116,7 +116,7 @@ class State {
         // Рудимент
         size_t get_index() const;
         void set_term(size_t atom_index, double term, CavityId cavity_id) { grid_states_[cavity_id].set_term(atom_index, term); }
-        double get_term(size_t atom_index, CavityId cavity_id) { return grid_states_[cavity_id].get_term(atom_index); }
+        double get_term(size_t atom_index, CavityId cavity_id) const { return grid_states_[cavity_id].get_term(atom_index); }
 
         // Get index of state in basis
         size_t get_index(const std::set<State>& basis) const;

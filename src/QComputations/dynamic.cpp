@@ -513,11 +513,11 @@ BLOCKED_Matrix<COMPLEX> create_BLOCKED_A_destroy(ILP_TYPE ctxt, const std::set<S
     return A;
 }
 
-BLOCKED_Matrix<COMPLEX> create_A_term(ILP_TYPE ctxt, const std::set<State>& basis) {
+BLOCKED_Matrix<COMPLEX> create_A_term(ILP_TYPE ctxt, const std::set<State>& basis, const State& grid) {
     size_t dim = basis.size();
 
     std::function<COMPLEX(size_t i, size_t j)> func = {
-    [&basis](size_t i, size_t j) {
+    [&basis, &grid](size_t i, size_t j) {
         auto state_from = get_elem_from_set(basis, j);
         auto state_to = get_elem_from_set(basis, i);
 
@@ -525,7 +525,9 @@ BLOCKED_Matrix<COMPLEX> create_A_term(ILP_TYPE ctxt, const std::set<State>& basi
             COMPLEX res = COMPLEX(0);
             for (size_t i = 0; i < state_from.cavities_count(); i++) {
                 for (size_t j = 0; j < state_from[i].size(); j++) {
-                    res += state_from.get_term(j, i);
+                    if (state_from[i].get_qubit(j) == 1) {
+                        res += grid.get_term(j, i);
+                    }
                 }
             }
 
@@ -628,7 +630,7 @@ Evolution::BLOCKED_Probs Evolution::quantum_master_equation(const std::vector<CO
         }
 
         if (is_term_enable) {
-            auto A = create_A_term(H.ctxt(), H.get_basis());
+            auto A = create_A_term(H.ctxt(), H.get_basis(), grid);
             A.show();
             //std::cout << gamma << std::endl;
             lindblads.push_back(std::function<Evolution::BLOCKED_Rho(const Evolution::BLOCKED_Rho& rho)> {
