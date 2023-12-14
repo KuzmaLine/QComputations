@@ -476,7 +476,7 @@ BLOCKED_Matrix<COMPLEX> create_BLOCKED_A_destroy(ILP_TYPE ctxt, const std::set<S
         auto state_from = get_elem_from_set(basis, j);
         auto state_to = get_elem_from_set(basis, i);
 
-        if (state_from.n(cavity_id) != 0) return photon_destroy(state_from, state_to);
+        if (state_from.n(cavity_id) != 0 and state_from.n(cavity_id) == state_to.n(cavity_id) + 1) return photon_destroy(state_from, state_to);
         else return COMPLEX(0);
     }};
 
@@ -544,32 +544,17 @@ BLOCKED_Matrix<COMPLEX> create_A_term(ILP_TYPE ctxt, const std::set<State>& basi
 
 BLOCKED_Matrix<COMPLEX> create_BLOCKED_A_create(ILP_TYPE ctxt, const std::set<State>& basis, size_t cavity_id) {
     size_t dim = basis.size();
-    BLOCKED_Matrix<COMPLEX> A(ctxt, GE, dim, dim, 0);
-    ILP_TYPE proc_rows, proc_cols, myrow, mycol;
-    mpi::blacs_gridinfo(ctxt, proc_rows, proc_cols, myrow, mycol);
-    ILP_TYPE iZERO = 0;
 
-    size_t index = 0;
-    for (size_t i = 0; i < A.local_m(); i++) {
-        //auto index_col = mpi::indxl2g(i, A.MB(), mycol, iZERO, proc_cols);
-        auto index_col = A.get_global_col(i);
+    std::function<COMPLEX(size_t i, size_t j)> func = {
+    [&basis, &cavity_id](size_t i, size_t j) {
+        auto state_from = get_elem_from_set(basis, j);
+        auto state_to = get_elem_from_set(basis, i);
 
-        auto state = get_elem_from_set<State>(basis, index_col);
-        auto n = state.n(cavity_id);
-        if (n != 0) {
-            auto tmp_state = state;
-            tmp_state.set_n(n + 1, cavity_id);
+        if (state_to.n(cavity_id) != 0 and state_from.n(cavity_id) == state_to.n(cavity_id) - 1) return photon_create(state_from, state_to);
+        else return COMPLEX(0);
+    }};
 
-            auto state_index = tmp_state.get_index(basis);
-            auto target_row = mpi::indxg2p(state_index, A.NB(), myrow, iZERO, proc_rows);
-            auto target_col = mpi::indxg2p(i, A.MB(), mycol, iZERO, proc_cols);
-
-            if (myrow == target_row and mycol == target_col) {
-                state_index = mpi::indxg2l(state_index, A.NB(), myrow, iZERO, proc_rows);
-                if (state_index != -1) A(state_index, i) = COMPLEX(std::sqrt(n + 1));
-            }
-        }
-    }
+    BLOCKED_Matrix<COMPLEX> A(ctxt, GE, dim, dim, func);
 
     return A;
 }
@@ -608,6 +593,7 @@ Evolution::BLOCKED_Probs Evolution::quantum_master_equation(const std::vector<CO
         auto gamma = grid.get_gain_gamma(cavity_id);
         if (!is_zero(gamma)) {
             auto A = create_BLOCKED_A_create(H.ctxt(), H.get_basis(), cavity_id);
+            A.show();
             //std::cout << gamma << std::endl;
             lindblads.push_back(std::function<Evolution::BLOCKED_Rho(const Evolution::BLOCKED_Rho& rho)> {
                 [A, gamma](const Evolution::BLOCKED_Rho& rho) {
@@ -631,7 +617,6 @@ Evolution::BLOCKED_Probs Evolution::quantum_master_equation(const std::vector<CO
 
         if (is_term_enable) {
             auto A = create_A_term(H.ctxt(), H.get_basis(), grid);
-            A.show();
             //std::cout << gamma << std::endl;
             lindblads.push_back(std::function<Evolution::BLOCKED_Rho(const Evolution::BLOCKED_Rho& rho)> {
                 [A](const Evolution::BLOCKED_Rho& rho) {

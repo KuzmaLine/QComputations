@@ -14,15 +14,16 @@ int main(int argc, char** argv) {
     QConfig::instance().set_width(30);
     double h = QConfig::instance().h();
     double w = QConfig::instance().w();
-    QConfig::instance().set_g(1.2);
+    QConfig::instance().set_g(0.7);
 
     std::vector<size_t> grid_config = {1, 1};
 
     State grid(grid_config);
     grid.set_n(1, 0);
-    grid.set_waveguide(0, 1, 0.8, 1);
-    grid.set_leak_for_cavity(1, 12);
-    grid[0].set_max_energy(2);
+    grid.set_waveguide(0, 1, 1, 1);
+    grid.set_leak_for_cavity(1, 2);
+    grid.set_gain_for_cavity(0, 3);
+    grid.set_max_N(3);
 
     int ctxt;
     mpi::init_grid(ctxt);
@@ -35,13 +36,15 @@ int main(int argc, char** argv) {
     std::vector<COMPLEX> init_state(H.size(), 0);
     init_state[grid.get_index(H.get_basis())] = COMPLEX(1, 0);
 
-    auto time_vec = linspace(0, 16, 20000);
+    auto time_vec = linspace(0, 100, 30000);
 
     matplotlib::make_figure(1920, 1080);
 
     //std::vector<double> terms = {0, 0.05, 0.1, 0.15, 0.25, 0.5};
-    std::vector<double> terms = {0, 15, 30, 60};
-    for (auto term: terms) {
+    std::vector<double> terms = {0, 3, 5, 10};
+    //for (auto term: terms) {
+    for (size_t i = 0; i < terms.size(); i++) {
+        auto term = terms[i];
         std::map<std::string, std::string> keywords;
         keywords["label"] = "gamma = " + std::to_string(term);
         grid.set_term(0, term, 0);

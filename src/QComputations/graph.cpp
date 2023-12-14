@@ -36,7 +36,7 @@ State_Graph::State_Graph(const State& init_state) {
                         tmp_state.set_n(cur_n, cavity_id, e_from, e_to);
                     }
 
-                    if (!is_zero(cur_state.get_gain_gamma(cavity_id)) and (cur_state.get_energy(cavity_id) < cur_state.get_max_energy(cavity_id))) {
+                    if (!is_zero(cur_state.get_gain_gamma(cavity_id)) and (cur_state.get_grid_energy() < cur_state.max_N())) {
                         tmp_state.set_n(cur_n + 1, cavity_id, e_from, e_to);
                         if (std::find(basis_.begin(), basis_.end(), tmp_state) == basis_.end()) {
                             basis_.insert(tmp_state);
