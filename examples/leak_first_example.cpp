@@ -14,12 +14,16 @@ int main(int argc, char** argv) {
     QConfig::instance().set_width(30);
     double h = QConfig::instance().h();
     double w = QConfig::instance().w();
+    // QConfig::instance().set_w(10); // частота фотона
+
+    double waveguide_amplitude = 0.007; // |ню|
+    double waveguide_length = 2; // длина волновода (переводчик гугл)
 
     std::vector<size_t> grid_config = {0, 0};
 
     State grid(grid_config);
-    grid.set_n(1, 0);
-    grid.set_waveguide(0, 1, 0.01, 1);
+    grid.set_n(1, 0); // ставим фотон в 0 полость
+    grid.set_waveguide(0, 1, waveguide_amplitude, waveguide_length); // интенсивность волновода 
     grid.set_leak_for_cavity(1, 0.1);
 
     int ctxt;
@@ -33,9 +37,9 @@ int main(int argc, char** argv) {
     std::vector<COMPLEX> init_state(H.size(), 0);
     init_state[grid.get_index(H.get_basis())] = COMPLEX(1, 0);
 
-    auto time_vec = linspace(0, 5000, 5000);
+    auto time_vec = linspace(0, 4000, 4000);
 
-    std::vector<double> gamma_vec = linspace(0.001, 0.1, 200);
+    std::vector<double> gamma_vec = linspace(0.001, 0.1, 100); 
 
     for (size_t i = 0; i < 10; i++) {
         gamma_vec.emplace_back(0.1 + (i + 1) * 0.01);
