@@ -13,12 +13,16 @@ int main(int argc, char** argv) {
     QConfig::instance().set_width(30);
     //QConfig::instance().set_g(0.005);
 
+    /*
     size_t grid_size = 4;
     size_t atoms_num = 2;
     int second_pol = 3;
     std::vector<size_t> grid_config(grid_size, 0);
     grid_config[0] = atoms_num;
     grid_config[second_pol] = atoms_num;
+    */
+
+    std::vector<size_t> grid_config = {1, 1, 1};
 
     /*
     for (size_t i = 0; i < grid_size; i++) {
@@ -30,11 +34,11 @@ int main(int argc, char** argv) {
     }
     */
     State grid(grid_config);
-    grid.reshape(2, 2, 1);
-    grid.set_waveguide(0.0025/std::sqrt(2), 1);
+    //grid.reshape(2, 2, 1);
+    grid.set_waveguide(0.0005, 1);
     //grid.set_waveguide(0, 1);
     grid.set_qubit(0, 0, 1);
-    grid.set_qubit(0, 1, 1);
+    //grid.set_qubit(0, 1, 1);
     //grid.set_qubit(0, 1, 1);
     //grid.set_qubit(0, 2, 0);
     //grid.set_n(2);
@@ -64,11 +68,14 @@ int main(int argc, char** argv) {
 
     std::vector<COMPLEX> init_state(H.size(), 0);
     //std::vector<COMPLEX> target_state(H.size(), 0);
-    init_state[grid.get_index(H.get_basis())] = COMPLEX(1, 0);
+    init_state[grid.get_index(H.get_basis())] = COMPLEX(1, 0) / std::sqrt(2);
+    grid.set_qubit(0, 0, 0);
+    grid.set_qubit(2, 0, 1);
+    init_state[grid.get_index(H.get_basis())] = COMPLEX(-1, 0) / std::sqrt(2);
     //size_t target_index = grid_copy.get_index(H.get_basis());
     //target_state[grid_copy.get_index(H.get_basis())] = COMPLEX(1, 0);
 
-    auto time_vec = linspace(0, 32000, 32000);
+    auto time_vec = linspace(0, 600000, 600000);
 
     auto probs = Evolution::schrodinger(init_state, H, time_vec);
     
@@ -102,6 +109,7 @@ int main(int argc, char** argv) {
     }
     */
 
+   /*
     if (rank == 0) {
         matplotlib::make_figure(1920, 1080);
     }
@@ -112,7 +120,7 @@ int main(int argc, char** argv) {
         matplotlib::grid();
         matplotlib::show(false);
     }
-
+    */
     if (rank == 0) {
         matplotlib::make_figure(1920, 1080);
     }
@@ -120,6 +128,7 @@ int main(int argc, char** argv) {
     //matplotlib::probs_to_plot(probs, time_vec, H.get_basis());
     matplotlib::probs_in_cavity_to_plot(probs, time_vec, H.get_basis(), 0);
     if (rank == 0) {
+        matplotlib::title("CAVITY_0");
         matplotlib::grid();
         matplotlib::show(false);
     }
@@ -129,8 +138,20 @@ int main(int argc, char** argv) {
     }
 
     //matplotlib::probs_to_plot(probs, time_vec, H.get_basis());
-    matplotlib::probs_in_cavity_to_plot(probs, time_vec, H.get_basis(), second_pol);
+    matplotlib::probs_in_cavity_to_plot(probs, time_vec, H.get_basis(), 2);
     if (rank == 0) {
+        matplotlib::title("CAVITY_2");
+        matplotlib::grid();
+        matplotlib::show(false);
+    }
+
+    if (rank == 0) {
+        matplotlib::make_figure(1920, 1080);
+    }
+
+    matplotlib::probs_in_cavity_to_plot(probs, time_vec, H.get_basis(), 1);
+    if (rank == 0) {
+        matplotlib::title("CAVITY_1");
         matplotlib::grid();
         matplotlib::show();
     }
