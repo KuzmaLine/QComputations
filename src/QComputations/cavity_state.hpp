@@ -109,6 +109,7 @@ class Cavity_State {
         //bool operator<(const Cavity_State& other) const { return n_ > other.n_ or get_index_from_state(state_) < get_index_from_state(other.state_); }
         bool operator<(const Cavity_State& other) const { return this->to_string() > other.to_string(); }
         size_t hash() const;
+        void set_max_energy(size_t N) { max_energy_ = N; }
     private:
         std::vector<double> term_;
         E_LEVEL e_levels_count_ = QConfig::instance().E_LEVELS_COUNT();

@@ -22,6 +22,7 @@ int main(int argc, char** argv) {
     grid.set_n(1, 0);
     grid.set_waveguide(0, 1, 0.8, 1);
     grid.set_leak_for_cavity(1, 12);
+    grid[0].set_max_energy(2);
 
     int ctxt;
     mpi::init_grid(ctxt);

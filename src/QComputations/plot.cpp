@@ -330,7 +330,7 @@ void matplotlib::show(bool is_block) {
 void matplotlib::make_figure(size_t x, size_t y, size_t dpi) {
     if (x == 0 or y == 0) plt::figure();
     else {
-        plt::figure_size(x, y, dpi);
+        plt::figure_size(x, y, dpi);    
     }
 }
 
