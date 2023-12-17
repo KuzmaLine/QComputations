@@ -13,14 +13,17 @@ int main(int argc, char** argv) {
     MPI_Comm_size(MPI_COMM_WORLD, &world_size);
     QConfig::instance().set_width(30);
     double h = QConfig::instance().h();
-    double w = QConfig::instance().w();
+    double w = QConfig::instance().w(); // E = hw
     QConfig::instance().set_g(0.005); // сила взаимодействия с полем атома
 
     std::vector<size_t> grid_config = {1};
 
     State grid(grid_config);
     grid.set_qubit(0, 0, 1);
+    // |0>ph|1>at
+    //grid.set_n(1);
     grid.set_leak_for_cavity(0, 0.1);
+    //grid.set_gain_for_cavity(0, 0.1); // приток фотонов
 
     int ctxt;
     mpi::init_grid(ctxt);
