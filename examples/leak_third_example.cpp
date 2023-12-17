@@ -14,6 +14,7 @@ int main(int argc, char** argv) {
     QConfig::instance().set_width(30);
     double h = QConfig::instance().h();
     double w = QConfig::instance().w();
+    QConfig::instance().set_g(0.005); // сила взаимодействия с полем атома
 
     std::vector<size_t> grid_config = {1};
 

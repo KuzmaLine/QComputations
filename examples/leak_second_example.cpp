@@ -19,9 +19,11 @@ int main(int argc, char** argv) {
 
     State grid(grid_config);
     grid.set_n(1, 0);
-    grid.set_waveguide(0, 1, 0.01, 1);
-    grid.set_leak_for_cavity(1, 0.1);
-    grid.set_leak_for_cavity(0, 0.1);
+    grid.set_waveguide(0, 1, 0.01, 1); // интесивность волновода gamma = |gamma|*exp(i * l)
+    grid.set_leak_for_cavity(1, 0.1); // интенсинвость стока из 1 полости
+    grid.set_leak_for_cavity(0, 0.1); // интенсинвость стока из 0 полости
+    //grid.set_gain_for_cavity(0, 0.1); // интенсивность притока фотонов в 0 полость
+    //grid.set_max_N(2);
 
     int ctxt;
     mpi::init_grid(ctxt);
