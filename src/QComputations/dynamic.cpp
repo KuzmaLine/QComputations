@@ -593,7 +593,7 @@ Evolution::BLOCKED_Probs Evolution::quantum_master_equation(const std::vector<CO
         auto gamma = grid.get_gain_gamma(cavity_id);
         if (!is_zero(gamma)) {
             auto A = create_BLOCKED_A_create(H.ctxt(), H.get_basis(), cavity_id);
-            A.show();
+            //A.show();
             //std::cout << gamma << std::endl;
             lindblads.push_back(std::function<Evolution::BLOCKED_Rho(const Evolution::BLOCKED_Rho& rho)> {
                 [A, gamma](const Evolution::BLOCKED_Rho& rho) {
