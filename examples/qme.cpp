@@ -348,7 +348,7 @@ int main(int argc, char** argv) {
     size_t width = 17;
     int norm_step = 20;
     double dt = 1e-4;
-    double gamma_leak = 0.005; // интенсивность утечки фотонов
+    double gamma_leak = 0.02; // интенсивность утечки фотонов
     // double gamma_gain = 0;  // интенсивность притока фотонов
     size_t steps_count = 1e7;
     size_t cout_delay = 0;
@@ -404,9 +404,9 @@ int main(int argc, char** argv) {
     auto U = eigen_vectors * D * eigen_vectors.hermit();
 
     std::vector<COMPLEX> init_state(basis.size(), 0);
-    init_state[0] = COMPLEX(1, 0);
-    //init_state[1] = COMPLEX(-1/sqrt(2), 0);
-    //init_state[2] = COMPLEX(1/sqrt(2), 0);
+    //init_state[0] = COMPLEX(1, 0);
+    init_state[1] = COMPLEX(-1/sqrt(2), 0);
+    init_state[2] = COMPLEX(1/sqrt(2), 0);
 
     // |ksi><ksi|;
     std::function<COMPLEX(size_t, size_t)> rho_func = [&init_state](size_t i, size_t j) {
@@ -455,28 +455,28 @@ int main(int argc, char** argv) {
     size_t t = 0;
     std::vector<double> time_vec = {0};
     while(t < steps_count) {
-        auto cur_rho = init_rho;
+        auto cur_rho = init_rho - (H * init_rho - init_rho * H) * COMPLEX(dt, 0) * COMPLEX(0, 1 / h);
 
         for (const auto& lindblad: lindblads) {
-            cur_rho += lindblad(cur_rho) * (COMPLEX(dt, 0) * COMPLEX(0, 1) / COMPLEX(h, 0));
+            cur_rho += lindblad(cur_rho) * COMPLEX(dt / h, 0);
         }
 
         //cur_rho = U * cur_rho * U.hermit();
-        cur_rho = U.hermit() * cur_rho * U;
+        //cur_rho = U.hermit() * cur_rho * U;
         auto diag = mpi::get_diagonal_elements(cur_rho.get_local_matrix(), cur_rho.desc());
         init_rho = cur_rho;
 
-        usleep(cout_delay);
+        //usleep(cout_delay);
         double sum = 0;
         for (size_t i = 0; i < diag.size(); i++) { 
             sum += std::abs(diag[i]);
-            if (rank == 0) {
+            if (rank == 0 and t % norm_step == 0) {
                 //P probs[i][t + 1] = std::abs(diag[i]);
                 std::cout << std::setw(width) << std::abs(diag[i]) << " ";
             }
         }
 
-        if (rank == 0) std::cout << std::endl;
+        if (rank == 0 and t % norm_step == 0) std::cout << std::endl;
         t++;
 
         if (t % norm_step == 0) {
