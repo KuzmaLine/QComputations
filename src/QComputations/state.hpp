@@ -57,12 +57,14 @@ class Basis_State {
         explicit Basis_State(const std::vector<ValType>& qudits, const std::vector<ValType>& max_vals,
                              size_t groups_count = 1);
         explicit Basis_State(const std::vector<ValType>& qudits,  const std::vector<ValType>& max_vals,
-                             const std::vector<std::vector<size_t>>)
+                             const std::vector<std::vector<size_t>>& groups);
     private:
         std::vector<ValType> qudits_;
         std::vector<ValType> max_vals_;
         std::vector<std::vector<size_t>> groups_;
 };
+
+
 
 class State {
     public:
