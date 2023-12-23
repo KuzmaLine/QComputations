@@ -11,6 +11,7 @@
 namespace QComputations {
 
 namespace {
+    using COMPLEX = std::complex<double>;
     std::complex<double> gamma(double amplitude, double length, double w_ph) {
         return amplitude * std::exp(std::complex<double>(0, -1) * length * w_ph / QConfig::instance().h());
     }
@@ -46,8 +47,33 @@ $W можно опустить, если QConfig::instance().is_freq_display() =
 Метод find_states_in_string() - будет согласно формату искать в строке состояния.
 */
 
+class Basis_State {
+    using ValType = int;
+    public:
+        explicit Basis_State(size_t qudits_count, ValType max_vals = 1, size_t groups_count = 1);
+        explicit Basis_State(size_t qudits_count, const std::vector<ValType>& max_vals,
+                            size_t groups_count = 1);
+        explicit Basis_State(const std::vector<ValType>& qudits, ValType max_vals = 1, size_t groups_count = 1);
+        explicit Basis_State(const std::vector<ValType>& qudits, const std::vector<ValType>& max_vals,
+                             size_t groups_count = 1);
+        explicit Basis_State(const std::vector<ValType>& qudits,  const std::vector<ValType>& max_vals,
+                             const std::vector<std::vector<size_t>>& groups);
+    private:
+        std::vector<ValType> qudits_;
+        std::vector<ValType> max_vals_;
+        std::vector<std::vector<size_t>> groups_;
+};
+
+
+
 class State {
-    using COMPLEX = std::complex<double>;
+    public:
+    protected:
+        std::vector<COMPLEX> state_vec_;
+        std::vector<Basis_State> state_components_;
+};
+
+class CHE_State: public State {
     using E_LEVEL = int;
     using CavityId = size_t;
     using AtomId = size_t;
