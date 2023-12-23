@@ -46,7 +46,7 @@ $W можно опустить, если QConfig::instance().is_freq_display() =
 В последствии метод to_string() числа переходов с уровня на уровень переделает их в нижние индексы.
 Метод find_states_in_string() - будет согласно формату искать в строке состояния.
 */
-
+/*
 class Basis_State {
     using ValType = int;
     public:
@@ -72,8 +72,9 @@ class State {
         std::vector<COMPLEX> state_vec_;
         std::vector<Basis_State> state_components_;
 };
+*/
 
-class CHE_State: public State {
+class State {
     using E_LEVEL = int;
     using CavityId = size_t;
     using AtomId = size_t;
