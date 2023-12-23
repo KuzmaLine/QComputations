@@ -70,6 +70,24 @@ BLOCKED_H_TC::BLOCKED_H_TC(ILP_TYPE ctxt, const State& grid) {
         }
     };
 
+    ILP_TYPE proc_rows, proc_cols, myrow, mycol, NB, MB;
+    mpi::blacs_gridinfo(ctxt, proc_rows, proc_cols, myrow, mycol);
+
+    NB = size / proc_rows;
+
+    MB = size / proc_cols;
+
+    if (NB == 0) {
+        NB = 1;
+    }
+
+    if (MB == 0) {
+        MB = 1;
+    }
+
+    NB = std::min(NB, MB);
+    MB = NB;
+
     H_ = BLOCKED_Matrix<COMPLEX>(ctxt, HE, size, size, func);
 }
 
@@ -91,6 +109,24 @@ BLOCKED_H_JC::BLOCKED_H_JC(ILP_TYPE ctxt, const State& grid) {
             return JC_ADD(state_from, state_to, grid);
         }
     };
+
+    ILP_TYPE proc_rows, proc_cols, myrow, mycol, NB, MB;
+    mpi::blacs_gridinfo(ctxt, proc_rows, proc_cols, myrow, mycol);
+
+    NB = size / proc_rows;
+
+    MB = size / proc_cols;
+
+    if (NB == 0) {
+        NB = 1;
+    }
+
+    if (MB == 0) {
+        MB = 1;
+    }
+
+    NB = std::min(NB, MB);
+    MB = NB;
 
     H_ = BLOCKED_Matrix<COMPLEX>(ctxt, HE, size, size, func);
 }

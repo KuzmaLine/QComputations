@@ -27,7 +27,7 @@ int main(int argc, char** argv) {
 
     int ctxt;
     mpi::init_grid(ctxt);
-    BLOCKED_H_TCH H(ctxt, grid);
+    BLOCKED_H_JC H(ctxt, grid);
 
     if (rank == 0) { show_basis(H.get_basis()); }
 
