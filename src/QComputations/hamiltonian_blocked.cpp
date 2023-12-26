@@ -13,6 +13,7 @@ namespace {
     using COMPLEX = std::complex<double>;
 }
 
+/*
 BLOCKED_H_TCH::BLOCKED_H_TCH(ILP_TYPE ctxt, const State& grid) {
     grid_ = grid;
     //auto basis = define_basis_of_hamiltonian(grid);
@@ -127,6 +128,51 @@ BLOCKED_H_JC::BLOCKED_H_JC(ILP_TYPE ctxt, const State& grid) {
 
     NB = std::min(NB, MB);
     MB = NB;
+
+    H_ = BLOCKED_Matrix<COMPLEX>(ctxt, HE, size, size, func);
+}
+*/
+
+BLOCKED_H_by_Formule::BLOCKED_H_by_Formule(ILP_TYPE ctxt, const State& init_state, std::function<Formule(const State&)> formule,
+                                     const std::vector<std::pair<double, OperatorType>>& decoherence) {
+    auto basis_ = State_graph(init_state, formule, decoherence).get_basis();
+    basis_ = basis;
+
+    size_t size = basis_.size();
+
+    ILP_TYPE proc_rows, proc_cols, myrow, mycol, NB, MB;
+    mpi::blacs_gridinfo(ctxt, proc_rows, proc_cols, myrow, mycol);
+
+    NB = size / proc_rows;
+
+    MB = size / proc_cols;
+
+    if (NB == 0) {
+        NB = 1;
+    }
+
+    if (MB == 0) {
+        MB = 1;
+    }
+
+    NB = std::min(NB, MB);
+    MB = NB;
+
+    std::function<COMPLEX(size_t i, size_t j)> func = {
+        [&basis, &grid](size_t i, size_t j) {
+            auto state_from = get_elem_from_set(basis, j);
+            auto state_to = get_elem_from_set(basis, i);
+            auto res_states = formule(state_from);
+            
+            COMPLEX res = COMPLEX(0, 0);
+
+            for (const auto& state: res_state.get_state()) {
+                if (state == state_to) res = state.get_coef();
+            }
+
+            return res;
+        }
+    };
 
     H_ = BLOCKED_Matrix<COMPLEX>(ctxt, HE, size, size, func);
 }

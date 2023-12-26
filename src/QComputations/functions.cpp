@@ -103,7 +103,7 @@ void show_basis(const std::set<Cavity_State>& basis) {
     std::cout << std::endl;
 }
 
-void show_basis(const std::set<State>& basis) {
+void show_basis(const std::set<Basis_State>& basis) {
     for (const auto& state: basis) {
         std::cout << std::setw(QConfig::instance().width()) << state.to_string() << " ";
     }
@@ -130,11 +130,11 @@ std::vector<size_t> make_rank_map(size_t size, int rank, int world_size, size_t&
     return rank_map;
 }
 
-std::set<State> Cavity_State_to_State(const std::set<Cavity_State>& st) {
-    std::set<State> res;
+std::set<CHE_State> Cavity_State_to_State(const std::set<Cavity_State>& st) {
+    std::set<CHE_State> res;
 
     for (const auto& item: st) {
-        res.insert(State(item));
+        res.insert(CHE_State(item));
     }
 
     return res;
@@ -306,7 +306,7 @@ Matrix<COMPLEX> FROM_lapack_complex_double_TO_Matrix(lapack_complex_double* A, l
     return res;
 }
 
-void print_state_biguint(const State& state) {
+void print_state_biguint(const CHE_State& state) {
     auto num = state.to_uint();
     auto num_str = num.binary_str();
 

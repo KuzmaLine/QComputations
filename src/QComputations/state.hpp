@@ -11,6 +11,8 @@
 namespace QComputations {
 
 namespace {
+    using QOperatorType = std::function<Basis_State(const Basis_State&, size_t, size_t)>;
+    using ValType = int;
     using COMPLEX = std::complex<double>;
     std::complex<double> gamma(double amplitude, double length, double w_ph) {
         return amplitude * std::exp(std::complex<double>(0, -1) * length * w_ph / QConfig::instance().h());
@@ -46,45 +48,64 @@ $W можно опустить, если QConfig::instance().is_freq_display() =
 В последствии метод to_string() числа переходов с уровня на уровень переделает их в нижние индексы.
 Метод find_states_in_string() - будет согласно формату искать в строке состояния.
 */
-/*
+
 class Basis_State {
-    using ValType = int;
     public:
-        explicit Basis_State(size_t qudits_count, ValType max_vals = 1, size_t groups_count = 1);
+        // инициализация пустого состояния
+        explicit Basis_State();
+        // groups_count делит кудиты на равные по размеру группы
+        explicit Basis_State(size_t qudits_count, ValType max_val = 1, size_t groups_count = 1);
+        // добавление поддержки для разных кудитов
         explicit Basis_State(size_t qudits_count, const std::vector<ValType>& max_vals,
                             size_t groups_count = 1);
+        // инициализация значений
         explicit Basis_State(const std::vector<ValType>& qudits, ValType max_vals = 1, size_t groups_count = 1);
+        // инициализация значений с поддержкой разных кудитов
         explicit Basis_State(const std::vector<ValType>& qudits, const std::vector<ValType>& max_vals,
                              size_t groups_count = 1);
+        // инициализация значений с поддержкой разных кудитов + разных групп
         explicit Basis_State(const std::vector<ValType>& qudits,  const std::vector<ValType>& max_vals,
-                             const std::vector<std::vector<size_t>>& groups);
-    private:
+                             const std::vector<size_t>& groups);
+
+        void set_qudit(ValType val, size_t qudit_index, size_t group_id = 0) { assert(val <= max_vals_[qudit_index]);
+                                    qudits_[this->get_group_start(group_id) + qudit_index] = val;}
+        ValType get_qudit(size_t qudit_index, size_t group_id = 0) const { return qudits_[this->get_group_start(group_id) + qudit_index]; }
+        void append_qudit(ValType init_val = 0, ValType max_val = 1) { groups_.emplace_back(qudits_.size());
+                                                                       qudits_.emplace_back(init_val);
+                                                                       max_vals_.emplace_back(max_val);}
+        bool is_empty() const { return qudits_.size() == 0;}
+
+        Basis_State operator*(const COMPLEX& c) const { auto res = *this; res.set_coef(this->get_coef() * c); return res;}
+
+        size_t get_group_start(size_t group_id) const { return ((group_id == 0) ? 0 : groups_[group_id] + 1);}
+        size_t get_group_end(size_t group_id) const { return groups_[group_id]; }
+        std::string to_string() const;
+        bool operator==(const Basis_State& other) const { assert(max_vals_ == other.max_vals_ and groups_ == other.groups_); return qudits_ == other.qudits_; }
+        bool operator<(const Basis_State& other) const { return this->to_string() > other.to_string(); }
+        
+        void set_max_val(ValType val, size_t qudit_index = -1);
+        void get_max_val(size_t qudit_index, size_t group_id = 0) const { return max_vals_[this->get_group_start(group_id) + qudit_index]; }
+
+        COMPLEX get_coef() const { return coef_; }
+        void set_coef(COMPLEX coef) { coef_ = coef; }
+    protected:
+        COMPLEX coef_ = COMPLEX(1, 0);
         std::vector<ValType> qudits_;
         std::vector<ValType> max_vals_;
-        std::vector<std::vector<size_t>> groups_;
+        std::vector<size_t> groups_;
 };
 
-
-
-class State {
-    public:
-    protected:
-        std::vector<COMPLEX> state_vec_;
-        std::vector<Basis_State> state_components_;
-};
-*/
-
-class State {
+class CHE_State: public Basis_State {
     using E_LEVEL = int;
     using CavityId = size_t;
     using AtomId = size_t;
 
     public:
-        State(size_t x_size = 1, size_t y_size = 1, size_t z_size = 1);
-        State(const Cavity_State& state);
-        State(const State& state) = default;
-        State(const std::vector<size_t>& grid_config, E_LEVEL e_levels_count = 2);
-        explicit State(const std::string&, const std::string& format = QConfig::instance().state_format(),
+        CHE_State(size_t x_size = 1, size_t y_size = 1, size_t z_size = 1);
+        CHE_State(const Cavity_State& state);
+        CHE_State(const CHE_State& state) = default;
+        CHE_State(const std::vector<size_t>& grid_config, E_LEVEL e_levels_count = 2);
+        explicit CHE_State(const std::string&, const std::string& format = QConfig::instance().state_format(),
                        const std::string& del = QConfig::instance().state_delimeter(),
                        bool is_freq_display = QConfig::instance().is_freq_display());
 
@@ -121,9 +142,7 @@ class State {
         void set_state(CavityId id, const Cavity_State& state);
 
         // add cavity to grid (Don't safe, be careful)
-        State add_state(const Cavity_State& state) const;
-
-        std::string to_string() const;
+        CHE_State add_state(const Cavity_State& state) const;
 
         size_t cavities_count() const { return grid_states_.size(); }
         size_t cavity_atoms_count(CavityId id) const { return grid_states_.at(id).m(); }
@@ -131,8 +150,8 @@ class State {
         // Рудимент
         size_t cavity_max_size(CavityId id) const { return grid_states_[id].variants_of_state_count(max_N_); }
 
-        bool operator==(const State& other) const { return grid_states_ == other.grid_states_; }
-        bool operator<(const State& other) const { return this->to_string() > other.to_string(); }
+        bool operator==(const CHE_State& other) const { return grid_states_ == other.grid_states_; }
+        bool operator<(const CHE_State& other) const { return this->to_string() > other.to_string(); }
 
         // Return state vector from cavity
         Cavity_State get_state_in_pol(CavityId pol_id) const { return grid_states_[pol_id]; }
@@ -146,7 +165,7 @@ class State {
         double get_term(size_t atom_index, CavityId cavity_id) const { return grid_states_[cavity_id].get_term(atom_index); }
 
         // Get index of state in basis
-        size_t get_index(const std::set<State>& basis) const;
+        size_t get_index(const std::set<CHE_State>& basis) const;
         size_t get_max_size() const;
 
         // return energy in state (photons + atoms in state one)
@@ -205,8 +224,21 @@ class State {
         std::set<CavityId> gain_cavities_;
 };
 
-class EXC_State {
+class EXC_State: public Basis_State {
     
 };
+
+class State {
+    public:
+        explicit State(const Basis_State& state);
+        explicit State(const std::string& state_string, ValType max_val = 1);
+        explicit State(const std::string& state_string, const std::vector<ValType>& max_vals);
+
+        std::set<Basis_State> get_state_components() const { return state_components_; }
+    private:
+        std::vector<COMPLEX> state_vec_;
+        std::set<Basis_State> state_components_;
+};
+
 
 } // namespace QComputations

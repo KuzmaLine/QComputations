@@ -15,6 +15,10 @@
 #endif
 #endif
 
+namespace {
+    using FormuleType = std::function<Formule(const Basis_State&)>;
+}
+
 namespace QComputations {
 
 Matrix<COMPLEX> Evolution::create_A_destroy(const std::set<State>& basis, size_t cavity_id) {
@@ -557,6 +561,41 @@ BLOCKED_Matrix<COMPLEX> create_BLOCKED_A_create(ILP_TYPE ctxt, const std::set<St
     BLOCKED_Matrix<COMPLEX> A(ctxt, GE, dim, dim, func);
 
     return A;
+}
+
+BLOCKED_Matrix<COMPLEX> operator_to_matrix(FormuleType operator, const std::set<Basis_state>& basis) {
+
+})
+
+BLOCKED_Probs quantum_master_equation(const State& init_state,
+                            BLOCKED_Hamiltonian& H,
+                            const std::vector<double>& time_vec,
+                            bool is_full_rho = false) {
+    std::vector<std::function<Evolution::BLOCKED_Rho(const Evolution::BLOCKED_Rho& rho)>> lindblads;
+
+    for (auto& p: H.get_decoherence()) {
+        gamma = p.first;
+        auto A = operator_to_matrix(p.second, H.get_basis());
+        lindblads.push_back(std::function<Evolution::BLOCKED_Rho(const Evolution::BLOCKED_Rho& rho)> {
+            [A, gamma](const Evolution::BLOCKED_Rho& rho) {
+                auto Aconj = A.hermit();
+                auto AconjA = Aconj * A;
+                return (A * rho * Aconj - (AconjA * rho + rho * AconjA) * COMPLEX(0.5)) * gamma;
+            }
+        }
+        );
+    }
+    
+    auto H_matrix = H.get_blocked_matrix();
+    std::function<Evolution::BLOCKED_Rho(double t, const Evolution::BLOCKED_Rho&)> equation {[&H_matrix, &lindblads](double t, const Evolution::BLOCKED_Rho& rho) {
+        auto tmp = (H_matrix * rho - rho * H_matrix) * COMPLEX(0, -1);
+        for (const auto& lindblad: lindblads) {
+            tmp += lindblad(rho);
+        }
+
+        return tmp;
+    }};
+
 }
 
 Evolution::BLOCKED_Probs Evolution::quantum_master_equation(const std::vector<COMPLEX>& init_state,

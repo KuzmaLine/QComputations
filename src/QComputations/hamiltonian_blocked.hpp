@@ -12,6 +12,8 @@
 namespace QComputations {
 
 namespace {
+    using OperatorType = std::function<Basis_State(const Basis_State&, size_t, size_t)>;
+    using FormuleType = std::function<Formule(const Basis_State&)>;
     using COMPLEX = std::complex<double>;
 }
 
@@ -22,14 +24,13 @@ class BLOCKED_Hamiltonian {
         size_t size() const { return H_.n(); }
         size_t n_loc() const { return H_.local_n(); }
         size_t m_loc() const { return H_.local_m(); }
-        State grid() const { return grid_; }
-        State get_grid() const { return grid_; }
+        CHE_State grid() const { return grid_; }
+        CHE_State get_grid() const { return grid_; }
         void set_grid(const State& grid) { grid_ = grid; }
         ILP_TYPE ctxt() const { return H_.ctxt(); }
-        std::set<State> get_basis() const { return basis_; }
+        std::set<Basis_State> get_basis() const { return basis_; }
+        std::vector<std::pair<double, OperatorType>> get_decoherence() const { return decoherence_;}
 
-// !!!!!!!!  MKL не идеален. На 2 процессорах параллельное спектральное разложение не работает. !!!!!
-// !!!!!!!!  Выдаёт невозможную ошибку !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         void virtual eigen() {
             if (!is_calculated_eigen_) {
                 auto p = Hermit_Lanczos(H_);
@@ -56,13 +57,16 @@ class BLOCKED_Hamiltonian {
         BLOCKED_Matrix<COMPLEX> get_blocked_matrix() const { return H_; }
     protected:
         bool is_calculated_eigen_ = false;
-        std::set<State> basis_;
+        std::set<Basis_State> basis_;
         BLOCKED_Matrix<COMPLEX> H_;
         BLOCKED_Matrix<COMPLEX> eigenvectors_;
         std::vector<double> eigenvalues_;
-        State grid_;
+        std::vector<std::pair<double, FormuleType>> decoherence_;
+        FormuleType formule;
+        CHE_State grid_;
 };
 
+/*
 class BLOCKED_H_TCH : public BLOCKED_Hamiltonian {
     public:
         explicit BLOCKED_H_TCH(ILP_TYPE ctxt, const State& state);
@@ -84,11 +88,20 @@ class BLOCKED_H_by_func: public BLOCKED_Hamiltonian {
     private:
         std::function<COMPLEX(size_t, size_t)> func_;
 };
+*/
 
+class BLOCKED_H_by_Formule: public BLOCKED_Hamiltonian {
+    public:
+        explicit BLOCKED_H_by_Formule(ILP_TYPE ctxt, const State& init_state, FormuleType formule,
+                                     const std::vector<std::pair<double, FormuleType>>& decoherence = {});    
+};
+
+/*
 class BLOCKED_H_TCH_EXC: BLOCKED_Hamiltonian {
     public:
         explicit BLOCKED_H_TCH_EXC(ILP_TYPE ctxt, const EXC_State& state);
 };
+*/
 
 } // namespace QComputations
 

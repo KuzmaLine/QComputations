@@ -66,6 +66,11 @@ namespace Evolution {
                                   const std::vector<double>& time_vec,
                                   bool is_full_rho = false);
 
+    BLOCKED_Probs quantum_master_equation(const State& init_state,
+                                BLOCKED_Hamiltonian& H,
+                                const std::vector<double>& time_vec,
+                                bool is_full_rho = false);
+
     // РУДИМЕНТ
     Probs Parallel_QME(const std::vector<COMPLEX>& init_state,
                        Hamiltonian& H,

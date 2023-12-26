@@ -24,7 +24,7 @@ namespace {
     constexpr bool is_freq_display_default = true;
     constexpr bool is_sequence_default = false;
     const std::string state_format_default = "|$N$W$!;$M>";
-    const std::string state_delimeter_default = ",";
+    const std::string state_delimeter_default = ";";
     const std::string excitation_state_format_default = "|$N>$W{$M" + angle_bracket_right;
 }
 

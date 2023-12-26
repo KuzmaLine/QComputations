@@ -3,6 +3,88 @@
 
 namespace QComputations {
 
+// ---------------------------- OPEATORS ---------------------------
+Basis_State a_destroy(const Basis_State& state, size_t photon_index, size_t cavity_id) {
+    auto cur_photons = state.get_qudit(photon_index, cavity_id);
+
+    Basis_State res();
+    if (cur_photons != 0) {
+        res = state;
+        res.set_qudit(cur_photons - 1, photon_index, cavity_id);
+    }
+
+    res.set_coef(std::sqrt(cur_photons));
+
+    return res;
+}
+
+Basis_State a_create(const Basis_State& state, size_t photon_index, size_t cavity_id) {
+    auto cur_photons = state.get_qudit(photon_index, cavity_id);
+
+    Basis_State res();
+    if (cur_photons != state.get_max_val) {
+        res = state;
+        res.set_qudit(cur_photons + 1, photon_index, cavity_id);
+    }
+
+    res.set_coef(std::sqrt(cur_photons + 1));
+    return res;
+}
+
+Basis_State sigma_destroy(const Basis_State& state, size_t atom_index, size_t cavity_id) {
+    auto cur_val = state.get_qudit(atom_index, cavity_id);
+
+    Basis_State res();
+    if (cur_val != 0) {
+        res = state;
+        res.set_qudit(cur_val - 1, atom_index, cavity_id);
+    }
+
+    return res;
+}
+
+Basis_State sigma_create(const Basis_State& state, size_t atom_index, size_t cavity_id) {
+    auto cur_val = state.get_qudit(atom_index, cavity_id);
+
+    Basis_State res();
+    if (cur_val != state.get_max_val(atom_index, cavity_id)) {
+        res = state;
+        res.set_qudit(cur_val + 1, atom_index, cavity_id);
+    }
+
+    return res;
+}
+
+Basis_State photons_count(const Basis_State& state, size_t photon_index, size_t cavity_id) {
+    ValType coef = 0;
+
+    coef += state.get_qudit(photon_index, cavity_id);
+
+    auto res = state;
+    res.set_coef(coef);
+    return res;
+}
+
+Basis_State atoms_exc_count(const Basis_State& state, size_t atom_index, size_t cavity_id) {
+    ValType coef = 0;
+
+    coef += state.get_qudit(atom_index, cavity_id);
+
+    auto res = state;
+    res.set_coef(coef);
+    return res;
+}
+
+Basis_State check(const Basis_State& state, ValType check_val, size_t qudit_index, size_t group_id) {
+    if (state.get_index(qudit_index, group_id) == check_val) {
+        return state;
+    } else {
+        return Basis_State();
+    }
+}
+
+// OLD
+
 COMPLEX self_energy_photon(const State& state_from, const State& state_to, COMPLEX h) {
     if (state_from == state_to) {
         COMPLEX res(0);

@@ -6,6 +6,7 @@ namespace QComputations {
 
 namespace {
     using CavityId = size_t;
+    constexpr ValType INIT_VAL = 0;
 
     std::vector<std::vector<CavityId>> update_neighbours(size_t x_size, size_t y_size, size_t z_size) {
         std::vector<std::vector<CavityId>> res(x_size * y_size * z_size);
@@ -36,7 +37,47 @@ namespace {
     }
 }
 
-size_t State::hash() const {
+// --------------------------- Basis_Sate -------------------------------------
+
+Basis_State::Basis_State(size_t qudits_count, ValType max_val, size_t groups_count): qudits_(qudits_count, INIT_VAL), max_vals_(qudits_count, max_val) {
+    assert(qudits_count % groups_count == 0);
+    groups_ = std::vector<size_t>(groups_count);
+    for (size_t i = 0; i < groups_count; ++i) {
+        groups_[i] = (i + 1) * (qudits_count / groups_count) - 1;
+    }
+}
+
+std::string Basis_State::to_string() const {
+    std::string state_delimeter = QConfig::instance().state_delimeter();
+
+    std::string res;
+
+    size_t next_end = 0;
+    size_t group_id = 0;
+    size_t next_start = 0;
+    size_t next_group = groups[0];
+    for (size_t i = 0; i < qudits_.size(); i++) {
+        if (i == next_start) {
+            next_end = groups_[group_id];
+            next_start = next_end + 1;
+            res += "|";
+        }
+
+        res += std::to_string(qudits_[i]);
+
+        if (i == next_end) {
+            res += ">";
+        } else {
+            res += state_delimeter;
+        }
+    }
+
+    return res;
+}
+
+// --------------------------- CHE_State -------------------------------------
+
+size_t CHE_State::hash() const {
     std::hash<Cavity_State> state_hash;
     auto res = state_hash(grid_states_[0]);
 
@@ -49,7 +90,7 @@ size_t State::hash() const {
 
 
 // REWRITE TO REGEXP
-State::State(const std::string& grid_state, const std::string& format,
+CHE_State::CHE_State(const std::string& grid_state, const std::string& format,
              const std::string& del, bool is_freq_display) : waveguides_(C_STYLE, 0, 0,
                                                                         std::make_pair(QConfig::instance().waveguides_amplitude(),
                                                                         QConfig::instance().waveguides_length())) {
@@ -151,7 +192,7 @@ State::State(const std::string& grid_state, const std::string& format,
     }
 }
 
-void State::set_waveguide(double amplitude, double length) {
+void CHE_State::set_waveguide(double amplitude, double length) {
     waveguides_ = Matrix<std::pair<double, double>>(C_STYLE, grid_states_.size(), grid_states_.size(),
         std::make_pair(0, 0));
     for (size_t from_id = 0; from_id < grid_states_.size(); from_id++) {
@@ -163,7 +204,7 @@ void State::set_waveguide(double amplitude, double length) {
     }
 }
 
-void State::reshape(size_t x_size, size_t y_size, size_t z_size) {
+void CHE_State::reshape(size_t x_size, size_t y_size, size_t z_size) {
     assert(x_size * y_size * z_size == grid_states_.size());
 
     x_size_ = x_size;
@@ -176,7 +217,7 @@ void State::reshape(size_t x_size, size_t y_size, size_t z_size) {
     neighbours_ = update_neighbours(x_size_, y_size_, z_size_);
 }
 
-State::State(const std::vector<size_t>& grid_config, E_LEVEL e_levels_count): waveguides_(C_STYLE, grid_config.size(),
+CHE_State::CHE_State(const std::vector<size_t>& grid_config, E_LEVEL e_levels_count): waveguides_(C_STYLE, grid_config.size(),
                                                                               grid_config.size(),
                                                                               std::make_pair(QConfig::instance().waveguides_amplitude(), QConfig::instance().waveguides_length())),
                                                                               e_levels_count_(e_levels_count) {
@@ -194,7 +235,7 @@ State::State(const std::vector<size_t>& grid_config, E_LEVEL e_levels_count): wa
     }
 }
 
-size_t State::get_index(const std::set<State>& basis) const {
+size_t CHE_State::get_index(const std::set<CHE_State>& basis) const {
     size_t index = 0;
     for (const auto& state: basis) {
         if (state == *this) return index;
@@ -204,7 +245,7 @@ size_t State::get_index(const std::set<State>& basis) const {
     return -1;
 }
 
-size_t State::get_max_size() const {
+size_t CHE_State::get_max_size() const {
     size_t res = 0;
 
     for (long i = grid_states_.size() - 1; i >= 0 ; i--) {
@@ -217,7 +258,7 @@ size_t State::get_max_size() const {
     return res;
 }
 
-size_t State::get_grid_energy() const {
+size_t CHE_State::get_grid_energy() const {
     size_t res = 0;
 
     for (const auto& state: grid_states_) {
@@ -227,11 +268,11 @@ size_t State::get_grid_energy() const {
     return res;
 }
 
-size_t State::get_energy(CavityId cavity_id) const {
+size_t CHE_State::get_energy(CavityId cavity_id) const {
     return grid_states_[cavity_id].get_energy();
 }
 
-void State::set_state(CavityId id, const Cavity_State& state) {
+void CHE_State::set_state(CavityId id, const Cavity_State& state) {
     max_N_ -= grid_states_[id].get_energy();
     grid_states_[id] = state;
 
@@ -242,8 +283,8 @@ void State::set_state(CavityId id, const Cavity_State& state) {
     if (state.m() != 0) cavities_with_atoms_.insert(id);
 }
 
-State State::add_state(const Cavity_State& state) const {
-    State res = (*this);
+CHE_State CHE_State::add_state(const Cavity_State& state) const {
+    CHE_State res = (*this);
     res.max_N_ += state.get_energy();
 
     if (state.m() != 0) res.cavities_with_atoms_.insert(res.cavities_count());
@@ -253,11 +294,11 @@ State State::add_state(const Cavity_State& state) const {
     return res;
 }
 
-State::State(size_t x_size, size_t y_size, size_t z_size) {
+CHE_State::CHE_State(size_t x_size, size_t y_size, size_t z_size) {
     grid_states_.reserve(x_size * y_size * z_size);
 }
 
-State::State(const Cavity_State& state) {
+CHE_State::CHE_State(const Cavity_State& state) {
     grid_states_.emplace_back(state);
     x_size_ = y_size_ = z_size_ = 1;
     max_N_ = state.get_energy();
@@ -269,7 +310,7 @@ State::State(const Cavity_State& state) {
 }
 
 // Рудимент
-size_t State::get_index() const {
+size_t CHE_State::get_index() const {
     size_t index = 0;
 
     for (long i = grid_states_.size() - 1; i >= 0 ; i--) {
@@ -280,7 +321,7 @@ size_t State::get_index() const {
     return index;
 }
 
-BigUInt State::to_uint() const {
+BigUInt CHE_State::to_uint() const {
     BigUInt res(0);
 
     for (size_t i = 0; i < grid_states_.size(); i++) {
@@ -300,7 +341,7 @@ BigUInt State::to_uint() const {
     return res;
 }
 
-void State::from_uint(const BigUInt& state_num) {
+void CHE_State::from_uint(const BigUInt& state_num) {
     size_t index = 0;
     for (long long i = grid_states_.size() - 1; i >= 0; i--) {
         long long m = grid_states_[i].m();
@@ -319,7 +360,7 @@ void State::from_uint(const BigUInt& state_num) {
 
 
 
-std::string State::to_string() const {
+std::string CHE_State::to_string() const {
     std::string res = "|";
 
     for (size_t i = 0; i < grid_states_.size(); i++) {

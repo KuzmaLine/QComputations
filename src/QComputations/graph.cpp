@@ -5,10 +5,47 @@
 
 namespace QComputations {
 
+bool is_in_basis(const std::set<Basis_State>& basis, const Basis_State& state) {
+    return std::find(basis.begin(), basis.end(), state) != basis.end();
+}
+
 bool is_in_basis(const std::set<State>& basis, const State& state) {
     return std::find(basis.begin(), basis.end(), state) != basis.end();
 }
 
+State_Graph::State_Graph(const State& init_state,
+                        std::function<Formule(const Basis_State&)> func,
+                        std::function<Formule(const Basis_State&)> func_decoherence) {
+    auto state_components = init_state.get_state_components();
+    std::queue<Basis_State> state_queue;
+    for (const auto& state: state_components) {
+        basis_.insert(state);
+        state_queue.push(state);
+    }
+
+    while (!state_queue.empty()) {
+        auto state = state_queue.front();
+        state_queue.pop();
+        auto res = func(state);
+        auto res_decoherence = func_decoherence(state);
+
+        for (const auto& state: res.get_states()) {
+            if (!is_in_basis(basis_, state)) {
+                basis_.insert(state);
+                state_queue_.push(state);
+            }
+        }
+
+        for (const auto& state: res.get_states()) {
+            if (!is_in_basis(basis_, state)) {
+                basis_.insert(state);
+                state_queue_.push(state);
+            }
+        }
+    }
+}
+
+/*
 State_Graph::State_Graph(const State& init_state) {
     basis_.insert(init_state);
     std::queue<State> state_queue_;
@@ -115,5 +152,6 @@ void State_Graph::show() const {
         std::cout << std::endl;
     }
 }
+*/
 
 } // namespace QComputations

@@ -34,7 +34,7 @@ std::string to_string_double_with_precision(const double a_value,
 
 std::string vector_to_string(const std::vector<std::string>& inp);
 
-void print_state_biguint(const State& state);
+void print_state_biguint(const CHE_State& state);
 
 std::vector<double> FROM_double_TO_vector(double* A, lapack_int n);
 Matrix<COMPLEX> FROM_lapack_complex_double_TO_Matrix(lapack_complex_double* A, lapack_int n, lapack_int m);
