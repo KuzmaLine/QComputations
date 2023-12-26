@@ -9,14 +9,27 @@ namespace {
     using COMPLEX = std::complex<double>;
 }
 
-class Formule {
+template<typename FuncType>
+class Operator {
+    public:
+        explicit Operator(FuncType op): operator_(op) {}
+        
+    private:
+        FuncType operator_;
+        std::vector<Operator<
+};
+
+template<typename FuncType>
+class Formule: public Operator<FuncType> {
     public:
         explicit Formule() = default;
-        explicit Formule(const Basis_State& state) : states_(1, state) {}
+        explicit Formule(const Basis_State& state) {states_.insert(state);}
+        explicit Formule(const Operator& operator) {}
 
         void operator+=(const Basis_State& state) { states_.insert(state); }
         std::set<Basis_State> get_states() const { return states_; }
     private:
+        
         std::set<Basis_State> states_;
 };
 
