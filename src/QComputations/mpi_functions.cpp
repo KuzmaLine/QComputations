@@ -76,7 +76,7 @@ std::vector<double> mpi::bcast_vector_double(const std::vector<double>& v) {
     return res;
 }
 
-State mpi::bcast_state(const State& state) {
+CHE_State mpi::bcast_state(const CHE_State& state) {
     int rank;
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 
@@ -112,7 +112,7 @@ State mpi::bcast_state(const State& state) {
 
     //std::cout << "GRID - " << rank << " : ";
     //show_vector(grid_config);
-    State res(grid_config);
+    CHE_State res(grid_config);
     res.set_max_N(data[0]);
     res.set_min_N(data[1]);
     // !!!!!!!!!!! res.set_gamma(Matrix<COMPLEX>(gamma, cavities_count, cavities_count, C_STYLE)); // true - c_style
@@ -165,7 +165,7 @@ void mpi::run_mpi_slaves(const std::map<int, std::vector<MPI_Data>>& data) {
 
 // ----------------------------------- GENERATE_H --------------------------------------
         if (command == COMMAND::GENERATE_H) {
-            State tmp = bcast_state();
+            CHE_State tmp = bcast_state();
             //std::cout << tmp.to_string() << std::endl;
             H_TCH H(tmp);
 

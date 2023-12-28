@@ -18,6 +18,7 @@ namespace QComputations {
 namespace {
     typedef std::complex<double> COMPLEX;
 
+    /*
     Matrix<COMPLEX> a_destroy(size_t n) {
         size_t size = n + 1;
 
@@ -113,9 +114,10 @@ namespace {
              tensor_multiply(
              tensor_multiply(E_Matrix<COMPLEX>(size_middle), a_destroy(grid.max_N())), E_Matrix<COMPLEX>(size_right))) * std::conj(gamma);
     }
+    */
 
-    std::set<State> update_basis(const std::set<State>& basis, const std::set<State>& addition) {
-        std::set<State> res;
+    std::set<CHE_State> update_basis(const std::set<CHE_State>& basis, const std::set<CHE_State>& addition) {
+        std::set<CHE_State> res;
 
         for (const auto& basis_state: basis) {
             for (const auto& state: addition) {
@@ -192,13 +194,13 @@ namespace {
 }
 
     // N >= 1
-std::set<State> define_basis_of_hamiltonian(const State& grid) {
-    std::set<State> basis;
+std::set<CHE_State> define_basis_of_hamiltonian(const CHE_State& grid) {
+    std::set<CHE_State> basis;
 
     long max_energy;
     for (max_energy = grid.max_N(); max_energy >= long(grid.min_N()); max_energy--) {
         //std::cout << max_energy << " " << target_N << std::endl;
-        State state = grid; // copy base structure of grid
+        CHE_State state = grid; // copy base structure of grid
 
         std::vector<size_t> energy_map(grid.cavities_count(), 0);
         energy_map[0] = max_energy;
@@ -415,7 +417,7 @@ H_JC::H_JC(const State& init_state) {
 }
 */
 
-H_JC::H_JC(const State& grid) {
+H_JC::H_JC(const CHE_State& grid) {
     assert(grid.cavities_count() == 1 and grid.m(0) == 1);
 /*
 #ifdef ENABLE_MPI
@@ -520,7 +522,7 @@ H_JC::H_JC(const State& grid) {
             H_[i][j] += photon_exchange(state_from, state_to, grid);
             */
 
-            H_[i][j] += JC_ADD(state_from, state_to, grid);
+            H_[i][j] += JC_ADD(CHE_State(state_from), CHE_State(state_to), grid);
             j++;
         }
         j = 0;
@@ -533,7 +535,7 @@ void H_JC::make_exact() {
     size_t i = 0, j = 0;
     for (const auto& state_from: basis_) {
         for (const auto& state_to: basis_) {
-            H_[i][j] += JC_addition(state_from, state_to);
+            H_[i][j] += JC_addition(CHE_State(state_from), CHE_State(state_to));
             j++;
         }
         j = 0;
@@ -541,7 +543,7 @@ void H_JC::make_exact() {
     }
 }
 
-H_TC::H_TC(const State& grid) {
+H_TC::H_TC(const CHE_State& grid) {
     assert(grid.cavities_count() == 1);
     grid_ = grid;
 
@@ -646,7 +648,7 @@ H_TC::H_TC(const State& grid) {
 
 // --------------------------- H_TCH ------------------------------------
 
-H_TCH::H_TCH(const State& grid) {
+H_TCH::H_TCH(const CHE_State& grid) {
 /*
 #ifdef ENABLE_MPI
     int rank, world_size;

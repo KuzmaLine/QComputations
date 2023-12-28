@@ -55,7 +55,7 @@ std::string Basis_State::to_string() const {
     size_t next_end = 0;
     size_t group_id = 0;
     size_t next_start = 0;
-    size_t next_group = groups[0];
+    size_t next_group = groups_[0];
     for (size_t i = 0; i < qudits_.size(); i++) {
         if (i == next_start) {
             next_end = groups_[group_id];
@@ -359,7 +359,7 @@ void CHE_State::from_uint(const BigUInt& state_num) {
 }
 
 
-
+/*
 std::string CHE_State::to_string() const {
     std::string res = "|";
 
@@ -389,5 +389,6 @@ std::string CHE_State::to_string() const {
 
     return res;
 }
+*/
 
 } // namespace QComputations

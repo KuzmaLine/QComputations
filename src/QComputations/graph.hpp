@@ -14,9 +14,9 @@ namespace QComputations {
 class State_Graph {
     public:
         explicit State_Graph(const CHE_State& init_state);
-        explicit State_Graph(const State& init_state,
-                        std::function<Formule(const Basis_State&)> func,
-                        std::function<Formule(const Basis_State&)> func_decoherence)
+        explicit State_Graph(const State<Basis_State>& init_state,
+                        const Operator<Basis_State>& A_op,
+                        const std::vector<Operator<Basis_State>>& operator_decoherence = {});
         void show() const;
 
         std::set<Basis_State> get_basis() const { return basis_; }

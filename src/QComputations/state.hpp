@@ -11,7 +11,6 @@
 namespace QComputations {
 
 namespace {
-    using QOperatorType = std::function<Basis_State(const Basis_State&, size_t, size_t)>;
     using ValType = int;
     using COMPLEX = std::complex<double>;
     std::complex<double> gamma(double amplitude, double length, double w_ph) {
@@ -84,7 +83,7 @@ class Basis_State {
         bool operator<(const Basis_State& other) const { return this->to_string() > other.to_string(); }
         
         void set_max_val(ValType val, size_t qudit_index = -1);
-        void get_max_val(size_t qudit_index, size_t group_id = 0) const { return max_vals_[this->get_group_start(group_id) + qudit_index]; }
+        ValType get_max_val(size_t qudit_index, size_t group_id = 0) const { return max_vals_[this->get_group_start(group_id) + qudit_index]; }
 
         COMPLEX get_coef() const { return coef_; }
         void set_coef(COMPLEX coef) { coef_ = coef; }
@@ -101,6 +100,7 @@ class CHE_State: public Basis_State {
     using AtomId = size_t;
 
     public:
+        CHE_State(const Basis_State& base);
         CHE_State(size_t x_size = 1, size_t y_size = 1, size_t z_size = 1);
         CHE_State(const Cavity_State& state);
         CHE_State(const CHE_State& state) = default;
@@ -228,16 +228,18 @@ class EXC_State: public Basis_State {
     
 };
 
+template<typename StateType>
 class State {
     public:
-        explicit State(const Basis_State& state);
+        explicit State(const StateType& state);
         explicit State(const std::string& state_string, ValType max_val = 1);
         explicit State(const std::string& state_string, const std::vector<ValType>& max_vals);
 
-        std::set<Basis_State> get_state_components() const { return state_components_; }
+        std::set<StateType> get_state_components() const { return state_components_; }
+        std::vector<COMPLEX> get_vector() const { return state_vec_;}
     private:
         std::vector<COMPLEX> state_vec_;
-        std::set<Basis_State> state_components_;
+        std::set<StateType> state_components_;
 };
 
 

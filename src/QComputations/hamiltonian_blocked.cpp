@@ -133,9 +133,17 @@ BLOCKED_H_JC::BLOCKED_H_JC(ILP_TYPE ctxt, const State& grid) {
 }
 */
 
-BLOCKED_H_by_Formule::BLOCKED_H_by_Formule(ILP_TYPE ctxt, const State& init_state, std::function<Formule(const State&)> formule,
-                                     const std::vector<std::pair<double, OperatorType>>& decoherence) {
-    auto basis_ = State_graph(init_state, formule, decoherence).get_basis();
+BLOCKED_H_by_Operator::BLOCKED_H_by_Operator(ILP_TYPE ctxt, const State<Basis_State>& init_state, const Operator<Basis_State>& H_op,
+                                     const std::vector<std::pair<double, Operator<Basis_State>>>& decoherence) {
+    operator_ = H_op;
+    decoherence_ = decoherence;
+
+    std::vector<Operator<Basis_State>> dec_tmp;
+    for (const auto& p: decoherence) {
+        dec_tmp.push_back(p.second);
+    }
+
+    auto basis = State_Graph(init_state, H_op, dec_tmp).get_basis();
     basis_ = basis;
 
     size_t size = basis_.size();
@@ -159,15 +167,18 @@ BLOCKED_H_by_Formule::BLOCKED_H_by_Formule(ILP_TYPE ctxt, const State& init_stat
     MB = NB;
 
     std::function<COMPLEX(size_t i, size_t j)> func = {
-        [&basis, &grid](size_t i, size_t j) {
+        [&basis, &H_op](size_t i, size_t j) {
             auto state_from = get_elem_from_set(basis, j);
             auto state_to = get_elem_from_set(basis, i);
-            auto res_states = formule(state_from);
+            auto res_states = H_op.run(State<Basis_State>(state_from));
             
             COMPLEX res = COMPLEX(0, 0);
 
-            for (const auto& state: res_state.get_state()) {
-                if (state == state_to) res = state.get_coef();
+            for (const auto& state: res_states) {
+                if (state == state_to) {
+                    res = state.get_coef();
+                    break;
+                }
             }
 
             return res;

@@ -9,13 +9,15 @@ bool is_in_basis(const std::set<Basis_State>& basis, const Basis_State& state) {
     return std::find(basis.begin(), basis.end(), state) != basis.end();
 }
 
+/*
 bool is_in_basis(const std::set<State>& basis, const State& state) {
     return std::find(basis.begin(), basis.end(), state) != basis.end();
 }
+*/
 
-State_Graph::State_Graph(const State& init_state,
-                        std::function<Formule(const Basis_State&)> func,
-                        std::function<Formule(const Basis_State&)> func_decoherence) {
+State_Graph::State_Graph(const State<Basis_State>& init_state,
+                         const Operator<Basis_State>& A_op,
+                         const std::vector<Operator<Basis_State>>& operator_decoherence) {
     auto state_components = init_state.get_state_components();
     std::queue<Basis_State> state_queue;
     for (const auto& state: state_components) {
@@ -26,20 +28,23 @@ State_Graph::State_Graph(const State& init_state,
     while (!state_queue.empty()) {
         auto state = state_queue.front();
         state_queue.pop();
-        auto res = func(state);
-        auto res_decoherence = func_decoherence(state);
+        auto res = A_op.run(State<Basis_State>(state));
 
-        for (const auto& state: res.get_states()) {
+        for (const auto& state: res) {
             if (!is_in_basis(basis_, state)) {
                 basis_.insert(state);
-                state_queue_.push(state);
+                state_queue.push(state);
             }
         }
 
-        for (const auto& state: res.get_states()) {
-            if (!is_in_basis(basis_, state)) {
-                basis_.insert(state);
-                state_queue_.push(state);
+        for (const auto& op: operator_decoherence) {
+            res = op.run(State<Basis_State>(state));
+
+            for (const auto& state: res) {
+                if (!is_in_basis(basis_, state)) {
+                    basis_.insert(state);
+                    state_queue.push(state);
+                }
             }
         }
     }

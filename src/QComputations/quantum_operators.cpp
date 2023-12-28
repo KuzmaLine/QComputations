@@ -4,6 +4,7 @@
 namespace QComputations {
 
 // ---------------------------- OPEATORS ---------------------------
+/*
 Basis_State a_destroy(const Basis_State& state, size_t photon_index, size_t cavity_id) {
     auto cur_photons = state.get_qudit(photon_index, cavity_id);
 
@@ -82,9 +83,11 @@ Basis_State check(const Basis_State& state, ValType check_val, size_t qudit_inde
         return Basis_State();
     }
 }
+*/
 
 // OLD
 
+/*
 COMPLEX self_energy_photon(const State& state_from, const State& state_to, COMPLEX h) {
     if (state_from == state_to) {
         COMPLEX res(0);
@@ -295,7 +298,9 @@ COMPLEX photon_create(const State& state_from, const State& state_to, COMPLEX ga
     return 0;
 }
 
-COMPLEX JC_addition(const State& state_from, const State& state_to, COMPLEX g) {
+*/
+
+COMPLEX JC_addition(const CHE_State& state_from, const CHE_State& state_to, COMPLEX g) {
     if (state_from.n(0) - 1 == state_to.n(0) and state_from.get_qubit(0, 0) == 1 and state_to.get_qubit(0, 0) == 0) {
         return g * sqrt(state_from.n(0));
     } else if (state_from.n(0) + 1 == state_to.n(0) and state_from.get_qubit(0, 0) == 0 and state_to.get_qubit(0, 0) == 1) {
@@ -305,7 +310,7 @@ COMPLEX JC_addition(const State& state_from, const State& state_to, COMPLEX g) {
     }
 }
 
-COMPLEX TCH_ADD(const State& state_from, const State& state_to, const State& grid) {
+COMPLEX TCH_ADD(const CHE_State& state_from, const CHE_State& state_to, const CHE_State& grid) {
     COMPLEX res(0);
     res += self_energy_atom(state_from, state_to);
     //std::cout << "Energy_atom PASSED\n";
@@ -320,7 +325,7 @@ COMPLEX TCH_ADD(const State& state_from, const State& state_to, const State& gri
     return res;
 }
 
-COMPLEX TC_ADD(const State& state_from, const State& state_to, const State& grid) {
+COMPLEX TC_ADD(const CHE_State& state_from, const CHE_State& state_to, const CHE_State& grid) {
     COMPLEX res(0);
     res += self_energy_atom(state_from, state_to);
     //std::cout << "Energy_atom PASSED\n";
@@ -334,7 +339,7 @@ COMPLEX TC_ADD(const State& state_from, const State& state_to, const State& grid
     return res;
 }
 
-COMPLEX JC_ADD(const State& state_from, const State& state_to, const State& grid) {
+COMPLEX JC_ADD(const CHE_State& state_from, const CHE_State& state_to, const CHE_State& grid) {
     COMPLEX res(0);
     res += self_energy_atom(state_from, state_to);
     //std::cout << "Energy_atom PASSED\n";
@@ -347,5 +352,6 @@ COMPLEX JC_ADD(const State& state_from, const State& state_to, const State& grid
 
     return res;
 }
+
 
 } // namespace QComputations

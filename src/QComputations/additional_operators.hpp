@@ -151,6 +151,7 @@ struct std::hash<std::pair<QComputations::Cavity_State, QComputations::Cavity_St
     }
 };
 
+/*
 template<>
 struct std::hash<QComputations::State> {
     size_t operator()(const QComputations::State& state) const {
@@ -167,3 +168,4 @@ struct std::hash<std::pair<QComputations::State, QComputations::State>> {
         return h1 ^ (h2 << 1);
     }
 };
+*/

@@ -52,7 +52,7 @@ void matplotlib::surface(const std::vector<std::vector<double>>& x,
 
 void matplotlib::probs_to_plot(const Evolution::Probs& probs, 
                                const std::vector<double>& time_vec,
-                               const std::set<State>& basis,
+                               const std::set<Basis_State>& basis,
                                std::vector<std::map<std::string, std::string>> keywords) {
     //std::cout << "HERE\n";
     size_t index = 0;
@@ -103,7 +103,7 @@ void matplotlib::probs_to_plot(const Evolution::Probs& probs,
 
 void matplotlib::probs_in_cavity_to_plot(const Evolution::BLOCKED_Probs& probs_start,
                                 const std::vector<double>& time_vec,
-                                const std::set<State>& basis_start,
+                                const std::set<Basis_State>& basis_start,
                                 size_t cavity_id,
                                 std::vector<std::map<std::string, std::string>> keywords) {
     ILP_TYPE rank;
@@ -143,7 +143,7 @@ void matplotlib::probs_in_cavity_to_plot(const Evolution::BLOCKED_Probs& probs_s
 
 void matplotlib::probs_to_plot(const Evolution::BLOCKED_Probs& probs, 
                                const std::vector<double>& time_vec,
-                               const std::set<State>& basis,
+                               const std::set<Basis_State>& basis,
                                std::vector<std::map<std::string, std::string>> keywords) {
     //std::cout << "HERE\n";
     ILP_TYPE rank;
@@ -217,7 +217,7 @@ void matplotlib::probs_to_plot(const Evolution::BLOCKED_Probs& probs,
 
 void matplotlib::rho_probs_to_plot(const Evolution::Probs& probs,
                        const std::vector<double>& time_vec,
-                       const std::set<State>& basis,
+                       const std::set<Basis_State>& basis,
                        std::vector<std::map<std::string, std::string>> keywords) {
     size_t from = 0;
     size_t to = 0;
@@ -254,7 +254,7 @@ void matplotlib::rho_probs_to_plot(const Evolution::Probs& probs,
 
 void matplotlib::rho_diag_to_plot(const Evolution::Probs& probs,
                                   const std::vector<double>& time_vec,
-                                  const std::set<State>& basis,
+                                  const std::set<Basis_State>& basis,
                                   std::vector<std::map<std::string, std::string>> keywords) {
     size_t state_index = 0;
     size_t basis_size = basis.size();
@@ -281,9 +281,10 @@ void matplotlib::rho_diag_to_plot(const Evolution::Probs& probs,
     plt::legend();
 }
 
+/*
 void matplotlib::rho_subdiag_to_plot(const Evolution::Probs& probs,
                                      const std::vector<double>& time_vec,
-                                     const std::set<State>& basis,
+                                     const std::set<Basis_State>& basis,
                                      std::vector<std::map<std::string, std::string>> keywords) {
     size_t from = 0;
     size_t to = 0;
@@ -308,11 +309,13 @@ void matplotlib::rho_subdiag_to_plot(const Evolution::Probs& probs,
             }
 
             keywords[index]["label"] = state_from.to_string() + " -> " + state_to.to_string();
+*/
             /*
             for (const auto& p: keywords[index]) {
                 std::cout << p.first << " " << p.second << std::endl;
             }
             */
+/*
             plt::plot(time_vec, probs.row(index), keywords[index]);
             //plt::plot(time_vec, state_probs);
             to++;
@@ -322,6 +325,7 @@ void matplotlib::rho_subdiag_to_plot(const Evolution::Probs& probs,
     }
     plt::legend();
 }
+*/
 
 void matplotlib::show(bool is_block) {
     plt::show(is_block);

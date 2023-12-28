@@ -8,12 +8,11 @@
 #include <set>
 #include "state.hpp"
 #include "config.hpp"
+#include "quantum_operators.hpp"
 
 namespace QComputations {
 
 namespace {
-    using OperatorType = std::function<Basis_State(const Basis_State&, size_t, size_t)>;
-    using FormuleType = std::function<Formule(const Basis_State&)>;
     using COMPLEX = std::complex<double>;
 }
 
@@ -26,10 +25,10 @@ class BLOCKED_Hamiltonian {
         size_t m_loc() const { return H_.local_m(); }
         CHE_State grid() const { return grid_; }
         CHE_State get_grid() const { return grid_; }
-        void set_grid(const State& grid) { grid_ = grid; }
+        void set_grid(const CHE_State& grid) { grid_ = grid; }
         ILP_TYPE ctxt() const { return H_.ctxt(); }
         std::set<Basis_State> get_basis() const { return basis_; }
-        std::vector<std::pair<double, OperatorType>> get_decoherence() const { return decoherence_;}
+        std::vector<std::pair<double, Operator<Basis_State>>> get_decoherence() const { return decoherence_;}
 
         void virtual eigen() {
             if (!is_calculated_eigen_) {
@@ -61,8 +60,8 @@ class BLOCKED_Hamiltonian {
         BLOCKED_Matrix<COMPLEX> H_;
         BLOCKED_Matrix<COMPLEX> eigenvectors_;
         std::vector<double> eigenvalues_;
-        std::vector<std::pair<double, FormuleType>> decoherence_;
-        FormuleType formule;
+        std::vector<std::pair<double, Operator<Basis_State>>> decoherence_;
+        Operator<Basis_State> operator_;
         CHE_State grid_;
 };
 
@@ -90,10 +89,10 @@ class BLOCKED_H_by_func: public BLOCKED_Hamiltonian {
 };
 */
 
-class BLOCKED_H_by_Formule: public BLOCKED_Hamiltonian {
+class BLOCKED_H_by_Operator: public BLOCKED_Hamiltonian {
     public:
-        explicit BLOCKED_H_by_Formule(ILP_TYPE ctxt, const State& init_state, FormuleType formule,
-                                     const std::vector<std::pair<double, FormuleType>>& decoherence = {});    
+        explicit BLOCKED_H_by_Operator(ILP_TYPE ctxt, const State<Basis_State>& init_state, const Operator<Basis_State>& H_op,
+                                     const std::vector<std::pair<double, Operator<Basis_State>>>& decoherence = {});    
 };
 
 /*

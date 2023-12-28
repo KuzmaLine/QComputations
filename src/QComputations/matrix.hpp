@@ -60,7 +60,7 @@ template<typename T> class Matrix {
             for (size_t i = 0; i < n_; i++) {
                 for (size_t j = 0; j < m_; j++) {
                     mass_.emplace_back(static_cast<V>(A[i][j]));
-               }
+                }
             }
 
             matrix_style_ = A.get_matrix_style();
