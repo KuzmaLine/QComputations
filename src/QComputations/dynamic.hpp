@@ -54,8 +54,8 @@ namespace Evolution {
     using BLOCKED_Probs = BLOCKED_Matrix<double>;
     using BLOCKED_Rho = BLOCKED_Matrix<COMPLEX>;
 
-    std::pair<BLOCKED_Probs, std::set<CHE_State>> probs_to_cavity_probs(const BLOCKED_Probs& probs,
-                                                const std::set<Basis_State>& basis, size_t cavity_id) ;
+    std::pair<BLOCKED_Probs, std::set<Basis_State>> probs_to_cavity_probs(const BLOCKED_Probs& probs,
+                                                const std::set<Basis_State>& basis, size_t cavity_id);
 
     BLOCKED_Rho create_BLOCKED_init_rho(ILP_TYPE ctxt, const std::vector<COMPLEX>& init_state);
 
@@ -72,10 +72,12 @@ namespace Evolution {
                                 bool is_full_rho = false);
 
     // РУДИМЕНТ
+    /*
     Probs Parallel_QME(const std::vector<COMPLEX>& init_state,
                        Hamiltonian& H,
                        const std::vector<double>& time_vec,
                        bool is_full_rho = false);
+    */
 
     std::vector<double> scan_gamma(const std::vector<COMPLEX>& init_state,
                             BLOCKED_Hamiltonian& H,

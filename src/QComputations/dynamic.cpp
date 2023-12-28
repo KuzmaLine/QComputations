@@ -17,19 +17,21 @@
 
 namespace QComputations {
 
-/*
+
 Matrix<COMPLEX> Evolution::create_A_destroy(const std::set<Basis_State>& basis, size_t cavity_id) {
     size_t dim = basis.size();
     Matrix<COMPLEX> A(DEFAULT_MATRIX_STYLE, dim, dim, 0);
 
     size_t index = 0;
     for (const auto& state: basis) {
-        auto n = state.n(cavity_id);
+        //auto n = state.n(cavity_id);
+        auto n = 0;
         if (n != 0) {
             auto tmp_state = state;
-            tmp_state.set_n(n - 1, cavity_id);
+            //tmp_state.set_n(n - 1, cavity_id);
 
-            auto state_index = tmp_state.get_index(basis);
+            //auto state_index = tmp_state.get_index(basis);
+            auto state_index = 0;
             if (state_index != -1) A[state_index][index] = COMPLEX(std::sqrt(n));
         }
 
@@ -45,11 +47,13 @@ Matrix<COMPLEX> Evolution::create_A_create(const std::set<Basis_State>& basis, s
 
     size_t index = 0;
     for (const auto& state: basis) {
-        auto n = state.n(cavity_id);
+        //auto n = state.n(cavity_id);
+        auto n = 0;
         auto tmp_state = state;
-        tmp_state.set_n(n + 1, cavity_id);
+        //tmp_state.set_n(n + 1, cavity_id);
 
-        auto state_index = tmp_state.get_index(basis);
+        //auto state_index = tmp_state.get_index(basis);
+        auto state_index = 0;
         if (state_index != -1) A[state_index][index] = COMPLEX(std::sqrt(n + 1));
 
         index++;
@@ -57,7 +61,7 @@ Matrix<COMPLEX> Evolution::create_A_create(const std::set<Basis_State>& basis, s
 
     return A;
 }
-*/
+
 
 Evolution::Rho Evolution::create_init_rho(const std::vector<COMPLEX>& init_state) {
     size_t dim = init_state.size();
@@ -575,15 +579,18 @@ BLOCKED_Matrix<COMPLEX> operator_to_matrix(ILP_TYPE ctxt, const Operator<Basis_S
         [&basis, &op](size_t i, size_t j) {
             auto state_from = get_elem_from_set(basis, j);
             auto state_to = get_elem_from_set(basis, i);
-            auto res_states = op.run(State<Basis_State>(state_from));
+            auto res_state = op.run(State<Basis_State>(state_from));
             
             COMPLEX res = COMPLEX(0, 0);
 
-            for (const auto& state: res_states) {
+            size_t index = 0;
+            for (const auto& state: res_state.get_state_components()) {
                 if (state == state_to) {
-                    res = state.get_coef();
+                    res = res_state[index];
                     break;
                 }
+
+                index++;
             }
 
             return res;

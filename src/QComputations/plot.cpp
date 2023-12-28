@@ -100,7 +100,7 @@ void matplotlib::probs_to_plot(const Evolution::Probs& probs,
 
 #ifdef ENABLE_MPI
 #ifdef ENABLE_CLUSTER
-
+/*
 void matplotlib::probs_in_cavity_to_plot(const Evolution::BLOCKED_Probs& probs_start,
                                 const std::vector<double>& time_vec,
                                 const std::set<Basis_State>& basis_start,
@@ -122,11 +122,6 @@ void matplotlib::probs_in_cavity_to_plot(const Evolution::BLOCKED_Probs& probs_s
                 keywords.emplace_back(tmp);
             }
             keywords[index]["label"] = state.to_string();
-            /*
-            for (const auto& p: keywords[index]) {
-                std::cout << p.first << " " << p.second << std::endl;
-            }
-            */
         }
 
         std::vector<double> probs_vec(time_vec.size());
@@ -140,6 +135,7 @@ void matplotlib::probs_in_cavity_to_plot(const Evolution::BLOCKED_Probs& probs_s
     }
     if (rank == 0) plt::legend();
 }
+*/
 
 void matplotlib::probs_to_plot(const Evolution::BLOCKED_Probs& probs, 
                                const std::vector<double>& time_vec,

@@ -191,7 +191,7 @@ void mpi::run_mpi_slaves(const std::map<int, std::vector<MPI_Data>>& data) {
             MPI_Bcast(&is_full_rho, 1, MPI_C_BOOL, mpi::ROOT_ID, MPI_COMM_WORLD);
 
             auto H_tmp = Hamiltonian();
-            Evolution::Parallel_QME(init_state, H_tmp, time_vec, is_full_rho);
+            //Evolution::Parallel_QME(init_state, H_tmp, time_vec, is_full_rho);
 #endif
 // ---------------------------------- DELETE --------------------------------------
 // --------------------------------------------------------------------------------

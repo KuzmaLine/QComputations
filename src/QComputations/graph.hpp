@@ -22,6 +22,7 @@ class State_Graph {
         std::set<Basis_State> get_basis() const { return basis_; }
     private:
         std::set<Basis_State> basis_;
+        std::set<CHE_State> ch_basis_;
         //std::unordered_map<Basis_State, std::unordered_set<Basis_State>> to_;
         //std::unordered_map<Basis_State, std::unordered_set<Basis_State>> from_;
 };

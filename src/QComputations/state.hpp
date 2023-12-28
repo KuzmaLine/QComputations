@@ -4,9 +4,11 @@
 #include <string>
 #include <complex>
 #include <cassert>
+#include <set>
 #include "cavity_state.hpp"
 #include "matrix.hpp"
 #include "big_uint.hpp"
+#include <algorithm>
 
 namespace QComputations {
 
@@ -51,7 +53,7 @@ $W можно опустить, если QConfig::instance().is_freq_display() =
 class Basis_State {
     public:
         // инициализация пустого состояния
-        explicit Basis_State();
+        explicit Basis_State() = default;
         // groups_count делит кудиты на равные по размеру группы
         explicit Basis_State(size_t qudits_count, ValType max_val = 1, size_t groups_count = 1);
         // добавление поддержки для разных кудитов
@@ -74,7 +76,7 @@ class Basis_State {
                                                                        max_vals_.emplace_back(max_val);}
         bool is_empty() const { return qudits_.size() == 0;}
 
-        Basis_State operator*(const COMPLEX& c) const { auto res = *this; res.set_coef(this->get_coef() * c); return res;}
+        //Basis_State operator*(const COMPLEX& c) const { auto res = *this; res.set_coef(this->get_coef() * c); return res;}
 
         size_t get_group_start(size_t group_id) const { return ((group_id == 0) ? 0 : groups_[group_id] + 1);}
         size_t get_group_end(size_t group_id) const { return groups_[group_id]; }
@@ -85,10 +87,12 @@ class Basis_State {
         void set_max_val(ValType val, size_t qudit_index = -1);
         ValType get_max_val(size_t qudit_index, size_t group_id = 0) const { return max_vals_[this->get_group_start(group_id) + qudit_index]; }
 
-        COMPLEX get_coef() const { return coef_; }
-        void set_coef(COMPLEX coef) { coef_ = coef; }
+        //COMPLEX get_coef() const { return coef_; }
+        //void set_coef(COMPLEX coef) { coef_ = coef; }
+
+        void clear() { qudits_.resize(0); max_vals_.resize(0); groups_.resize(0); }
     protected:
-        COMPLEX coef_ = COMPLEX(1, 0);
+        //COMPLEX coef_ = COMPLEX(1, 0);
         std::vector<ValType> qudits_;
         std::vector<ValType> max_vals_;
         std::vector<size_t> groups_;
@@ -100,7 +104,7 @@ class CHE_State: public Basis_State {
     using AtomId = size_t;
 
     public:
-        CHE_State(const Basis_State& base);
+        CHE_State(const Basis_State& base): Basis_State(base) {}
         CHE_State(size_t x_size = 1, size_t y_size = 1, size_t z_size = 1);
         CHE_State(const Cavity_State& state);
         CHE_State(const CHE_State& state) = default;
@@ -228,19 +232,77 @@ class EXC_State: public Basis_State {
     
 };
 
+// ------------------------------ State ---------------------------------
+
 template<typename StateType>
 class State {
     public:
-        explicit State(const StateType& state);
+        explicit State() = default;
+        State(const State<StateType>& state) = default;
+        State(const StateType& state) {
+            if (!state.is_empty()) {
+                state_vec_.emplace_back(1, 0);
+                state_components_.insert(state);
+            }
+        }
+
         explicit State(const std::string& state_string, ValType max_val = 1);
         explicit State(const std::string& state_string, const std::vector<ValType>& max_vals);
 
+        State<StateType> operator*(const COMPLEX& c) const {
+            State<StateType> res(*this);
+
+            size_t index = 0;
+
+            for (StateType st: res.state_components_) {
+                res.state_vec_[index] *= c;
+                
+                index++;
+            }
+
+            return res;
+        }
+
+        COMPLEX& operator[](size_t index) { return state_vec_[index];}
+        COMPLEX operator[](size_t index) const { return state_vec_[index];}
+        size_t size() const { return state_vec_.size(); }
+
+        size_t get_index(const StateType& state) const {
+            auto it = std::find(state_components_.begin(), state_components_.end(), state);
+            return std::distance(state_components_.begin(), it);
+        }
+
+        void insert(const StateType& state) {
+            if (std::find(state_components_.begin(), state_components_.end(), state) == state_components_.end()) {
+                state_components_.insert(state);
+                state_vec_.insert(state_vec_.begin() + this->get_index(state), COMPLEX(0, 0));
+            }
+        }
+
         std::set<StateType> get_state_components() const { return state_components_; }
         std::vector<COMPLEX> get_vector() const { return state_vec_;}
+
+        std::string to_string() const {
+            std::string res;
+
+            size_t index = 0;
+            for (const auto& st: state_components_) {
+                res += "(" + std::to_string(state_vec_[index].real()) + " + " + std::to_string(state_vec_[index].imag()) + "j)";
+                index++;
+
+                res += " * ";
+                res += st.to_string();
+
+                if (index != state_components_.size()) {
+                    res += " + ";
+                }
+            }
+
+            return res;
+        }
     private:
         std::vector<COMPLEX> state_vec_;
         std::set<StateType> state_components_;
 };
-
 
 } // namespace QComputations

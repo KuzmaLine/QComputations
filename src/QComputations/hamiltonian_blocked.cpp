@@ -170,15 +170,18 @@ BLOCKED_H_by_Operator::BLOCKED_H_by_Operator(ILP_TYPE ctxt, const State<Basis_St
         [&basis, &H_op](size_t i, size_t j) {
             auto state_from = get_elem_from_set(basis, j);
             auto state_to = get_elem_from_set(basis, i);
-            auto res_states = H_op.run(State<Basis_State>(state_from));
+            auto res_state = H_op.run(State<Basis_State>(state_from));
             
             COMPLEX res = COMPLEX(0, 0);
 
-            for (const auto& state: res_states) {
+            size_t index = 0;
+            for (const auto& state: res_state.get_state_components()) {
                 if (state == state_to) {
-                    res = state.get_coef();
+                    res = res_state[index];
                     break;
                 }
+
+                index++;
             }
 
             return res;

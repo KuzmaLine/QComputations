@@ -17,51 +17,83 @@ namespace {
 template<typename StateType>
 class Operator {
     public:
-        explicit Operator() = default;
-        explicit Operator(OperatorType<StateType> op): cur_id(0), operators_(1, std::vector<OperatorType<StateType>>(1, op)) {}
+        explicit Operator(): cur_id_(-1) {}
+        explicit Operator(OperatorType<StateType> op): cur_id_(0), operators_(1, std::vector<OperatorType<StateType>>(1, op)) {}
 
         void operator+(OperatorType<StateType> other) {
             operators_.emplace_back(1, other);
-            cur_id++;
-        }
-        void operator*(OperatorType<StateType> other) {
-            operators_[cur_id].push_back(other);
+            cur_id_++;
         }
 
-        std::set<StateType> run(const State<StateType>& init_state) const;
+        void operator*(OperatorType<StateType> other) {
+            operators_[cur_id_].push_back(other);
+        }
+
+        Operator<StateType> operator+(const Operator<StateType>& other) const {
+            auto res = *this;
+
+            res.cur_id_ = this->operators_.size() + other.operators_.size();
+
+            for (size_t i = 0; i < other.operators_.size(); i++) {
+                res.operators_.push_back(other.operators_[i]);
+            }
+
+            return res;
+        }
+
+        Operator<StateType> operator*(const Operator<StateType>& other) const {
+            Operator<StateType> res(*this);
+            assert(other.operators_.size() <= 1);
+
+            for (const auto& op: other.operators_) {
+                for (const auto& cur_op: op) {
+                    res.operators_[res.cur_id_].push_back(cur_op);
+                }
+            }
+            return res;
+        }
+
+
+        State<StateType> run(const State<StateType>& init_state) const;
     private:
-        int cur_id;
+        int cur_id_;
         std::vector<std::vector<OperatorType<StateType>>> operators_;
 };
 
 template<typename StateType>
-std::set<StateType> Operator<StateType>::run(const State<StateType>& init_state) const {
-    std::set<StateType> states_;
-    states_ = init_state.get_state_components();
-    std::set<StateType> new_states;
+State<StateType> Operator<StateType>::run(const State<StateType>& init_state) const {
+    State<StateType> states_ = init_state;
+    for (size_t i = 0; i < states_.size(); ++i) {
+        states_[i] = 0;
+    }
+
+    std::cout << states_.to_string() << std::endl;
+
+    State<StateType> new_state;
 
     for (const auto& op: operators_) {
         for (const auto& cur_state: init_state.get_state_components())  {
             auto res = op[op.size() - 1](cur_state);
 
-            new_states = res.get_state_components();
+            new_state = res;
 
             for (int i = op.size() - 2; i >= 0; i--) {
-                std::set<StateType> tmp_states;
+                State<StateType> tmp_state;
 
-                for (const auto& cur_new_state: new_states) {
+                for (const auto& cur_new_state: new_state.get_state_components()) {
                     res = op[i](cur_new_state);
-                    for (const auto& st: res.get_state_components()) {
-                        tmp_states.insert(st);
-                    }
+                    tmp_state = res;
                 }
 
-                new_states = tmp_states;
+                new_state = tmp_state;
             }
 
-            for (const auto& state: new_states) {
-                states_.insert(state);
+            for (const auto& st: new_state.get_state_components()) {
+                states_.insert(st);
+                states_[states_.get_index(st)] = new_state[new_state.get_index(st)];
             }
+
+            std::cout << states_.to_string() << std::endl;
         }
     }
 
@@ -87,6 +119,40 @@ void Formule<StateType>::make_work_area() {
 */
 
 // ---------------------------- OPERATORS ---------------------------
+
+template<typename StateType>
+State<StateType> set_qudit(const StateType& state, size_t qudit_index, ValType val) {
+    auto res = state;
+    if (val > state.get_max_val(qudit_index) or val < 0) {
+        res.clear();
+    }
+
+    return State<StateType>(res);
+}
+
+template<typename StateType>
+State<StateType> sigma_x(const StateType& state, size_t qudit_index) {
+    StateType res = state;
+    auto qudit = state.get_qudit(qudit_index);
+    assert(qudit == 0 or qudit == 1);
+
+    if (qudit == 0) qudit = 1;
+    else qudit = 0;
+
+    res.set_qudit(qudit, qudit_index);
+
+    return State<StateType>(res);
+}
+
+template<typename StateType>
+State<StateType> check(const StateType& state, ValType check_val, size_t qudit_index) {
+    auto res = state;
+    if (res.get_qudit(qudit_index) != check_val) {
+        res.clear();
+    }
+
+    return State<StateType>(res);
+}
 
 State<CHE_State> a_destroy_qudit(const CHE_State& state, size_t photon_index, size_t cavity_id = 0);
 State<CHE_State> a_create_qudit(const CHE_State& state, size_t photon_index, size_t cavity_id = 0);

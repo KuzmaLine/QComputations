@@ -9,11 +9,11 @@ bool is_in_basis(const std::set<Basis_State>& basis, const Basis_State& state) {
     return std::find(basis.begin(), basis.end(), state) != basis.end();
 }
 
-/*
-bool is_in_basis(const std::set<State>& basis, const State& state) {
+
+bool is_in_basis(const std::set<CHE_State>& basis, const CHE_State& state) {
     return std::find(basis.begin(), basis.end(), state) != basis.end();
 }
-*/
+
 
 State_Graph::State_Graph(const State<Basis_State>& init_state,
                          const Operator<Basis_State>& A_op,
@@ -30,7 +30,7 @@ State_Graph::State_Graph(const State<Basis_State>& init_state,
         state_queue.pop();
         auto res = A_op.run(State<Basis_State>(state));
 
-        for (const auto& state: res) {
+        for (const auto& state: res.get_state_components()) {
             if (!is_in_basis(basis_, state)) {
                 basis_.insert(state);
                 state_queue.push(state);
@@ -40,7 +40,7 @@ State_Graph::State_Graph(const State<Basis_State>& init_state,
         for (const auto& op: operator_decoherence) {
             res = op.run(State<Basis_State>(state));
 
-            for (const auto& state: res) {
+            for (const auto& state: res.get_state_components()) {
                 if (!is_in_basis(basis_, state)) {
                     basis_.insert(state);
                     state_queue.push(state);
@@ -50,10 +50,10 @@ State_Graph::State_Graph(const State<Basis_State>& init_state,
     }
 }
 
-/*
-State_Graph::State_Graph(const State& init_state) {
-    basis_.insert(init_state);
-    std::queue<State> state_queue_;
+
+State_Graph::State_Graph(const CHE_State& init_state) {
+    ch_basis_.insert(init_state);
+    std::queue<CHE_State> state_queue_;
     state_queue_.push(init_state);
     auto cavities_count = init_state.cavities_count();
     auto e_levels_count = init_state.e_levels_count();
@@ -69,23 +69,23 @@ State_Graph::State_Graph(const State& init_state) {
                     auto cur_n = cur_state.n(cavity_id, e_from, e_to);
                     if ((!is_zero(cur_state.get_leak_gamma(cavity_id))) and cur_n != 0 and cur_state.get_grid_energy() > cur_state.min_N()) {
                         tmp_state.set_n(cur_n - 1, cavity_id, e_from, e_to);
-                        if (std::find(basis_.begin(), basis_.end(), tmp_state) == basis_.end()) {
-                            basis_.insert(tmp_state);
+                        if (std::find(ch_basis_.begin(), ch_basis_.end(), tmp_state) == ch_basis_.end()) {
+                            ch_basis_.insert(tmp_state);
                             state_queue_.push(tmp_state);
                         }
 
-                        from_[cur_state].insert(tmp_state);
+                        //from_[cur_state].insert(tmp_state);
                         tmp_state.set_n(cur_n, cavity_id, e_from, e_to);
                     }
 
                     if (!is_zero(cur_state.get_gain_gamma(cavity_id)) and (cur_state.get_grid_energy() < cur_state.max_N())) {
                         tmp_state.set_n(cur_n + 1, cavity_id, e_from, e_to);
-                        if (std::find(basis_.begin(), basis_.end(), tmp_state) == basis_.end()) {
-                            basis_.insert(tmp_state);
+                        if (std::find(ch_basis_.begin(), ch_basis_.end(), tmp_state) == ch_basis_.end()) {
+                            ch_basis_.insert(tmp_state);
                             state_queue_.push(tmp_state);
                         }
 
-                        from_[cur_state].insert(tmp_state);
+                        //from_[cur_state].insert(tmp_state);
                         tmp_state.set_n(cur_n, cavity_id, e_from, e_to);
                     }
 
@@ -93,8 +93,8 @@ State_Graph::State_Graph(const State& init_state) {
                         if (!is_zero(cur_state.get_gamma(cavity_id, to_cavity)) and cur_n != 0) {
                             tmp_state.set_n(tmp_state.n(to_cavity, e_from, e_to) + 1, to_cavity, e_from, e_to);
                             tmp_state.set_n(cur_n - 1, cavity_id, e_from, e_to);
-                            if (std::find(basis_.begin(), basis_.end(), tmp_state) == basis_.end()) {
-                                basis_.insert(tmp_state);
+                            if (std::find(ch_basis_.begin(), ch_basis_.end(), tmp_state) == ch_basis_.end()) {
+                                ch_basis_.insert(tmp_state);
                                 state_queue_.push(tmp_state);
                             }
 
@@ -108,13 +108,13 @@ State_Graph::State_Graph(const State& init_state) {
                             tmp_state.set_qubit(cavity_id, i, e_from);
                             tmp_state.set_n(cur_n + 1, cavity_id, e_from, e_to); 
 
-                            if (std::find(basis_.begin(), basis_.end(), tmp_state) == basis_.end()) {
-                                basis_.insert(tmp_state);
+                            if (std::find(ch_basis_.begin(), ch_basis_.end(), tmp_state) == ch_basis_.end()) {
+                                ch_basis_.insert(tmp_state);
                                 state_queue_.push(tmp_state);
                             }
 
-                            from_[cur_state].insert(tmp_state);
-                            to_[tmp_state].insert(cur_state);
+                            //from_[cur_state].insert(tmp_state);
+                            //to_[tmp_state].insert(cur_state);
                             tmp_state.set_qubit(cavity_id, i, e_to);
                             tmp_state.set_n(cur_n, cavity_id, e_from, e_to); 
                         }
@@ -126,13 +126,13 @@ State_Graph::State_Graph(const State& init_state) {
                                 tmp_state.set_qubit(cavity_id, i, e_to);
                                 tmp_state.set_n(cur_n - 1, cavity_id, e_from, e_to); 
 
-                                if (std::find(basis_.begin(), basis_.end(), tmp_state) == basis_.end()) {
-                                    basis_.insert(tmp_state);
+                                if (std::find(ch_basis_.begin(), ch_basis_.end(), tmp_state) == ch_basis_.end()) {
+                                    ch_basis_.insert(tmp_state);
                                     state_queue_.push(tmp_state);
                                 }
 
-                                from_[cur_state].insert(tmp_state);
-                                to_[tmp_state].insert(cur_state);
+                                //from_[cur_state].insert(tmp_state);
+                                //to_[tmp_state].insert(cur_state);
                                 tmp_state.set_qubit(cavity_id, i, e_from);
                                 tmp_state.set_n(cur_n, cavity_id, e_from, e_to); 
                             }
@@ -145,7 +145,7 @@ State_Graph::State_Graph(const State& init_state) {
 }
 
 
-
+/*
 void State_Graph::show() const {
     for (const auto& state: basis_) {
         std::cout << state.to_string() << " : ";

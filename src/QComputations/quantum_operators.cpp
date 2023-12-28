@@ -87,8 +87,8 @@ Basis_State check(const Basis_State& state, ValType check_val, size_t qudit_inde
 
 // OLD
 
-/*
-COMPLEX self_energy_photon(const State& state_from, const State& state_to, COMPLEX h) {
+
+COMPLEX self_energy_photon(const CHE_State& state_from, const CHE_State& state_to, COMPLEX h) {
     if (state_from == state_to) {
         COMPLEX res(0);
 
@@ -102,7 +102,7 @@ COMPLEX self_energy_photon(const State& state_from, const State& state_to, COMPL
     }
 }
 
-COMPLEX self_energy_atom(const State& state_from, const State& state_to, COMPLEX h) {
+COMPLEX self_energy_atom(const CHE_State& state_from, const CHE_State& state_to, COMPLEX h) {
     if (state_from == state_to) {
         COMPLEX res(0);
 
@@ -116,7 +116,7 @@ COMPLEX self_energy_atom(const State& state_from, const State& state_to, COMPLEX
     }
 }
 
-COMPLEX excitation_atom(const State& state_from, const State& state_to, COMPLEX g) {
+COMPLEX excitation_atom(const CHE_State& state_from, const CHE_State& state_to, COMPLEX g) {
     long photon_pos = -1;
     long atom_pos = -1;
 
@@ -149,7 +149,7 @@ COMPLEX excitation_atom(const State& state_from, const State& state_to, COMPLEX 
     return g * COMPLEX(std::sqrt(state_from[photon_pos].n()));
 }
 
-COMPLEX de_excitation_atom(const State& state_from, const State& state_to, COMPLEX g) {
+COMPLEX de_excitation_atom(const CHE_State& state_from, const CHE_State& state_to, COMPLEX g) {
     long photon_pos = -1;
     long atom_pos = -1;
 
@@ -182,7 +182,7 @@ COMPLEX de_excitation_atom(const State& state_from, const State& state_to, COMPL
     return g * COMPLEX(std::sqrt(state_from[photon_pos].n() + 1));
 }
 
-COMPLEX photon_exchange(const State& state_from, const State& state_to, const State& grid) {
+COMPLEX photon_exchange(const CHE_State& state_from, const CHE_State& state_to, const CHE_State& grid) {
     for (size_t i = 0; i < state_from.cavities_count(); i++) {
         for (size_t j = 0; j < state_from.m(i); j++) {
             if (state_from[i].get_qubit(j) != state_to[i].get_qubit(j)) {
@@ -246,7 +246,7 @@ COMPLEX photon_exchange(const State& state_from, const State& state_to, const St
     return grid.get_gamma(photon_index_from, photon_index_to) * std::sqrt(state_from.n(photon_index_from)) * std::sqrt(state_from.n(photon_index_to) + 1);
 }
 
-COMPLEX photon_destroy(const State& state_from, const State& state_to, COMPLEX gamma) {
+COMPLEX photon_destroy(const CHE_State& state_from, const CHE_State& state_to, COMPLEX gamma) {
     auto tmp_state = state_from;
 
     bool is_founded = false;
@@ -272,7 +272,7 @@ COMPLEX photon_destroy(const State& state_from, const State& state_to, COMPLEX g
     return 0;
 }
 
-COMPLEX photon_create(const State& state_from, const State& state_to, COMPLEX gamma) {
+COMPLEX photon_create(const CHE_State& state_from, const CHE_State& state_to, COMPLEX gamma) {
     auto tmp_state = state_from;
 
     bool is_founded = false;
@@ -297,8 +297,6 @@ COMPLEX photon_create(const State& state_from, const State& state_to, COMPLEX ga
 
     return 0;
 }
-
-*/
 
 COMPLEX JC_addition(const CHE_State& state_from, const CHE_State& state_to, COMPLEX g) {
     if (state_from.n(0) - 1 == state_to.n(0) and state_from.get_qubit(0, 0) == 1 and state_to.get_qubit(0, 0) == 0) {
