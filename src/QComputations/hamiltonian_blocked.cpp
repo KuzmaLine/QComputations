@@ -133,6 +133,7 @@ BLOCKED_H_JC::BLOCKED_H_JC(ILP_TYPE ctxt, const State& grid) {
 }
 */
 
+/*
 BLOCKED_H_by_Operator::BLOCKED_H_by_Operator(ILP_TYPE ctxt, const State<Basis_State>& init_state, const Operator<Basis_State>& H_op,
                                      const std::vector<std::pair<double, Operator<Basis_State>>>& decoherence) {
     operator_ = H_op;
@@ -190,6 +191,7 @@ BLOCKED_H_by_Operator::BLOCKED_H_by_Operator(ILP_TYPE ctxt, const State<Basis_St
 
     H_ = BLOCKED_Matrix<COMPLEX>(ctxt, HE, size, size, func);
 }
+*/
 
 } // namespace QComputations
 

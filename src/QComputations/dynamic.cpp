@@ -572,46 +572,17 @@ BLOCKED_Matrix<COMPLEX> create_BLOCKED_A_create(ILP_TYPE ctxt, const std::set<Ba
     return A;
 }
 
-BLOCKED_Matrix<COMPLEX> operator_to_matrix(ILP_TYPE ctxt, const Operator<Basis_State>& op, const std::set<Basis_State>& basis) {
-    size_t dim = basis.size();
-
-    std::function<COMPLEX(size_t i, size_t j)> func = {
-        [&basis, &op](size_t i, size_t j) {
-            auto state_from = get_elem_from_set(basis, j);
-            auto state_to = get_elem_from_set(basis, i);
-            auto res_state = op.run(State<Basis_State>(state_from));
-            
-            COMPLEX res = COMPLEX(0, 0);
-
-            size_t index = 0;
-            for (const auto& state: res_state.get_state_components()) {
-                if (state == state_to) {
-                    res = res_state[index];
-                    break;
-                }
-
-                index++;
-            }
-
-            return res;
-        }
-    };
-
-    BLOCKED_Matrix<COMPLEX> A(ctxt, GE, dim, dim, func);
-
-    return A;
-}
-
-Evolution::BLOCKED_Probs quantum_master_equation(const State<Basis_State>& init_state,
+Evolution::BLOCKED_Probs Evolution::quantum_master_equation(const State<Basis_State>& init_state,
                             BLOCKED_Hamiltonian& H,
                             const std::vector<double>& time_vec,
-                            bool is_full_rho = false) {
+                            bool is_full_rho) {
     size_t dim = H.size();
     std::vector<std::function<Evolution::BLOCKED_Rho(const Evolution::BLOCKED_Rho& rho)>> lindblads;
 
-    for (auto& p: H.get_decoherence()) {
+    for (const auto& p: H.get_decoherence()) {
         auto gamma = p.first;
-        auto A = operator_to_matrix(H.ctxt(), p.second, H.get_basis());
+        auto A = p.second;
+        //A.show();
         lindblads.push_back(std::function<Evolution::BLOCKED_Rho(const Evolution::BLOCKED_Rho& rho)> {
             [A, gamma](const Evolution::BLOCKED_Rho& rho) {
                 auto Aconj = A.hermit();
@@ -621,7 +592,7 @@ Evolution::BLOCKED_Probs quantum_master_equation(const State<Basis_State>& init_
         }
         );
     }
-    
+
     auto H_matrix = H.get_blocked_matrix();
     std::function<Evolution::BLOCKED_Rho(double t, const Evolution::BLOCKED_Rho&)> equation {[&H_matrix, &lindblads](double t, const Evolution::BLOCKED_Rho& rho) {
         auto tmp = (H_matrix * rho - rho * H_matrix) * COMPLEX(0, -1);

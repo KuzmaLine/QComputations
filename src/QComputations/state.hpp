@@ -249,6 +249,19 @@ class State {
         explicit State(const std::string& state_string, ValType max_val = 1);
         explicit State(const std::string& state_string, const std::vector<ValType>& max_vals);
 
+        /*
+        operator State<Basis_State>() {
+            State<Basis_State> res;
+            res.state_vec_ = this->state_vec_;
+
+            for (const auto& st: this->state_components_) {
+                res.state_components_.insert(Basis_State(st));
+            }
+
+            return res;
+        }
+        */
+
         State<StateType> operator*(const COMPLEX& c) const {
             State<StateType> res(*this);
 
@@ -296,6 +309,30 @@ class State {
                 if (index != state_components_.size()) {
                     res += " + ";
                 }
+            }
+
+            return res;
+        }
+
+        State<Basis_State> fit_to_basis(const std::set<Basis_State>& basis) const {
+            State<Basis_State> res;
+
+            res.state_vec_ = std::vector<COMPLEX>(basis.size(), 0);
+            res.state_components_ = basis;
+
+            size_t index = 0;
+            for (const auto& state: basis) {
+                size_t my_index = 0;
+                for (const auto& my_state: this->state_components_) {
+                    if (state == Basis_State(my_state)) {
+                        res.state_vec_[index] = this->state_vec_[my_index];
+                        break;
+                    }
+
+                    my_index++;
+                }
+
+                index++;
             }
 
             return res;

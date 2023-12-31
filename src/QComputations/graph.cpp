@@ -5,53 +5,21 @@
 
 namespace QComputations {
 
+/*
 bool is_in_basis(const std::set<Basis_State>& basis, const Basis_State& state) {
     return std::find(basis.begin(), basis.end(), state) != basis.end();
 }
-
+*/
 
 bool is_in_basis(const std::set<CHE_State>& basis, const CHE_State& state) {
     return std::find(basis.begin(), basis.end(), state) != basis.end();
 }
 
+template<>
+std::set<CHE_State> State_Graph<CHE_State>::get_basis() const { return ch_basis_;}
 
-State_Graph::State_Graph(const State<Basis_State>& init_state,
-                         const Operator<Basis_State>& A_op,
-                         const std::vector<Operator<Basis_State>>& operator_decoherence) {
-    auto state_components = init_state.get_state_components();
-    std::queue<Basis_State> state_queue;
-    for (const auto& state: state_components) {
-        basis_.insert(state);
-        state_queue.push(state);
-    }
-
-    while (!state_queue.empty()) {
-        auto state = state_queue.front();
-        state_queue.pop();
-        auto res = A_op.run(State<Basis_State>(state));
-
-        for (const auto& state: res.get_state_components()) {
-            if (!is_in_basis(basis_, state)) {
-                basis_.insert(state);
-                state_queue.push(state);
-            }
-        }
-
-        for (const auto& op: operator_decoherence) {
-            res = op.run(State<Basis_State>(state));
-
-            for (const auto& state: res.get_state_components()) {
-                if (!is_in_basis(basis_, state)) {
-                    basis_.insert(state);
-                    state_queue.push(state);
-                }
-            }
-        }
-    }
-}
-
-
-State_Graph::State_Graph(const CHE_State& init_state) {
+template<>
+State_Graph<CHE_State>::State_Graph(const CHE_State& init_state) {
     ch_basis_.insert(init_state);
     std::queue<CHE_State> state_queue_;
     state_queue_.push(init_state);

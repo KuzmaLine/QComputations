@@ -28,7 +28,7 @@ class BLOCKED_Hamiltonian {
         void set_grid(const CHE_State& grid) { grid_ = grid; }
         ILP_TYPE ctxt() const { return H_.ctxt(); }
         std::set<Basis_State> get_basis() const { return basis_; }
-        std::vector<std::pair<double, Operator<Basis_State>>> get_decoherence() const { return decoherence_;}
+        std::vector<std::pair<double, BLOCKED_Matrix<COMPLEX>>> get_decoherence() const { return decoherence_;}
 
         void virtual eigen() {
             if (!is_calculated_eigen_) {
@@ -60,8 +60,7 @@ class BLOCKED_Hamiltonian {
         BLOCKED_Matrix<COMPLEX> H_;
         BLOCKED_Matrix<COMPLEX> eigenvectors_;
         std::vector<double> eigenvalues_;
-        std::vector<std::pair<double, Operator<Basis_State>>> decoherence_;
-        Operator<Basis_State> operator_;
+        std::vector<std::pair<double, BLOCKED_Matrix<COMPLEX>>> decoherence_;
         CHE_State grid_;
 };
 
@@ -89,11 +88,73 @@ class BLOCKED_H_by_func: public BLOCKED_Hamiltonian {
 };
 */
 
+template<typename StateType>
 class BLOCKED_H_by_Operator: public BLOCKED_Hamiltonian {
     public:
-        explicit BLOCKED_H_by_Operator(ILP_TYPE ctxt, const State<Basis_State>& init_state, const Operator<Basis_State>& H_op,
-                                     const std::vector<std::pair<double, Operator<Basis_State>>>& decoherence = {});    
+        explicit BLOCKED_H_by_Operator(ILP_TYPE ctxt, const State<StateType>& init_state, const Operator<StateType>& H_op,
+                                     const std::vector<std::pair<double, Operator<StateType>>>& decoherence = {});
 };
+
+template<typename StateType>
+BLOCKED_H_by_Operator<StateType>::BLOCKED_H_by_Operator(ILP_TYPE ctxt, const State<StateType>& init_state, const Operator<StateType>& H_op,
+                                     const std::vector<std::pair<double, Operator<StateType>>>& decoherence) {
+    std::vector<Operator<StateType>> dec_tmp;
+    for (const auto& p: decoherence) {
+        dec_tmp.push_back(p.second);
+    }
+
+    auto basis = State_Graph(init_state, H_op, dec_tmp).get_basis();
+    basis_ = convert_to(basis);
+
+    size_t size = basis_.size();
+
+    ILP_TYPE proc_rows, proc_cols, myrow, mycol, NB, MB;
+    mpi::blacs_gridinfo(ctxt, proc_rows, proc_cols, myrow, mycol);
+
+    NB = size / proc_rows;
+
+    MB = size / proc_cols;
+
+    if (NB == 0) {
+        NB = 1;
+    }
+
+    if (MB == 0) {
+        MB = 1;
+    }
+
+    NB = std::min(NB, MB);
+    MB = NB;
+
+    std::function<COMPLEX(size_t i, size_t j)> func = {
+        [&basis, &H_op](size_t i, size_t j) {
+            auto state_from = get_elem_from_set(basis, j);
+            auto state_to = get_elem_from_set(basis, i);
+            auto res_state = H_op.run(State<StateType>(state_from));
+            
+            COMPLEX res = COMPLEX(0, 0);
+
+            size_t index = 0;
+            for (const auto& state: res_state.get_state_components()) {
+                if (state == state_to) {
+                    res = res_state[index];
+                    break;
+                }
+
+                index++;
+            }
+
+            return res;
+        }
+    };
+
+    H_ = BLOCKED_Matrix<COMPLEX>(ctxt, HE, size, size, func);
+
+    for (const auto& p: decoherence) {
+        auto A = BLOCKED_Matrix<COMPLEX>(operator_to_matrix(H_.ctxt(), p.second, basis));
+        decoherence_.push_back(std::make_pair(p.first, A));
+    }
+}
 
 /*
 class BLOCKED_H_TCH_EXC: BLOCKED_Hamiltonian {

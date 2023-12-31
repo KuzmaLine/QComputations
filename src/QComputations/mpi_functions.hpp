@@ -222,6 +222,7 @@ namespace mpi {
     */
 
 #ifdef ENABLE_CLUSTER
+
     std::vector<ILP_TYPE> descinit(ILP_TYPE n, ILP_TYPE m, ILP_TYPE NB,
                                    ILP_TYPE MB, ILP_TYPE rsrc, ILP_TYPE csrc,
                                    ILP_TYPE ctxt, ILP_TYPE LLD, ILP_TYPE info);

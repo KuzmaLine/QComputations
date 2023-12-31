@@ -11,8 +11,6 @@
 namespace QComputations {
 
 namespace {
-    template<typename StateType>
-        using OperatorType = std::function<State<StateType>(const StateType& state)>;
     typedef std::complex<double> COMPLEX;
 }
 

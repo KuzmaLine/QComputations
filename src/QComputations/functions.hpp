@@ -1,8 +1,8 @@
 #pragma once
 #include "additional_operators.hpp"
-#include "matrix.hpp"
 #include "config.hpp"
 #include "state.hpp"
+#include "matrix.hpp"
 #include <chrono>
 #include <vector>
 #include <complex>
@@ -20,6 +20,12 @@
 namespace QComputations {
 
 namespace {
+#ifdef MKL_ILP64
+    using ILP_TYPE = long long;
+#else
+    using ILP_TYPE = int;
+#endif
+
     using E_LEVEL = int;
     using COMPLEX = std::complex<double>;
     using vec_complex = std::vector<COMPLEX>;
@@ -182,7 +188,6 @@ std::vector<V> Runge_Kutt_4(const std::vector<T>& x, const V& y0, std::function<
     return y;
 }
 
-
 // Tridiagonal linear system solving
 template<typename T>
 std::vector<T> Pro_Race_Algorithm(const Matrix<T>& B, const std::vector<T>& y) {
@@ -221,6 +226,17 @@ void show_vector(const std::vector<T>& v) {
 
     std::cout << std::endl;
 }
+
+template<typename StateType>
+std::set<Basis_State> convert_to(const std::set<StateType>& states) {
+    std::set<Basis_State> res;
+    for (const auto& st: states) {
+        res.insert(Basis_State(st));
+    }
+
+    return res;
+}
+
 
 // from {x1, x2, x3 ...} to {f(x1), f(x2), ...}
 template<typename T>

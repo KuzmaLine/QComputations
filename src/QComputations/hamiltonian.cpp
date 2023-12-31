@@ -7,7 +7,6 @@
 #include "config.hpp"
 #include "graph.hpp"
 #include "functions.hpp"
-#include "quantum_operators.hpp"
 
 #ifdef ENABLE_MPI
 #include "mpi_functions.hpp"
@@ -437,7 +436,9 @@ H_JC::H_JC(const CHE_State& grid) {
     auto y_size = grid.y_size();
     auto z_size = grid.z_size();
 
-    basis_ = State_Graph(grid).get_basis();
+    auto basis = State_Graph<CHE_State>(grid).get_basis();
+    
+    basis_ = convert_to(basis);
 
     size_t size = basis_.size();
     H_ = Matrix<COMPLEX>(DEFAULT_MATRIX_STYLE, size, size, 0);
@@ -552,7 +553,8 @@ H_TC::H_TC(const CHE_State& grid) {
     auto z_size = grid.z_size();
 
     //basis_ = define_basis_of_hamiltonian(grid);
-    basis_ = State_Graph(grid).get_basis();
+    auto basis = State_Graph<CHE_State>(grid).get_basis();
+    basis_ = convert_to(basis);
 
     size_t size = basis_.size();
     H_ = Matrix<COMPLEX>(DEFAULT_MATRIX_STYLE, size, size, 0);
@@ -667,7 +669,8 @@ H_TCH::H_TCH(const CHE_State& grid) {
     auto y_size = grid.y_size();
     auto z_size = grid.z_size();
 
-    basis_ = State_Graph(grid).get_basis();
+    auto basis = State_Graph<CHE_State>(grid).get_basis();
+    basis_ = convert_to(basis);
 
     size_t size = basis_.size();
     H_ = Matrix<COMPLEX>(DEFAULT_MATRIX_STYLE, size, size, 0);

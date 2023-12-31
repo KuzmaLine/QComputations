@@ -3,10 +3,17 @@
 #include "state.hpp"
 #include "config.hpp"
 #include <functional>
+#include "blocked_matrix.hpp"
 
 namespace QComputations {
 
 namespace {
+#ifdef MKL_ILP64
+    using ILP_TYPE = long long;
+#else
+    using ILP_TYPE = int;
+#endif
+
     template<typename StateType>
         using OperatorType = std::function<State<StateType>(const StateType& state)>;
 
@@ -67,7 +74,7 @@ State<StateType> Operator<StateType>::run(const State<StateType>& init_state) co
         states_[i] = 0;
     }
 
-    std::cout << states_.to_string() << std::endl;
+    //std::cout << states_.to_string() << std::endl;
 
     State<StateType> new_state;
 
@@ -93,11 +100,42 @@ State<StateType> Operator<StateType>::run(const State<StateType>& init_state) co
                 states_[states_.get_index(st)] = new_state[new_state.get_index(st)];
             }
 
-            std::cout << states_.to_string() << std::endl;
+            //std::cout << states_.to_string() << std::endl;
         }
     }
 
     return states_;
+}
+
+template<typename StateType>
+BLOCKED_Matrix<COMPLEX> operator_to_matrix(ILP_TYPE ctxt, const Operator<StateType>& op, const std::set<StateType>& basis) {
+    size_t dim = basis.size();
+
+    std::function<COMPLEX(size_t i, size_t j)> func = {
+        [&basis, &op](size_t i, size_t j) {
+            auto state_from = get_elem_from_set(basis, j);
+            auto state_to = get_elem_from_set(basis, i);
+            auto res_state = op.run(State<StateType>(state_from));
+            
+            COMPLEX res = COMPLEX(0, 0);
+
+            size_t index = 0;
+            for (const auto& state: res_state.get_state_components()) {
+                if (state == state_to) {
+                    res = res_state[index];
+                    break;
+                }
+
+                index++;
+            }
+
+            return res;
+        }
+    };
+
+    BLOCKED_Matrix<COMPLEX> A(ctxt, GE, dim, dim, func);
+
+    return A;
 }
 
 /*
@@ -125,6 +163,8 @@ State<StateType> set_qudit(const StateType& state, size_t qudit_index, ValType v
     auto res = state;
     if (val > state.get_max_val(qudit_index) or val < 0) {
         res.clear();
+    } else {
+        res.set_qudit(val, qudit_index);
     }
 
     return State<StateType>(res);
@@ -152,6 +192,14 @@ State<StateType> check(const StateType& state, ValType check_val, size_t qudit_i
     }
 
     return State<StateType>(res);
+}
+
+template<typename StateType>
+State<StateType> get_qudit(const StateType& state, size_t qudit_index) {
+    auto res = State(state);
+    res[0] = state.get_qudit(qudit_index);
+
+    return res;
 }
 
 State<CHE_State> a_destroy_qudit(const CHE_State& state, size_t photon_index, size_t cavity_id = 0);
