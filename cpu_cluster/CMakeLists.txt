@@ -16,6 +16,9 @@ set(BLACS_LIBRARIES "$ENV{ONEAPI_ROOT}/mkl/latest/lib/intel64/libmkl_blacs_intel
 # Set Intel Python variables
 set(INTEL_PYTHON_INCLUDE_DIRS "$ENV{ONEAPI_ROOT}/intelpython/latest/include/python3.7m" "$ENV{ONEAPI_ROOT}/intelpython/latest/lib/python3.7m/site-packages/numpy/core/include")
 set(INTEL_PYTHON_LIBRARIES "$ENV{ONEAPI_ROOT}/intelpython/latest/lib")
+#set(INTEL_PYTHON_INCLUDE_DIRS "$ENV{HOME}/my_venv/include/python3.7m" "$ENV{HOME}/my_venv/lib/python3.7/site-packages/numpy/core/include")
+#set(INTEL_PYTHON_LIBRARIES "$ENV{HOME}/my_venv/lib")
+
 
 # Set Intel MPI variables
 set(MPI_INCLUDE_DIRS "$ENV{ONEAPI_ROOT}/mpi/latest/include")
