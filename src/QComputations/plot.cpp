@@ -11,7 +11,7 @@ namespace QComputations {
 #ifdef ENABLE_MPI
 #ifdef ENABLE_CLUSTER
 
-using std::filesystem = fs;
+namespace fs = std::filesystem;
 
 void check_dir(const std::string& dir) {
     if (dir != "") {
@@ -38,7 +38,8 @@ void basis_to_file(const std::string& filename, const std::set<Basis_State>& bas
 
     MPI_File file;
 
-    MPI_File_open(MPI_COMM_WORLD, dir + "/" + filename, MPI_MODE_CREATE | MPI_MODE_WRONLY | MPI_MODE_APPEND,
+    auto filepath = dir + "/" + filename;
+    MPI_File_open(MPI_COMM_WORLD, filepath.c_str(), MPI_MODE_CREATE | MPI_MODE_WRONLY | MPI_MODE_APPEND,
                   MPI_INFO_NULL, &file);
 
     size_t state_length = get_elem_from_set<Basis_State>(basis, 0).to_string().length();
@@ -48,7 +49,7 @@ void basis_to_file(const std::string& filename, const std::set<Basis_State>& bas
 
     MPI_File_seek(file, state_length * start + start, MPI_SEEK_CUR);
     for (size_t i = start; i < start + count; i++) {
-        auto state_str = get_elem_from_set<Basis_State>(basis, 0).to_string();
+        std::string state_str = get_elem_from_set<Basis_State>(basis, 0).to_string();
 
         if (i != basis.size() - 1) {
             state_str += ",";
@@ -57,7 +58,7 @@ void basis_to_file(const std::string& filename, const std::set<Basis_State>& bas
         MPI_File_write(file, state_str.c_str(), state_str.length(), MPI_CHAR, MPI_STATUS_IGNORE);
 
         if (i == basis.size() - 1) {
-            auto tmp = "\n";
+            std::string tmp = "\n";
             MPI_File_write(file, tmp.c_str(), tmp.length(), MPI_CHAR, MPI_STATUS_IGNORE);
         }
     }
@@ -74,27 +75,28 @@ void time_vec_to_file(const std::string& filename, const std::vector<double>& ti
 
     MPI_File file;
 
-    MPI_File_open(MPI_COMM_WORLD, dir + "/" + filename, MPI_MODE_CREATE | MPI_MODE_WRONLY | MPI_MODE_APPEND,
+    auto filepath = dir + "/" + filename;
+    MPI_File_open(MPI_COMM_WORLD, filepath.c_str(), MPI_MODE_CREATE | MPI_MODE_WRONLY | MPI_MODE_APPEND,
                   MPI_INFO_NULL, &file);
 
-    auto num_length = QConfig::instance().max_number_csv_size();
-    auto accuracy = QConfig::instance().num_accuracy();
+    auto num_length = QConfig::instance().csv_max_number_size();
+    auto accuracy = QConfig::instance().csv_num_accuracy();
 
     size_t start, count;
     make_rank_map(time_vec.size(), rank, world_size, start, count);
 
     MPI_File_seek(file, num_length * start + start, MPI_SEEK_CUR);
     for (size_t i = start; i < start + count; i++) {
-        auto num_str = to_string_double_with_precision(time_vec[i], accuracy, num_length);
+        std::string num_str = to_string_double_with_precision(time_vec[i], accuracy, num_length);
 
-        if (i != basis.size() - 1) {
+        if (i != time_vec.size() - 1) {
             num_str += ",";
         }
 
         MPI_File_write(file, num_str.c_str(), num_str.length(), MPI_CHAR, MPI_STATUS_IGNORE);
 
-        if (i == basis.size() - 1) {
-            auto tmp = "\n";
+        if (i == time_vec.size() - 1) {
+            std::string tmp = "\n";
             MPI_File_write(file, tmp.c_str(), tmp.length(), MPI_CHAR, MPI_STATUS_IGNORE);
         }
     }
@@ -115,7 +117,7 @@ void plot_from_files(const std::string& plotname,
     MPI_Comm_size(MPI_COMM_WORLD, &world_size);
 
     if (rank == mpi::ROOT_ID) {
-        std::string command = "python " + python_script_path + " " + dir + " " * dir.size() + plotname;
+        std::string command = "python " + python_script_path + " " + dir + " " + plotname;
         std::system(command.c_str());
     }
 
