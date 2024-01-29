@@ -1,11 +1,148 @@
 #include "plot.hpp"
 #include "functions.hpp"
+#include <filesystem>
 
 #ifdef ENABLE_MATPLOTLIB
 #include "matplotlibcpp.hpp"
 #endif
 
 namespace QComputations {
+
+#ifdef ENABLE_MPI
+#ifdef ENABLE_CLUSTER
+
+using std::filesystem = fs;
+
+void check_dir(const std::string& dir) {
+    if (dir != "") {
+        ILP_TYPE rank;
+        MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+
+        if (rank == mpi::ROOT_ID) {
+            fs::create_directory(dir);
+        }
+    }
+}
+
+void hamiltonian_to_file(const std::string& filename, const BLOCKED_Hamiltonian& H, const std::string& dir) {
+    check_dir(dir);
+    H.write_to_file(dir + "/" + filename);
+}
+
+void basis_to_file(const std::string& filename, const std::set<Basis_State>& basis, const std::string& dir) {
+    check_dir(dir);
+
+    ILP_TYPE rank, world_size;
+    MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+    MPI_Comm_size(MPI_COMM_WORLD, &world_size);
+
+    MPI_File file;
+
+    MPI_File_open(MPI_COMM_WORLD, dir + "/" + filename, MPI_MODE_CREATE | MPI_MODE_WRONLY | MPI_MODE_APPEND,
+                  MPI_INFO_NULL, &file);
+
+    size_t state_length = get_elem_from_set<Basis_State>(basis, 0).to_string().length();
+
+    size_t start, count;
+    make_rank_map(basis.size(), rank, world_size, start, count);
+
+    MPI_File_seek(file, state_length * start + start, MPI_SEEK_CUR);
+    for (size_t i = start; i < start + count; i++) {
+        auto state_str = get_elem_from_set<Basis_State>(basis, 0).to_string();
+
+        if (i != basis.size() - 1) {
+            state_str += ",";
+        }
+
+        MPI_File_write(file, state_str.c_str(), state_str.length(), MPI_CHAR, MPI_STATUS_IGNORE);
+
+        if (i == basis.size() - 1) {
+            auto tmp = "\n";
+            MPI_File_write(file, tmp.c_str(), tmp.length(), MPI_CHAR, MPI_STATUS_IGNORE);
+        }
+    }
+
+    MPI_File_close(&file);
+}
+
+void time_vec_to_file(const std::string& filename, const std::vector<double>& time_vec, const std::string& dir) {
+    check_dir(dir);
+
+    ILP_TYPE rank, world_size;
+    MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+    MPI_Comm_size(MPI_COMM_WORLD, &world_size);
+
+    MPI_File file;
+
+    MPI_File_open(MPI_COMM_WORLD, dir + "/" + filename, MPI_MODE_CREATE | MPI_MODE_WRONLY | MPI_MODE_APPEND,
+                  MPI_INFO_NULL, &file);
+
+    auto num_length = QConfig::instance().max_number_csv_size();
+    auto accuracy = QConfig::instance().num_accuracy();
+
+    size_t start, count;
+    make_rank_map(time_vec.size(), rank, world_size, start, count);
+
+    MPI_File_seek(file, num_length * start + start, MPI_SEEK_CUR);
+    for (size_t i = start; i < start + count; i++) {
+        auto num_str = to_string_double_with_precision(time_vec[i], accuracy, num_length);
+
+        if (i != basis.size() - 1) {
+            num_str += ",";
+        }
+
+        MPI_File_write(file, num_str.c_str(), num_str.length(), MPI_CHAR, MPI_STATUS_IGNORE);
+
+        if (i == basis.size() - 1) {
+            auto tmp = "\n";
+            MPI_File_write(file, tmp.c_str(), tmp.length(), MPI_CHAR, MPI_STATUS_IGNORE);
+        }
+    }
+
+    MPI_File_close(&file);
+}
+
+void probs_to_file(const std::string& filename, const Evolution::BLOCKED_Probs& probs, const std::string& dir) {
+    check_dir(dir);
+    probs.write_to_file(dir + "/" + filename);
+}
+
+void plot_from_files(const std::string& plotname,
+                     const std::string& dir,
+                     const std::string& python_script_path) {
+    ILP_TYPE rank, world_size;
+    MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+    MPI_Comm_size(MPI_COMM_WORLD, &world_size);
+
+    if (rank == mpi::ROOT_ID) {
+        std::string command = "python " + python_script_path + " " + dir + " " * dir.size() + plotname;
+        std::system(command.c_str());
+    }
+
+    MPI_Barrier(MPI_COMM_WORLD);
+}
+
+void make_plot(const std::string& plotname,
+               const BLOCKED_Hamiltonian& H,
+               const Evolution::BLOCKED_Probs& probs,
+               const std::vector<double>& time_vec,
+               const std::set<Basis_State>& basis,
+               const std::string& dir) {
+    assert(dir != "");
+
+    check_dir(dir);
+
+    hamiltonian_to_file("hamiltonian.csv", H, dir);
+    basis_to_file("basis.csv", basis, dir);
+    time_vec_to_file("time.csv", time_vec, dir);
+    probs_to_file("probs.csv", probs, dir);
+    plot_from_files(plotname, dir);
+
+    fs::remove_all(dir);
+}
+
+#endif
+#endif
 
 #ifdef ENABLE_MATPLOTLIB
 namespace {

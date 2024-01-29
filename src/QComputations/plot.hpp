@@ -7,6 +7,25 @@
 
 namespace QComputations {
 
+#ifdef ENABLE_MPI
+#ifdef ENABLE_CLUSTER
+
+void hamiltonian_to_file(const std::string& filename, const BLOCKED_Hamiltonian& H, const std::string& dir = "");
+void basis_to_file(const std::string& filename, const std::set<Basis_State>& basis, const std::string& dir = "");
+void time_vec_to_file(const std::string& filename, const std::vector<double>& time_vec, const std::string& dir = "");
+void probs_to_file(const std::string& filename, const Evolution::BLOCKED_Probs& probs, const std::string& dir = "");
+void plot_from_files(const std::string& plotname, const std::string& dir, const std::string& python_script_path = QConfig::instance().python_script_path());
+
+void make_plot(const std::string& plotname,
+               const BLOCKED_Hamiltonian& H,
+               const Evolution::BLOCKED_Probs& probs,
+               const std::vector<double>& time_vec,
+               const std::set<Basis_State>& basis,
+               const std::string& dir);
+
+#endif
+#endif
+
 #ifdef ENABLE_MATPLOTLIB
 
 // NEED REWORK
