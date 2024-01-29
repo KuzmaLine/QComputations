@@ -88,7 +88,7 @@ COMPLEX scalar_product(const std::vector<COMPLEX>& a, const std::vector<COMPLEX>
 // Euclidean
 double norm(const std::vector<COMPLEX>& v);
 
-std::vector<size_t> make_rank_map(size_t size, int rank, int world_size, size_t& start_col);
+void make_rank_map(size_t size, int rank, int world_size, size_t& start_col, size_t& count);
 
 //std::string make_state_regex_pattern(const std::string& format,
 //                                     bool is_freq_display = QConfig::instance().is_freq_display(),
