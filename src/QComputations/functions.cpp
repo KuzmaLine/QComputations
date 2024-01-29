@@ -111,23 +111,18 @@ void show_basis(const std::set<Basis_State>& basis) {
     std::cout << std::endl;
 }
 
-std::vector<size_t> make_rank_map(size_t size, int rank, int world_size, size_t& start_col) {
+void make_rank_map(size_t size, int rank, int world_size, size_t& start_col, size_t& count) {
     size_t size_per_proc = size / world_size;
-    std::vector<size_t> rank_map(world_size, size_per_proc);
+    count = size_per_proc;
 
-    size_t rest = size - size_per_proc * world_size;
+    int rest = size - size_per_proc * world_size;
     start_col = 0;
-    for (size_t i = 0; i < world_size; i++) {
-        if (i < rest) {
-            rank_map[i]++;
-        }
 
-        if (i < rank) {
-            start_col += rank_map[i];
-        }
+    if (rank < rest) {
+        count++;
     }
 
-    return rank_map;
+    start_col = rank * size_per_proc + std::min(rank, rest);
 }
 
 std::set<CHE_State> Cavity_State_to_State(const std::set<Cavity_State>& st) {
