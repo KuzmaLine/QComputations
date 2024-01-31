@@ -7,7 +7,7 @@ namespace QComputations {
 enum MULTIPLY_ALGS {COMMON_MODE = 0, CANNON_MODE = 1, DIM_MODE = 2, P_GEMM_MODE = 3};
 namespace {
     const std::string angle_bracket_right = "\u29FD";
-    enum FIG_PARAMS {FIG_WIDTH = 960, FIG_HEIGHT = 540, DPI = 80};
+    enum FIG_PARAMS {FIG_WIDTH = 600, FIG_HEIGHT = 400, DPI = 80};
     constexpr double h_default = 1;
     constexpr double w_default = 1;
     constexpr double g_default = 0.01;
@@ -26,6 +26,7 @@ namespace {
     const std::string state_format_default = "|$N$W$!;$M>";
     const std::string state_delimeter_default = ";";
     const std::string excitation_state_format_default = "|$N>$W{$M" + angle_bracket_right;
+    const std::string python_script_path_default = "seaborn_plot.py";
 }
 
 class QConfig {
@@ -76,6 +77,7 @@ class QConfig {
         std::string state_format() const { return state_format_; }
         std::string state_delimeter() const { return state_delimeter_; }
         std::string excitation_state_format() const { return excitation_state_format_; }
+        std::string python_script_path() const { return python_script_path_; }
 
         void show() const {
             std::cout << "CONFIG PARAMS: " << std::endl;
@@ -117,6 +119,7 @@ class QConfig {
         std::string state_format_ = state_format_default;
         std::string state_delimeter_ = state_delimeter_default;
         std::string excitation_state_format_ = excitation_state_format_default;
+        std::string python_script_path_ = python_script_path_default;
 };
 
 } // namespace QComputations
