@@ -1,6 +1,6 @@
 #include <iostream>
 #include <complex>
-#include "QComputations_CPU_CLUSTER.hpp"
+#include "QComputations_CPU_CLUSTER_NO_PLOTS.hpp"
 
 namespace QComputations {
 
@@ -86,24 +86,14 @@ int main(int argc, char** argv) {
 
     H.show();
 
-    H.write_to_csv_file("hamiltonian.csv");
     std::cout << "Here-1\n";
     auto time_vec = linspace(0, 2000, 2000);
     std::cout << "here-2\n";
 
-    //auto probs = Evolution::quantum_master_equation(State(state).fit_to_basis(H.get_basis()), H, time_vec);
+    auto probs = Evolution::quantum_master_equation(State(state).fit_to_basis(H.get_basis()), H, time_vec);
 
-    /*
-    if (rank == 0) {
-        matplotlib::make_figure(1920, 1080);
-    }
-
-    matplotlib::probs_to_plot(probs, time_vec, H.get_basis());
-    if (rank == 0) {
-        matplotlib::grid();
-        matplotlib::show();
-    }
-    */
+    //basis_to_file("basis_check.csv", H.get_basis());    
+    make_plot("test.svg", H, probs, time_vec, H.get_basis(), "test_dir");
 
     MPI_Finalize();
     return 0;

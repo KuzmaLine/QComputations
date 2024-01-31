@@ -1,5 +1,6 @@
 #ifdef ENABLE_MPI
 #pragma once
+#include "graph.hpp"
 #include "mpi_functions.hpp"
 #include "blocked_matrix.hpp"
 #include <complex>
@@ -29,6 +30,7 @@ class BLOCKED_Hamiltonian {
         ILP_TYPE ctxt() const { return H_.ctxt(); }
         std::set<Basis_State> get_basis() const { return basis_; }
         std::vector<std::pair<double, BLOCKED_Matrix<COMPLEX>>> get_decoherence() const { return decoherence_;}
+        void write_to_csv_file(const std::string& filename) const { H_.write_to_csv_file(filename); }
 
         void virtual eigen() {
             if (!is_calculated_eigen_) {

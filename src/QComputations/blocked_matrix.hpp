@@ -88,9 +88,7 @@ class BLOCKED_Matrix {
         void print_distributed(const std::string& name) const;
         void show(size_t width = QConfig::instance().width(), ILP_TYPE root_id = mpi::ROOT_ID) const;
 
-        void write_to_csv_file(const std::string& filename, ILP_TYPE row = 0, ILP_TYPE col = 0,
-                               ILP_TYPE num_accuracy = QConfig::instance().csv_num_accuracy(),
-                               ILP_TYPE max_number_size = QConfig::instance().csv_max_number_size());
+        void write_to_csv_file(const std::string& filename) const;
 
         ILP_TYPE get_global_row(size_t i) const;
         ILP_TYPE get_global_col(size_t j) const;
