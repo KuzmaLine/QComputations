@@ -16,6 +16,12 @@ void time_vec_to_file(const std::string& filename, const std::vector<double>& ti
 void probs_to_file(const std::string& filename, const Evolution::BLOCKED_Probs& probs, std::string dir = "");
 void plot_from_files(const std::string& plotname, std::string dir, const std::string& python_script_path = QConfig::instance().python_script_path());
 
+void make_probs_files(const BLOCKED_Hamiltonian& H,
+                      const Evolution::BLOCKED_Probs& probs,
+                      const std::vector<double>& time_vec,
+                      const std::set<Basis_State>& basis,
+                      std::string dir);
+
 void make_plot(const std::string& plotname,
                const BLOCKED_Hamiltonian& H,
                const Evolution::BLOCKED_Probs& probs,
