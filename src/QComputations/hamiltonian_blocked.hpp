@@ -1,5 +1,6 @@
 #ifdef ENABLE_MPI
 #pragma once
+#include "graph.hpp"
 #include "mpi_functions.hpp"
 #include "blocked_matrix.hpp"
 #include <complex>
@@ -29,6 +30,7 @@ class BLOCKED_Hamiltonian {
         ILP_TYPE ctxt() const { return H_.ctxt(); }
         std::set<Basis_State> get_basis() const { return basis_; }
         std::vector<std::pair<double, BLOCKED_Matrix<COMPLEX>>> get_decoherence() const { return decoherence_;}
+        void write_to_csv_file(const std::string& filename) const { H_.write_to_csv_file(filename); }
 
         void virtual eigen() {
             if (!is_calculated_eigen_) {
@@ -103,8 +105,8 @@ BLOCKED_H_by_Operator<StateType>::BLOCKED_H_by_Operator(ILP_TYPE ctxt, const Sta
         dec_tmp.push_back(p.second);
     }
 
-    auto basis = State_Graph<StateType>(init_state, H_op, dec_tmp).get_basis();
-    basis_ = convert_to<StateType>(basis);
+    auto basis = State_Graph(init_state, H_op, dec_tmp).get_basis();
+    basis_ = convert_to(basis);
 
     size_t size = basis_.size();
 
@@ -128,8 +130,8 @@ BLOCKED_H_by_Operator<StateType>::BLOCKED_H_by_Operator(ILP_TYPE ctxt, const Sta
 
     std::function<COMPLEX(size_t i, size_t j)> func = {
         [&basis, &H_op](size_t i, size_t j) {
-            auto state_from = get_elem_from_set<StateType>(basis, j);
-            auto state_to = get_elem_from_set<StateType>(basis, i);
+            auto state_from = get_elem_from_set(basis, j);
+            auto state_to = get_elem_from_set(basis, i);
             auto res_state = H_op.run(State<StateType>(state_from));
             
             COMPLEX res = COMPLEX(0, 0);
@@ -151,7 +153,7 @@ BLOCKED_H_by_Operator<StateType>::BLOCKED_H_by_Operator(ILP_TYPE ctxt, const Sta
     H_ = BLOCKED_Matrix<COMPLEX>(ctxt, HE, size, size, func);
 
     for (const auto& p: decoherence) {
-        auto A = BLOCKED_Matrix<COMPLEX>(operator_to_matrix<StateType>(H_.ctxt(), p.second, basis));
+        auto A = BLOCKED_Matrix<COMPLEX>(operator_to_matrix(H_.ctxt(), p.second, basis));
         decoherence_.push_back(std::make_pair(p.first, A));
     }
 }
