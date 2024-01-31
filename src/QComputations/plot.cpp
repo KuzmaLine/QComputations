@@ -1,6 +1,6 @@
 #include "plot.hpp"
 #include "functions.hpp"
-#include <filesystem>
+#include <experimental/filesystem>
 
 #ifdef ENABLE_MATPLOTLIB
 #include "matplotlibcpp.hpp"
@@ -11,7 +11,7 @@ namespace QComputations {
 #ifdef ENABLE_MPI
 #ifdef ENABLE_CLUSTER
 
-namespace fs = std::filesystem;
+namespace fs = std::experimental::filesystem;
 
 void check_dir(std::string& dir, const std::string& filename = "") {
     if (dir != "") {
@@ -122,6 +122,7 @@ void plot_from_files(const std::string& plotname,
     MPI_Comm_size(MPI_COMM_WORLD, &world_size);
 
     if (rank == mpi::ROOT_ID) {
+        std::cout << "COMMAND_GIVE\n";
         std::string command = std::string("$SEABORN_PLOT") + " " + dir + " " + plotname + " " + std::to_string(QConfig::instance().fig_width()) + " " + std::to_string(QConfig::instance().fig_height());
         std::system(command.c_str());
     }
