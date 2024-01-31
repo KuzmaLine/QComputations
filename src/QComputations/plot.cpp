@@ -13,7 +13,7 @@ namespace QComputations {
 
 namespace fs = std::filesystem;
 
-void check_dir(std::string& dir) {
+void check_dir(std::string& dir, const std::string& filename = "") {
     if (dir != "") {
         ILP_TYPE rank;
         MPI_Comm_rank(MPI_COMM_WORLD, &rank);
@@ -129,8 +129,7 @@ void plot_from_files(const std::string& plotname,
     MPI_Barrier(MPI_COMM_WORLD);
 }
 
-void make_plot(const std::string& plotname,
-               const BLOCKED_Hamiltonian& H,
+void make_probs_files(const BLOCKED_Hamiltonian& H,
                const Evolution::BLOCKED_Probs& probs,
                const std::vector<double>& time_vec,
                const std::set<Basis_State>& basis,
@@ -141,6 +140,15 @@ void make_plot(const std::string& plotname,
     basis_to_file("basis.csv", basis, dir);
     time_vec_to_file("time.csv", time_vec, dir);
     probs_to_file("probs.csv", probs, dir);
+}
+
+void make_plot(const std::string& plotname,
+               const BLOCKED_Hamiltonian& H,
+               const Evolution::BLOCKED_Probs& probs,
+               const std::vector<double>& time_vec,
+               const std::set<Basis_State>& basis,
+               std::string dir) {
+    make_probs_files(H, probs, time_vec, basis, dir);
     plot_from_files(plotname, dir);
 
     ILP_TYPE rank;
