@@ -196,7 +196,7 @@ State<StateType> check(const StateType& state, ValType check_val, size_t qudit_i
 
 template<typename StateType>
 State<StateType> get_qudit(const StateType& state, size_t qudit_index) {
-    auto res = State(state);
+    auto res = State<StateType>(state);
     res[0] = state.get_qudit(qudit_index);
 
     return res;

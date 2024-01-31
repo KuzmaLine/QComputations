@@ -1,345 +1,349 @@
-#pragma once
-#include <iostream>
-#include <vector>
-#include <string>
-#include <complex>
-#include <cassert>
-#include <set>
-#include "cavity_state.hpp"
-#include "matrix.hpp"
-#include "big_uint.hpp"
-#include <algorithm>
+    #pragma once
+    #include <iostream>
+    #include <vector>
+    #include <string>
+    #include <complex>
+    #include <cassert>
+    #include <set>
+    #include "cavity_state.hpp"
+    #include "matrix.hpp"
+    #include "big_uint.hpp"
+    #include <algorithm>
 
-namespace QComputations {
+    namespace QComputations {
 
-namespace {
-    using ValType = int;
-    using COMPLEX = std::complex<double>;
-    std::complex<double> gamma(double amplitude, double length, double w_ph) {
-        return amplitude * std::exp(std::complex<double>(0, -1) * length * w_ph / QConfig::instance().h());
+    namespace {
+        using ValType = int;
+        using COMPLEX = std::complex<double>;
+        std::complex<double> gamma(double amplitude, double length, double w_ph) {
+            return amplitude * std::exp(std::complex<double>(0, -1) * length * w_ph / QConfig::instance().h());
+        }
+
+        const std::vector<std::string> subscript_numbers = {
+            "\u2080", "\u2081", "\u2082", "\u2083", "\u2084", "\u2085", "\u2086",
+            "\u2087", "\u2088", "\u2089"};
     }
 
-    const std::vector<std::string> subscript_numbers = {
-        "\u2080", "\u2081", "\u2082", "\u2083", "\u2084", "\u2085", "\u2086",
-        "\u2087", "\u2088", "\u2089"};
-}
+    const std::string PHOTONS_STR = "$N";
+    const std::string ATOMS_STR = "$M";
+    const std::string FREQ_STR = "$W";
+    const std::string DEL_STR = "$!";
 
-const std::string PHOTONS_STR = "$N";
-const std::string ATOMS_STR = "$M";
-const std::string FREQ_STR = "$W";
-const std::string DEL_STR = "$!";
+    /*
+    Инструкция к строковому формату.
+    $N - место задания фотонов
+    $M - место задания атомов
+    $W - место отображения частот перехода с 1 уровня на другой, если QConfig::instance().is_freq_display() == true
+    $! - разделитель, между состояниями фотонов и атомами (смысл см. в примерах)
 
-/*
-Инструкция к строковому формату.
-$N - место задания фотонов
-$M - место задания атомов
-$W - место отображения частот перехода с 1 уровня на другой, если QConfig::instance().is_freq_display() == true
-$! - разделитель, между состояниями фотонов и атомами (смысл см. в примерах)
+    Пример:
+    Для формата |$N>$W$!|$M> примером состояние будет
+    |0>[0-1]|1>[1-2]|2>[0-2]|0112>, то есть,
+    0 фотонов для переход с 0 уровня на 1
+    1 -''- с 1 на 2
+    2 -''- с 0 на 2
+    и состояния атомов 0112
 
-Пример:
-Для формата |$N>$W$!|$M> примером состояние будет
-|0>[0-1]|1>[1-2]|2>[0-2]|0112>, то есть,
-0 фотонов для переход с 0 уровня на 1
-1 -''- с 1 на 2
-2 -''- с 0 на 2
-и состояния атомов 0112
+    $W можно опустить, если QConfig::instance().is_freq_display() == false
 
-$W можно опустить, если QConfig::instance().is_freq_display() == false
+    В последствии метод to_string() числа переходов с уровня на уровень переделает их в нижние индексы.
+    Метод find_states_in_string() - будет согласно формату искать в строке состояния.
+    */
 
-В последствии метод to_string() числа переходов с уровня на уровень переделает их в нижние индексы.
-Метод find_states_in_string() - будет согласно формату искать в строке состояния.
-*/
+    class Basis_State {
+        public:
+            // инициализация пустого состояния
+            explicit Basis_State() = default;
+            // groups_count делит кудиты на равные по размеру группы
+            explicit Basis_State(size_t qudits_count, ValType max_val = 1, size_t groups_count = 1);
+            // добавление поддержки для разных кудитов
+            explicit Basis_State(size_t qudits_count, const std::vector<ValType>& max_vals,
+                                size_t groups_count = 1);
+            // инициализация значений
+            explicit Basis_State(const std::vector<ValType>& qudits, ValType max_vals = 1, size_t groups_count = 1);
+            // инициализация значений с поддержкой разных кудитов
+            explicit Basis_State(const std::vector<ValType>& qudits, const std::vector<ValType>& max_vals,
+                                size_t groups_count = 1);
+            // инициализация значений с поддержкой разных кудитов + разных групп
+            explicit Basis_State(const std::vector<ValType>& qudits,  const std::vector<ValType>& max_vals,
+                                const std::vector<size_t>& groups);
 
-class Basis_State {
-    public:
-        // инициализация пустого состояния
-        explicit Basis_State() = default;
-        // groups_count делит кудиты на равные по размеру группы
-        explicit Basis_State(size_t qudits_count, ValType max_val = 1, size_t groups_count = 1);
-        // добавление поддержки для разных кудитов
-        explicit Basis_State(size_t qudits_count, const std::vector<ValType>& max_vals,
-                            size_t groups_count = 1);
-        // инициализация значений
-        explicit Basis_State(const std::vector<ValType>& qudits, ValType max_vals = 1, size_t groups_count = 1);
-        // инициализация значений с поддержкой разных кудитов
-        explicit Basis_State(const std::vector<ValType>& qudits, const std::vector<ValType>& max_vals,
-                             size_t groups_count = 1);
-        // инициализация значений с поддержкой разных кудитов + разных групп
-        explicit Basis_State(const std::vector<ValType>& qudits,  const std::vector<ValType>& max_vals,
-                             const std::vector<size_t>& groups);
+            void set_qudit(ValType val, size_t qudit_index, size_t group_id = 0) { assert(val <= max_vals_[qudit_index]);
+                                        qudits_[this->get_group_start(group_id) + qudit_index] = val;}
+            ValType get_qudit(size_t qudit_index, size_t group_id = 0) const { return qudits_[this->get_group_start(group_id) + qudit_index]; }
+            void append_qudit(ValType init_val = 0, ValType max_val = 1) { groups_.emplace_back(qudits_.size());
+                                                                        qudits_.emplace_back(init_val);
+                                                                        max_vals_.emplace_back(max_val);}
+            bool is_empty() const { return qudits_.size() == 0;}
 
-        void set_qudit(ValType val, size_t qudit_index, size_t group_id = 0) { assert(val <= max_vals_[qudit_index]);
-                                    qudits_[this->get_group_start(group_id) + qudit_index] = val;}
-        ValType get_qudit(size_t qudit_index, size_t group_id = 0) const { return qudits_[this->get_group_start(group_id) + qudit_index]; }
-        void append_qudit(ValType init_val = 0, ValType max_val = 1) { groups_.emplace_back(qudits_.size());
-                                                                       qudits_.emplace_back(init_val);
-                                                                       max_vals_.emplace_back(max_val);}
-        bool is_empty() const { return qudits_.size() == 0;}
+            //Basis_State operator*(const COMPLEX& c) const { auto res = *this; res.set_coef(this->get_coef() * c); return res;}
 
-        //Basis_State operator*(const COMPLEX& c) const { auto res = *this; res.set_coef(this->get_coef() * c); return res;}
+            size_t get_group_start(size_t group_id) const { return ((group_id == 0) ? 0 : groups_[group_id] + 1);}
+            size_t get_group_end(size_t group_id) const { return groups_[group_id]; }
+            std::string to_string() const;
+            bool operator==(const Basis_State& other) const { assert(max_vals_ == other.max_vals_ and groups_ == other.groups_); return qudits_ == other.qudits_; }
+            bool operator<(const Basis_State& other) const { return this->to_string() > other.to_string(); }
+            
+            void set_max_val(ValType val, size_t qudit_index = -1);
+            ValType get_max_val(size_t qudit_index, size_t group_id = 0) const { return max_vals_[this->get_group_start(group_id) + qudit_index]; }
 
-        size_t get_group_start(size_t group_id) const { return ((group_id == 0) ? 0 : groups_[group_id] + 1);}
-        size_t get_group_end(size_t group_id) const { return groups_[group_id]; }
-        std::string to_string() const;
-        bool operator==(const Basis_State& other) const { assert(max_vals_ == other.max_vals_ and groups_ == other.groups_); return qudits_ == other.qudits_; }
-        bool operator<(const Basis_State& other) const { return this->to_string() > other.to_string(); }
+            //COMPLEX get_coef() const { return coef_; }
+            //void set_coef(COMPLEX coef) { coef_ = coef; }
+
+            void clear() { qudits_.resize(0); max_vals_.resize(0); groups_.resize(0); }
+        protected:
+            //COMPLEX coef_ = COMPLEX(1, 0);
+            std::vector<ValType> qudits_;
+            std::vector<ValType> max_vals_;
+            std::vector<size_t> groups_;
+    };
+
+    class CHE_State: public Basis_State {
+        using E_LEVEL = int;
+        using CavityId = size_t;
+        using AtomId = size_t;
+
+        public:
+            CHE_State(const Basis_State& base): Basis_State(base) {}
+            CHE_State(size_t x_size = 1, size_t y_size = 1, size_t z_size = 1);
+            CHE_State(const Cavity_State& state);
+            CHE_State(const CHE_State& state) = default;
+            CHE_State(const std::vector<size_t>& grid_config, E_LEVEL e_levels_count = 2);
+            explicit CHE_State(const std::string&, const std::string& format = QConfig::instance().state_format(),
+                        const std::string& del = QConfig::instance().state_delimeter(),
+                        bool is_freq_display = QConfig::instance().is_freq_display());
+
+            size_t x_size() const { return x_size_; }
+            size_t y_size() const { return y_size_; }
+            size_t z_size() const { return z_size_; }
+
+            size_t max_N() const { return max_N_; }  // Get maximum considering energy on grid
+            void set_max_N(size_t N) { max_N_ = N; } // Set maximum considering energy on grid
+            size_t min_N() const { return min_N_; }  // Get minimum considering energy on grid
+            void set_min_N(size_t N) { min_N_ = N; } // Set minimum considering energy on grid
+
+            size_t n(CavityId id = 0, E_LEVEL e_from = 0, E_LEVEL e_to = 1) const { return grid_states_[id].n(e_from, e_to); } // get amount of photons in cavity with id = id
+            void set_n(size_t n, CavityId id = 0, E_LEVEL e_from = 0, E_LEVEL e_to = 1) { grid_states_[id].set_n(n, e_from, e_to); } // set n photons in cavity with id = id
+            size_t m(CavityId id) const { return grid_states_[id].m(); } // get amount of atoms in cavity with id = id
+
+            // change grid shapes
+            void reshape(size_t x_size, size_t y_size, size_t z_size);
+
+            // TMP realizations
+            void set_waveguide(double amplitude, double length);
+            void set_waveguide(const Matrix<std::pair<double, double>>& A) {waveguides_ = A;}
+            void set_waveguide(size_t from_cavity_id, size_t to_cavity_id, double amplitude, double length = 0) { waveguides_[from_cavity_id][to_cavity_id] = std::make_pair(amplitude, length); }
+
+            // get qubit in cavity with atom_index
+            E_LEVEL get_qubit(CavityId pol_id, AtomId atom_index) const { return grid_states_[pol_id].get_qubit(atom_index); }
+
+            // set qubit in cavity with atom_index
+            void set_qubit(CavityId pol_id, AtomId atom_index, E_LEVEL level) {
+                grid_states_[pol_id].set_qubit(atom_index, level);
+            }
+
+            // set entire state in cavity with id = id
+            void set_state(CavityId id, const Cavity_State& state);
+
+            // add cavity to grid (Don't safe, be careful)
+            CHE_State add_state(const Cavity_State& state) const;
+
+            size_t cavities_count() const { return grid_states_.size(); }
+            size_t cavity_atoms_count(CavityId id) const { return grid_states_.at(id).m(); }
+            
+            // Рудимент
+            size_t cavity_max_size(CavityId id) const { return grid_states_[id].variants_of_state_count(max_N_); }
+
+            bool operator==(const CHE_State& other) const { return grid_states_ == other.grid_states_; }
+            bool operator<(const CHE_State& other) const { return this->to_string() > other.to_string(); }
+
+            // Return state vector from cavity
+            Cavity_State get_state_in_pol(CavityId pol_id) const { return grid_states_[pol_id]; }
+            Cavity_State operator[](CavityId pol_id) const { return grid_states_[pol_id]; }
+
+            CavityId get_index_of_pol(size_t x, size_t y = 0, size_t z = 0) const { return z * y_size_ * x_size_ + y * x_size_ + x; }
+            
+            // Рудимент
+            size_t get_index() const;
+            void set_term(size_t atom_index, double term, CavityId cavity_id) { grid_states_[cavity_id].set_term(atom_index, term); }
+            double get_term(size_t atom_index, CavityId cavity_id) const { return grid_states_[cavity_id].get_term(atom_index); }
+
+            // Get index of state in basis
+            size_t get_index(const std::set<CHE_State>& basis) const;
+            size_t get_max_size() const;
+
+            // return energy in state (photons + atoms in state one)
+            size_t get_grid_energy() const;
+
+            size_t get_energy(CavityId cavity_id) const;
+            size_t get_max_energy(CavityId cavity_id) const { return grid_states_[cavity_id].get_max_energy(); }
         
-        void set_max_val(ValType val, size_t qudit_index = -1);
-        ValType get_max_val(size_t qudit_index, size_t group_id = 0) const { return max_vals_[this->get_group_start(group_id) + qudit_index]; }
+            std::set<CavityId> get_cavities_with_leak() const { return leak_cavities_; }
+            COMPLEX get_leak_gamma(CavityId id) const { return gamma_leak_cavities_[id]; }
+            std::set<CavityId> get_cavities_with_gain() const { return gain_cavities_; }
+            COMPLEX get_gain_gamma(CavityId id) const { return gamma_gain_cavities_[id]; }
 
-        //COMPLEX get_coef() const { return coef_; }
-        //void set_coef(COMPLEX coef) { coef_ = coef; }
+            void set_leak_for_cavity(CavityId id, COMPLEX gamma) { leak_cavities_.insert(id);
+                                                                gamma_leak_cavities_[id] = gamma;}
+            void set_gain_for_cavity(CavityId id, COMPLEX gamma) { gain_cavities_.insert(id);
+                                                                gamma_gain_cavities_[id] = gamma;}
 
-        void clear() { qudits_.resize(0); max_vals_.resize(0); groups_.resize(0); }
-    protected:
-        //COMPLEX coef_ = COMPLEX(1, 0);
-        std::vector<ValType> qudits_;
-        std::vector<ValType> max_vals_;
-        std::vector<size_t> groups_;
-};
+            // Matrix<COMPLEX> get_gamma() const { return gamma_; }
+            COMPLEX get_gamma(CavityId from_id, CavityId to_id, E_LEVEL e_from = 0, E_LEVEL e_to = 1) const {
+                if (from_id > to_id) {
+                    auto tmp = from_id;
+                    from_id = to_id;
+                    to_id = tmp;
+                }
+                return gamma(waveguides_[from_id][to_id].first, waveguides_[from_id][to_id].second, grid_states_[from_id].w_ph(e_from, e_to));
+            }
+            std::set<CavityId> get_cavities_with_atoms() const { return cavities_with_atoms_; }
 
-class CHE_State: public Basis_State {
-    using E_LEVEL = int;
-    using CavityId = size_t;
-    using AtomId = size_t;
+            // Like a hash
+            BigUInt to_uint() const;
 
-    public:
-        CHE_State(const Basis_State& base): Basis_State(base) {}
-        CHE_State(size_t x_size = 1, size_t y_size = 1, size_t z_size = 1);
-        CHE_State(const Cavity_State& state);
-        CHE_State(const CHE_State& state) = default;
-        CHE_State(const std::vector<size_t>& grid_config, E_LEVEL e_levels_count = 2);
-        explicit CHE_State(const std::string&, const std::string& format = QConfig::instance().state_format(),
-                       const std::string& del = QConfig::instance().state_delimeter(),
-                       bool is_freq_display = QConfig::instance().is_freq_display());
+            // Change state to with BigUint = state_num
+            void from_uint(const BigUInt& state_num);
 
-        size_t x_size() const { return x_size_; }
-        size_t y_size() const { return y_size_; }
-        size_t z_size() const { return z_size_; }
+            size_t e_levels_count() const { return e_levels_count_; }
 
-        size_t max_N() const { return max_N_; }  // Get maximum considering energy on grid
-        void set_max_N(size_t N) { max_N_ = N; } // Set maximum considering energy on grid
-        size_t min_N() const { return min_N_; }  // Get minimum considering energy on grid
-        void set_min_N(size_t N) { min_N_ = N; } // Set minimum considering energy on grid
+            std::vector<CavityId> get_neighbours(CavityId cavity_id) const { return neighbours_[cavity_id]; }
 
-        size_t n(CavityId id = 0, E_LEVEL e_from = 0, E_LEVEL e_to = 1) const { return grid_states_[id].n(e_from, e_to); } // get amount of photons in cavity with id = id
-        void set_n(size_t n, CavityId id = 0, E_LEVEL e_from = 0, E_LEVEL e_to = 1) { grid_states_[id].set_n(n, e_from, e_to); } // set n photons in cavity with id = id
-        size_t m(CavityId id) const { return grid_states_[id].m(); } // get amount of atoms in cavity with id = id
+            size_t hash() const;
+        private:
+            size_t max_N_;
+            size_t min_N_ = 0;
+            size_t x_size_;
+            size_t y_size_;
+            size_t z_size_;
+            size_t e_levels_count_;
 
-        // change grid shapes
-        void reshape(size_t x_size, size_t y_size, size_t z_size);
+            std::set<CavityId> cavities_with_atoms_;
+            std::vector<Cavity_State> grid_states_;
+            Matrix<std::pair<double, double>> waveguides_;
+            std::vector<std::vector<CavityId>> neighbours_;
+            std::vector<COMPLEX> gamma_leak_cavities_;
+            std::vector<COMPLEX> gamma_gain_cavities_;
+            std::set<CavityId> leak_cavities_;
+            std::set<CavityId> gain_cavities_;
+    };
 
-        // TMP realizations
-        void set_waveguide(double amplitude, double length);
-        void set_waveguide(const Matrix<std::pair<double, double>>& A) {waveguides_ = A;}
-        void set_waveguide(size_t from_cavity_id, size_t to_cavity_id, double amplitude, double length = 0) { waveguides_[from_cavity_id][to_cavity_id] = std::make_pair(amplitude, length); }
-
-        // get qubit in cavity with atom_index
-        E_LEVEL get_qubit(CavityId pol_id, AtomId atom_index) const { return grid_states_[pol_id].get_qubit(atom_index); }
-
-        // set qubit in cavity with atom_index
-        void set_qubit(CavityId pol_id, AtomId atom_index, E_LEVEL level) {
-            grid_states_[pol_id].set_qubit(atom_index, level);
-        }
-
-        // set entire state in cavity with id = id
-        void set_state(CavityId id, const Cavity_State& state);
-
-        // add cavity to grid (Don't safe, be careful)
-        CHE_State add_state(const Cavity_State& state) const;
-
-        size_t cavities_count() const { return grid_states_.size(); }
-        size_t cavity_atoms_count(CavityId id) const { return grid_states_.at(id).m(); }
+    class EXC_State: public Basis_State {
         
-        // Рудимент
-        size_t cavity_max_size(CavityId id) const { return grid_states_[id].variants_of_state_count(max_N_); }
+    };
 
-        bool operator==(const CHE_State& other) const { return grid_states_ == other.grid_states_; }
-        bool operator<(const CHE_State& other) const { return this->to_string() > other.to_string(); }
+    // ------------------------------ State ---------------------------------
 
-        // Return state vector from cavity
-        Cavity_State get_state_in_pol(CavityId pol_id) const { return grid_states_[pol_id]; }
-        Cavity_State operator[](CavityId pol_id) const { return grid_states_[pol_id]; }
-
-        CavityId get_index_of_pol(size_t x, size_t y = 0, size_t z = 0) const { return z * y_size_ * x_size_ + y * x_size_ + x; }
-        
-        // Рудимент
-        size_t get_index() const;
-        void set_term(size_t atom_index, double term, CavityId cavity_id) { grid_states_[cavity_id].set_term(atom_index, term); }
-        double get_term(size_t atom_index, CavityId cavity_id) const { return grid_states_[cavity_id].get_term(atom_index); }
-
-        // Get index of state in basis
-        size_t get_index(const std::set<CHE_State>& basis) const;
-        size_t get_max_size() const;
-
-        // return energy in state (photons + atoms in state one)
-        size_t get_grid_energy() const;
-
-        size_t get_energy(CavityId cavity_id) const;
-        size_t get_max_energy(CavityId cavity_id) const { return grid_states_[cavity_id].get_max_energy(); }
-    
-        std::set<CavityId> get_cavities_with_leak() const { return leak_cavities_; }
-        COMPLEX get_leak_gamma(CavityId id) const { return gamma_leak_cavities_[id]; }
-        std::set<CavityId> get_cavities_with_gain() const { return gain_cavities_; }
-        COMPLEX get_gain_gamma(CavityId id) const { return gamma_gain_cavities_[id]; }
-
-        void set_leak_for_cavity(CavityId id, COMPLEX gamma) { leak_cavities_.insert(id);
-                                                               gamma_leak_cavities_[id] = gamma;}
-        void set_gain_for_cavity(CavityId id, COMPLEX gamma) { gain_cavities_.insert(id);
-                                                               gamma_gain_cavities_[id] = gamma;}
-
-        // Matrix<COMPLEX> get_gamma() const { return gamma_; }
-        COMPLEX get_gamma(CavityId from_id, CavityId to_id, E_LEVEL e_from = 0, E_LEVEL e_to = 1) const {
-            if (from_id > to_id) {
-                auto tmp = from_id;
-                from_id = to_id;
-                to_id = tmp;
-            }
-            return gamma(waveguides_[from_id][to_id].first, waveguides_[from_id][to_id].second, grid_states_[from_id].w_ph(e_from, e_to));
-        }
-        std::set<CavityId> get_cavities_with_atoms() const { return cavities_with_atoms_; }
-
-        // Like a hash
-        BigUInt to_uint() const;
-
-        // Change state to with BigUint = state_num
-        void from_uint(const BigUInt& state_num);
-
-        size_t e_levels_count() const { return e_levels_count_; }
-
-        std::vector<CavityId> get_neighbours(CavityId cavity_id) const { return neighbours_[cavity_id]; }
-
-        size_t hash() const;
-    private:
-        size_t max_N_;
-        size_t min_N_ = 0;
-        size_t x_size_;
-        size_t y_size_;
-        size_t z_size_;
-        size_t e_levels_count_;
-
-        std::set<CavityId> cavities_with_atoms_;
-        std::vector<Cavity_State> grid_states_;
-        Matrix<std::pair<double, double>> waveguides_;
-        std::vector<std::vector<CavityId>> neighbours_;
-        std::vector<COMPLEX> gamma_leak_cavities_;
-        std::vector<COMPLEX> gamma_gain_cavities_;
-        std::set<CavityId> leak_cavities_;
-        std::set<CavityId> gain_cavities_;
-};
-
-class EXC_State: public Basis_State {
-    
-};
-
-// ------------------------------ State ---------------------------------
-
-template<typename StateType>
-class State {
-    public:
-        explicit State() = default;
-        State(const State<StateType>& state) = default;
-        State(const StateType& state) {
-            if (!state.is_empty()) {
-                state_vec_.emplace_back(1, 0);
-                state_components_.insert(state);
-            }
-        }
-
-        explicit State(const std::string& state_string, ValType max_val = 1);
-        explicit State(const std::string& state_string, const std::vector<ValType>& max_vals);
-
-        /*
-        operator State<Basis_State>() {
-            State<Basis_State> res;
-            res.state_vec_ = this->state_vec_;
-
-            for (const auto& st: this->state_components_) {
-                res.state_components_.insert(Basis_State(st));
-            }
-
-            return res;
-        }
-        */
-
-        State<StateType> operator*(const COMPLEX& c) const {
-            State<StateType> res(*this);
-
-            size_t index = 0;
-
-            for (StateType st: res.state_components_) {
-                res.state_vec_[index] *= c;
-                
-                index++;
-            }
-
-            return res;
-        }
-
-        COMPLEX& operator[](size_t index) { return state_vec_[index];}
-        COMPLEX operator[](size_t index) const { return state_vec_[index];}
-        size_t size() const { return state_vec_.size(); }
-
-        size_t get_index(const StateType& state) const {
-            auto it = std::find(state_components_.begin(), state_components_.end(), state);
-            return std::distance(state_components_.begin(), it);
-        }
-
-        void insert(const StateType& state) {
-            if (std::find(state_components_.begin(), state_components_.end(), state) == state_components_.end()) {
-                state_components_.insert(state);
-                state_vec_.insert(state_vec_.begin() + this->get_index(state), COMPLEX(0, 0));
-            }
-        }
-
-        std::set<StateType> get_state_components() const { return state_components_; }
-        std::vector<COMPLEX> get_vector() const { return state_vec_;}
-
-        std::string to_string() const {
-            std::string res;
-
-            size_t index = 0;
-            for (const auto& st: state_components_) {
-                res += "(" + std::to_string(state_vec_[index].real()) + " + " + std::to_string(state_vec_[index].imag()) + "j)";
-                index++;
-
-                res += " * ";
-                res += st.to_string();
-
-                if (index != state_components_.size()) {
-                    res += " + ";
+    template<typename StateType>
+    class State {
+        public:
+            explicit State() = default;
+            State(const State<StateType>& state) = default;
+            State(const StateType& state) {
+                if (!state.is_empty()) {
+                    state_vec_.emplace_back(1, 0);
+                    state_components_.insert(state);
                 }
             }
 
-            return res;
-        }
+            explicit State(const std::string& state_string, ValType max_val = 1);
+            explicit State(const std::string& state_string, const std::vector<ValType>& max_vals);
 
-        State<Basis_State> fit_to_basis(const std::set<Basis_State>& basis) const {
-            State<Basis_State> res;
+            /*
+            operator State<Basis_State>() {
+                State<Basis_State> res;
+                res.state_vec_ = this->state_vec_;
 
-            res.state_vec_ = std::vector<COMPLEX>(basis.size(), 0);
-            res.state_components_ = basis;
+                for (const auto& st: this->state_components_) {
+                    res.state_components_.insert(Basis_State(st));
+                }
 
-            size_t index = 0;
-            for (const auto& state: basis) {
-                size_t my_index = 0;
-                for (const auto& my_state: this->state_components_) {
-                    if (state == Basis_State(my_state)) {
-                        res.state_vec_[index] = this->state_vec_[my_index];
-                        break;
+                return res;
+            }
+            */
+
+            State<StateType> operator*(const COMPLEX& c) const {
+                State<StateType> res(*this);
+
+                size_t index = 0;
+
+                for (StateType st: res.state_components_) {
+                    res.state_vec_[index] *= c;
+                    
+                    index++;
+                }
+
+                return res;
+            }
+
+            COMPLEX& operator[](size_t index) { return state_vec_[index];}
+            COMPLEX operator[](size_t index) const { return state_vec_[index];}
+            size_t size() const { return state_vec_.size(); }
+
+            size_t get_index(const StateType& state) const {
+                auto it = std::find(state_components_.begin(), state_components_.end(), state);
+                return std::distance(state_components_.begin(), it);
+            }
+
+            void insert(const StateType& state) {
+                if (std::find(state_components_.begin(), state_components_.end(), state) == state_components_.end()) {
+                    state_components_.insert(state);
+                    state_vec_.insert(state_vec_.begin() + this->get_index(state), COMPLEX(0, 0));
+                }
+            }
+
+            void set_state_components(const std::set<StateType>& st) { state_components_ = st; }
+            void set_vector(const std::vector<COMPLEX>& v) { state_vec_ = v; }
+            std::set<StateType> get_state_components() const { return state_components_; }
+            std::vector<COMPLEX> get_vector() const { return state_vec_;}
+
+            std::string to_string() const {
+                std::string res;
+
+                size_t index = 0;
+                for (const auto& st: state_components_) {
+                    res += "(" + std::to_string(state_vec_[index].real()) + " + " + std::to_string(state_vec_[index].imag()) + "j)";
+                    index++;
+
+                    res += " * ";
+                    res += st.to_string();
+
+                    if (index != state_components_.size()) {
+                        res += " + ";
+                    }
+                }
+
+                return res;
+            }
+
+            State<Basis_State> fit_to_basis(const std::set<Basis_State>& basis) const {
+                State<Basis_State> res;
+
+                //res.state_vec_ = std::vector<COMPLEX>(basis.size(), 0);
+                res.set_vector(std::vector<COMPLEX>(basis.size(), 0));
+                //res.state_components_ = basis;
+                res.set_state_components(basis);
+
+                size_t index = 0;
+                for (const auto& state: basis) {
+                    size_t my_index = 0;
+                    for (const auto& my_state: this->state_components_) {
+                        if (state == Basis_State(my_state)) {
+                            res[index] = this->state_vec_[my_index];
+                            break;
+                        }
+
+                        my_index++;
                     }
 
-                    my_index++;
+                    index++;
                 }
 
-                index++;
+                return res;
             }
+        private:
+            std::vector<COMPLEX> state_vec_;
+            std::set<StateType> state_components_;
+    };
 
-            return res;
-        }
-    private:
-        std::vector<COMPLEX> state_vec_;
-        std::set<StateType> state_components_;
-};
-
-} // namespace QComputations
+    } // namespace QComputations

@@ -18,8 +18,8 @@
 #include "QComputations/mpi_functions.hpp"
 #include "QComputations/test.hpp"
 #include "QComputations/graph.hpp"
-#include "QComputations/blocked_matrix.hpp"
 #include "QComputations/plot.hpp"
+#include "QComputations/blocked_matrix.hpp"
 #include <mpi.h>
 #include "QComputations/blocked_vector.hpp"
 #include "QComputations/hamiltonian_blocked.hpp"
