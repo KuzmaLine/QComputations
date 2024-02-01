@@ -98,7 +98,7 @@ State<StateType> Operator<StateType>::run(const State<StateType>& init_state) co
 
             for (int i = op.size() - 2; i >= 0; i--) {
                 for (const auto& cur_new_state: res.get_state_components()) {
-                    new_state += op[i](cur_new_state); 
+                    new_state = op[i](cur_new_state); 
                 }
             }
 
