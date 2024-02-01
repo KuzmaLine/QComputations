@@ -33,7 +33,7 @@ print(probs)
 plt.figure()
 sns.lineplot(data=probs)
 plt.grid()
-#plt.savefig(plotname, format='svg')
+plt.savefig(plotname, format='svg')
 plt.show()
 
 
