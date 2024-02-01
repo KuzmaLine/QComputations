@@ -29,11 +29,11 @@ print(probs)
 # print(time_vec)
 # print(basis)
 
-#plt.figure(figsize = (int(sys.argv[3]), int(sys.argv[4])))
-plt.figure()
+plt.figure(figsize = (int(sys.argv[4]), int(sys.argv[5])))
+#plt.figure()
 sns.lineplot(data=probs)
 plt.grid()
-plt.savefig(plotname, format='svg')
-plt.show()
+plt.savefig(plotname, format=sys.argv[3])
+#plt.show()
 
 
