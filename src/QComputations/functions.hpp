@@ -97,6 +97,19 @@ void make_rank_map(size_t size, int rank, int world_size, size_t& start_col, siz
 // ------------------------------- template functions --------------------------------------
 
 template<typename T>
+std::set<T> set_query(const std::set<T>& v, const std::function<bool(T)>& func) {
+    std::set<T> res;
+
+    for (const auto& x: v) {
+        if (func(x)) {
+            res.insert(x);
+        }
+    }
+
+    return res;
+}
+
+template<typename T>
 T read_number(const std::string& str, size_t& start_index) {
     T n = T(0);
     size_t index = start_index;

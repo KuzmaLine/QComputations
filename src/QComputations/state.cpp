@@ -8,6 +8,7 @@ namespace {
     using CavityId = size_t;
     constexpr ValType INIT_VAL = 0;
 
+    /*
     std::vector<std::vector<CavityId>> update_neighbours(size_t x_size, size_t y_size, size_t z_size) {
         std::vector<std::vector<CavityId>> res(x_size * y_size * z_size);
 
@@ -35,6 +36,7 @@ namespace {
 
         return res;
     }
+    */
 }
 
 // --------------------------- Basis_Sate -------------------------------------
@@ -55,10 +57,9 @@ std::string Basis_State::to_string() const {
     size_t next_end = 0;
     size_t group_id = 0;
     size_t next_start = 0;
-    size_t next_group = groups_[0];
     for (size_t i = 0; i < qudits_.size(); i++) {
         if (i == next_start) {
-            next_end = groups_[group_id];
+            next_end = groups_[group_id++];
             next_start = next_end + 1;
             res += "|";
         }
@@ -77,6 +78,7 @@ std::string Basis_State::to_string() const {
 
 // --------------------------- CHE_State -------------------------------------
 
+/*
 size_t CHE_State::hash() const {
     std::hash<Cavity_State> state_hash;
     auto res = state_hash(grid_states_[0]);
@@ -87,40 +89,14 @@ size_t CHE_State::hash() const {
 
     return res;
 }
-
+*/
 
 // REWRITE TO REGEXP
+/*
 CHE_State::CHE_State(const std::string& grid_state, const std::string& format,
              const std::string& del, bool is_freq_display) : waveguides_(C_STYLE, 0, 0,
                                                                         std::make_pair(QConfig::instance().waveguides_amplitude(),
                                                                         QConfig::instance().waveguides_length())) {
-    /*
-    std::regex format_reg("\\$[N,W,!,M]");
-    std::vector<std::string> prefixes;
-    std::vector<std::string> obj_sequence;
-
-    auto regex_begin = std::sregex_iterator(format.begin(), format.end(), format_regex);
-    auto regex_end = std::sregex_iterator();
-
-    std::smatch match;
-    bool is_sep = false;
-    for (std::sregex_iterator i = regex_begin; i != regex_end; i++) {
-        match = *i;
-        if (is_sep) {
-            is_sep = false;
-            prefixes[prefixes.size() - 1] += match.prefix();
-            obj_sequence.emplace_back(match.str())
-        } else {
-            if (QConfig::is_sequence_state() and match.str() == "$!") {
-                is_sep = true;
-                prefixes.emplace_back(match.prefix())
-            } else {
-                prefixes.emplace_back(match.prefix())
-                obj_sequence.emplace_back(match.str())
-            }
-        }
-    }
-    */
     size_t format_index = 0;
     size_t left_length = 0, middle_length = 0, right_length = 0;
     while (format[format_index] != 'N') {
@@ -191,11 +167,12 @@ CHE_State::CHE_State(const std::string& grid_state, const std::string& format,
         }
     }
 }
+*/
 
 void CHE_State::set_waveguide(double amplitude, double length) {
-    waveguides_ = Matrix<std::pair<double, double>>(C_STYLE, grid_states_.size(), grid_states_.size(),
+    waveguides_ = Matrix<std::pair<double, double>>(C_STYLE, groups_.size(), groups_.size(),
         std::make_pair(0, 0));
-    for (size_t from_id = 0; from_id < grid_states_.size(); from_id++) {
+    for (size_t from_id = 0; from_id < groups_.size(); from_id++) {
         auto neighbours = neighbours_[from_id];
 
         for (const auto to_id: neighbours) {
@@ -205,33 +182,85 @@ void CHE_State::set_waveguide(double amplitude, double length) {
 }
 
 void CHE_State::reshape(size_t x_size, size_t y_size, size_t z_size) {
-    assert(x_size * y_size * z_size == grid_states_.size());
+    assert(x_size * y_size * z_size == groups_.size());
 
     x_size_ = x_size;
     y_size_ = y_size;
     z_size_ = z_size;
 
-    waveguides_ = Matrix<std::pair<double, double>>(C_STYLE, grid_states_.size(), grid_states_.size(),
+    waveguides_ = Matrix<std::pair<double, double>>(C_STYLE, groups_.size(), groups_.size(),
             std::make_pair(QConfig::instance().waveguides_amplitude(), QConfig::instance().waveguides_length()));
 
     neighbours_ = update_neighbours(x_size_, y_size_, z_size_);
 }
 
-CHE_State::CHE_State(const std::vector<size_t>& grid_config, E_LEVEL e_levels_count): waveguides_(C_STYLE, grid_config.size(),
-                                                                              grid_config.size(),
-                                                                              std::make_pair(QConfig::instance().waveguides_amplitude(), QConfig::instance().waveguides_length())),
-                                                                              e_levels_count_(e_levels_count) {
+std::set<CavityId> CHE_State::get_cavities_with_leak() const {
+    std::set<CavityId> cavity_set;
+
+    for (size_t i = 0; i < this->cavities_count(); i++) {
+        cavity_set.insert(i);
+    }
+
+    std::function<bool(CavityId)> func = {[&](CavityId cavity_id){
+        return !is_zero(gamma_leak_cavities_[cavity_id]);
+    }};
+
+    return set_query<CavityId>(cavity_set, func);
+}
+
+std::set<CavityId> CHE_State::get_cavities_with_gain() const {
+    std::set<CavityId> cavity_set;
+
+    for (size_t i = 0; i < this->cavities_count(); i++) {
+        cavity_set.insert(i);
+    }
+
+    std::function<bool(CavityId)> func = {[&](CavityId cavity_id){
+        return !is_zero(gamma_gain_cavities_[cavity_id]);
+    }};
+
+    return set_query<CavityId>(cavity_set, func);
+}
+
+namespace {
+    size_t vector_sum(const std::vector<size_t>& v) {
+        size_t sum = 0;
+        for (size_t i = 0; i < v.size(); i++) {
+            sum += v[i];
+        }
+
+        return sum;
+    }
+
+    std::vector<size_t> che_groups_from_grid_config(const std::vector<size_t>& grid_config) {
+        std::vector<size_t> groups;
+
+        size_t qudits_prev_sum = 0;
+        for (const auto& qubits_count: grid_config) {
+            auto n = qubits_count + 1;
+            groups.emplace_back(qudits_prev_sum + n - 1);
+            qudits_prev_sum += n;
+        }
+
+        return groups;
+    }
+}
+
+CHE_State::CHE_State(const std::vector<size_t>& grid_config): Basis_State(vector_sum(grid_config) + grid_config.size(), 1, che_groups_from_grid_config(grid_config)),
+                                                              gamma_leak_cavities_(grid_config.size(), 0),
+                                                              gamma_gain_cavities_(grid_config.size(), 0),
+                                                              waveguides_(C_STYLE, grid_config.size(),
+                                                              grid_config.size(),
+                                                              std::make_pair(QConfig::instance().waveguides_amplitude(), QConfig::instance().waveguides_length())) {
     //std::cout << grid_config << std::endl;
     x_size_ = grid_config.size();
     y_size_ = 1;
     z_size_ = 1;
 
     neighbours_ = update_neighbours(x_size_, y_size_, z_size_);
+
     for (size_t i = 0; i < grid_config.size(); i++) {
-        std::vector<int> m(grid_config[i], 0);
-        grid_states_.emplace_back(0, m, e_levels_count);
-        gamma_leak_cavities_.emplace_back(0);
-        gamma_gain_cavities_.emplace_back(0);
+        this->set_max_val(QConfig::instance().max_photons(), 0, i);
     }
 }
 
@@ -245,6 +274,27 @@ size_t CHE_State::get_index(const std::set<CHE_State>& basis) const {
     return -1;
 }
 
+CHE_State CHE_State::get_state_in_cavity(CavityId cavity_id) const {
+    auto a = this->get_group_start(cavity_id);
+    auto b = this->get_group_end(cavity_id);
+
+    std::vector<ValType> qudits(b - a + 1);
+    std::vector<ValType> max_vals(b - a + 1);
+
+    std::copy(qudits_.begin() + a, qudits_.begin() + b + 1, qudits.begin());    
+    std::copy(max_vals_.begin() + a, max_vals_.begin() + b + 1, max_vals.begin());
+
+    Basis_State b_state(qudits, max_vals);
+
+    CHE_State res(b_state);
+
+    res.set_leak_for_cavity(0, this->get_leak_gamma(0));
+    res.set_gain_for_cavity(0, this->get_gain_gamma(0));
+
+    return res;
+}
+
+/*
 size_t CHE_State::get_max_size() const {
     size_t res = 0;
 
@@ -357,7 +407,7 @@ void CHE_State::from_uint(const BigUInt& state_num) {
         this->set_n(n_num.get_num(grid_states_.size() - i - 1), i);
     }
 }
-
+*/
 
 /*
 std::string CHE_State::to_string() const {

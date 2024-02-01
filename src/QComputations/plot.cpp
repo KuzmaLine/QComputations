@@ -1,6 +1,6 @@
 #include "plot.hpp"
 #include "functions.hpp"
-#include <experimental/filesystem>
+#include <filesystem>
 
 #ifdef ENABLE_MATPLOTLIB
 #include "matplotlibcpp.hpp"
@@ -11,7 +11,7 @@ namespace QComputations {
 #ifdef ENABLE_MPI
 #ifdef ENABLE_CLUSTER
 
-namespace fs = std::experimental::filesystem;
+namespace fs = std::filesystem;
 
 void check_dir(std::string& dir, const std::string& filename = "") {
     if (dir != "") {
@@ -86,8 +86,9 @@ void time_vec_to_file(const std::string& filename, const std::vector<double>& ti
 
     size_t start, count;
     make_rank_map(time_vec.size(), rank, world_size, start, count);
+    std::cout << "RANK: "<< rank << " - " << start << ", " << count << " | " << time_vec[start] << " " << time_vec[start + count - 1] << std::endl;
 
-    MPI_File_seek(file, num_length * start + start, MPI_SEEK_CUR);
+    MPI_File_seek(file, num_length * start + 2 * start, MPI_SEEK_SET);
     for (size_t i = start; i < start + count; i++) {
         std::string num_str = to_string_double_with_precision(time_vec[i], accuracy, num_length);
 
@@ -121,6 +122,7 @@ void plot_from_files(const std::string& plotname,
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
     MPI_Comm_size(MPI_COMM_WORLD, &world_size);
 
+    MPI_Barrier(MPI_COMM_WORLD);
     if (rank == mpi::ROOT_ID) {
         std::cout << "COMMAND_GIVE\n";
         std::string command = std::string("$SEABORN_PLOT") + " " + dir + " " + plotname + " " + std::to_string(QConfig::instance().fig_width()) + " " + std::to_string(QConfig::instance().fig_height());

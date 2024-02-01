@@ -61,7 +61,7 @@ namespace mpi {
 
     std::vector<COMPLEX> bcast_vector_complex(const std::vector<COMPLEX>& v = {});
     std::vector<double> bcast_vector_double(const std::vector<double>& v = {});
-    CHE_State bcast_state(const CHE_State& state = CHE_State());
+    //CHE_State bcast_state(const CHE_State& state = CHE_State());
 
 
 #ifdef ENABLE_CLUSTER

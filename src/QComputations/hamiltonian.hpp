@@ -27,7 +27,7 @@ class Hamiltonian {
         Matrix<COMPLEX> get_matrix() const { return H_; }
         std::pair<std::vector<double>, Matrix<COMPLEX>> eigen(); // Find eigenvalues and eigenvectors (functions.hpp)
         COMPLEX get_leak(size_t cavity_id) { return grid_.get_leak_gamma(cavity_id); } // (state.hpp)
-        void set_leak(size_t cavity_id, COMPLEX gamma) { grid_.set_leak_for_cavity(cavity_id, gamma); } // (state.hpp)
+        void set_leak(size_t cavity_id, double gamma) { grid_.set_leak_for_cavity(cavity_id, gamma); } // (state.hpp)
     protected:
         bool is_eigen_ = false;
         CHE_State grid_;
@@ -39,6 +39,7 @@ class Hamiltonian {
         Operator<Basis_State> operator_;
 };
 
+/*
 class H_by_func : public Hamiltonian {
     public:
         H_by_func(size_t n, std::function<COMPLEX(size_t, size_t)> func);
@@ -75,5 +76,7 @@ class H_TCH : public Hamiltonian {
     public:
         H_TCH(const CHE_State& init_state);
 };
+
+*/
 
 } // namespace QComputations

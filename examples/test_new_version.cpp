@@ -42,11 +42,11 @@ State<Hydrogen_State> bond_energy(const Hydrogen_State& state) {
 }
 
 State<Hydrogen_State> A_in(const Hydrogen_State& state) {
-    return set_qudit(state, 0, state.get_qudit(0) + 1);
+    return set_qudit(state, state.get_qudit(0) + 1, 0);
 }
 
 State<Hydrogen_State> A_out(const Hydrogen_State& state) {
-    return set_qudit(state, 0, state.get_qudit(0) - 1);
+    return set_qudit(state, state.get_qudit(0) - 1, 0);
 }
 
 } // namespace QComputations

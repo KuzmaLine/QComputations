@@ -2,6 +2,8 @@
 
 import pandas as pd
 import seaborn as sns
+import matplotlib
+
 import matplotlib.pyplot as plt
 import numpy as np
 import sys
@@ -14,6 +16,9 @@ time_vec = pd.read_csv("./" + dir + "/time.csv", header=None).to_numpy().squeeze
 basis = pd.read_csv("./" + dir + "/basis.csv", header=None).to_numpy().squeeze().tolist()
 probs = pd.read_csv("./" + dir + "/probs.csv", header=None)
 
+print("TIME - ", len(time_vec))
+print("Probs - ", probs.shape[0], probs.shape[1])
+
 probs.index=time_vec
 probs.columns = basis
 
@@ -25,8 +30,10 @@ print(probs)
 # print(basis)
 
 #plt.figure(figsize = (int(sys.argv[3]), int(sys.argv[4])))
+plt.figure()
 sns.lineplot(data=probs)
 plt.grid()
-plt.savefig(plotname, format='svg')
+#plt.savefig(plotname, format='svg')
+plt.show()
 
 
