@@ -125,6 +125,7 @@ void make_rank_map(size_t size, int rank, int world_size, size_t& start_col, siz
     start_col = rank * size_per_proc + std::min(rank, rest);
 }
 
+/*
 std::set<CHE_State> Cavity_State_to_State(const std::set<Cavity_State>& st) {
     std::set<CHE_State> res;
 
@@ -134,6 +135,7 @@ std::set<CHE_State> Cavity_State_to_State(const std::set<Cavity_State>& st) {
 
     return res;
 }
+*/
 
 std::function<double(double)> Cubic_Spline_Interpolate(const std::vector<double>& x, const std::vector<double>& f) {
     auto begin = std::chrono::steady_clock::now();
@@ -301,6 +303,7 @@ Matrix<COMPLEX> FROM_lapack_complex_double_TO_Matrix(lapack_complex_double* A, l
     return res;
 }
 
+/*
 void print_state_biguint(const CHE_State& state) {
     auto num = state.to_uint();
     auto num_str = num.binary_str();
@@ -325,6 +328,7 @@ void print_state_biguint(const CHE_State& state) {
 
     std::cout << num_str;
 }
+*/
 
 std::vector<double> make_timeline(double start, double end, double step) {
     size_t n = (end - start) / step;

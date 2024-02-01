@@ -76,6 +76,7 @@ std::vector<double> mpi::bcast_vector_double(const std::vector<double>& v) {
     return res;
 }
 
+/*
 CHE_State mpi::bcast_state(const CHE_State& state) {
     int rank;
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
@@ -147,6 +148,7 @@ CHE_State mpi::bcast_state(const CHE_State& state) {
     //std::cout << rank << " " << res.to_string() << std::endl;
     return res;
 }
+*/
 
 // ################################ RUN_MPI_SLAVES #######################################
 
@@ -165,13 +167,13 @@ void mpi::run_mpi_slaves(const std::map<int, std::vector<MPI_Data>>& data) {
 
 // ----------------------------------- GENERATE_H --------------------------------------
         if (command == COMMAND::GENERATE_H) {
-            CHE_State tmp = bcast_state();
+            //CHE_State tmp = bcast_state();
             //std::cout << tmp.to_string() << std::endl;
-            H_TCH H(tmp);
+            //H_TCH H(tmp);
 
 // --------------------------------- GENERATE_H_FUNC -----------------------------------
         } else if (command == COMMAND::GENERATE_H_FUNC) {
-            H_by_func H(data.at(command)[command_id].n, data.at(command)[command_id].func);
+            //H_by_func H(data.at(command)[command_id].n, data.at(command)[command_id].func);
 
 // ---------------------------------- SCHRODINGER --------------------------------------
         } else if (command == COMMAND::SCHRODINGER) {

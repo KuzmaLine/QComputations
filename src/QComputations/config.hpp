@@ -13,13 +13,14 @@ namespace {
     constexpr double g_default = 0.01;
     constexpr double waveguides_length_default = 0;
     constexpr double waveguides_amplitude_default = 0;
+    constexpr int max_photons_default = 1;
     constexpr int E_LEVELS_COUNT_DEFAULT = 2;
 
     constexpr double eps_default = 1e-12;
     constexpr int width_default = 15;
 
     constexpr int csv_max_number_size_default = 21;
-    constexpr int csv_num_accuracy_default = 18;
+    constexpr int csv_num_accuracy_default = 16;
 
     constexpr bool is_freq_display_default = true;
     constexpr bool is_sequence_default = false;
@@ -40,6 +41,7 @@ class QConfig {
         }
 
         void set_h(double h) { h_ = h; }
+        void set_max_photons(int max_photons) { max_photons_ = max_photons; }
         void set_w(double w) { w_ = w; }
         void set_g(double g) { g_ = g; }
         void set_fig_width(int fig_width) { fig_width_ = fig_width; }
@@ -59,6 +61,7 @@ class QConfig {
         void set_excitation_state_format(const std::string& excitation_state_format) { excitation_state_format_ = excitation_state_format; }
 
         double h() const { return h_; }
+        int max_photons() const { return max_photons_; }
         double w() const { return w_; }
         double g() const { return g_; }
         int fig_width() const { return fig_width_; }
@@ -106,6 +109,7 @@ class QConfig {
 
         double eps_ = eps_default;
         
+        int max_photons_ = max_photons_default;
         int E_LEVELS_COUNT_ = E_LEVELS_COUNT_DEFAULT;
         double wavegiudes_length_ = waveguides_length_default;
         double wavegiudes_amplitude_ = waveguides_amplitude_default;

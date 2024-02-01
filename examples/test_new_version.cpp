@@ -42,11 +42,11 @@ State<Hydrogen_State> bond_energy(const Hydrogen_State& state) {
 }
 
 State<Hydrogen_State> A_in(const Hydrogen_State& state) {
-    return set_qudit(state, 0, state.get_qudit(0) + 1);
+    return set_qudit(state, state.get_qudit(0) + 1, 0);
 }
 
 State<Hydrogen_State> A_out(const Hydrogen_State& state) {
-    return set_qudit(state, 0, state.get_qudit(0) - 1);
+    return set_qudit(state, state.get_qudit(0) - 1, 0);
 }
 
 } // namespace QComputations
@@ -86,12 +86,14 @@ int main(int argc, char** argv) {
 
     H.show();
 
+    H.write_to_csv_file("hamiltonian.csv");
     std::cout << "Here-1\n";
     auto time_vec = linspace(0, 2000, 2000);
     std::cout << "here-2\n";
 
-    auto probs = Evolution::quantum_master_equation(State(state).fit_to_basis(H.get_basis()), H, time_vec);
+    //auto probs = Evolution::quantum_master_equation(State(state).fit_to_basis(H.get_basis()), H, time_vec);
 
+    /*
     if (rank == 0) {
         matplotlib::make_figure(1920, 1080);
     }
@@ -101,6 +103,7 @@ int main(int argc, char** argv) {
         matplotlib::grid();
         matplotlib::show();
     }
+    */
 
     MPI_Finalize();
     return 0;

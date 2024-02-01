@@ -11,6 +11,7 @@ bool is_in_basis(const std::set<Basis_State>& basis, const Basis_State& state) {
 }
 */
 
+/*
 bool is_in_basis(const std::set<CHE_State>& basis, const CHE_State& state) {
     return std::find(basis.begin(), basis.end(), state) != basis.end();
 }
@@ -111,7 +112,7 @@ State_Graph<CHE_State>::State_Graph(const CHE_State& init_state) {
         }
     }
 }
-
+*/
 
 /*
 void State_Graph::show() const {
