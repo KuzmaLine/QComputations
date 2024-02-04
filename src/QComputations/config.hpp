@@ -7,7 +7,7 @@ namespace QComputations {
 enum MULTIPLY_ALGS {COMMON_MODE = 0, CANNON_MODE = 1, DIM_MODE = 2, P_GEMM_MODE = 3};
 namespace {
     const std::string angle_bracket_right = "\u29FD";
-    enum FIG_PARAMS {FIG_WIDTH = 600, FIG_HEIGHT = 400, DPI = 80};
+    enum FIG_PARAMS {FIG_WIDTH = 19, FIG_HEIGHT = 10, DPI = 80};
     constexpr double h_default = 1;
     constexpr double w_default = 1;
     constexpr double g_default = 0.01;
