@@ -76,6 +76,26 @@ std::string Basis_State::to_string() const {
     return res;
 }
 
+Basis_State Basis_State::get_group(size_t group_id) const {
+    std::vector<ValType> qudits(this->get_group_size(group_id));
+
+    for (size_t i = 0; i < this->get_group_size(group_id); i++) {
+        qudits[i] = this->get_qudit(i, group_id);
+    }
+
+    return Basis_State(qudits, max_vals_);
+}
+
+size_t Basis_State::get_index(const std::set<Basis_State>& basis) const {
+    size_t index = 0;
+    for (const auto& state: basis) {
+        if (state == *this) return index;
+        index++;
+    }
+
+    return -1;
+}
+
 // --------------------------- CHE_State -------------------------------------
 
 /*
@@ -274,6 +294,7 @@ size_t CHE_State::get_index(const std::set<CHE_State>& basis) const {
     return -1;
 }
 
+/*
 CHE_State CHE_State::get_state_in_cavity(CavityId cavity_id) const {
     auto a = this->get_group_start(cavity_id);
     auto b = this->get_group_end(cavity_id);
@@ -293,6 +314,7 @@ CHE_State CHE_State::get_state_in_cavity(CavityId cavity_id) const {
 
     return res;
 }
+*/
 
 /*
 size_t CHE_State::get_max_size() const {

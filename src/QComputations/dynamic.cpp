@@ -431,16 +431,16 @@ BLOCKED_Probs schrodinger(const std::vector<COMPLEX>& init_state, BLOCKED_Hamilt
 }
 */
 
-/*
- std::pair<Evolution::BLOCKED_Probs, std::set<CHE_State>> Evolution::probs_to_cavity_probs(const Evolution::BLOCKED_Probs& probs,
-                                                          const std::set<CHE_State>& basis, size_t cavity_id) {
+
+ std::pair<Evolution::BLOCKED_Probs, std::set<Basis_State>> Evolution::probs_to_cavity_probs(const Evolution::BLOCKED_Probs& probs,
+                                                          const std::set<Basis_State>& basis, size_t cavity_id) {
     ILP_TYPE rank, world_size;
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
     MPI_Comm_size(MPI_COMM_WORLD, &world_size);
     
-    std::set<State> basis_res;
+    std::set<Basis_State> basis_res;
     for (auto& cur_state: basis) {
-        basis_res.insert(State(cur_state[cavity_id]));
+        basis_res.insert(cur_state.get_group(cavity_id));
     }
 
     size_t m = probs.m();
@@ -455,7 +455,7 @@ BLOCKED_Probs schrodinger(const std::vector<COMPLEX>& init_state, BLOCKED_Hamilt
 
     for (size_t t = 0; t < probs.m(); t++) {
         for (size_t i = 0; i < probs.n(); i++) {
-            size_t res_index = State(get_elem_from_set(basis, i).get_state_in_pol(cavity_id)).get_index(basis_res);
+            size_t res_index = Basis_State(get_elem_from_set(basis, i)).get_group(cavity_id).get_index(basis_res);
 
             auto cur = res.get(res_index, t);
             auto prob = probs.get(i, t);
@@ -466,7 +466,7 @@ BLOCKED_Probs schrodinger(const std::vector<COMPLEX>& init_state, BLOCKED_Hamilt
 
     return std::make_pair(res, basis_res);
 }
-*/
+
 
 Evolution::BLOCKED_Rho Evolution::create_BLOCKED_init_rho(ILP_TYPE ctxt, const std::vector<COMPLEX>& init_state) {
     std::function<COMPLEX(size_t i, size_t j)> func = {

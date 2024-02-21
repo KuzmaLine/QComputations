@@ -4,11 +4,11 @@ import os
 import json
 import pandas as pd
 import seaborn as sns
-import matplotlib
 
+from pathlib import Path
+from matplotlib.animation import FuncAnimation
 import matplotlib.pyplot as plt
 import numpy as np
-import sys
 
 def read_files(dir):
     time_vec = pd.read_csv("./" + dir + "/time.csv", header=None).to_numpy().squeeze().tolist()
@@ -33,29 +33,38 @@ if (format == "gif"):
     dirs = config.get("dirs")
     plotname = config.get("filename")
 
-    # hamiltonian = pandas.read_csv("./" + dir + "/hamiltonian.csv", header=None)
-    time_vec = pd.read_csv("./" + dir + "/time.csv", header=None).to_numpy().squeeze().tolist()
-    basis = pd.read_csv("./" + dir + "/basis.csv", header=None).to_numpy().squeeze().tolist()
-    probs = pd.read_csv("./" + dir + "/probs.csv", header=None)
+    fig = plt.figure(figsize = (int(config.get("width")), int(config.get("height"))))
 
-    print("TIME - ", len(time_vec))
-    print("Probs - ", probs.shape[0], probs.shape[1])
+    dir_list = []
+    for p in Path('.').glob(dirs):
+        dir_list.append(str(p))
 
-    probs.index=time_vec
-    probs.columns = basis
+    dir_list.sort()
+    probs = read_files(dir_list[0])
+    def init():
+        global probs
+        sns.lineplot(data=probs)
+        plt.title(dir_list[0])
+        plt.legend(loc='upper right')
+        plt.grid()
 
-    print(probs)
+    index = 1
+    def update(frame):
+        global dir_list
+        global index
+        global config
 
-    # print(hamiltonian)
-    # print(hamiltonian.head(1))
-    # print(time_vec)
-    # print(basis)
+        probs = read_files(dir_list[index % int(config.get('frames'))])
+        plt.clf()
+        sns.lineplot(data=probs)
+        plt.title(dir_list[index % int(config.get('frames'))])
+        plt.legend(loc='upper right')
+        plt.grid()
+        index += 1
 
-    plt.figure(figsize = (int(config.get("width")), int(config.get("height"))))
-    #plt.figure()
-    sns.lineplot(data=probs)
-    plt.grid()
-    plt.savefig(plotname, format=config.get("format"))
+    ani = FuncAnimation(fig, update, frames=int(config.get("frames")),
+                        init_func=init, interval=int(config.get("interval")))
+    ani.save(config.get("filename"))
     plt.show()
 else:
     dir = config.get("dir")

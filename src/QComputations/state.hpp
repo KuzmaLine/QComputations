@@ -131,12 +131,18 @@
             size_t get_group_start(size_t group_id) const { return ((group_id == 0) ? 0 : groups_[group_id - 1] + 1);}
             size_t get_group_end(size_t group_id) const { return groups_[group_id]; }
             size_t get_groups_count() const { return groups_.size(); }
+            size_t get_group_size(size_t group_id) const { return this->get_group_end(group_id) - this->get_group_start(group_id) + 1; }
+            Basis_State get_group(size_t group_id) const;
+
             std::string to_string() const;
             bool operator==(const Basis_State& other) const { assert(max_vals_ == other.max_vals_ and groups_ == other.groups_); return qudits_ == other.qudits_; }
             bool operator<(const Basis_State& other) const { return this->to_string() > other.to_string(); }
             
             void set_max_val(ValType val, size_t qudit_index, size_t group_id = 0) { max_vals_[this->get_group_start(group_id) + qudit_index] = val; }
             ValType get_max_val(size_t qudit_index, size_t group_id = 0) const { return max_vals_[this->get_group_start(group_id) + qudit_index]; }
+            std::vector<ValType> max_vals() const { return max_vals_; }
+
+            size_t get_index(const std::set<Basis_State>& basis) const;
 
             //COMPLEX get_coef() const { return coef_; }
             //void set_coef(COMPLEX coef) { coef_ = coef; }
@@ -195,8 +201,8 @@
             void set_n(ValType n, CavityId id) { qudits_[get_group_start(id)] = n; }
 
             // Return state vector from cavity
-            CHE_State get_state_in_cavity(CavityId cavity_id) const;
-            CHE_State operator[](CavityId cavity_id) const;
+            CHE_State get_state_in_cavity(CavityId cavity_id) const { return CHE_State(this->get_group(cavity_id)); }
+            CHE_State operator[](CavityId cavity_id) const { return CHE_State(this->get_group(cavity_id)); }
 
             CavityId get_index_of_cavity(size_t x, size_t y = 0, size_t z = 0) const { return z * y_size_ * x_size_ + y * x_size_ + x; }
             

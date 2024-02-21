@@ -13,12 +13,15 @@ namespace QComputations {
 
 namespace fs = std::filesystem;
 
-void check_dir(std::string& dir, const std::string& filename = "") {
+void check_dir(std::string& dir, bool remove_is_exist = false) {
     if (dir != "") {
         ILP_TYPE rank;
         MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 
         if (rank == mpi::ROOT_ID) {
+            if (remove_is_exist and fs::is_directory(dir)) {
+                fs::remove_all(dir);
+            }
             fs::create_directory(dir);
         }
     } else {
@@ -137,7 +140,7 @@ void make_probs_files(const BLOCKED_Hamiltonian& H,
                const std::vector<double>& time_vec,
                const std::set<Basis_State>& basis,
                std::string dir) {
-    check_dir(dir);
+    check_dir(dir, true);
 
     hamiltonian_to_file("hamiltonian.csv", H, dir);
     basis_to_file("basis.csv", basis, dir);

@@ -1,0 +1,10 @@
+{
+    "format": "gif",
+    "filename": "rabi_waveguide_2.gif",
+    "width": "19",
+    "height": "10",
+    "dir": "original",
+    "dirs": "amplitude*",
+    "frames": "100",
+    "interval": "300"
+}
