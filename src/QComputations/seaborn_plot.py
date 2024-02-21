@@ -1,5 +1,6 @@
 #!/opt/intel/oneapi/intelpython/latest/bin/python
 
+import json
 import pandas as pd
 import seaborn as sns
 import matplotlib
@@ -8,8 +9,13 @@ import matplotlib.pyplot as plt
 import numpy as np
 import sys
 
-dir = sys.argv[1]
-plotname = sys.argv[2]
+json_file = "$SEABORN_CONFIG"
+
+with open(json_file) as json_data:
+    config = json.load(json_data)
+
+dir = config.get("dir")
+plotname = config.get("filename")
 
 # hamiltonian = pandas.read_csv("./" + dir + "/hamiltonian.csv", header=None)
 time_vec = pd.read_csv("./" + dir + "/time.csv", header=None).to_numpy().squeeze().tolist()
@@ -29,9 +35,9 @@ print(probs)
 # print(time_vec)
 # print(basis)
 
-plt.figure(figsize = (int(sys.argv[4]), int(sys.argv[5])))
+plt.figure(figsize = (int(config.get("width")), int(config.get("height"))))
 #plt.figure()
 sns.lineplot(data=probs)
 plt.grid()
-plt.savefig(plotname, format=sys.argv[3])
+plt.savefig(plotname, format=config.get("format"))
 plt.show()

@@ -5,21 +5,22 @@
 int main(int argc, char** argv) {
     using namespace QComputations;
     int world_size, rank;
+    size_t atoms_count = 1, steps_count = 20;
+    double a = 0.001, b = 0.01;
     MPI_Init(&argc, &argv);
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
     MPI_Comm_size(MPI_COMM_WORLD, &world_size);
 
     //QConfig::instance().set_max_photons(2);
-    std::vector<size_t> grid_config = {1};
+    std::vector<size_t> grid_config = {atoms_count};
     CHE_State state(grid_config);
 
-    State<CHE_State> init_state(state);
-    state.set_n(1, 0);
+    state.set_n(atoms_count, 0);
     //state.set_qudit(1, 1, 0);
     //state.set_qudit(1, 1, 1);
     //state.set_waveguide(0.002, 0);
 
-    init_state.insert(state, 1);
+    State<CHE_State> init_state(state);
 
     int ctxt;
     mpi::init_grid(ctxt);
@@ -38,8 +39,34 @@ int main(int argc, char** argv) {
     auto probs = Evolution::quantum_master_equation(init_state.fit_to_basis(H.get_basis()), H, time_vec);
 
     //basis_to_file("basis_check.csv", H.get_basis());
-    make_probs_files(H, probs, time_vec, H.get_basis(), "rabi_waveguide_amplitude_2");  
+    make_probs_files(H, probs, time_vec, H.get_basis(), "rabi_waveguide_amplitude_2/original");  
     //make_plot("test_tch.svg", H, probs, time_vec, H.get_basis(), "test_dir");
+
+    auto amplitude_range = linspace(a, b, steps_count);
+
+    for (auto amplitude: amplitude_range) {
+        grid_config = {atoms_count, atoms_count};
+        state = CHE_State(grid_config);
+
+        state.set_n(1, 0);
+        state.set_waveguide(0.002, 0);
+
+        State<CHE_State> init_state_2_cavity(state);
+
+        int ctxt;
+        mpi::init_grid(ctxt);
+
+        //std::cout << "HERE\n";
+        H = BLOCKED_H_TCH(ctxt, init_state_2_cavity);
+
+        if (rank == 0) show_basis(H.get_basis());
+
+        H.show();
+
+        auto probs = Evolution::quantum_master_equation(init_state_2_cavity.fit_to_basis(H.get_basis()), H, time_vec);
+
+        make_probs_files(H, probs, time_vec, H.get_basis(), "rabi_waveguide_amplitude_2/amplitude_" + std::to_string(amplitude));  
+    }
 
     MPI_Finalize();
     return 0;

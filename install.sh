@@ -14,6 +14,15 @@ else
     echo -e "\nexport SEABORN_PLOT=\"$1/QComputations/seaborn_plot.py\"" >> ~/.bashrc
 fi
 
+# Check if the alias already exists in .bashrc
+if echo "$bashrc_content" | grep -q "export SEABORN_CONFIG"; then
+    # The alias exists, so remove it and add the new one
+    echo "$bashrc_content" | sed -i "s@export SEABORN_CONFIG.*@export SEABORN_CONFIG=\"$1\/QComputations\/seaborn_config.json\"@" ~/.bashrc
+else
+    # The alias doesn't exist, so add it to .bashrc
+    echo -e "\nexport SEABORN_CONFIG=\"$1/QComputations/seaborn_config.json\"" >> ~/.bashrc
+fi
+
 sudo chmod +x $1/QComputations/seaborn_plot.py
 
 cd cpu_cluster
