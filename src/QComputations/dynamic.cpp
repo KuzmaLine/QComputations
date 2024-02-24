@@ -20,7 +20,7 @@ namespace QComputations {
 
 Matrix<COMPLEX> Evolution::create_A_destroy(const std::set<Basis_State>& basis, size_t cavity_id) {
     size_t dim = basis.size();
-    Matrix<COMPLEX> A(DEFAULT_MATRIX_STYLE, dim, dim, 0);
+    Matrix<COMPLEX> A(DEFAULT_MATRIX_STYLE, dim, dim, COMPLEX(0));
 
     size_t index = 0;
     for (const auto& state: basis) {
@@ -43,7 +43,7 @@ Matrix<COMPLEX> Evolution::create_A_destroy(const std::set<Basis_State>& basis, 
 
 Matrix<COMPLEX> Evolution::create_A_create(const std::set<Basis_State>& basis, size_t cavity_id) {
     size_t dim = basis.size();
-    Matrix<COMPLEX> A(DEFAULT_MATRIX_STYLE, dim, dim, 0);
+    Matrix<COMPLEX> A(DEFAULT_MATRIX_STYLE, dim, dim, COMPLEX(0));
 
     size_t index = 0;
     for (const auto& state: basis) {
@@ -75,94 +75,24 @@ Evolution::Rho Evolution::create_init_rho(const std::vector<COMPLEX>& init_state
     return rho;
 }
 
+/*
+
 Evolution::Probs Evolution::schrodinger(const std::vector<COMPLEX>& init_state, Hamiltonian& H, const std::vector<double>& time_vec) {
     std::vector<double> eigen_values;
     Matrix<COMPLEX> eigen_vectors;
-/*
-#ifdef ENABLE_MPI
-    int rank, world_size;
-    MPI_Comm_size(MPI_COMM_WORLD, &world_size);
-    MPI_Comm_rank(MPI_COMM_WORLD, &rank);
-
-    if (rank == mpi::ROOT_ID) {
-        mpi::make_command(COMMAND::SCHRODINGER);
-        mpi::bcast_vector_complex(init_state);
-        mpi::bcast_vector_double(time_vec);
-#endif
-*/
     auto p = H.eigen();
     eigen_values = p.first;
     eigen_vectors = p.second;
 
-/*
-#ifdef ENABLE_MPI
-    }
-
-    MPI_Barrier(MPI_COMM_WORLD);
-    if (rank == mpi::ROOT_ID) {
-        mpi::bcast_vector_double(eigen_values);
-        mpi::bcast_vector_complex(eigen_vectors.get_mass());
-    } else {
-        eigen_values = mpi::bcast_vector_double();
-        eigen_vectors = Matrix<COMPLEX>(mpi::bcast_vector_complex(), eigen_values.size(), eigen_values.size(), C_STYLE); // c_style
-    }
-#endif
-*/
     std::vector<COMPLEX> lambda;
     for (size_t i = 0; i < eigen_values.size(); i++) {
         //std::cout << norm(eigen_vectors.col(i)) << std::endl;
         lambda.emplace_back(eigen_vectors.col(i) | init_state); // <PHI_i|KSI(0)> 
     }
 
-    //std::cout << "L - " << norm(lambda) << std::endl;
     Probs probs(C_STYLE, eigen_values.size(), time_vec.size());
     size_t time_index = 0;
-    //eigen_vectors = eigen_vectors.transpose();
-/*
-#ifdef ENABLE_MPI
-    size_t start_col;
-    auto rank_map = make_rank_map(time_vec.size(), rank, world_size, start_col);
 
-    for (size_t time_index = start_col; time_index < start_col + rank_map[rank]; time_index++) {
-        auto t = time_vec[time_index];
-        std::vector<COMPLEX> psi_t(eigen_values.size(), 0);
-
-        for (size_t i = 0; i < eigen_values.size(); i++) {
-            for (size_t j = 0; j < psi_t.size(); j++) {
-                psi_t[j] += lambda[i] * std::exp(COMPLEX(0, -1 / QConfig::instance().h() * eigen_values[i] * t)) * eigen_vectors[i][j];
-            }
-        }
-
-        //std::cout << norm(psi_t) << std::endl;
-        for (size_t i = 0; i < eigen_values.size(); i++) {
-            double tmp = std::abs(psi_t[i]);
-            probs[i][time_index] = tmp * tmp;
-        }
-    }
-
-    size_t size = eigen_values.size();
-    if (rank == mpi::ROOT_ID) {
-        size_t col_index = rank_map[mpi::ROOT_ID];
-        for (size_t i = mpi::ROOT_ID + 1; i < world_size; i++) {
-            for (size_t j = rank_map[i]; j != 0; j--) {
-                std::vector<double> col(size);
-                //std::cout << i << " " << j << " " << col_index << std::endl;
-
-                MPI_Recv(col.data(), size, MPI_DOUBLE, i, MPI_ANY_TAG, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
-                //show_vector(col);
-                probs.modify_col(col_index, col);
-                col_index++;
-            }
-        }
-    } else {
-        for (size_t i = start_col; i < start_col + rank_map[rank]; i++) {
-            std::vector<double> col = probs.col(i);
-
-            MPI_Send(col.data(), size, MPI_DOUBLE, mpi::ROOT_ID, 0, MPI_COMM_WORLD);
-        }
-    }
-#else
-*/
     for (const auto& t: time_vec) {
         std::vector<COMPLEX> psi_t(eigen_values.size(), 0);
         std::vector<COMPLEX> tmp(eigen_values.size(), 0);
@@ -185,6 +115,8 @@ Evolution::Probs Evolution::schrodinger(const std::vector<COMPLEX>& init_state, 
 //#endif
     return probs;
 }
+
+*/
 
 #ifdef ENABLE_MPI
 #ifdef ENABLE_CLUSTER

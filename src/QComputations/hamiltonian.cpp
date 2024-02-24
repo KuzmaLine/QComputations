@@ -240,6 +240,7 @@ std::set<CHE_State> define_basis_of_hamiltonian(const CHE_State& grid) {
 }
 */
 
+/*
 void Hamiltonian::show(const size_t width) const {
     H_.show(width);
 }
@@ -257,6 +258,7 @@ std::pair<std::vector<double>, Matrix<COMPLEX>> Hamiltonian::eigen() {
 
     return std::make_pair(eigenvalues_, eigenvectors_);
 }
+*/
 
 // -------------------------------   H_by_func   -------------------------------
 
@@ -475,5 +477,50 @@ H_TCH::H_TCH(const CHE_State& grid) {
 //#endif
 }
 */
+
+namespace {
+    Operator<CHE_State> H_TCH_OP() {
+        using OpType = Operator<CHE_State>;
+
+        OpType my_H;
+        my_H = my_H + OpType(photons_count) + OpType(atoms_exc_count) + OpType(exc_relax_atoms) + OpType(photons_transfer);
+
+        return my_H;
+    }
+    
+    std::vector<std::pair<double, Operator<CHE_State>>> decs(const State<CHE_State>& state) {
+        using OpType = Operator<CHE_State>;
+
+        auto st = *(state.get_state_components().begin());
+        std::vector<std::pair<double, OpType>> dec;
+
+        for (size_t i = 0; i < st.cavities_count(); i++) {
+            if (!is_zero(st.get_leak_gamma(i))) {
+                OperatorType<CHE_State> a_destroy_i = {[i](const CHE_State& che_state) {
+                    return set_qudit(che_state, che_state.n(i) - 1, 0, i) * std::sqrt(che_state.n(i));
+                }};
+
+                OpType my_A_out(a_destroy_i);
+
+                dec.emplace_back(std::make_pair(st.get_leak_gamma(i), my_A_out));
+            }
+
+            if (!is_zero(st.get_gain_gamma(i))) {
+                OperatorType<CHE_State> a_create_i = {[i](const CHE_State& che_state) {
+                    return set_qudit(che_state, che_state.n(i) + 1, 0, i) * std::sqrt(che_state.n(i) + 1);
+                }};
+
+                OpType my_A_in(a_create_i);
+
+                dec.emplace_back(std::make_pair(st.get_gain_gamma(i), my_A_in));
+            }
+        }
+
+        return dec;
+    }
+}
+
+H_TCH::H_TCH(const State<CHE_State>& state):
+                       H_by_Operator<CHE_State>(state, H_TCH_OP(), decs(state)) {}
 
 } // namespace QComputations

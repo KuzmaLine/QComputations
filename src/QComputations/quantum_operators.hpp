@@ -115,6 +115,37 @@ State<StateType> Operator<StateType>::run(const State<StateType>& init_state) co
 }
 
 template<typename StateType>
+Matrix<COMPLEX> operator_to_matrix(const Operator<StateType>& op, const std::set<StateType>& basis) {
+    size_t dim = basis.size();
+
+    std::function<COMPLEX(size_t i, size_t j)> func = {
+        [&basis, &op](size_t i, size_t j) {
+            auto state_from = get_elem_from_set(basis, j);
+            auto state_to = get_elem_from_set(basis, i);
+            auto res_state = op.run(State<StateType>(state_from));
+            
+            COMPLEX res = COMPLEX(0, 0);
+
+            size_t index = 0;
+            for (const auto& state: res_state.get_state_components()) {
+                if (state == state_to) {
+                    res = res_state[index];
+                    break;
+                }
+
+                index++;
+            }
+
+            return res;
+        }
+    };
+
+    Matrix<COMPLEX> A(C_STYLE, dim, dim, func);
+
+    return A;
+}
+
+template<typename StateType>
 BLOCKED_Matrix<COMPLEX> operator_to_matrix(ILP_TYPE ctxt, const Operator<StateType>& op, const std::set<StateType>& basis) {
     size_t dim = basis.size();
 

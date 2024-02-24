@@ -8,6 +8,7 @@
 #include <iomanip>
 #include <mkl_lapack.h>
 #include <mkl_lapacke.h>
+#include <functional>
 #include "config.hpp"
 
 namespace QComputations {
@@ -53,6 +54,7 @@ template<typename T> class Matrix {
         //explicit Matrix(size_t n, size_t m, const T& init_val): n_(n), m_(m), mass_(n_ * m_, init_val), matrix_style_(config::IS_C_MATRIX_STYLE) {}
         explicit Matrix(const Matrix<T>& A): n_(A.n_), m_(A.m_), mass_(A.mass_), matrix_style_(A.matrix_style_) {}
         explicit Matrix(const std::vector<T>& mass, size_t n, size_t m, MATRIX_STYLE matrix_style): n_(n), m_(m), mass_(mass), matrix_style_(matrix_style) {}
+        explicit Matrix(MATRIX_STYLE matrix_style, size_t n, size_t m, std::function<COMPLEX(size_t, size_t)> func);
 
         // Conversation to another type
         template<typename V>
@@ -155,6 +157,15 @@ template<typename T> class Matrix {
 };
 
 // -------------------------------- Matrix Methods ----------------------------------
+
+template<typename T>
+Matrix<T>::Matrix(MATRIX_STYLE matrix_style, size_t n, size_t m, std::function<COMPLEX(size_t, size_t)> func): matrix_style_(matrix_style), n_(n), m_(m), mass_(n_ * m_) {
+    for (size_t i = 0; i < n_; i++) {
+        for (size_t j = 0; j < m_; j++) {
+            mass_[get_index(i,j)] = func(i, j);
+        }
+    }
+}
 
 template<typename T>
 void Matrix<T>::to_fortran_style() {

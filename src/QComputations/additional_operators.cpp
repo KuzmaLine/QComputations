@@ -18,7 +18,7 @@ COMPLEX operator | (const std::vector<COMPLEX>& a, const std::vector<COMPLEX>& b
 
 Matrix<COMPLEX> operator* (const Matrix<COMPLEX>& A, const Matrix<double>& B) {
     assert(A.m() == B.n());
-    Matrix<COMPLEX> res(DEFAULT_MATRIX_STYLE, A.n(), B.m(), 0);
+    Matrix<COMPLEX> res(DEFAULT_MATRIX_STYLE, A.n(), B.m(), COMPLEX(0));
 
     for (size_t i = 0; i < A.n(); i++) {
         for (size_t j = 0; j < B.m(); j++) {

@@ -97,17 +97,13 @@ template<typename StateType>
 BLOCKED_H_by_Operator<StateType>::BLOCKED_H_by_Operator(ILP_TYPE ctxt, const State<StateType>& init_state, const Operator<StateType>& H_op,
                                      const std::vector<std::pair<double, Operator<StateType>>>& decoherence) {
     std::vector<Operator<StateType>> dec_tmp;
-    std::cout << "HERE-1\n";
     for (const auto& p: decoherence) {
         dec_tmp.push_back(p.second);
     }
 
-    std::cout << "HERE0\n";
     auto basis = State_Graph<StateType>(init_state, H_op, dec_tmp).get_basis();
-    std::cout << "HERE00\n";
     basis_ = convert_to<StateType>(basis);
 
-    std::cout << "HERE000\n";
     size_t size = basis_.size();
 
     ILP_TYPE proc_rows, proc_cols, myrow, mycol, NB, MB;
@@ -128,10 +124,8 @@ BLOCKED_H_by_Operator<StateType>::BLOCKED_H_by_Operator(ILP_TYPE ctxt, const Sta
     NB = std::min(NB, MB);
     MB = NB;
 
-    std::cout << "HERE1\n";
     std::function<COMPLEX(size_t i, size_t j)> func = {
         [&basis, &H_op](size_t i, size_t j) {
-            std::cout << "HERE2 - " << i << " " << j << std::endl;
             auto state_from = get_elem_from_set<StateType>(basis, j);
             auto state_to = get_elem_from_set<StateType>(basis, i);
             auto res_state = H_op.run(State<StateType>(state_from));
@@ -152,14 +146,11 @@ BLOCKED_H_by_Operator<StateType>::BLOCKED_H_by_Operator(ILP_TYPE ctxt, const Sta
         }
     };
 
-    std::cout << "HERE3\n";
     H_ = BLOCKED_Matrix<COMPLEX>(ctxt, HE, size, size, func);
-    std::cout << "HERE4\n";
     for (const auto& p: decoherence) {
         auto A = BLOCKED_Matrix<COMPLEX>(operator_to_matrix<StateType>(H_.ctxt(), p.second, basis));
         decoherence_.push_back(std::make_pair(p.first, A));
     }
-    std::cout << "HERE5\n";
 }
 
 class BLOCKED_H_TCH : public BLOCKED_H_by_Operator<CHE_State> {

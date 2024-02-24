@@ -519,7 +519,7 @@ void tridiagonal_QR(Matrix<double>& T) {
 Matrix<double> MGS (const Matrix<COMPLEX>& A, double eps = QConfig::instance().eps()) {
     auto m = A.size();
     //std::cout << "HERE 1\n";
-    Matrix<COMPLEX> v(C_STYLE, m, m, 0);
+    Matrix<COMPLEX> v(C_STYLE, m, m, COMPLEX(0));
     v[0][0] = COMPLEX(1);
 
     Matrix<double> H(C_STYLE, m, m, double(0));
