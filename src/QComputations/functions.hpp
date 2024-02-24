@@ -46,10 +46,30 @@ std::vector<double> FROM_double_TO_vector(double* A, lapack_int n);
 Matrix<COMPLEX> FROM_lapack_complex_double_TO_Matrix(lapack_complex_double* A, lapack_int n, lapack_int m);
 
 // start = 0, end = 4, step = 2 -> {0, 2, 4}
-std::vector<double> make_timeline(double start, double end, double step);
+//std::vector<double> make_timeline(double start, double end, double step);
 
-//Equal to Python
-std::vector<double> linspace(double start, double end, double npoints);
+template<typename T>
+std::vector<double> linspace(T start_in, T end_in, int num_in)
+{
+  std::vector<double> linspaced;
+  double start = static_cast<double>(start_in);
+  double end = static_cast<double>(end_in);
+  double num = static_cast<double>(num_in);
+  if (num == 0) { return linspaced; }
+  if (num == 1)
+    {
+      linspaced.push_back(start);
+      return linspaced;
+    }
+  double delta = (end - start) / (num - 1);
+  for(int i=0; i < num-1; ++i)
+    {
+      linspaced.push_back(start + delta * i);
+    }
+  linspaced.push_back(end); // I want to ensure that start and end
+                            // are exactly the same as the input
+  return linspaced;
+}
 
 // Convert state to 10 numerical system
 size_t get_index_from_state(vec_levels state);

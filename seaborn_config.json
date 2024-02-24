@@ -1,10 +1,10 @@
 {
     "format": "gif",
-    "filename": "rabi_waveguide_2.gif",
+    "filename": "0_hyd_g_bond=0.2.gif",
     "width": "19",
     "height": "10",
     "dir": "original",
-    "dirs": "amplitude*",
-    "frames": "100",
-    "interval": "300"
-}
+    "dirs": "0_hyd_g_bond*",
+    "frames": "90",
+    "interval": "100"
+} 

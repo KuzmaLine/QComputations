@@ -330,22 +330,6 @@ void print_state_biguint(const CHE_State& state) {
 }
 */
 
-std::vector<double> make_timeline(double start, double end, double step) {
-    size_t n = (end - start) / step;
-    std::vector<double> timeline(n + 1);
-
-    auto cur_time = start;
-    for (size_t i = 0; i <= n; i++) {
-        timeline[i] = start + step * i;
-    }
-
-    return timeline;
-}
-
-std::vector<double> linspace(double start, double end, double npoints) {
-    return make_timeline(start, end, (end - start) / (npoints - 1));
-}
-
 double scalar_product(const std::vector<double>& a, const std::vector<double>& b) {
     return cblas_ddot(a.size(), a.data(), 1, b.data(), 1);
     

@@ -54,6 +54,9 @@ namespace Evolution {
     using BLOCKED_Probs = BLOCKED_Matrix<double>;
     using BLOCKED_Rho = BLOCKED_Matrix<COMPLEX>;
 
+    std::pair<BLOCKED_Probs, std::set<Basis_State>> probs_to_group_probs(const BLOCKED_Probs& probs,
+                                                const std::set<Basis_State>& basis, size_t group_id);
+
     std::pair<BLOCKED_Probs, std::set<Basis_State>> probs_to_cavity_probs(const BLOCKED_Probs& probs,
                                                 const std::set<Basis_State>& basis, size_t cavity_id);
 

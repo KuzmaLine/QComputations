@@ -2,11 +2,13 @@
 #include <complex>
 #include "QComputations_CPU_CLUSTER_NO_PLOTS.hpp"
 
+// amplitude = 0.0115 = резонанс
+
 int main(int argc, char** argv) {
     using namespace QComputations;
     int world_size, rank;
-    size_t atoms_count = 1, steps_count = 100;
-    double a = 0.001, b = 0.05;
+    size_t atoms_count = 1, steps_count = 90;
+    double a = 0.001, b = 0.03;
     MPI_Init(&argc, &argv);
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
     MPI_Comm_size(MPI_COMM_WORLD, &world_size);
@@ -43,8 +45,7 @@ int main(int argc, char** argv) {
     //make_plot("test_tch.svg", H, probs, time_vec, H.get_basis(), "test_dir");
 
     auto amplitude_range = linspace(a, b, steps_count);
-
-    /*    
+   
     for (auto amplitude: amplitude_range) {
         grid_config = {atoms_count, atoms_count};
         state = CHE_State(grid_config);
@@ -63,9 +64,14 @@ int main(int argc, char** argv) {
 
         probs = Evolution::quantum_master_equation(init_state_2_cavity.fit_to_basis(H.get_basis()), H, time_vec);
 
-        make_probs_files(H, probs, time_vec, H.get_basis(), "rabi_waveguide_amplitude_2/amplitude_" + std::to_string(amplitude));  
+        make_probs_files(H, probs, time_vec, H.get_basis(), "rabi_waveguide_amplitude_2/amplitude_" + std::to_string(amplitude));
+        
+        auto p_0 = Evolution::probs_to_cavity_probs(probs, H.get_basis(), 0);
+        auto p_1 = Evolution::probs_to_cavity_probs(probs, H.get_basis(), 1);
+
+        make_probs_files(H, p_0.first, time_vec, p_0.second, "rabi_waveguide_amplitude_2/0_amplitude_" + std::to_string(amplitude));
+        make_probs_files(H, p_1.first, time_vec, p_1.second, "rabi_waveguide_amplitude_2/1_amplitude_" + std::to_string(amplitude));
     }
-    */
 
     amplitude_range = linspace(QConfig::instance().g(), QConfig::instance().g() + 0.002, 20);
 
@@ -74,7 +80,7 @@ int main(int argc, char** argv) {
         state = CHE_State(grid_config);
 
         state.set_n(1, 0);
-        state.set_waveguide(0.0115, 2);
+        state.set_waveguide(amplitude, 2);
 
         State<CHE_State> init_state_2_cavity(state);
 
@@ -89,6 +95,12 @@ int main(int argc, char** argv) {
         probs = Evolution::quantum_master_equation(init_state_2_cavity.fit_to_basis(H.get_basis()), H, time_vec);
 
         make_probs_files(H, probs, time_vec, H.get_basis(), "rabi_waveguide_amplitude_2/q=waveguide_" + std::to_string(amplitude));
+
+        auto p_0 = Evolution::probs_to_cavity_probs(probs, H.get_basis(), 0);
+        auto p_1 = Evolution::probs_to_cavity_probs(probs, H.get_basis(), 1);
+
+        make_probs_files(H, p_0.first, time_vec, p_0.second, "rabi_waveguide_amplitude_2/0_q=waveguide_" + std::to_string(amplitude));
+        make_probs_files(H, p_1.first, time_vec, p_1.second, "rabi_waveguide_amplitude_2/1_q=waveguide_" + std::to_string(amplitude));
     }
 
     MPI_Finalize();

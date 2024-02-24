@@ -1,5 +1,7 @@
 #!/usr/bin/bash
 
+python setup.py
+
 ./install_headers.sh $1
 
 # Read the .bashrc file into a variable

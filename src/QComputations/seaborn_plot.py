@@ -9,14 +9,12 @@ from pathlib import Path
 from matplotlib.animation import FuncAnimation
 import matplotlib.pyplot as plt
 import numpy as np
+from concurrent.futures import ThreadPoolExecutor
 
 def read_files(dir):
     time_vec = pd.read_csv("./" + dir + "/time.csv", header=None).to_numpy().squeeze().tolist()
     basis = pd.read_csv("./" + dir + "/basis.csv", header=None).to_numpy().squeeze().tolist()
     probs = pd.read_csv("./" + dir + "/probs.csv", header=None)
-
-    print("TIME - ", len(time_vec))
-    print("Probs - ", probs.shape[0], probs.shape[1])
 
     probs.index=time_vec
     probs.columns = basis    
@@ -33,7 +31,7 @@ if (format == "gif"):
     dirs = config.get("dirs")
     plotname = config.get("filename")
 
-    fig = plt.figure(figsize = (int(config.get("width")), int(config.get("height"))))
+    fig = plt.figure(figsize=(int(config.get("width")), int(config.get("height"))))
 
     dir_list = []
     for p in Path('.').glob(dirs):
@@ -41,6 +39,7 @@ if (format == "gif"):
 
     dir_list.sort()
     probs = read_files(dir_list[0])
+    
     def init():
         global probs
         sns.lineplot(data=probs)
@@ -62,9 +61,11 @@ if (format == "gif"):
         plt.grid()
         index += 1
 
-    ani = FuncAnimation(fig, update, frames=int(config.get("frames")),
-                        init_func=init, interval=int(config.get("interval")))
-    ani.save(config.get("filename"))
+    ani = FuncAnimation(fig, update, frames=int(config.get("frames")), init_func=init, interval=int(config.get("interval")))
+    
+    with ThreadPoolExecutor() as executor:
+        executor.submit(ani.save, config.get("filename"))
+    
     plt.show()
 else:
     dir = config.get("dir")
