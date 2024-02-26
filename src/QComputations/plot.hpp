@@ -11,13 +11,21 @@ namespace QComputations {
 #ifdef ENABLE_CLUSTER
 
 void hamiltonian_to_file(const std::string& filename, const BLOCKED_Hamiltonian& H, std::string dir = "");
+void hamiltonian_to_file(const std::string& filename, const Hamiltonian& H, std::string dir = "");
 void basis_to_file(const std::string& filename, const std::set<Basis_State>& basis, std::string dir = "");
 void time_vec_to_file(const std::string& filename, const std::vector<double>& time_vec, std::string dir = "");
 void probs_to_file(const std::string& filename, const Evolution::BLOCKED_Probs& probs, std::string dir = "");
+void probs_to_file(const std::string& filename, const Evolution::Probs& probs, std::string dir = "");
 void plot_from_files(const std::string& plotname, std::string dir, const std::string& python_script_path = QConfig::instance().python_script_path());
 
 void make_probs_files(const BLOCKED_Hamiltonian& H,
                       const Evolution::BLOCKED_Probs& probs,
+                      const std::vector<double>& time_vec,
+                      const std::set<Basis_State>& basis,
+                      std::string dir);
+
+void make_probs_files(const Hamiltonian& H,
+                      const Evolution::Probs& probs,
                       const std::vector<double>& time_vec,
                       const std::set<Basis_State>& basis,
                       std::string dir);

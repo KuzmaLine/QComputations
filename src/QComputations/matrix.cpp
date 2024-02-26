@@ -4,6 +4,7 @@
 #include <mkl_blas.h>
 #include "mpi_functions.hpp"
 #include <chrono>
+#include <fstream>
 #include "functions.hpp"
 
 namespace QComputations {
@@ -54,6 +55,62 @@ Matrix<COMPLEX> Matrix<COMPLEX>::operator* (const Matrix<COMPLEX>& A) const {
                 this->LD(), A.mass_.data(), A.LD(), &betta,
                 res.mass_.data(), res.LD());
     return res;
+}
+
+template<>
+void Matrix<double>::write_to_csv_file(const std::string& filename) const {
+    std::ofstream file(filename);
+
+    size_t max_number_size = QConfig::instance().csv_max_number_size();
+    size_t num_accuracy = QConfig::instance().csv_num_accuracy();
+
+    const int delimiter_size = 1;
+    const int one_elem_size = max_number_size + 1;
+    const char char_delimiter = ',';
+
+    for (size_t i = 0; i < this->n(); i++) {
+        for (size_t j = 0; j < this->m(); j++) {
+            auto cur_index = i * this->m() + j;
+
+            if ((j + 1) != this->m()) {
+                file << to_string_double_with_precision(this->elem(i, j),
+                                                         num_accuracy, max_number_size) << char_delimiter;
+            } else {
+                file << to_string_double_with_precision(this->elem(i, j),
+                                                         num_accuracy, max_number_size) << "\n";
+            }
+        }
+    }
+
+    file.close();
+}
+
+template<>
+void Matrix<COMPLEX>::write_to_csv_file(const std::string& filename) const {
+    std::ofstream file(filename);
+
+    size_t max_number_size = QConfig::instance().csv_max_number_size();
+    size_t num_accuracy = QConfig::instance().csv_num_accuracy();
+
+    const int delimiter_size = 1;
+    const int one_elem_size = max_number_size + 1;
+    const char char_delimiter = ',';
+
+    for (size_t i = 0; i < this->n(); i++) {
+        for (size_t j = 0; j < this->m(); j++) {
+            auto cur_index = this->get_index(i, j);
+
+            if ((j + 1) != this->m()) {
+                file << to_string_complex_with_precision(this->elem(i, j),
+                                                         num_accuracy, max_number_size) << char_delimiter;
+            } else {
+                file << to_string_complex_with_precision(this->elem(i, j),
+                                                         num_accuracy, max_number_size) << "\n";
+            }
+        }
+    }
+
+    file.close();
 }
 
 //#else

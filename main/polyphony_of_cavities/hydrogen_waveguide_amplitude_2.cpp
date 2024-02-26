@@ -8,7 +8,7 @@ class Hydrogen_System: public Basis_State {
     public:
         explicit Hydrogen_System(size_t cavities_with_hydrogen, const std::vector<size_t>& grid_config): Basis_State(cavities_with_hydrogen * 3 + (grid_config.size() > 1 ? (grid_config.size() - 2) : 0)),
                                                                                                               grid_map(C_STYLE, grid_config.size(), grid_config.size(), std::pair<double, double>(0, 0)) {
-            std::cout << this->to_string() << ": " << this->get_max_val(0, 0) << " " << this->get_max_val(1, 0) << " " << this->get_max_val(2, 0) << std::endl;
+            //std::cout << this->to_string() << ": " << this->get_max_val(0, 0) << " " << this->get_max_val(1, 0) << " " << this->get_max_val(2, 0) << std::endl;
             std::vector<size_t> groups;
             long qudit_id = -1;
             for (size_t i = 0; i < grid_config.size(); ++i) {
@@ -18,10 +18,6 @@ class Hydrogen_System: public Basis_State {
 
                 qudit_id += grid_config[i] + 1;
                 groups.emplace_back(qudit_id);
-            }
-
-            for (auto i: groups_) {
-                std::cout << i << std::endl;
             }
 
             groups_ = groups;
@@ -146,7 +142,7 @@ int main(int argc, char** argv) {
     state.set_qudit(1, 2, 1);
     state.set_qudit(1, 1, 1);
 
-    std::cout << state.to_string() << std::endl;
+    //std::cout << state.to_string() << std::endl;
 
     OpType my_H;
     my_H = my_H + OpType(H_dist) + OpType(H_bond) + OpType(prot_transfer) + OpType(bond_energy);
@@ -167,25 +163,25 @@ int main(int argc, char** argv) {
     double a = 0.001, b = 0.03;
     auto amplitude_range = linspace(a, b, steps_count);
 
-    int ctxt;
-    mpi::init_grid(ctxt);
-
-    BLOCKED_H_by_Operator H(ctxt, State(one_state), my_H);
+    H_by_Operator H(State(one_state), my_H);
 
     auto probs = Evolution::quantum_master_equation(State(one_state).fit_to_basis(H.get_basis()), H, time_vec);
 
-    make_probs_files(H, probs, time_vec, H.get_basis(), "hydrogen_waveguide_amplitude_2/original_g_bond=" + std::to_string(state.get_g_bond().real()));
+    if (rank == 0) {
+        make_probs_files(H, probs, time_vec, H.get_basis(), "hydrogen_waveguide_amplitude_2/original_g_bond=" + std::to_string(state.get_g_bond().real()));
+    }
 
-    for (auto amplitude: amplitude_range) {
+    size_t start, count;
+    make_rank_map(amplitude_range.size(), rank, world_size, start, count);
+
+    for (size_t i = start; i < count + start; i++) {
+        auto amplitude = amplitude_range[i];
         state.set_prot_trans_gamma(0, 1, amplitude, 1);
-        H = BLOCKED_H_by_Operator(ctxt, State(state), my_H);
+        H = H_by_Operator(State(state), my_H);
 
-        if (rank == 0) show_basis(H.get_basis());
+        //if (rank == 0) show_basis(H.get_basis());
 
-        H.show();
-
-        std::cout << "Here-1\n";
-        std::cout << "here-2\n";
+        //H.show();
 
         probs = Evolution::quantum_master_equation(State(state).fit_to_basis(H.get_basis()), H, time_vec);
 

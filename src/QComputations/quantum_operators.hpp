@@ -85,15 +85,15 @@ State<StateType> Operator<StateType>::run(const State<StateType>& init_state) co
         states_[i] = 0;
     }
 
-    std::cout << states_.to_string() << std::endl;
+    //std::cout << states_.to_string() << std::endl;
 
     for (const auto& op: operators_) {
         for (const auto& cur_state: init_state.get_state_components())  {
             State<StateType> new_state;
 
-            std::cout << cur_state.to_string() << std::endl;
+            //std::cout << cur_state.to_string() << std::endl;
             auto res = op[op.size() - 1](cur_state);
-            std::cout << res.to_string() << std::endl;
+            //std::cout << res.to_string() << std::endl;
             new_state = res;
 
             for (int i = op.size() - 2; i >= 0; i--) {

@@ -166,6 +166,8 @@ Evolution::BLOCKED_Probs Evolution::schrodinger(const std::vector<COMPLEX>& init
 #endif
 #endif
 
+
+/*
 Evolution::Probs Evolution::quantum_master_equation(const std::vector<COMPLEX>& init_state,
                                                     Hamiltonian& H,
                                                     const std::vector<double>& time_vec,
@@ -274,7 +276,92 @@ Evolution::Probs Evolution::quantum_master_equation(const std::vector<COMPLEX>& 
 
     return probs;
 }
+*/
 
+Evolution::Probs Evolution::quantum_master_equation(const State<Basis_State>& init_state,
+                            Hamiltonian& H,
+                            const std::vector<double>& time_vec,
+                            bool is_full_rho) {
+    size_t dim = H.size();
+    std::vector<std::function<Evolution::Rho(const Evolution::Rho& rho)>> lindblads;
+
+    for (const auto& p: H.get_decoherence()) {
+        auto gamma = p.first;
+        auto A = p.second;
+        //A.show();
+        lindblads.push_back(std::function<Evolution::Rho(const Evolution::Rho& rho)> {
+            [A, gamma](const Evolution::Rho& rho) {
+                auto Aconj = A.hermit();
+                auto AconjA = Aconj * A;
+                return (A * rho * Aconj - (AconjA * rho + rho * AconjA) * COMPLEX(0.5)) * gamma;
+            }
+        }
+        );
+    }
+
+    auto H_matrix = H.get_matrix();
+    std::function<Evolution::Rho(double t, const Evolution::Rho&)> equation {[&H_matrix, &lindblads](double t, const Evolution::Rho& rho) {
+        auto tmp = (H_matrix * rho - rho * H_matrix) * COMPLEX(0, -1);
+        for (const auto& lindblad: lindblads) {
+            tmp += lindblad(rho);
+        }
+
+        return tmp;
+    }};
+
+    auto rho_0 = Evolution::create_init_rho(init_state.get_vector());
+    //rho_0.show();
+    //auto begin_c = std::chrono::steady_clock::now();
+    //std::cout << "HERE\n";
+    auto rho_vec = Runge_Kutt_4<double, Evolution::Rho>(time_vec, rho_0, equation);
+    //auto end_c = std::chrono::steady_clock::now();
+    //std::cout << " c " << std::chrono::duration_cast<std::chrono::milliseconds>(end_c - begin_c).count() << std::endl;
+    //std::cout << "HERE 2\n";
+
+    Evolution::Probs probs(C_STYLE, dim, time_vec.size());
+
+    for (size_t i = 0; i < dim; i++) {
+        for (size_t t = 0; t < time_vec.size(); t++) {
+            probs[i][t] = std::abs(rho_vec[t][i][i]);
+        }
+    }
+
+    /*
+    for (size_t t = 0; t < time_vec.size(); t++) {
+        double res = 0.0;
+        for (size_t i = 0; i < dim; i++) {
+            res += probs[i][t];
+        }
+
+        //std::cout << t << " " << res << std::endl;
+
+        if (std::abs(res - 1) >= QConfig::instance().eps()) {
+            //std::cout << t << " " << res << std::endl;
+        }
+    }
+    */
+    return probs;
+}
+
+std::pair<Evolution::Probs, std::set<Basis_State>> Evolution::probs_to_cavity_probs(const Evolution::Probs& probs,
+                                                          const std::set<Basis_State>& basis, size_t cavity_id) {
+    std::set<Basis_State> basis_res;
+    for (auto& cur_state: basis) {
+        basis_res.insert(cur_state.get_group(cavity_id));
+    }
+
+    size_t m = probs.m();
+    Probs res(C_STYLE, basis_res.size(), m, double(0));
+
+    for (size_t t = 0; t < probs.m(); t++) {
+        for (size_t i = 0; i < probs.n(); i++) {
+            size_t res_index = Basis_State(get_elem_from_set(basis, i)).get_group(cavity_id).get_index(basis_res);
+            res[res_index][t] += probs.elem(i, t);
+        }
+    }
+
+    return std::make_pair(res, basis_res);
+}
 
 // ON MPI NEEDED
 /*

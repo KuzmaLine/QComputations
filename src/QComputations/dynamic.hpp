@@ -29,16 +29,21 @@ namespace Evolution {
 
     // Solve Schrodinger equation (dont't work with leaks or gains of photons in cavities)
     // Return Matrix<double> where row(i) - state(basis[i]), cols(j) - probability in time[j]
-    Probs schrodinger(const std::vector<COMPLEX>& init_state, Hamiltonian& H, const std::vector<double>& time_vec);
+    //Probs schrodinger(const std::vector<COMPLEX>& init_state, Hamiltonian& H, const std::vector<double>& time_vec);
 
     // Solve Schrodinger equation with rho. USE ONLY if you have leaks or gains of photons in cavities
     // because it's too slow
     // Return Matrix<double> where row(i) - state(basis[i]), cols(j) - probability in time[j]
     // !!!!!! If you get incorrect probs - decrease step in time_vec !!!!!!!!
-    Probs quantum_master_equation(const std::vector<COMPLEX>& init_state,
-                                  Hamiltonian& H,
-                                  const std::vector<double>& time_vec,
-                                  bool is_full_rho = false);
+    //Probs quantum_master_equation(const std::vector<COMPLEX>& init_state,
+    //                              Hamiltonian& H,
+    //                              const std::vector<double>& time_vec,
+    //                              bool is_full_rho = false);
+
+    Probs quantum_master_equation(const State<Basis_State>& init_state,
+                            Hamiltonian& H,
+                            const std::vector<double>& time_vec,
+                            bool is_full_rho = false);
 
     // Solve quantum master equation with different leaks of photons from cavity and return vector of time, when probability
     // zero state equal target
@@ -48,6 +53,9 @@ namespace Evolution {
                                    const std::vector<double>& time_vec,
                                    const std::vector<double>& gamma_vec,
                                    double target);
+    
+    std::pair<Probs, std::set<Basis_State>> probs_to_cavity_probs(const Probs& probs,
+                                            const std::set<Basis_State>& basis, size_t cavity_id);
 
 #ifdef ENABLE_MPI
 #ifdef ENABLE_CLUSTER

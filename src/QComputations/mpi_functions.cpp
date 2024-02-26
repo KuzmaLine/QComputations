@@ -181,7 +181,7 @@ void mpi::run_mpi_slaves(const std::map<int, std::vector<MPI_Data>>& data) {
             //show_vector(init_state);
             auto time_vec = bcast_vector_double();
             auto H = Hamiltonian();
-            Evolution::schrodinger(init_state, H, time_vec);
+            //Evolution::schrodinger(init_state, H, time_vec);
 
 // ------------------------------------- QME -------------------------------------------
 #ifdef ENABLE_CLUSTER

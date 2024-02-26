@@ -50,6 +50,8 @@ class Hamiltonian {
 
         void show(size_t width = QConfig::instance().width()) const { H_.show(width); }
         Matrix<COMPLEX> get_matrix() const { return H_; }
+
+        void write_to_csv_file(const std::string& filename) const { H_.write_to_csv_file(filename); }
     protected:
         bool is_calculated_eigen_ = false;
         std::set<Basis_State> basis_;

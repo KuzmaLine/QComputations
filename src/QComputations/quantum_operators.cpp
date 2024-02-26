@@ -381,7 +381,7 @@ State<CHE_State> photons_transfer(const CHE_State& st) {
                     state.set_n(state.n(i) - 1, i);
                 }
 
-                std::cout << "RES - " << res.to_string() << std::endl;
+                //std::cout << "RES - " << res.to_string() << std::endl;
             }
         }
     }
@@ -422,7 +422,7 @@ State<CHE_State> photons_count(const CHE_State& state) {
     res[0] = 0;
 
     for (size_t i = 0; i < state.cavities_count(); i++) {
-        std::cout << state.get_qudit(0, i) << std::endl;
+        //std::cout << state.get_qudit(0, i) << std::endl;
         res[0] += state.get_qudit(0, i) * QConfig::instance().h() * QConfig::instance().w();
     }
 
