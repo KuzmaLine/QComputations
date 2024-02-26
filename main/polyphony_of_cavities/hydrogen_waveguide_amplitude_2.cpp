@@ -159,7 +159,7 @@ int main(int argc, char** argv) {
     std::cout << res.to_string() << std::endl;
     */
     auto time_vec = linspace(0, 8000, 8000);
-    size_t steps_count = 90;
+    size_t steps_count = 900;
     double a = 0.001, b = 0.03;
     auto amplitude_range = linspace(a, b, steps_count);
 
@@ -173,6 +173,10 @@ int main(int argc, char** argv) {
 
     size_t start, count;
     make_rank_map(amplitude_range.size(), rank, world_size, start, count);
+
+    std::cout << rank << ": " << start << ", " << count << std::endl;
+    if (rank == 0) show_vector(amplitude_range);
+
 
     for (size_t i = start; i < count + start; i++) {
         auto amplitude = amplitude_range[i];
@@ -195,6 +199,7 @@ int main(int argc, char** argv) {
         make_probs_files(H, p_1.first, time_vec, p_1.second, "hydrogen_waveguide_amplitude_2/1_hyd_g_bond=" + std::to_string(state.get_g_bond().real()) + "_amplitude_" + std::to_string(amplitude));
     }
 
+    MPI_Barrier(MPI_COMM_WORLD);
 
     MPI_Finalize();
     return 0;

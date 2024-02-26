@@ -9,6 +9,68 @@
 
 namespace QComputations {
 
+void hamiltonian_to_file(const std::string& filename, const Hamiltonian& H, std::string dir) {
+    check_dir(dir);
+    H.write_to_csv_file(dir + "/" + filename);
+}
+
+void basis_to_file(const std::string& filename, const std::set<Basis_State>& basis, std::string dir) {
+    check_dir(dir);
+
+    auto filepath = dir + "/" + filename;
+
+    std::ofstream file(filepath);
+
+    for (size_t i = 0; i < basis.size(); i++) {
+        std::string state_str = get_elem_from_set<Basis_State>(basis, i).to_string();
+
+        if (i != basis.size() - 1) {
+            state_str += ",";
+        }
+
+        file << state_str;
+
+        if (i == basis.size() - 1) {
+            file << "\n";
+        }
+    }
+
+    file.close();
+}
+
+void time_vec_to_file(const std::string& filename, const std::vector<double>& time_vec, std::string dir) {
+    check_dir(dir);
+
+    auto filepath = dir + "/" + filename;
+
+    auto num_length = QConfig::instance().csv_max_number_size();
+    auto accuracy = QConfig::instance().csv_num_accuracy();
+
+    std::ofstream file(filepath);
+
+    for (size_t i = 0; i < time_vec.size(); i++) {
+        std::string num_str = to_string_double_with_precision(time_vec[i], accuracy, num_length);
+
+        if (i != time_vec.size() - 1) {
+            num_str += ",";
+        }
+
+        file << num_str;
+
+        if (i == time_vec.size() - 1) {
+            file << "\n";
+        }
+    }
+
+    file.close();
+}
+
+void probs_to_file(const std::string& filename, const Evolution::Probs& probs, std::string dir) {
+    check_dir(dir);
+    auto probs_hermit = probs.transpose();
+    probs_hermit.write_to_csv_file(dir + "/" + filename);
+}
+
 #ifdef ENABLE_MPI
 #ifdef ENABLE_CLUSTER
 
