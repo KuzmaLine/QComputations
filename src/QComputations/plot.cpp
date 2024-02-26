@@ -9,6 +9,8 @@
 
 namespace QComputations {
 
+#ifndef ENABLE_CLUSTER
+
 void hamiltonian_to_file(const std::string& filename, const Hamiltonian& H, std::string dir) {
     check_dir(dir);
     H.write_to_csv_file(dir + "/" + filename);
@@ -71,6 +73,8 @@ void probs_to_file(const std::string& filename, const Evolution::Probs& probs, s
     probs_hermit.write_to_csv_file(dir + "/" + filename);
 }
 
+#endif
+
 #ifdef ENABLE_MPI
 #ifdef ENABLE_CLUSTER
 
@@ -129,12 +133,18 @@ void basis_to_file(const std::string& filename, const std::set<Basis_State>& bas
 void time_vec_to_file(const std::string& filename, const std::vector<double>& time_vec, std::string dir) {
     check_dir(dir);
 
+    ILP_TYPE rank, world_size;
+    MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+    MPI_Comm_size(MPI_COMM_WORLD, &world_size);
+
+    MPI_File file;
+
     auto filepath = dir + "/" + filename;
+    MPI_File_open(MPI_COMM_WORLD, filepath.c_str(), MPI_MODE_CREATE | MPI_MODE_WRONLY | MPI_MODE_APPEND,
+                  MPI_INFO_NULL, &file);
 
     auto num_length = QConfig::instance().csv_max_number_size();
     auto accuracy = QConfig::instance().csv_num_accuracy();
-
-    std::ofstream file(filepath);
 
     for (size_t i = 0; i < time_vec.size(); i++) {
         std::string num_str = to_string_double_with_precision(time_vec[i], accuracy, num_length);
@@ -143,14 +153,15 @@ void time_vec_to_file(const std::string& filename, const std::vector<double>& ti
             num_str += ",";
         }
 
-        file << num_str;
+        MPI_File_write(file, num_str.c_str(), num_str.length(), MPI_CHAR, MPI_STATUS_IGNORE);
 
         if (i == time_vec.size() - 1) {
-            file << "\n";
+            std::string tmp = "\n";
+            MPI_File_write(file, tmp.c_str(), tmp.length(), MPI_CHAR, MPI_STATUS_IGNORE);
         }
     }
 
-    file.close();
+    MPI_File_close(&file);
 }
 
 void probs_to_file(const std::string& filename, const Evolution::BLOCKED_Probs& probs, std::string dir) {
