@@ -59,6 +59,7 @@ Matrix<COMPLEX> Matrix<COMPLEX>::operator* (const Matrix<COMPLEX>& A) const {
 
 template<>
 void Matrix<double>::write_to_csv_file(const std::string& filename) const {
+    #ifdef ENABLE_CLUSTER
     std::ofstream file(filename);
 
     size_t max_number_size = QConfig::instance().csv_max_number_size();
@@ -83,10 +84,78 @@ void Matrix<double>::write_to_csv_file(const std::string& filename) const {
     }
 
     file.close();
+
+#else
+
+    const char *charname = filename.c_str();
+    size_t max_number_size = QConfig::instance().csv_max_number_size();
+    size_t num_accuracy = QConfig::instance().csv_num_accuracy();
+
+    int rank, size, root_id = 0;
+    int file_exists = 1, end_not_empty = 0;
+    long long A_n = this->n(), A_m = this->m();
+
+    MPI_Status status;
+    MPI_File file;
+
+    //std::cout << "HERE\n";
+
+    // Существует ли файл.
+    std::ifstream file_ending(filename, std::ifstream::ate);
+    if (file_ending)
+        file_ending.close();
+    else
+        file_exists = 0;
+
+    //std::cout << "HERE1\n";
+    const int delimiter_size = 1;
+    const int one_elem_size = max_number_size + 1;
+    const char char_delimiter = ',';
+    std::string str_delimiter = ",";
+
+    if (file_exists == 1) {
+      MPI_File_open(MPI_COMM_WORLD, charname, MPI_MODE_APPEND | MPI_MODE_WRONLY,
+                    MPI_INFO_NULL, &file);
+    } else {
+      MPI_File_open(MPI_COMM_WORLD, charname, MPI_MODE_CREATE | MPI_MODE_WRONLY,
+                    MPI_INFO_NULL, &file);
+    }
+
+    MPI_Offset start_offset;
+    MPI_File_get_position(file, &start_offset);
+    MPI_Offset offset = 0;
+
+    MPI_File_seek(file, start_offset, MPI_SEEK_SET);
+
+    for (size_t i = 0; i < this->n(); i++) {
+      for (size_t j = 0; j < this->m(); j++) {
+        //std::cout << i << " " << j << ", " << this->n() << " " << this->m() << std::endl;
+        auto cur_index = this->get_index(i, j);
+        if ((cur_index + 1) % this->LD() != 0) {
+          auto num_str =
+              to_string_double_with_precision(this->elem(i, j),
+                                              num_accuracy, max_number_size) +
+              char_delimiter;
+          MPI_File_write(file, num_str.c_str(), num_str.length(), MPI_CHAR,
+                        &status);
+        } else {
+          auto num_str = to_string_double_with_precision(
+              this->elem(i, j), num_accuracy, max_number_size);
+          num_str += "\n";
+          MPI_File_write(file, num_str.c_str(), num_str.length(), MPI_CHAR,
+                        &status);
+        }
+      }
+    }
+    MPI_File_close(&file);
+
+#endif
 }
 
 template<>
 void Matrix<COMPLEX>::write_to_csv_file(const std::string& filename) const {
+#ifdef ENABLE_CLUSTER
+
     std::ofstream file(filename);
 
     size_t max_number_size = QConfig::instance().csv_max_number_size();
@@ -111,6 +180,67 @@ void Matrix<COMPLEX>::write_to_csv_file(const std::string& filename) const {
     }
 
     file.close();
+
+#else
+    const char *charname = filename.c_str();
+    size_t max_number_size = QConfig::instance().csv_max_number_size();
+    size_t num_accuracy = QConfig::instance().csv_num_accuracy();
+
+    int rank, size, root_id = 0;
+    int file_exists = 1, end_not_empty = 0;
+    long long A_n = this->n(), A_m = this->m();
+
+    MPI_Status status;
+    MPI_File file;
+
+    // Существует ли файл.
+    std::ifstream file_ending(filename, std::ifstream::ate);
+    if (file_ending)
+    file_ending.close();
+    else
+    file_exists = 0;
+
+    const int delimiter_size = 1;
+    const int one_elem_size = 2 * max_number_size + 3;
+    const char char_delimiter = ',';
+    std::string str_delimiter = ",";
+
+    if (file_exists == 1) {
+      MPI_File_open(MPI_COMM_WORLD, charname, MPI_MODE_APPEND | MPI_MODE_WRONLY,
+                    MPI_INFO_NULL, &file);
+    } else {
+      MPI_File_open(MPI_COMM_WORLD, charname, MPI_MODE_CREATE | MPI_MODE_WRONLY,
+                    MPI_INFO_NULL, &file);
+    }
+
+    MPI_Offset start_offset;
+    MPI_File_get_position(file, &start_offset);
+    MPI_Offset offset = 0;
+
+    MPI_File_seek(file, start_offset, MPI_SEEK_SET);
+    for (size_t i = 0; i < this->n(); i++) {
+      for (size_t j = 0; j < this->m(); j++) {
+        auto cur_index = this->get_index(i, j);
+
+        if ((cur_index + 1) % this->LD() != 0) {
+          auto num_str =
+              to_string_complex_with_precision(this->elem(i, j),
+                                              num_accuracy, max_number_size) +
+              char_delimiter;
+          MPI_File_write(file, num_str.c_str(), num_str.length(), MPI_CHAR,
+                        &status);
+        } else {
+          auto num_str = to_string_complex_with_precision(
+              this->elem(i, j), num_accuracy, max_number_size);
+          num_str += "\n";
+          MPI_File_write(file, num_str.c_str(), num_str.length(), MPI_CHAR,
+                        &status);
+        }
+      }
+    }
+    MPI_File_close(&file);
+
+#endif
 }
 
 //#else

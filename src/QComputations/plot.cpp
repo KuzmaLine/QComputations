@@ -9,11 +9,82 @@
 
 namespace QComputations {
 
+namespace fs = std::filesystem;
+
+#ifndef ENABLE_CLUSTER
+
+void check_dir(std::string& dir, bool remove_is_exist = false) {
+    if (dir != "") {
+        if (remove_is_exist and fs::is_directory(dir)) {
+            fs::remove_all(dir);
+        }
+        fs::create_directory(dir);
+    } else {
+        dir = ".";
+    }
+}
+
+void make_probs_files(const Hamiltonian& H,
+               const Evolution::Probs& probs,
+               const std::vector<double>& time_vec,
+               const std::set<Basis_State>& basis,
+               std::string dir) {
+    check_dir(dir, true);
+
+    hamiltonian_to_file("hamiltonian.csv", H, dir);
+    basis_to_file("basis.csv", basis, dir);
+    time_vec_to_file("time.csv", time_vec, dir);
+    probs_to_file("probs.csv", probs, dir);
+}
+
+
+#else
+#ifdef ENABLE_MPI
+
+void check_dir(std::string& dir, ILP_TYPE main_rank, bool remove_is_exist = false) {
+    if (dir != "") {
+        ILP_TYPE rank;
+        MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+
+        if (rank == main_rank) {
+            if (remove_is_exist and fs::is_directory(dir)) {
+                fs::remove_all(dir);
+            }
+            fs::create_directory(dir);
+        }
+    } else {
+        dir = ".";
+    }
+}
+
+void make_probs_files(const Hamiltonian& H,
+               const Evolution::Probs& probs,
+               const std::vector<double>& time_vec,
+               const std::set<Basis_State>& basis,
+               std::string dir,
+               ILP_TYPE main_rank) {
+    check_dir(dir, main_rank, true);
+
+    hamiltonian_to_file("hamiltonian.csv", H, dir, main_rank);
+    basis_to_file("basis.csv", basis, dir, main_rank);
+    time_vec_to_file("time.csv", time_vec, dir, main_rank);
+    probs_to_file("probs.csv", probs, dir, main_rank);
+}
+
+#endif
+#endif
+
 #ifndef ENABLE_CLUSTER
 
 void hamiltonian_to_file(const std::string& filename, const Hamiltonian& H, std::string dir) {
     check_dir(dir);
     H.write_to_csv_file(dir + "/" + filename);
+}
+
+void probs_to_file(const std::string& filename, const Evolution::Probs& probs, std::string dir) {
+    check_dir(dir);
+    auto probs_hermit = probs.transpose();
+    probs_hermit.write_to_csv_file(dir + "/" + filename);
 }
 
 void basis_to_file(const std::string& filename, const std::set<Basis_State>& basis, std::string dir) {
@@ -67,47 +138,29 @@ void time_vec_to_file(const std::string& filename, const std::vector<double>& ti
     file.close();
 }
 
-void probs_to_file(const std::string& filename, const Evolution::Probs& probs, std::string dir) {
-    check_dir(dir);
-    auto probs_hermit = probs.transpose();
-    probs_hermit.write_to_csv_file(dir + "/" + filename);
-}
-
 #endif
 
 #ifdef ENABLE_MPI
 #ifdef ENABLE_CLUSTER
 
-namespace fs = std::filesystem;
-
-void check_dir(std::string& dir, bool remove_is_exist = false) {
-    if (dir != "") {
-        ILP_TYPE rank;
-        MPI_Comm_rank(MPI_COMM_WORLD, &rank);
-
-        if (rank == mpi::ROOT_ID) {
-            if (remove_is_exist and fs::is_directory(dir)) {
-                fs::remove_all(dir);
-            }
-            fs::create_directory(dir);
-        }
-    } else {
-        dir = ".";
-    }
-}
-
-void hamiltonian_to_file(const std::string& filename, const BLOCKED_Hamiltonian& H, std::string dir) {
-    check_dir(dir);
+void hamiltonian_to_file(const std::string& filename, const Hamiltonian& H, std::string dir, ILP_TYPE main_rank) {
+    check_dir(dir, main_rank);
     H.write_to_csv_file(dir + "/" + filename);
 }
 
-void hamiltonian_to_file(const std::string& filename, const Hamiltonian& H, std::string dir) {
-    check_dir(dir);
+void probs_to_file(const std::string& filename, const Evolution::Probs& probs, std::string dir, ILP_TYPE main_rank) {
+    check_dir(dir, main_rank);
+    auto probs_hermit = probs.transpose();
+    probs_hermit.write_to_csv_file(dir + "/" + filename);
+}
+
+void hamiltonian_to_file(const std::string& filename, const BLOCKED_Hamiltonian& H, std::string dir, ILP_TYPE main_rank) {
+    check_dir(dir, main_rank);
     H.write_to_csv_file(dir + "/" + filename);
 }
 
-void basis_to_file(const std::string& filename, const std::set<Basis_State>& basis, std::string dir) {
-    check_dir(dir);
+void basis_to_file(const std::string& filename, const std::set<Basis_State>& basis, std::string dir, ILP_TYPE main_rank) {
+    check_dir(dir, main_rank);
 
     auto filepath = dir + "/" + filename;
 
@@ -128,6 +181,65 @@ void basis_to_file(const std::string& filename, const std::set<Basis_State>& bas
     }
 
     file.close();
+}
+
+void time_vec_to_file(const std::string& filename, const std::vector<double>& time_vec, std::string dir, ILP_TYPE main_rank) {
+    check_dir(dir, main_rank);
+
+    auto filepath = dir + "/" + filename;
+
+    auto num_length = QConfig::instance().csv_max_number_size();
+    auto accuracy = QConfig::instance().csv_num_accuracy();
+
+    std::ofstream file(filepath);
+
+    for (size_t i = 0; i < time_vec.size(); i++) {
+        std::string num_str = to_string_double_with_precision(time_vec[i], accuracy, num_length);
+
+        if (i != time_vec.size() - 1) {
+            num_str += ",";
+        }
+
+        file << num_str;
+
+        if (i == time_vec.size() - 1) {
+            file << "\n";
+        }
+    }
+
+    file.close();
+}
+
+/*
+void basis_to_file(const std::string& filename, const std::set<Basis_State>& basis, std::string dir) {
+    check_dir(dir);
+
+    ILP_TYPE rank, world_size;
+    MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+    MPI_Comm_size(MPI_COMM_WORLD, &world_size);
+
+    MPI_File file;
+
+    auto filepath = dir + "/" + filename;
+    MPI_File_open(MPI_COMM_WORLD, filepath.c_str(), MPI_MODE_CREATE | MPI_MODE_WRONLY | MPI_MODE_APPEND,
+                  MPI_INFO_NULL, &file);
+
+    for (size_t i = 0; i < basis.size(); i++) {
+        std::string state_str = get_elem_from_set<Basis_State>(basis, i).to_string();
+
+        if (i != basis.size() - 1) {
+            state_str += ",";
+        }
+
+        MPI_File_write(file, state_str.c_str(), state_str.length(), MPI_CHAR, MPI_STATUS_IGNORE);
+
+        if (i == basis.size() - 1) {
+            std::string tmp = "\n";
+            MPI_File_write(file, tmp.c_str(), tmp.length(), MPI_CHAR, MPI_STATUS_IGNORE);
+        }
+    }
+
+    MPI_File_close(&file);
 }
 
 void time_vec_to_file(const std::string& filename, const std::vector<double>& time_vec, std::string dir) {
@@ -163,19 +275,15 @@ void time_vec_to_file(const std::string& filename, const std::vector<double>& ti
 
     MPI_File_close(&file);
 }
+*/
 
-void probs_to_file(const std::string& filename, const Evolution::BLOCKED_Probs& probs, std::string dir) {
-    check_dir(dir);
+void probs_to_file(const std::string& filename, const Evolution::BLOCKED_Probs& probs, std::string dir, ILP_TYPE main_rank) {
+    check_dir(dir, main_rank);
     auto probs_hermit = probs.hermit();
     probs_hermit.write_to_csv_file(dir + "/" + filename);
 }
 
-void probs_to_file(const std::string& filename, const Evolution::Probs& probs, std::string dir) {
-    check_dir(dir);
-    auto probs_hermit = probs.transpose();
-    probs_hermit.write_to_csv_file(dir + "/" + filename);
-}
-
+/*
 void plot_from_files(const std::string& plotname,
                      std::string dir,
                      const std::string& python_script_path) {
@@ -194,33 +302,23 @@ void plot_from_files(const std::string& plotname,
 
     MPI_Barrier(MPI_COMM_WORLD);
 }
+*/
 
 void make_probs_files(const BLOCKED_Hamiltonian& H,
                const Evolution::BLOCKED_Probs& probs,
                const std::vector<double>& time_vec,
                const std::set<Basis_State>& basis,
-               std::string dir) {
-    check_dir(dir, true);
+               std::string dir,
+               ILP_TYPE main_rank) {
+    check_dir(dir, main_rank, true);
 
-    hamiltonian_to_file("hamiltonian.csv", H, dir);
-    basis_to_file("basis.csv", basis, dir);
-    time_vec_to_file("time.csv", time_vec, dir);
-    probs_to_file("probs.csv", probs, dir);
+    hamiltonian_to_file("hamiltonian.csv", H, dir, main_rank);
+    basis_to_file("basis.csv", basis, dir, main_rank);
+    time_vec_to_file("time.csv", time_vec, dir, main_rank);
+    probs_to_file("probs.csv", probs, dir, main_rank);
 }
 
-void make_probs_files(const Hamiltonian& H,
-               const Evolution::Probs& probs,
-               const std::vector<double>& time_vec,
-               const std::set<Basis_State>& basis,
-               std::string dir) {
-    check_dir(dir, true);
-
-    hamiltonian_to_file("hamiltonian.csv", H, dir);
-    basis_to_file("basis.csv", basis, dir);
-    time_vec_to_file("time.csv", time_vec, dir);
-    probs_to_file("probs.csv", probs, dir);
-}
-
+/*
 void make_plot(const std::string& plotname,
                const BLOCKED_Hamiltonian& H,
                const Evolution::BLOCKED_Probs& probs,
@@ -236,6 +334,7 @@ void make_plot(const std::string& plotname,
         fs::remove_all(dir);
     }
 }
+*/
 
 #endif
 #endif

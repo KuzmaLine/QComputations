@@ -168,7 +168,8 @@ int main(int argc, char** argv) {
     auto probs = Evolution::quantum_master_equation(State(one_state).fit_to_basis(H.get_basis()), H, time_vec);
 
     if (rank == 0) {
-        make_probs_files(H, probs, time_vec, H.get_basis(), "hydrogen_waveguide_amplitude_2/original_g_bond=" + std::to_string(state.get_g_bond().real()));
+        std::cout << "calculated\n";
+        make_probs_files(H, probs, time_vec, H.get_basis(), "hydrogen_waveguide_amplitude_2/original_g_bond=" + std::to_string(state.get_g_bond().real()), rank);
     }
 
     size_t start, count;
@@ -190,13 +191,13 @@ int main(int argc, char** argv) {
         probs = Evolution::quantum_master_equation(State(state).fit_to_basis(H.get_basis()), H, time_vec);
 
         //basis_to_file("basis_check.csv", H.get_basis());    
-        make_probs_files(H, probs, time_vec, H.get_basis(), "hydrogen_waveguide_amplitude_2/hyd_g_bond=" + std::to_string(state.get_g_bond().real()) + "_amplitude_" + std::to_string(amplitude));
+        make_probs_files(H, probs, time_vec, H.get_basis(), "hydrogen_waveguide_amplitude_2/hyd_g_bond=" + std::to_string(state.get_g_bond().real()) + "_amplitude_" + std::to_string(amplitude), rank);
 
         auto p_0 = Evolution::probs_to_cavity_probs(probs, H.get_basis(), 0);
         auto p_1 = Evolution::probs_to_cavity_probs(probs, H.get_basis(), 1);
 
-        make_probs_files(H, p_0.first, time_vec, p_0.second, "hydrogen_waveguide_amplitude_2/0_hyd_g_bond=" + std::to_string(state.get_g_bond().real()) + "_amplitude_" + std::to_string(amplitude));
-        make_probs_files(H, p_1.first, time_vec, p_1.second, "hydrogen_waveguide_amplitude_2/1_hyd_g_bond=" + std::to_string(state.get_g_bond().real()) + "_amplitude_" + std::to_string(amplitude));
+        make_probs_files(H, p_0.first, time_vec, p_0.second, "hydrogen_waveguide_amplitude_2/0_hyd_g_bond=" + std::to_string(state.get_g_bond().real()) + "_amplitude_" + std::to_string(amplitude), rank);
+        make_probs_files(H, p_1.first, time_vec, p_1.second, "hydrogen_waveguide_amplitude_2/1_hyd_g_bond=" + std::to_string(state.get_g_bond().real()) + "_amplitude_" + std::to_string(amplitude), rank);
     }
 
     MPI_Barrier(MPI_COMM_WORLD);
