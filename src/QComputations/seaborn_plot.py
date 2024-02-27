@@ -10,6 +10,9 @@ from matplotlib.animation import FuncAnimation
 import matplotlib.pyplot as plt
 import numpy as np
 from concurrent.futures import ThreadPoolExecutor
+from joblib import Parallel, delayed
+from joblib import parallel_backend
+import imageio
 
 def read_files(dir):
     time_vec = pd.read_csv("./" + dir + "/time.csv", header=None).to_numpy().squeeze().tolist()
@@ -40,6 +43,7 @@ if (format == "gif"):
     dir_list.sort()
     probs = read_files(dir_list[0])
     
+    '''
     def init():
         global probs
         sns.lineplot(data=probs)
@@ -54,7 +58,7 @@ if (format == "gif"):
         global config
 
         probs = read_files(dir_list[index % int(config.get('frames'))])
-        plt.clf()
+        fig = plt.figure(figsize=(int(config.get("width")), int(config.get("height"))))
         sns.lineplot(data=probs)
         plt.title(dir_list[index % int(config.get('frames'))])
         plt.legend(loc='upper right')
@@ -62,19 +66,57 @@ if (format == "gif"):
         index += 1
 
     ani = FuncAnimation(fig, update, frames=int(config.get("frames")), init_func=init, interval=int(config.get("interval")))
-    
-    with ThreadPoolExecutor() as executor:
-        executor.submit(ani.save, config.get("filename"))
-    
-    plt.show()
+
+    def save_animation(filename):
+        plt.figure(figsize=(int(config.get("width")), int(config.get("height"))))
+        ani.save(filename)
+
+    with parallel_backend(backend="loky"):
+        Parallel()(delayed(save_animation)(config.get("filename")))
+    '''
+
+    def save_frame(filename, frame_data):
+        fig = plt.figure(figsize=(int(config.get("width")), int(config.get("height"))))
+        sns.lineplot(data=frame_data)
+        plt.title(filename)
+        plt.legend(loc='upper right')
+        plt.grid()
+        plt.savefig(filename)
+
+    def process_dir(dir_path):
+        probs = read_files(dir_path)
+        save_frame(f"{dir_path}.png", probs)
+
+    Parallel(n_jobs=-1)(delayed(process_dir)(dir_path) for dir_path in dir_list)
+
+    images = []
+    for i, dir_path in enumerate(dir_list):
+        images.append(imageio.imread(f"{dir_path}.png"))
+
+    imageio.mimsave(config.get("filename"), images)
+
+    for dir_path in dir_list:
+        os.remove(f"{dir_path}.png")
+    #plt.show()
 else:
-    dir = config.get("dir")
-    plotname = config.get("filename")
+    dirs = config.get("dirs")
 
-    probs = read_files(dir)
+    fig = plt.figure(figsize=(int(config.get("width")), int(config.get("height"))))
 
-    plt.figure(figsize = (int(config.get("width")), int(config.get("height"))))
-    sns.lineplot(data=probs)
-    plt.grid()
-    plt.savefig(plotname, format=config.get("format"))
-    plt.show()
+    dir_list = []
+    for p in Path('.').glob(dirs):
+        if (os.path.isdir(str(p))):
+            dir_list.append(str(p))
+
+    dir_list.sort()
+
+    for dir in dir_list:
+        probs = read_files(dir)
+
+        plt.figure(figsize = (int(config.get("width")), int(config.get("height"))))
+        sns.lineplot(data=probs)
+        plt.title(dir)
+        plt.xlabel("Time (6.626 * 10^(-34) seconds)")
+        plt.ylabel("Probabilty")
+        plt.grid()
+        plt.savefig(dir + ".png", format=config.get("format"))
