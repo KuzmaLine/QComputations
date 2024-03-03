@@ -42,7 +42,7 @@ class Hydrogen_System: public Basis_State {
         }
     private:
         Matrix<std::pair<double, double>> grid_map;
-        COMPLEX g_bond_ = 0.21;
+        COMPLEX g_bond_ = 0.2;
         COMPLEX g_dist_ = 0.01;
 };
 
@@ -172,14 +172,8 @@ int main(int argc, char** argv) {
         make_probs_files(H, probs, time_vec, H.get_basis(), "hydrogen_waveguide_amplitude_2/original_g_bond=" + std::to_string(state.get_g_bond().real()), rank);
     }
 
-    MPI_Finalize();
-    return 0;
-
     size_t start, count;
     make_rank_map(amplitude_range.size(), rank, world_size, start, count);
-
-    std::cout << rank << ": " << start << ", " << count << std::endl;
-    if (rank == 0) show_vector(amplitude_range);
 
 
     for (size_t i = start; i < count + start; i++) {

@@ -116,6 +116,7 @@
 
             void set_qudit(ValType val, size_t qudit_index, size_t group_id = 0) { assert(val <= max_vals_[qudit_index]);
                                         qudits_[this->get_group_start(group_id) + qudit_index] = val;}
+            void set_atom(ValType val, size_t atom_index, size_t group_id) { this->set_qudit(val, atom_index  + 1, group_id); }
             ValType get_qudit(size_t qudit_index, size_t group_id = 0) const { return qudits_[this->get_group_start(group_id) + qudit_index]; }
             void append_qudit(ValType init_val = 0, ValType max_val = 1) { groups_.emplace_back(qudits_.size());
                                                                         qudits_.emplace_back(init_val);
