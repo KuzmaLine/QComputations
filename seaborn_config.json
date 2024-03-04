@@ -1,9 +1,9 @@
 {
-    "format": "png",
-    "filename": "0_hyd_g_bond=0.2.gif",
+    "format": "ready_gif",
+    "filename": "test.gif",
     "width": "19",
     "height": "10",
-    "dirs": "original*",
+    "dirs": "amplitude*.png",
     "frames": "900",
     "interval": "30"
 } 

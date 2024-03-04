@@ -20,7 +20,7 @@ def read_files(dir):
     probs = pd.read_csv("./" + dir + "/probs.csv", header=None)
 
     probs.index=time_vec
-    probs.columns = basis    
+    probs.columns = basis
 
     return probs
 
@@ -42,7 +42,7 @@ if (format == "gif"):
 
     dir_list.sort()
     probs = read_files(dir_list[0])
-    
+
     '''
     def init():
         global probs
@@ -82,6 +82,7 @@ if (format == "gif"):
         plt.legend(loc='upper right')
         plt.grid()
         plt.savefig(filename)
+        plt.close(fig)
 
     def process_dir(dir_path):
         probs = read_files(dir_path)
@@ -98,6 +99,19 @@ if (format == "gif"):
     for dir_path in dir_list:
         os.remove(f"{dir_path}.png")
     #plt.show()
+elif (format == "ready_gif"):
+    dirs = config.get("dirs")
+    dir_list = []
+    for p in Path('.').glob(dirs):
+        dir_list.append(str(p))
+
+    images = Parallel(n_jobs=-1)(delayed(imageio.imread)(f"{dir_path}") for dir_path in dir_list)
+
+    print("HERE")
+    imageio.mimsave(config.get("filename"), images)
+
+    for dir_path in dir_list:
+        os.remove(f"{dir_path}")
 else:
     dirs = config.get("dirs")
 
