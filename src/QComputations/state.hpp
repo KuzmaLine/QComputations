@@ -37,34 +37,34 @@
             return res;
         }
 
-        std::vector<std::vector<CavityId>> update_neighbours(size_t x_size, size_t y_size, size_t z_size) {
-            std::vector<std::vector<CavityId>> res(x_size * y_size * z_size);
+    }
 
-            for (size_t z = 0; z < z_size; z++) {
-                for (size_t y = 0; y < y_size; y++) {
-                    for (size_t x = 0; x < x_size; x++) {
-                        auto index = z * y_size * x_size + y * x_size + x;
-                        if ((x + 1) != x_size) {
-                            res[index].emplace_back(index + 1);
-                            res[index + 1].emplace_back(index);
-                        }
+    std::vector<std::vector<CavityId>> update_neighbours(size_t x_size, size_t y_size, size_t z_size) {
+        std::vector<std::vector<CavityId>> res(x_size * y_size * z_size);
 
-                        if ((y + 1) != y_size) {
-                            res[index].emplace_back(index + x_size);
-                            res[index + x_size].emplace_back(index);
-                        }
-                        
-                        if ((z + 1) != z_size) {
-                            res[index].emplace_back(index + x_size * y_size);
-                            res[index + x_size * y_size].emplace_back(index);
-                        }
+        for (size_t z = 0; z < z_size; z++) {
+            for (size_t y = 0; y < y_size; y++) {
+                for (size_t x = 0; x < x_size; x++) {
+                    auto index = z * y_size * x_size + y * x_size + x;
+                    if ((x + 1) != x_size) {
+                        res[index].emplace_back(index + 1);
+                        res[index + 1].emplace_back(index);
+                    }
+
+                    if ((y + 1) != y_size) {
+                        res[index].emplace_back(index + x_size);
+                        res[index + x_size].emplace_back(index);
+                    }
+                    
+                    if ((z + 1) != z_size) {
+                        res[index].emplace_back(index + x_size * y_size);
+                        res[index + x_size * y_size].emplace_back(index);
                     }
                 }
             }
-
-            return res;
         }
 
+        return res;
     }
 
     const std::string PHOTONS_STR = "$N";
