@@ -146,7 +146,7 @@ BLOCKED_H_by_Operator<StateType>::BLOCKED_H_by_Operator(ILP_TYPE ctxt, const Sta
         }
     };
 
-    H_ = BLOCKED_Matrix<COMPLEX>(ctxt, HE, size, size, func);
+    H_ = BLOCKED_Matrix<COMPLEX>(ctxt, HE, size, size, func, NB, MB);
     for (const auto& p: decoherence) {
         auto A = BLOCKED_Matrix<COMPLEX>(operator_to_matrix<StateType>(H_.ctxt(), p.second, basis));
         decoherence_.push_back(std::make_pair(p.first, A));

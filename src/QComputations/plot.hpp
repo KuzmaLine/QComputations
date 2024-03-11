@@ -47,7 +47,8 @@ void make_probs_files(const BLOCKED_Hamiltonian& H,
                       const Evolution::BLOCKED_Probs& probs,
                       const std::vector<double>& time_vec,
                       const std::set<Basis_State>& basis,
-                      std::string dir);
+                      std::string dir = "",
+                      ILP_TYPE main_rank = 0);
 
 void make_plot(const std::string& plotname,
                const BLOCKED_Hamiltonian& H,

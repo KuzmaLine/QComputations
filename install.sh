@@ -2,6 +2,8 @@
 
 ./install_headers.sh $1
 
+./update_plot_script.sh $1
+
 # Read the .bashrc file into a variable
 bashrc_content=$(cat ~/.bashrc)
 

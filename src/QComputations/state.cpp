@@ -39,6 +39,35 @@ namespace {
     */
 }
 
+std::vector<std::vector<CavityId>> update_neighbours(size_t x_size, size_t y_size, size_t z_size) {
+        std::vector<std::vector<CavityId>> res(x_size * y_size * z_size);
+
+        for (size_t z = 0; z < z_size; z++) {
+            for (size_t y = 0; y < y_size; y++) {
+                for (size_t x = 0; x < x_size; x++) {
+                    auto index = z * y_size * x_size + y * x_size + x;
+                    if ((x + 1) != x_size) {
+                        res[index].emplace_back(index + 1);
+                        res[index + 1].emplace_back(index);
+                    }
+
+                    if ((y + 1) != y_size) {
+                        res[index].emplace_back(index + x_size);
+                        res[index + x_size].emplace_back(index);
+                    }
+                    
+                    if ((z + 1) != z_size) {
+                        res[index].emplace_back(index + x_size * y_size);
+                        res[index + x_size * y_size].emplace_back(index);
+                    }
+                }
+            }
+        }
+
+        return res;
+    }
+
+
 // --------------------------- Basis_Sate -------------------------------------
 
 Basis_State::Basis_State(size_t qudits_count, ValType max_val, size_t groups_count): qudits_(qudits_count, INIT_VAL), max_vals_(qudits_count, max_val) {
@@ -197,6 +226,17 @@ void CHE_State::set_waveguide(double amplitude, double length) {
 
         for (const auto to_id: neighbours) {
             waveguides_[from_id][to_id] = std::make_pair(amplitude, length);
+        }
+    }
+}
+
+void CHE_State::set_waveguide(size_t from_cavity_id, size_t to_cavity_id, double amplitude, double length) {
+    waveguides_[from_cavity_id][to_cavity_id] = std::make_pair(amplitude, length);
+
+    if (amplitude >= QConfig::instance().eps()) {
+        if (!is_in_vector(neighbours_[from_cavity_id], to_cavity_id)) {
+            neighbours_[from_cavity_id].emplace_back(to_cavity_id);
+            neighbours_[to_cavity_id].emplace_back(from_cavity_id);
         }
     }
 }

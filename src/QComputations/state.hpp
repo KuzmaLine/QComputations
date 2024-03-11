@@ -39,33 +39,7 @@
 
     }
 
-    std::vector<std::vector<CavityId>> update_neighbours(size_t x_size, size_t y_size, size_t z_size) {
-        std::vector<std::vector<CavityId>> res(x_size * y_size * z_size);
-
-        for (size_t z = 0; z < z_size; z++) {
-            for (size_t y = 0; y < y_size; y++) {
-                for (size_t x = 0; x < x_size; x++) {
-                    auto index = z * y_size * x_size + y * x_size + x;
-                    if ((x + 1) != x_size) {
-                        res[index].emplace_back(index + 1);
-                        res[index + 1].emplace_back(index);
-                    }
-
-                    if ((y + 1) != y_size) {
-                        res[index].emplace_back(index + x_size);
-                        res[index + x_size].emplace_back(index);
-                    }
-                    
-                    if ((z + 1) != z_size) {
-                        res[index].emplace_back(index + x_size * y_size);
-                        res[index + x_size * y_size].emplace_back(index);
-                    }
-                }
-            }
-        }
-
-        return res;
-    }
+    std::vector<std::vector<CavityId>> update_neighbours(size_t x_size, size_t y_size, size_t z_size = 1);
 
     const std::string PHOTONS_STR = "$N";
     const std::string ATOMS_STR = "$M";
@@ -186,8 +160,7 @@
             // TMP realizations
             void set_waveguide(double amplitude, double length);
             void set_waveguide(const Matrix<std::pair<double, double>>& A) {waveguides_ = A;}
-            void set_waveguide(size_t from_cavity_id, size_t to_cavity_id, double amplitude, double length = QConfig::instance().waveguides_length()) { waveguides_[from_cavity_id][to_cavity_id] = std::make_pair(amplitude, length); }
-
+            void set_waveguide(size_t from_cavity_id, size_t to_cavity_id, double amplitude, double length = QConfig::instance().waveguides_length());
             // set entire state in cavity with id = id
             void set_state(CavityId id, const CHE_State& state);
 
@@ -237,7 +210,7 @@
                     from_id = to_id;
                     to_id = tmp;
                 }
-                return gamma(waveguides_[from_id][to_id].first, waveguides_[from_id][to_id].second, 1);
+                return gamma(waveguides_[from_id][to_id].first, waveguides_[from_id][to_id].second, QConfig::instance().w());
             }
 
             std::set<CavityId> get_cavities_with_atoms() const { return cavities_with_atoms_; }

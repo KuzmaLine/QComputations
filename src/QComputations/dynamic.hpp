@@ -29,7 +29,7 @@ namespace Evolution {
 
     // Solve Schrodinger equation (dont't work with leaks or gains of photons in cavities)
     // Return Matrix<double> where row(i) - state(basis[i]), cols(j) - probability in time[j]
-    //Probs schrodinger(const std::vector<COMPLEX>& init_state, Hamiltonian& H, const std::vector<double>& time_vec);
+    Probs schrodinger(const State<Basis_State>& init_state, Hamiltonian& H, const std::vector<double>& time_vec);
 
     // Solve Schrodinger equation with rho. USE ONLY if you have leaks or gains of photons in cavities
     // because it's too slow
@@ -70,7 +70,8 @@ namespace Evolution {
 
     BLOCKED_Rho create_BLOCKED_init_rho(ILP_TYPE ctxt, const std::vector<COMPLEX>& init_state);
 
-    BLOCKED_Probs schrodinger(const std::vector<COMPLEX>& init_state, BLOCKED_Hamiltonian& H, const std::vector<double>& time_vec);
+    //BLOCKED_Probs schrodinger(const std::vector<COMPLEX>& init_state, BLOCKED_Hamiltonian& H, const std::vector<double>& time_vec);
+    BLOCKED_Probs schrodinger(const State<Basis_State>& init_state, BLOCKED_Hamiltonian& H, const std::vector<double>& time_vec);
 
     BLOCKED_Probs quantum_master_equation(const std::vector<COMPLEX>& init_state,
                                   BLOCKED_Hamiltonian& H,

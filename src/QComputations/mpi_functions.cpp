@@ -754,7 +754,7 @@ ILP_TYPE mpi::indxl2g(ILP_TYPE n, ILP_TYPE NB, ILP_TYPE myindx, ILP_TYPE RSRC, I
 
 ILP_TYPE mpi::indxg2p(ILP_TYPE n, ILP_TYPE NB, ILP_TYPE myindx, ILP_TYPE RSRC, ILP_TYPE dim_size) {
     ILP_TYPE n_new = n + 1;
-    return indxg2p_(&n_new, &NB, &myindx, &RSRC, &dim_size) - 1;
+    return indxg2p_(&n_new, &NB, &myindx, &RSRC, &dim_size);
 }
 
 ILP_TYPE mpi::indxg2l(ILP_TYPE n, ILP_TYPE NB, ILP_TYPE myindx, ILP_TYPE RSRC, ILP_TYPE dim_size) {

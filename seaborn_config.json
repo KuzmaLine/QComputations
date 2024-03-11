@@ -1,9 +1,9 @@
 {
-    "format": "ready_gif",
-    "filename": "test.gif",
+    "format": "png",
+    "filename": "original.png",
     "width": "19",
     "height": "10",
-    "dirs": "amplitude*.png",
-    "frames": "900",
-    "interval": "30"
-} 
+    "dirs": "*",
+    "frames": "20",
+    "interval": "100"
+}

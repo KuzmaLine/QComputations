@@ -75,19 +75,18 @@ Evolution::Rho Evolution::create_init_rho(const std::vector<COMPLEX>& init_state
     return rho;
 }
 
-/*
 
-Evolution::Probs Evolution::schrodinger(const std::vector<COMPLEX>& init_state, Hamiltonian& H, const std::vector<double>& time_vec) {
+
+Evolution::Probs Evolution::schrodinger(const State<Basis_State>& init_state, Hamiltonian& H, const std::vector<double>& time_vec) {
     std::vector<double> eigen_values;
     Matrix<COMPLEX> eigen_vectors;
-    auto p = H.eigen();
-    eigen_values = p.first;
-    eigen_vectors = p.second;
+    eigen_values = H.eigenvalues();
+    eigen_vectors = H.eigenvectors();
 
     std::vector<COMPLEX> lambda;
     for (size_t i = 0; i < eigen_values.size(); i++) {
         //std::cout << norm(eigen_vectors.col(i)) << std::endl;
-        lambda.emplace_back(eigen_vectors.col(i) | init_state); // <PHI_i|KSI(0)> 
+        lambda.emplace_back(eigen_vectors.col(i) | init_state.get_vector()); // <PHI_i|KSI(0)> 
     }
 
     Probs probs(C_STYLE, eigen_values.size(), time_vec.size());
@@ -116,12 +115,10 @@ Evolution::Probs Evolution::schrodinger(const std::vector<COMPLEX>& init_state, 
     return probs;
 }
 
-*/
-
 #ifdef ENABLE_MPI
 #ifdef ENABLE_CLUSTER
 
-Evolution::BLOCKED_Probs Evolution::schrodinger(const std::vector<COMPLEX>& init_state, BLOCKED_Hamiltonian& H,
+Evolution::BLOCKED_Probs Evolution::schrodinger(const State<Basis_State>& init_state, BLOCKED_Hamiltonian& H,
                                                 const std::vector<double>& time_vec) {
     auto eigen_values = H.eigenvalues();
     auto eigen_vectors = H.eigenvectors();
@@ -129,7 +126,7 @@ Evolution::BLOCKED_Probs Evolution::schrodinger(const std::vector<COMPLEX>& init
     ILP_TYPE vector_ctxt;
     mpi::init_vector_grid(vector_ctxt);
     auto vector_of_eigen_vectors = blocked_matrix_to_blocked_vectors(vector_ctxt, eigen_vectors);
-    BLOCKED_Vector<COMPLEX> blocked_init_state(vector_ctxt, init_state);
+    BLOCKED_Vector<COMPLEX> blocked_init_state(vector_ctxt, init_state.get_vector());
 
     std::vector<COMPLEX> lambda;
     for (size_t i = 0; i < eigen_values.size(); i++) {
@@ -456,13 +453,22 @@ BLOCKED_Probs schrodinger(const std::vector<COMPLEX>& init_state, BLOCKED_Hamilt
     ILP_TYPE rank, world_size;
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
     MPI_Comm_size(MPI_COMM_WORLD, &world_size);
-    
+    MPI_Status status;
+
+    ILP_TYPE proc_rows, proc_cols, myrow, mycol;
+    mpi::blacs_gridinfo(probs.ctxt(), proc_rows, proc_cols, myrow, mycol);
+
     std::set<Basis_State> basis_res;
     for (auto& cur_state: basis) {
         basis_res.insert(cur_state.get_group(cavity_id));
     }
 
-    size_t m = probs.m();
+    std::vector<size_t> inplace_states(basis_res.size(), 0);
+    for (auto& cur_state: basis) {
+        size_t res_index = cur_state.get_group(cavity_id).get_index(basis_res);
+        inplace_states[res_index] += 1;
+    }
+
     size_t NB = basis_res.size() / world_size;
 
     if (basis_res.size() < world_size) {
@@ -470,17 +476,51 @@ BLOCKED_Probs schrodinger(const std::vector<COMPLEX>& init_state, BLOCKED_Hamilt
             NB = 1;
         }
     }
-    BLOCKED_Probs res(probs.ctxt(), GE, basis_res.size(), m, 0, NB, probs.MB());
 
-    for (size_t t = 0; t < probs.m(); t++) {
-        for (size_t i = 0; i < probs.n(); i++) {
-            size_t res_index = Basis_State(get_elem_from_set(basis, i)).get_group(cavity_id).get_index(basis_res);
+    BLOCKED_Probs res(probs.ctxt(), GE, basis_res.size(), probs.m(), 0, NB, probs.MB());
+    std::vector<MPI_Request> requests_send;
+    std::vector<std::vector<double>> buf;
 
-            auto cur = res.get(res_index, t);
-            auto prob = probs.get(i, t);
-            MPI_Barrier(MPI_COMM_WORLD);
-            res.set(res_index, t, cur + prob);
+    for (size_t i_local = 0; i_local < probs.local_n(); i_local++) {            
+        auto i = probs.get_global_row(i_local);
+        size_t res_index = Basis_State(get_elem_from_set(basis, i)).get_group(cavity_id).get_index(basis_res);
+        auto proc_row = res.get_row_proc(res_index);
+        auto res_local_row = res.get_local_row(res_index);
+
+        if (proc_row == myrow) {
+            inplace_states[res_index] -= 1;
+            for (size_t t = 0; t < probs.m(); t++) {     
+                res(res_local_row, t) += probs(i_local, t);
+            }
+        } else {
+            requests_send.emplace_back(MPI_REQUEST_NULL);
+            buf.emplace_back(probs.m());
+
+            for (size_t t = 0; t < probs.m(); t++) {
+                buf[buf.size() - 1][t] = probs(i_local, t);
+            }
+    
+            MPI_Isend(buf[buf.size() - 1].data(), probs.m(), MPI_DOUBLE, proc_row, res_index, MPI_COMM_WORLD, &requests_send[requests_send.size() - 1]);
         }
+    }
+
+    MPI_Barrier(MPI_COMM_WORLD);
+
+    std::vector<double> res_index_probs(probs.m());
+    for (size_t i = 0; i < res.local_n(); i++) {
+        size_t i_global = res.get_global_row(i);
+
+        for (size_t k = 0; k < inplace_states[i_global]; k++) {
+            MPI_Recv(res_index_probs.data(), probs.m(), MPI_DOUBLE, MPI_ANY_SOURCE, i_global, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+
+            for (size_t t = 0; t < probs.m(); t++) {
+                res(i, t) += res_index_probs[t];
+            }
+        }
+    }
+
+    for (auto& request: requests_send) {
+        MPI_Wait(&request, MPI_STATUS_IGNORE);
     }
 
     return std::make_pair(res, basis_res);

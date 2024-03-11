@@ -2,8 +2,8 @@
 #include <complex>
 #include "QComputations_CPU_CLUSTER_NO_PLOTS.hpp"
 
-double find_amplitude(double amplitude, size_t path_length, size_t count_paths) {
-    return std::pow(amplitude / count_paths, double(1) / path_length) / std::pow(10, double(1) / path_length - 1);
+double find_amplitude(double amplitude, size_t path_length, size_t count_paths, double alpha = 1) {
+    return std::pow(amplitude / count_paths, double(1) / (alpha * path_length));
 }
 
 std::string make_filename(const std::vector<size_t>& shapes) {
@@ -43,6 +43,9 @@ class Hydrogen_System: public Basis_State {
 
             if (i > j) {
                 coef = 1;
+                auto tmp = i;
+                i = j;
+                j = tmp;
             }
 
             return grid_map[i][j].first * std::exp(std::complex<double>(0, coef) * grid_map[i][j].second / QConfig::instance().h());
@@ -67,6 +70,16 @@ class Hydrogen_System: public Basis_State {
                     grid_map[from_id][to_id] = std::make_pair(amplitude, length);
                 }
             }
+        }
+
+        void set_waveguide(size_t from, size_t to, double amplitude, double length) {
+            if (from > to) {
+                auto tmp = from;
+                from = to;
+                to = tmp;
+            }
+
+            grid_map[from][to] = std::make_pair(amplitude, length);
         }
     private:
         size_t x_, y_, z_;
@@ -160,10 +173,12 @@ void set_init_hyd_state(Hydrogen_System& state, size_t target_cavity = 0) {
 int main(int argc, char** argv) {
     using namespace QComputations;
     int world_size, rank;
-    double amplitude = 0.0005;
+    double amplitude = 0.001;
     MPI_Init(&argc, &argv);
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
     MPI_Comm_size(MPI_COMM_WORLD, &world_size);
+    int ctxt;
+    mpi::init_grid(ctxt);
 
     std::vector<size_t> grid_config = {1};
     Hydrogen_System state(1, grid_config);
@@ -176,7 +191,8 @@ int main(int argc, char** argv) {
 
     H_by_Operator H(State(state), my_H);
 
-    auto probs = Evolution::quantum_master_equation(State(state).fit_to_basis(H.get_basis()), H, time_vec);
+    //auto probs = Evolution::quantum_master_equation(State(state).fit_to_basis(H.get_basis()), H, time_vec);
+    auto probs = Evolution::schrodinger(State(state).fit_to_basis(H.get_basis()), H, time_vec);
 
     if (rank == 0) {
         std::cout << "calculated\n";
@@ -191,22 +207,35 @@ int main(int argc, char** argv) {
                                                      {1, 0, 0, 1},
                                                      {1, 0, 0,
                                                       0, 1, 0,
-                                                      0, 0, 0}};
+                                                      0, 0, 0},
+                                                      {1, 0, 0, 0, 0, 0, 0, 0, 0,
+                                                      0, 0, 0, 0, 0, 0, 0, 0, 0,
+                                                      0, 0, 0, 0, 0, 0, 0, 0, 1},
+                                                      {1, 0, 0, 0, 0, 0, 0, 0, 0,
+                                                      0, 0, 0, 0, 0, 0, 0, 0, 0,
+                                                      0, 0, 0, 0, 0, 0, 0, 0, 1}};
                                                       
 
     std::vector<std::vector<size_t>> shapes = {{2, 1, 1},
                                                {3, 1, 1},
                                                {2, 2, 1},
                                                {4, 1, 1},
-                                               {3, 3, 1}};
+                                               {3, 3, 1},
+                                               {3, 3, 3},
+                                               {3, 3, 3}};
 
-    std::vector<size_t> target_cavity = {1, 2, 3, 3, 4};
+    std::vector<size_t> target_cavity = {1, 2, 3, 3, 4, 26, 26};
 
+    double alpha = 1;
     std::vector<double> amplitudes = {amplitude,
-                                      find_amplitude(amplitude, 2, 1),
-                                      find_amplitude(amplitude, 2, 2),
-                                      find_amplitude(amplitude, 3, 1) / 10,
-                                      find_amplitude(amplitude, 2, 2)};
+                                      0.01,
+                                      0.01 / std::sqrt(2),
+                                      0.02,
+                                      0.01 / std::sqrt(2),
+                                      0.01,
+                                      0.001};
+
+    //std::vector<double> amplitudes(5, amplitude);
 
     for (size_t i = 0; i < shapes.size(); ++i) {
         auto time_vec = linspace(0, 16000, 16000);
@@ -220,9 +249,17 @@ int main(int argc, char** argv) {
         new_state.reshape(shapes[i][0], shapes[i][1], shapes[i][2]);
         new_state.set_waveguide(new_amplitude, 0);
 
-        H_by_Operator H(State(new_state), my_H);
+        std::string second;
+        if (i == shapes.size() - 1) {
+            new_state.set_waveguide(0, 26, amplitude, 0);
+            second = "_second";
+        }
+
+        BLOCKED_H_by_Operator H(ctxt, State(new_state), my_H);
 
         if (rank == 0) show_basis(H.get_basis());
+
+        H.show();
 
         /*
         for (size_t i = 0; i < new_state.get_groups_count(); i++) {
@@ -239,17 +276,15 @@ int main(int argc, char** argv) {
         //H.show();
         std::cout << new_amplitude << std::endl;
 
-        auto probs = Evolution::quantum_master_equation(State(new_state).fit_to_basis(H.get_basis()), H, time_vec);
+        auto probs = Evolution::schrodinger(State(new_state).fit_to_basis(H.get_basis()), H, time_vec);
 
-        if (rank == 0) {
-            make_probs_files(H, probs, time_vec, H.get_basis(), "hyd_map/" + make_filename(shapes[i]), rank);
-        }
+        make_probs_files(H, probs, time_vec, H.get_basis(), "hyd_map/" + make_filename(shapes[i]) + second, 0);
 
         auto p_0 = Evolution::probs_to_cavity_probs(probs, H.get_basis(), 0);
         auto p_1 = Evolution::probs_to_cavity_probs(probs, H.get_basis(), target_cavity[i]);
 
-        make_probs_files(H, p_0.first, time_vec, p_0.second, "hyd_map/0_" + make_filename(shapes[i]), rank);
-        make_probs_files(H, p_1.first, time_vec, p_1.second, "hyd_map/" + std::to_string(target_cavity[i]) + "_" + make_filename(shapes[i]), rank);
+        make_probs_files(H, p_0.first, time_vec, p_0.second, "hyd_map/0_" + make_filename(shapes[i]) + second, 0);
+        make_probs_files(H, p_1.first, time_vec, p_1.second, "hyd_map/" + std::to_string(target_cavity[i]) + "_" + make_filename(shapes[i]) + second, 0);
     }
 
     MPI_Finalize();

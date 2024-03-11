@@ -124,13 +124,17 @@ else:
 
     dir_list.sort()
 
-    for dir in dir_list:
+    def process_directory(dir):
         probs = read_files(dir)
 
-        plt.figure(figsize = (int(config.get("width")), int(config.get("height"))))
+        fig = plt.figure(figsize=(int(config.get("width")), int(config.get("height"))))
         sns.lineplot(data=probs)
         plt.title(dir)
         plt.xlabel("Time (6.626 * 10^(-34) seconds)")
         plt.ylabel("Probabilty")
         plt.grid()
         plt.savefig(dir + ".png", format=config.get("format"))
+        plt.close(fig)
+
+    # Распараллеливаем цикл по всем директориям
+    Parallel(n_jobs=-1)(delayed(process_directory)(dir) for dir in dir_list)

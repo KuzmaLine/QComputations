@@ -79,8 +79,8 @@ class BLOCKED_Matrix {
         Matrix<T>& get_local_matrix() { return local_matrix_;}
         const Matrix<T>& get_local_matrix() const { return local_matrix_;}
 
-        T* data() { return local_matrix_.data(); }
-        const T* data() const { return local_matrix_.data(); }
+        T* data(size_t i = 0, size_t j = 0) { return local_matrix_.data() + get_local_index(i, j); }
+        const T* data(size_t i = 0, size_t j = 0) const { return local_matrix_.data() + get_local_index(i, j); }
 
         T& operator()(size_t i, size_t j) { return local_matrix_(i, j); }
         const T operator()(size_t i, size_t j) const { return local_matrix_(i, j); }
@@ -93,6 +93,9 @@ class BLOCKED_Matrix {
         ILP_TYPE get_global_row(size_t i) const;
         ILP_TYPE get_global_col(size_t j) const;
 
+        ILP_TYPE get_local_row(size_t i) const;
+        ILP_TYPE get_local_col(size_t j) const;
+
         ILP_TYPE get_row_proc(size_t i) const;
         ILP_TYPE get_col_proc(size_t i) const;
 
@@ -101,8 +104,8 @@ class BLOCKED_Matrix {
         std::vector<T> col(size_t i) const;
         std::vector<T> row(size_t j) const;
     protected:
-        size_t get_global_index(size_t i, size_t j) { return j * n_ + i; }
-        size_t get_local_index(size_t i, size_t j) { return j * local_matrix_.n() + i; }
+        size_t get_global_index(size_t i, size_t j) const { return j * n_ + i; }
+        size_t get_local_index(size_t i, size_t j) const { return j * local_matrix_.n() + i; }
 
         MATRIX_TYPE matrix_type_;
         ILP_TYPE ctxt_;
@@ -264,6 +267,43 @@ ILP_TYPE BLOCKED_Matrix<T>::get_global_col(size_t j) const {
 
     return mpi::indxl2g(j, MB_, mycol, iZERO, proc_cols);
 }
+
+template<typename T>
+ILP_TYPE BLOCKED_Matrix<T>::get_row_proc(size_t i) const {
+    ILP_TYPE iZERO = 0;
+    ILP_TYPE proc_rows, proc_cols, myrow, mycol;
+    mpi::blacs_gridinfo(ctxt_, proc_rows, proc_cols, myrow, mycol);
+
+    return mpi::indxg2p(i, NB_, myrow, iZERO, proc_rows);
+}
+
+template<typename T>
+ILP_TYPE BLOCKED_Matrix<T>::get_col_proc(size_t j) const {
+    ILP_TYPE iZERO = 0;
+    ILP_TYPE proc_rows, proc_cols, myrow, mycol;
+    mpi::blacs_gridinfo(ctxt_, proc_rows, proc_cols, myrow, mycol);
+
+    return mpi::indxg2p(j, MB_, mycol, iZERO, proc_cols);
+}
+
+template<typename T>
+ILP_TYPE BLOCKED_Matrix<T>::get_local_row(size_t i) const {
+    ILP_TYPE iZERO = 0;
+    ILP_TYPE proc_rows, proc_cols, myrow, mycol;
+    mpi::blacs_gridinfo(ctxt_, proc_rows, proc_cols, myrow, mycol);
+
+    return mpi::indxg2l(i, NB_, myrow, iZERO, proc_rows);
+}
+
+template<typename T>
+ILP_TYPE BLOCKED_Matrix<T>::get_local_col(size_t j) const {
+    ILP_TYPE iZERO = 0;
+    ILP_TYPE proc_rows, proc_cols, myrow, mycol;
+    mpi::blacs_gridinfo(ctxt_, proc_rows, proc_cols, myrow, mycol);
+
+    return mpi::indxg2l(j, MB_, mycol, iZERO, proc_cols);
+}
+
 
 template<typename T>
 BLOCKED_Matrix<T>::BLOCKED_Matrix(const BLOCKED_Matrix<T>& A, const Matrix<T>& local_matrix): matrix_type_(A.matrix_type_),

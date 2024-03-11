@@ -221,6 +221,11 @@ std::vector<V> Runge_Kutt_4(const std::vector<T>& x, const V& y0, std::function<
     return y;
 }
 
+template<typename T>
+bool is_in_vector(const std::vector<T> v, const T& elem) {
+    return std::find(v.begin(), v.end(), elem) != v.end();
+}
+
 // Tridiagonal linear system solving
 template<typename T>
 std::vector<T> Pro_Race_Algorithm(const Matrix<T>& B, const std::vector<T>& y) {
