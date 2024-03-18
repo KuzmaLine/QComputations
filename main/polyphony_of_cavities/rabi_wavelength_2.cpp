@@ -2,20 +2,40 @@
 #include <complex>
 #include "QComputations_CPU_CLUSTER_NO_PLOTS.hpp"
 
+double find_amplitude(double amplitude, size_t path_length, size_t count_paths) {
+    return std::pow(amplitude / count_paths, double(1) / path_length);
+}
+
+std::string make_filename(const std::vector<size_t>& shapes) {
+    return std::string(std::string("map_") + std::to_string(shapes[0]) + "_" + std::to_string(shapes[1]) + "_" + std::to_string(shapes[2]));
+}
+
 int main(int argc, char** argv) {
     using namespace QComputations;
     int world_size, rank;
-    size_t atoms_count = 1, steps_count = 100;
-    double a = 0.001, b = 0.05;
+    size_t atoms_count = 1;
+    size_t target_cavity = 3;
+    double amplitude = 0.001;
+    double step = 0.25;
+    double steps_count = double(2) / 0.25;
     MPI_Init(&argc, &argv);
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
     MPI_Comm_size(MPI_COMM_WORLD, &world_size);
 
-    //QConfig::instance().set_max_photons(2);
-    std::vector<size_t> grid_config = {atoms_count};
+    //QConfig::instance().set_g(0.1);
+    QConfig::instance().set_max_photons(atoms_count);
+    std::vector<size_t> grid_config = {atoms_count, 0, 0, atoms_count};
     CHE_State state(grid_config);
+    state.reshape(2, 2, 1);
+    state.set_waveguide(find_amplitude(amplitude, 2, 2) / 20, 2*M_PI);
 
-    state.set_n(atoms_count, 0);
+    //state.set_n(atoms_count, 0);
+    //state.set_n(atoms_count, 0);
+    for (size_t i = 0; i < atoms_count; i++) {
+        state.set_atom(1, i, 0);
+    }
+    //state.set_atom(1, 0, 0);
+
     //state.set_qudit(1, 1, 0);
     //state.set_qudit(1, 1, 1);
     //state.set_waveguide(0.002, 0);
@@ -26,71 +46,53 @@ int main(int argc, char** argv) {
     mpi::init_grid(ctxt);
 
     //std::cout << "HERE\n";
-    BLOCKED_H_TCH H(ctxt, init_state);
+    H_TCH H(init_state);
 
-    if (rank == 0) show_basis(H.get_basis());
+    if (rank == 0) {
+        show_basis(H.get_basis());
+        H.show();
+        std::cout << "------------------------------------\n";
+    }
 
-    H.show();
+    //if (rank == 0) show_basis(H.get_basis());
 
-    auto time_vec = linspace(0, 4000, 4000);
+    //H.show();
+
+    auto time_vec = linspace(0, 16000, 16000);
 
     //time_vec_to_file("test_time_vec", time_vec, "");
 
-    auto probs = Evolution::quantum_master_equation(init_state.fit_to_basis(H.get_basis()), H, time_vec);
+    auto probs = Evolution::schrodinger(init_state.fit_to_basis(H.get_basis()), H, time_vec);
 
-    //basis_to_file("basis_check.csv", H.get_basis());
-    make_probs_files(H, probs, time_vec, H.get_basis(), "rabi_waveguide_amplitude_2/original");  
-    //make_plot("test_tch.svg", H, probs, time_vec, H.get_basis(), "test_dir");
+    auto p_0 = Evolution::probs_to_cavity_probs(probs, H.get_basis(), 0);
+    auto p_1 = Evolution::probs_to_cavity_probs(probs, H.get_basis(), target_cavity);
 
-    auto amplitude_range = linspace(a, b, steps_count);
+    make_probs_files(H, p_0.first, time_vec, p_0.second, "rabi_wavelength/0_original", 0);
+    make_probs_files(H, p_1.first, time_vec, p_1.second, "rabi_wavelength/1_original", 0);
 
-    /*    
-    for (auto amplitude: amplitude_range) {
-        grid_config = {atoms_count, atoms_count};
-        state = CHE_State(grid_config);
+    for (size_t i = 0; i < steps_count; i++) {
+        double coef = step * (i + 1);
+        state.set_waveguide(1, 3, find_amplitude(amplitude, 2, 2) / 20, coef * M_PI);
 
-        state.set_n(1, 0);
-        state.set_waveguide(amplitude, 0);
+        State<CHE_State> init_state(state);
+        H = H_TCH(init_state);
 
-        State<CHE_State> init_state_2_cavity(state);
+        if (rank == 0) {
+            H.show();
+            std::cout << coef << " ------------------------------------\n";
+        }
 
-        //std::cout << "HERE\n";
-        H = BLOCKED_H_TCH(ctxt, init_state_2_cavity);
+        //time_vec_to_file("test_time_vec", time_vec, "");
 
-        if (rank == 0) show_basis(H.get_basis());
+        probs = Evolution::schrodinger(init_state.fit_to_basis(H.get_basis()), H, time_vec);
 
-        H.show();
+        //basis_to_file("basis_check.csv", H.get_basis());
+        p_0 = Evolution::probs_to_cavity_probs(probs, H.get_basis(), 0);
+        p_1 = Evolution::probs_to_cavity_probs(probs, H.get_basis(), target_cavity);
 
-        probs = Evolution::quantum_master_equation(init_state_2_cavity.fit_to_basis(H.get_basis()), H, time_vec);
-
-        make_probs_files(H, probs, time_vec, H.get_basis(), "rabi_waveguide_amplitude_2/amplitude_" + std::to_string(amplitude));  
+        make_probs_files(H, p_0.first, time_vec, p_0.second, "rabi_wavelength/0_" + std::to_string(coef) + "PI", 0);
+        make_probs_files(H, p_1.first, time_vec, p_1.second, "rabi_wavelength/1_" + std::to_string(coef) + "PI", 0);
     }
-    */
-
-    amplitude_range = linspace(0, 2*M_PI, 100);
-
-    for (auto amplitude: amplitude_range) {
-        grid_config = {atoms_count, atoms_count};
-        state = CHE_State(grid_config);
-
-        state.set_n(1, 0);
-        state.set_waveguide(0.0115, amplitude);
-
-        State<CHE_State> init_state_2_cavity(state);
-
-        time_vec = linspace(0, 8000, 8000);
-        //std::cout << "HERE\n";
-        H = BLOCKED_H_TCH(ctxt, init_state_2_cavity);
-
-        //if (rank == 0) show_basis(H.get_basis());
-
-        //H.show();
-
-        probs = Evolution::quantum_master_equation(init_state_2_cavity.fit_to_basis(H.get_basis()), H, time_vec);
-
-        make_probs_files(H, probs, time_vec, H.get_basis(), "rabi_wavelength_2/wavelength_" + std::to_string(amplitude));
-    }
-
     MPI_Finalize();
     return 0;
 }

@@ -205,12 +205,20 @@
 
             // Matrix<COMPLEX> get_gamma() const { return gamma_; }
             COMPLEX get_gamma(CavityId from_id, CavityId to_id) const {
+                bool is_conj = false;
                 if (from_id > to_id) {
                     auto tmp = from_id;
                     from_id = to_id;
                     to_id = tmp;
+                    is_conj = true;
                 }
-                return gamma(waveguides_[from_id][to_id].first, waveguides_[from_id][to_id].second, QConfig::instance().w());
+                auto res = gamma(waveguides_[from_id][to_id].first, waveguides_[from_id][to_id].second, QConfig::instance().w());
+
+                if (is_conj) {
+                    res = std::conj(res);
+                }
+
+                return res;
             }
 
             std::set<CavityId> get_cavities_with_atoms() const { return cavities_with_atoms_; }

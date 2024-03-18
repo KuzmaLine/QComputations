@@ -290,7 +290,7 @@ Evolution::Probs Evolution::quantum_master_equation(const State<Basis_State>& in
             [A, gamma](const Evolution::Rho& rho) {
                 auto Aconj = A.hermit();
                 auto AconjA = Aconj * A;
-                return (A * rho * Aconj - (AconjA * rho + rho * AconjA) * COMPLEX(0.5)) * gamma;
+                return (A * rho * Aconj - (AconjA * rho + rho * AconjA) * COMPLEX(0.5, 0)) * gamma;
             }
         }
         );
@@ -298,7 +298,7 @@ Evolution::Probs Evolution::quantum_master_equation(const State<Basis_State>& in
 
     auto H_matrix = H.get_matrix();
     std::function<Evolution::Rho(double t, const Evolution::Rho&)> equation {[&H_matrix, &lindblads](double t, const Evolution::Rho& rho) {
-        auto tmp = (H_matrix * rho - rho * H_matrix) * COMPLEX(0, -1);
+        auto tmp = (H_matrix * rho - rho * H_matrix) * COMPLEX(0, -1 / QConfig::instance().h());
         for (const auto& lindblad: lindblads) {
             tmp += lindblad(rho);
         }
