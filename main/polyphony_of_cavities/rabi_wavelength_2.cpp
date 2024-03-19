@@ -6,10 +6,6 @@ double find_amplitude(double amplitude, size_t path_length, size_t count_paths) 
     return std::pow(amplitude / count_paths, double(1) / path_length);
 }
 
-std::string make_filename(const std::vector<size_t>& shapes) {
-    return std::string(std::string("map_") + std::to_string(shapes[0]) + "_" + std::to_string(shapes[1]) + "_" + std::to_string(shapes[2]));
-}
-
 int main(int argc, char** argv) {
     using namespace QComputations;
     int world_size, rank;
@@ -18,6 +14,7 @@ int main(int argc, char** argv) {
     double amplitude = 0.001;
     double step = 0.25;
     double steps_count = double(2) / 0.25;
+    std::string dir = "results/";
     MPI_Init(&argc, &argv);
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
     MPI_Comm_size(MPI_COMM_WORLD, &world_size);
@@ -67,8 +64,8 @@ int main(int argc, char** argv) {
     auto p_0 = Evolution::probs_to_cavity_probs(probs, H.get_basis(), 0);
     auto p_1 = Evolution::probs_to_cavity_probs(probs, H.get_basis(), target_cavity);
 
-    make_probs_files(H, p_0.first, time_vec, p_0.second, "rabi_wavelength/0_original", 0);
-    make_probs_files(H, p_1.first, time_vec, p_1.second, "rabi_wavelength/1_original", 0);
+    make_probs_files(H, p_0.first, time_vec, p_0.second, dir + "rabi_wavelength/0_original", 0);
+    make_probs_files(H, p_1.first, time_vec, p_1.second, dir + "rabi_wavelength/1_original", 0);
 
     for (size_t i = 0; i < steps_count; i++) {
         double coef = step * (i + 1);
@@ -90,8 +87,8 @@ int main(int argc, char** argv) {
         p_0 = Evolution::probs_to_cavity_probs(probs, H.get_basis(), 0);
         p_1 = Evolution::probs_to_cavity_probs(probs, H.get_basis(), target_cavity);
 
-        make_probs_files(H, p_0.first, time_vec, p_0.second, "rabi_wavelength/0_" + std::to_string(coef) + "PI", 0);
-        make_probs_files(H, p_1.first, time_vec, p_1.second, "rabi_wavelength/1_" + std::to_string(coef) + "PI", 0);
+        make_probs_files(H, p_0.first, time_vec, p_0.second, dir + "rabi_wavelength/0_" + std::to_string(coef) + "PI", 0);
+        make_probs_files(H, p_1.first, time_vec, p_1.second, dir + "rabi_wavelength/1_" + std::to_string(coef) + "PI", 0);
     }
     MPI_Finalize();
     return 0;
