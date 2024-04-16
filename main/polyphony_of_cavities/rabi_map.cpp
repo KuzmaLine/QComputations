@@ -19,45 +19,25 @@ int main(int argc, char** argv) {
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
     MPI_Comm_size(MPI_COMM_WORLD, &world_size);
 
-    //QConfig::instance().set_g(0.1);
     QConfig::instance().set_max_photons(atoms_count);
     std::vector<size_t> grid_config = {atoms_count};
     CHE_State state(grid_config);
 
-    //state.set_n(atoms_count, 0);
-    //state.set_n(atoms_count, 0);
     for (size_t i = 0; i < atoms_count; i++) {
         state.set_atom(1, i, 0);
     }
-    //state.set_atom(1, 0, 0);
-
-    //state.set_qudit(1, 1, 0);
-    //state.set_qudit(1, 1, 1);
-    //state.set_waveguide(0.002, 0);
 
     State<CHE_State> init_state(state);
 
-    int ctxt;
-    mpi::init_grid(ctxt);
-
-    //std::cout << "HERE\n";
     H_TCH H(init_state);
-
-    //if (rank == 0) show_basis(H.get_basis());
-
-    //H.show();
 
     auto time_vec = linspace(0, 1000, 1000);
 
-    //time_vec_to_file("test_time_vec", time_vec, "");
+    auto probs = Evolution::schrodinger(init_state.fit_to_basis(H.get_basis()), H, time_vec);
 
-    auto probs = Evolution::quantum_master_equation(init_state.fit_to_basis(H.get_basis()), H, time_vec);
-
-    //basis_to_file("basis_check.csv", H.get_basis());
     if (rank == 0) {
         make_probs_files(H, probs, time_vec, H.get_basis(), "rabi_map/original", rank);
     }
-    //make_plot("test_tch.svg", H, probs, time_vec, H.get_basis(), "test_dir");
 
 // ---------------------- graphs ----------------------------
 
@@ -73,7 +53,8 @@ int main(int argc, char** argv) {
                                                       0, 0, 0, 0, 0, 0, 0, 0, atoms_count},
                                                       {atoms_count, 0, 0, 0, 0, 0, 0, 0, 0,
                                                       0, 0, 0, 0, 0, 0, 0, 0, 0,
-                                                      0, 0, 0, 0, 0, 0, 0, 0, atoms_count}};
+                                                      0, 0, 0, 0, 0, 0, 0, 0, atoms_count},
+                                                    {atoms_count, 0, 0, atoms_count}};
                                                       
 
     std::vector<std::vector<size_t>> shapes = {{2, 1, 1},
@@ -82,9 +63,10 @@ int main(int argc, char** argv) {
                                                {4, 1, 1},
                                                {3, 3, 1},
                                                {3, 3, 3},
-                                               {3, 3, 3}};
+                                               {3, 3, 3},
+                                               {2, 2, 1}};
 
-    std::vector<size_t> target_cavity = {1, 2, 3, 3, 4, 26, 26};
+    std::vector<size_t> target_cavity = {1, 2, 3, 3, 4, 26, 26, 3};
 
     std::vector<double> amplitudes = {amplitude,
                                       find_amplitude(amplitude, 2, 1) / 20,
@@ -92,16 +74,16 @@ int main(int argc, char** argv) {
                                       find_amplitude(amplitude, 3, 1) / 35,
                                       find_amplitude(amplitude, 2, 2) / 20,
                                       find_amplitude(amplitude, 3, 6) / 20,
-                                      find_amplitude(amplitude, 3, 6) / 40};
+                                      find_amplitude(amplitude, 3, 6) / 40,
+                                      find_amplitude(amplitude, 2, 2) / 15};
 
-    std::vector<int> times = {16000, 16000, 16000, 16000, 64000, 16000, 16000};
+    std::vector<int> times = {16000, 16000, 16000, 16000, 64000, 16000, 16000, 32000};
 
     for (size_t i = 0; i < shapes.size(); ++i) {
         auto time_vec = linspace(0, times[i], times[i]);
         auto new_amplitude = amplitudes[i];
         CHE_State new_state(grid_configs[i]);
 
-        //new_state.set_n(atoms_count, 0);
         size_t start_cavity = 0;
 
         if (i == 4) {
@@ -110,16 +92,11 @@ int main(int argc, char** argv) {
         for (size_t i = 0; i < atoms_count; i++) {
             new_state.set_atom(1, i, start_cavity);
         }
-        //new_state.set_atom(1, 0, 0);
 
         new_state.reshape(shapes[i][0], shapes[i][1], shapes[i][2]);
         new_state.set_waveguide(new_amplitude, 0);
 
         if (i == 4) {
-            //new_state.set_waveguide(1, 2, 0, 0);
-            //new_state.set_waveguide(2, 1, 0, 0);
-            //new_state.set_waveguide(3, 6, 0, 0);
-            //new_state.set_waveguide(6, 3, 0, 0);
             new_state.set_waveguide(4, 7, 0, 0);
             new_state.set_waveguide(7, 4, 0, 0);
             new_state.set_waveguide(4, 5, 0, 0);
@@ -128,8 +105,14 @@ int main(int argc, char** argv) {
         }
 
         std::string second;
-
         if (i == shapes.size() - 1) {
+            new_state.set_waveguide(0, 2, 0, 0);
+            new_state.set_waveguide(2, 3, 0, 0);
+            new_state.set_waveguide(1, 2, find_amplitude(amplitude, 2, 2) / 15, 0);
+            second = "_not_quadro";
+        }
+
+        if (i == shapes.size() - 2) {
             new_state.set_waveguide(0, 26, amplitude, 0);
             new_state.set_waveguide(26, 0, amplitude, 0);
             std::cout << new_state.get_gamma(0, 26) << std::endl;
@@ -144,22 +127,9 @@ int main(int argc, char** argv) {
 
         H.show();
 
-        /*
-        for (size_t i = 0; i < new_state.get_groups_count(); i++) {
-            for (size_t j = 0; j < new_state.get_groups_count(); j++) {
-                if (i == j) std::cout << 0 << " ";
-                else {
-                    std::cout << std::setw(10) << new_state.get_gamma(i, j).real() << " ";
-                }
-            }
-            std::cout << std::endl;
-        }
-        */
-
-        //H.show();
         std::cout << new_amplitude << std::endl;
 
-        auto probs = Evolution::quantum_master_equation(new_init_state.fit_to_basis(H.get_basis()), H, time_vec);
+        auto probs = Evolution::schrodinger(new_init_state.fit_to_basis(H.get_basis()), H, time_vec);
 
         if (rank == 0) {
             make_probs_files(H, probs, time_vec, H.get_basis(), "rabi_map/" + make_filename(shapes[i]) + second, rank);

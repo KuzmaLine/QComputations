@@ -241,6 +241,19 @@ void CHE_State::set_waveguide(size_t from_cavity_id, size_t to_cavity_id, double
     }
 }
 
+/*
+void CHE_State::set_waveguide(const Matrix<std::pair<double, double>>& A) {
+    waveguides_ = A;
+    for (size_t from_id = 0; from_id < groups_.size(); from_id++) {
+        auto neighbours = neighbours_[from_id];
+
+        for (const auto to_id: neighbours) {
+            waveguides_[from_id][to_id] = std::make_pair(amplitude, length);
+        }
+    }
+}
+*/
+
 void CHE_State::reshape(size_t x_size, size_t y_size, size_t z_size) {
     assert(x_size * y_size * z_size == groups_.size());
 

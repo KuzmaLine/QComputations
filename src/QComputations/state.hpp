@@ -159,7 +159,7 @@
 
             // TMP realizations
             void set_waveguide(double amplitude, double length);
-            void set_waveguide(const Matrix<std::pair<double, double>>& A) {waveguides_ = A;}
+            //void set_waveguide(const Matrix<std::pair<double, double>>& A);
             void set_waveguide(size_t from_cavity_id, size_t to_cavity_id, double amplitude, double length = QConfig::instance().waveguides_length());
             // set entire state in cavity with id = id
             void set_state(CavityId id, const CHE_State& state);
