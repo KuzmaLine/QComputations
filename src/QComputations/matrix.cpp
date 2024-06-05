@@ -59,7 +59,7 @@ Matrix<COMPLEX> Matrix<COMPLEX>::operator* (const Matrix<COMPLEX>& A) const {
 
 template<>
 void Matrix<double>::write_to_csv_file(const std::string& filename) const {
-    #ifdef ENABLE_CLUSTER
+#ifndef ENABLE_CLUSTER
     std::ofstream file(filename);
 
     size_t max_number_size = QConfig::instance().csv_max_number_size();
@@ -154,7 +154,7 @@ void Matrix<double>::write_to_csv_file(const std::string& filename) const {
 
 template<>
 void Matrix<COMPLEX>::write_to_csv_file(const std::string& filename) const {
-#ifdef ENABLE_CLUSTER
+#ifndef ENABLE_CLUSTER
 
     std::ofstream file(filename);
 
