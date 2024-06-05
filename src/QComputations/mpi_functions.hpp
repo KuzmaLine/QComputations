@@ -3,8 +3,6 @@
 #ifdef ENABLE_MPI
 
 #include <mpi.h>
-//#include </home/kuzmaline/.local/include/mpi.h>
-//#include </usr/lib/x86_64-linux-gnu/openmpi/include/mpi.h>
 #include <iostream>
 #include <complex>
 #include "state.hpp"
@@ -24,21 +22,6 @@ namespace {
 }
 
 namespace QComputations {
-
-// COMMAND LIST
-namespace COMMAND {
-    constexpr int COMMANDS_COUNT = 11;
-
-    enum COMMANDS { STOP = 100, GENERATE_H = 101, GENERATE_H_FUNC = 102,
-                    SCHRODINGER = 103, QME = 104, CANNON_MULTIPLY = 105,
-                    MATVEC = 106, MATNUM = 107, EXIT_FROM_FUNC = 108,
-                    DIM_MULTIPLY = 109, P_GEMM_MULTIPLY = 110};
-    // UNUSED, DELETE
-    namespace DIM {
-        constexpr int ROW = 0;
-        constexpr int COL = 1;
-    }
-}
 
 namespace mpi {
     struct MPI_Data {
@@ -61,7 +44,6 @@ namespace mpi {
 
     std::vector<COMPLEX> bcast_vector_complex(const std::vector<COMPLEX>& v = {});
     std::vector<double> bcast_vector_double(const std::vector<double>& v = {});
-    //CHE_State bcast_state(const CHE_State& state = CHE_State());
 
 
 #ifdef ENABLE_CLUSTER
@@ -81,7 +63,6 @@ namespace mpi {
                 std::cout << std::endl;
             }
 
-            //blacs_barrier(&ctxt, "All");
             MPI_Barrier(MPI_COMM_WORLD);
         }
     }
@@ -161,65 +142,6 @@ namespace mpi {
                              ILP_TYPE NB, ILP_TYPE nrows, ILP_TYPE ctxt, ILP_TYPE root_id);
 
 #endif
-
-    // Stay to wait all MPI process until root process give commands. MPI_Init included
-    void run_mpi_slaves(const std::map<int, std::vector<MPI_Data>>& data = {}); 
-
-    // Stop MPI. MPI_Finalize() included
-    void stop_mpi_slaves();
-
-    /*
-    void Cannon_Multiply(const Matrix<COMPLEX>& A, const Matrix<COMPLEX>& B, Matrix<COMPLEX>& C, int grid_size, int block_size, int n);
-    void Cannon_Multiply(const Matrix<double>& A, const Matrix<double>& B, Matrix<double>& C, int grid_size, int block_size, int n);
-    void Cannon_Multiply(const Matrix<int>& A, const Matrix<int>& B, Matrix<int>& C, int grid_size, int block_size, int n);
-    */
-
-   template<typename T>
-   void Cannon_Multiply(const Matrix<T>& A, const Matrix<T>& B, Matrix<T>& C, int grid_size, int block_size, int n);
-
-   template<>
-   void Cannon_Multiply<COMPLEX>(const Matrix<COMPLEX>& A, const Matrix<COMPLEX>& B, Matrix<COMPLEX>& C, int grid_size, int block_size, int n);
-   template<>
-   void Cannon_Multiply<int>(const Matrix<int>& A, const Matrix<int>& B, Matrix<int>& C, int grid_size, int block_size, int n);
-   template<>
-   void Cannon_Multiply<double>(const Matrix<double>& A, const Matrix<double>& B, Matrix<double>& C, int grid_size, int block_size, int n);
-
-   template<typename T>
-   void Dim_Multiply(const Matrix<T>& A, const Matrix<T>& B, Matrix<T>& C);
-
-   template<>
-   void Dim_Multiply<COMPLEX>(const Matrix<COMPLEX>& A, const Matrix<COMPLEX>& B, Matrix<COMPLEX>& C);
-
-    /*
-    template<typename T, typename V>
-    std::vector<V> MPI_Runge_Kutt_4(const std::vector<T>& x, const V& y0,
-                                    std::function<V(T, V)> f, int* proc_group,
-                                    MPI_Comm comm) {
-        int rank, numproc;
-        MPI_Comm_rank(comm, &rank);
-        MPI_Comm_size(comm, &numproc);
-        size_t len = x.size();
-        std::vector<V> y(len);
-        y[0] = y0;
-
-        for (size_t i = 0; i < len - 1; i++) {
-            if (i % (len / 100) == 0) std::cout << i << " " << len << std::endl;
-            //std::cout << i << " " << y[i] << " ";
-            T h = x[i + 1] - x[i];
-
-            if (rank <= proc_group[0]) V k1 = f(x[i], y[i]);
-            if (proc_group[0] < rank and rank <= proc_group[1]) V k2 = f(x[i] + h / 2.0, y[i] + k1 * (h / 2.0));
-            if (proc_group[1] < rank and rank <= proc_group[2]) V k3 = f(x[i] + h / 2.0, y[i] + k2 * (h / 2.0));
-            if (proc_group[2] < rank and rank <= proc_group[3]) V k4 = f(x[i] + h, y[i] + k3 * h);
-            
-            y[i + 1] = y[i]  + (k1 + (k2 + k3) * 2 + k4) * (h / 6.0);
-            //std::cout << h << " " << y[i + 1] << " " << 2 * x[i + 1] << std::endl;
-            MPI_Barrier(MPI_COMM_WORLD);
-        }
-
-        return y;
-    }
-    */
 
 #ifdef ENABLE_CLUSTER
 

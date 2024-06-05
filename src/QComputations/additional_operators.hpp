@@ -73,11 +73,6 @@ std::vector<T> operator/(const std::vector<T>& v, T num) {
     return answer;
 }
 
-/*
-template<typename T>
-std::vector<T> operator/(T num, const std::vector<T>& v) { return v * num; }
-*/
-
 // vector - vector
 template<typename T>
 std::vector<T> operator-(const std::vector<T>& a, const std::vector<T>& b) {
@@ -150,22 +145,3 @@ struct std::hash<std::pair<QComputations::Cavity_State, QComputations::Cavity_St
         return h1 ^ (h2 << 1);
     }
 };
-
-/*
-template<>
-struct std::hash<QComputations::State> {
-    size_t operator()(const QComputations::State& state) const {
-        return state.hash();
-    }
-};
-
-template<>
-struct std::hash<std::pair<QComputations::State, QComputations::State>> {
-    size_t operator()(const std::pair<QComputations::State, QComputations::State>& p) const {
-        std::hash<QComputations::State> state_hash;
-        size_t h1 = state_hash(p.first);
-        size_t h2 = state_hash(p.second);
-        return h1 ^ (h2 << 1);
-    }
-};
-*/

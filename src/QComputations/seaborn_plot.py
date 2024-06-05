@@ -43,38 +43,6 @@ if (format == "gif"):
     dir_list.sort()
     probs = read_files(dir_list[0])
 
-    '''
-    def init():
-        global probs
-        sns.lineplot(data=probs)
-        plt.title(dir_list[0])
-        plt.legend(loc='upper right')
-        plt.grid()
-
-    index = 1
-    def update(frame):
-        global dir_list
-        global index
-        global config
-
-        probs = read_files(dir_list[index % int(config.get('frames'))])
-        fig = plt.figure(figsize=(int(config.get("width")), int(config.get("height"))))
-        sns.lineplot(data=probs)
-        plt.title(dir_list[index % int(config.get('frames'))])
-        plt.legend(loc='upper right')
-        plt.grid()
-        index += 1
-
-    ani = FuncAnimation(fig, update, frames=int(config.get("frames")), init_func=init, interval=int(config.get("interval")))
-
-    def save_animation(filename):
-        plt.figure(figsize=(int(config.get("width")), int(config.get("height"))))
-        ani.save(filename)
-
-    with parallel_backend(backend="loky"):
-        Parallel()(delayed(save_animation)(config.get("filename")))
-    '''
-
     def save_frame(filename, frame_data):
         fig = plt.figure(figsize=(int(config.get("width")), int(config.get("height"))))
         sns.lineplot(data=frame_data)
@@ -98,7 +66,6 @@ if (format == "gif"):
 
     for dir_path in dir_list:
         os.remove(f"{dir_path}.png")
-    #plt.show()
 elif (format == "ready_gif"):
     dirs = config.get("dirs")
     dir_list = []

@@ -24,29 +24,24 @@ namespace Evolution {
     Matrix<COMPLEX> create_A_destroy(const std::set<Basis_State>& basis, size_t cavity_id);
     Matrix<COMPLEX> create_A_create(const std::set<Basis_State>& basis, size_t cavity_id);
 
-    // Create rho of pure state (rho = |ksi><ksi|)
+    // Создать матрицу плотности чистого состояния
     Rho create_init_rho(const std::vector<COMPLEX>& init_state);
 
-    // Solve Schrodinger equation (dont't work with leaks or gains of photons in cavities)
-    // Return Matrix<double> where row(i) - state(basis[i]), cols(j) - probability in time[j]
+    // Уравнение Шредингера
+    // Return Matrix<double> где row(i) - state(basis[i]), cols(j) - вероятность в time[j]
     Probs schrodinger(const State<Basis_State>& init_state, Hamiltonian& H, const std::vector<double>& time_vec);
 
-    // Solve Schrodinger equation with rho. USE ONLY if you have leaks or gains of photons in cavities
-    // because it's too slow
+    // Решает основное квантовое уравнение, использовать только при наличии фактора декогерентности из-за плохого ускорения
     // Return Matrix<double> where row(i) - state(basis[i]), cols(j) - probability in time[j]
-    // !!!!!! If you get incorrect probs - decrease step in time_vec !!!!!!!!
-    //Probs quantum_master_equation(const std::vector<COMPLEX>& init_state,
-    //                              Hamiltonian& H,
-    //                              const std::vector<double>& time_vec,
-    //                              bool is_full_rho = false);
 
+    // !!!!!! Если получаете некорректные вероятности (улетающие в бесконечность) - уменьшите шаг во времени !!!!!!!!
     Probs quantum_master_equation(const State<Basis_State>& init_state,
                             Hamiltonian& H,
                             const std::vector<double>& time_vec,
                             bool is_full_rho = false);
 
-    // Solve quantum master equation with different leaks of photons from cavity and return vector of time, when probability
-    // zero state equal target
+    // Решает основное квантовое уравнение с разными интенсивности улёта фотона, и строит по ним вектор времени, 
+    // когда вероятность состояния всех нулей становится равно target
     std::vector<double> scan_gamma(const std::vector<COMPLEX>& init_state,
                                    Hamiltonian& H,
                                    size_t cavity_id,
@@ -62,15 +57,16 @@ namespace Evolution {
     using BLOCKED_Probs = BLOCKED_Matrix<double>;
     using BLOCKED_Rho = BLOCKED_Matrix<COMPLEX>;
 
+    // Объединяет все вероятности в конкретную группу, то есть, если мы рассматриваем состояния только конкретной группы.
     std::pair<BLOCKED_Probs, std::set<Basis_State>> probs_to_group_probs(const BLOCKED_Probs& probs,
                                                 const std::set<Basis_State>& basis, size_t group_id);
 
+    // Другое название probs_to_group_probs
     std::pair<BLOCKED_Probs, std::set<Basis_State>> probs_to_cavity_probs(const BLOCKED_Probs& probs,
                                                 const std::set<Basis_State>& basis, size_t cavity_id);
 
     BLOCKED_Rho create_BLOCKED_init_rho(ILP_TYPE ctxt, const std::vector<COMPLEX>& init_state);
 
-    //BLOCKED_Probs schrodinger(const std::vector<COMPLEX>& init_state, BLOCKED_Hamiltonian& H, const std::vector<double>& time_vec);
     BLOCKED_Probs schrodinger(const State<Basis_State>& init_state, BLOCKED_Hamiltonian& H, const std::vector<double>& time_vec);
 
     BLOCKED_Probs quantum_master_equation(const std::vector<COMPLEX>& init_state,
@@ -82,14 +78,6 @@ namespace Evolution {
                                 BLOCKED_Hamiltonian& H,
                                 const std::vector<double>& time_vec,
                                 bool is_full_rho = false);
-
-    // РУДИМЕНТ
-    /*
-    Probs Parallel_QME(const std::vector<COMPLEX>& init_state,
-                       Hamiltonian& H,
-                       const std::vector<double>& time_vec,
-                       bool is_full_rho = false);
-    */
 
     std::vector<double> scan_gamma(const std::vector<COMPLEX>& init_state,
                             BLOCKED_Hamiltonian& H,

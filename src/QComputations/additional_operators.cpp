@@ -23,7 +23,6 @@ Matrix<COMPLEX> operator* (const Matrix<COMPLEX>& A, const Matrix<double>& B) {
     for (size_t i = 0; i < A.n(); i++) {
         for (size_t j = 0; j < B.m(); j++) {
             for (size_t k = 0; k < A.m(); k++) {
-                //res.mass_[res.get_index(i, j)] += std::conj(mass_[this->get_index(i, k)]) * A[k][j];
                 res[i][j] += A[i][k] * B[k][j];
             }
         }

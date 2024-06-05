@@ -45,30 +45,28 @@ void print_state_biguint(const CHE_State& state);
 std::vector<double> FROM_double_TO_vector(double* A, lapack_int n);
 Matrix<COMPLEX> FROM_lapack_complex_double_TO_Matrix(lapack_complex_double* A, lapack_int n, lapack_int m);
 
-// start = 0, end = 4, step = 2 -> {0, 2, 4}
-//std::vector<double> make_timeline(double start, double end, double step);
-
 template<typename T>
-std::vector<double> linspace(T start_in, T end_in, int num_in)
-{
-  std::vector<double> linspaced;
-  double start = static_cast<double>(start_in);
-  double end = static_cast<double>(end_in);
-  double num = static_cast<double>(num_in);
-  if (num == 0) { return linspaced; }
-  if (num == 1)
-    {
-      linspaced.push_back(start);
-      return linspaced;
+std::vector<double> linspace(T start_in, T end_in, int num_in) {
+    std::vector<double> linspaced;
+    double start = static_cast<double>(start_in);
+    double end = static_cast<double>(end_in);
+    double num = static_cast<double>(num_in);
+
+    if (num == 0) { return linspaced; }
+
+    if (num == 1) {
+        linspaced.push_back(start);
+        return linspaced;
     }
-  double delta = (end - start) / (num - 1);
-  for(int i=0; i < num-1; ++i)
-    {
-      linspaced.push_back(start + delta * i);
+
+    double delta = (end - start) / (num - 1);
+    for(long i = 0; i < num - 1; ++i) {
+        linspaced.push_back(start + delta * i);
     }
-  linspaced.push_back(end); // I want to ensure that start and end
-                            // are exactly the same as the input
-  return linspaced;
+
+    linspaced.push_back(end); 
+
+    return linspaced;
 }
 
 // Convert state to 10 numerical system
@@ -109,10 +107,6 @@ COMPLEX scalar_product(const std::vector<COMPLEX>& a, const std::vector<COMPLEX>
 double norm(const std::vector<COMPLEX>& v);
 
 void make_rank_map(size_t size, int rank, int world_size, size_t& start_col, size_t& count);
-
-//std::string make_state_regex_pattern(const std::string& format,
-//                                     bool is_freq_display = QConfig::instance().is_freq_display(),
-//                                     bool is_sequence = QConfig::instance().is_sequence_state());
 
 // ------------------------------- template functions --------------------------------------
 
@@ -197,8 +191,6 @@ T get_elem_from_set(const std::set<T>& st, size_t index) {
     return *it;
 }
 
-// На соплях работает, сука, не трогать
-// Need optimization
 template<typename T, typename V>
 std::vector<V> Runge_Kutt_4(const std::vector<T>& x, const V& y0, std::function<V(T, V)> f) {
     size_t len = x.size();
@@ -206,8 +198,6 @@ std::vector<V> Runge_Kutt_4(const std::vector<T>& x, const V& y0, std::function<
     y[0] = y0;
 
     for (size_t i = 0; i < len - 1; i++) {
-        //if (i % (len / 100) == 0) std::cout << i << " " << len << std::endl;
-        //std::cout << i << " " << y[i] << " ";
         T h = x[i + 1] - x[i];
 
         V k1 = f(x[i], y[i]);
@@ -215,7 +205,6 @@ std::vector<V> Runge_Kutt_4(const std::vector<T>& x, const V& y0, std::function<
         V k3 = f(x[i] + h / 2.0, y[i] + k2 * (h / 2.0));
         V k4 = f(x[i] + h, y[i] + k3 * h);
         y[i + 1] = y[i]  + (k1 + (k2 + k3) * 2 + k4) * (h / 6.0);
-        //std::cout << h << " " << y[i + 1] << " " << 2 * x[i + 1] << std::endl;
     }
 
     return y;
@@ -287,22 +276,6 @@ std::vector<T> f_vector(std::function<T(T)> f, const std::vector<T>& x) {
     }
 
     return res;
-}
-
-// Рудимент - удалить
-template<typename T>
-void Multiply_Matrix (const Matrix<T>& A, const Matrix<T>& B, Matrix<T>& C) {
-    assert(A.m() == B.n());
-    for (size_t i = 0; i < A.n(); i++) {
-        for (size_t j = 0; j < B.m(); j++) {
-            T res(0);
-            for (size_t k = 0; k < A.m(); k++) {
-                res += A[i][k] * B[k][j];
-            }
-
-            C[i][j] = res;
-        }
-    }
 }
 
 // Не трогать!!!!!

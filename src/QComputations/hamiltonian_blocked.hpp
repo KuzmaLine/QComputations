@@ -51,7 +51,6 @@ class BLOCKED_Hamiltonian {
             return eigenvectors_;
         }
 
-        //COMPLEX operator() (size_t i, size_t j) const { return H_(i, j); }
         void show(size_t width = QConfig::instance().width(), ILP_TYPE root_id = mpi::ROOT_ID) const { H_.show(width, root_id); }
         void print_distributed(const std::string& name) const { H_.print_distributed(name); }
         Matrix<COMPLEX> get_local_matrix() const { return H_.get_local_matrix(); }
@@ -65,26 +64,6 @@ class BLOCKED_Hamiltonian {
         std::vector<std::pair<double, BLOCKED_Matrix<COMPLEX>>> decoherence_;
         CHE_State grid_;
 };
-
-/*
-
-class BLOCKED_H_TC : public BLOCKED_Hamiltonian {
-    public:
-        explicit BLOCKED_H_TC(ILP_TYPE ctxt, const State& state);
-};
-
-class BLOCKED_H_JC : public BLOCKED_Hamiltonian {
-    public:
-        explicit BLOCKED_H_JC(ILP_TYPE ctxt, const State& state);
-};
-
-class BLOCKED_H_by_func: public BLOCKED_Hamiltonian {
-    public:
-        explicit BLOCKED_H_by_func(ILP_TYPE ctxt, size_t n, std::function<COMPLEX(size_t, size_t)> func);
-    private:
-        std::function<COMPLEX(size_t, size_t)> func_;
-};
-*/
 
 template<typename StateType>
 class BLOCKED_H_by_Operator: public BLOCKED_Hamiltonian {
@@ -157,13 +136,6 @@ class BLOCKED_H_TCH : public BLOCKED_H_by_Operator<CHE_State> {
     public:
         explicit BLOCKED_H_TCH(ILP_TYPE ctxt, const State<CHE_State>& state);
 };
-
-/*
-class BLOCKED_H_TCH_EXC: BLOCKED_Hamiltonian {
-    public:
-        explicit BLOCKED_H_TCH_EXC(ILP_TYPE ctxt, const EXC_State& state);
-};
-*/
 
 } // namespace QComputations
 

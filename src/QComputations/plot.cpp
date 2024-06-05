@@ -210,99 +210,11 @@ void time_vec_to_file(const std::string& filename, const std::vector<double>& ti
     file.close();
 }
 
-/*
-void basis_to_file(const std::string& filename, const std::set<Basis_State>& basis, std::string dir) {
-    check_dir(dir);
-
-    ILP_TYPE rank, world_size;
-    MPI_Comm_rank(MPI_COMM_WORLD, &rank);
-    MPI_Comm_size(MPI_COMM_WORLD, &world_size);
-
-    MPI_File file;
-
-    auto filepath = dir + "/" + filename;
-    MPI_File_open(MPI_COMM_WORLD, filepath.c_str(), MPI_MODE_CREATE | MPI_MODE_WRONLY | MPI_MODE_APPEND,
-                  MPI_INFO_NULL, &file);
-
-    for (size_t i = 0; i < basis.size(); i++) {
-        std::string state_str = get_elem_from_set<Basis_State>(basis, i).to_string();
-
-        if (i != basis.size() - 1) {
-            state_str += ",";
-        }
-
-        MPI_File_write(file, state_str.c_str(), state_str.length(), MPI_CHAR, MPI_STATUS_IGNORE);
-
-        if (i == basis.size() - 1) {
-            std::string tmp = "\n";
-            MPI_File_write(file, tmp.c_str(), tmp.length(), MPI_CHAR, MPI_STATUS_IGNORE);
-        }
-    }
-
-    MPI_File_close(&file);
-}
-
-void time_vec_to_file(const std::string& filename, const std::vector<double>& time_vec, std::string dir) {
-    check_dir(dir);
-
-    ILP_TYPE rank, world_size;
-    MPI_Comm_rank(MPI_COMM_WORLD, &rank);
-    MPI_Comm_size(MPI_COMM_WORLD, &world_size);
-
-    MPI_File file;
-
-    auto filepath = dir + "/" + filename;
-    MPI_File_open(MPI_COMM_WORLD, filepath.c_str(), MPI_MODE_CREATE | MPI_MODE_WRONLY | MPI_MODE_APPEND,
-                  MPI_INFO_NULL, &file);
-
-    auto num_length = QConfig::instance().csv_max_number_size();
-    auto accuracy = QConfig::instance().csv_num_accuracy();
-
-    for (size_t i = 0; i < time_vec.size(); i++) {
-        std::string num_str = to_string_double_with_precision(time_vec[i], accuracy, num_length);
-
-        if (i != time_vec.size() - 1) {
-            num_str += ",";
-        }
-
-        MPI_File_write(file, num_str.c_str(), num_str.length(), MPI_CHAR, MPI_STATUS_IGNORE);
-
-        if (i == time_vec.size() - 1) {
-            std::string tmp = "\n";
-            MPI_File_write(file, tmp.c_str(), tmp.length(), MPI_CHAR, MPI_STATUS_IGNORE);
-        }
-    }
-
-    MPI_File_close(&file);
-}
-*/
-
 void probs_to_file(const std::string& filename, const Evolution::BLOCKED_Probs& probs, std::string dir, ILP_TYPE main_rank) {
     check_dir(dir, main_rank);
     auto probs_hermit = probs.hermit();
     probs_hermit.write_to_csv_file(dir + "/" + filename);
 }
-
-/*
-void plot_from_files(const std::string& plotname,
-                     std::string dir,
-                     const std::string& python_script_path) {
-    check_dir(dir);
-
-    ILP_TYPE rank, world_size;
-    MPI_Comm_rank(MPI_COMM_WORLD, &rank);
-    MPI_Comm_size(MPI_COMM_WORLD, &world_size);
-
-    MPI_Barrier(MPI_COMM_WORLD);
-    if (rank == mpi::ROOT_ID) {
-        std::cout << "COMMAND_GIVE\n";
-        std::string command = std::string("$SEABORN_PLOT") + " " + dir + " " + plotname + " " + std::to_string(QConfig::instance().fig_width()) + " " + std::to_string(QConfig::instance().fig_height());
-        std::system(command.c_str());
-    }
-
-    MPI_Barrier(MPI_COMM_WORLD);
-}
-*/
 
 void make_probs_files(const BLOCKED_Hamiltonian& H,
                const Evolution::BLOCKED_Probs& probs,
@@ -317,24 +229,6 @@ void make_probs_files(const BLOCKED_Hamiltonian& H,
     time_vec_to_file("time.csv", time_vec, dir, main_rank);
     probs_to_file("probs.csv", probs, dir, main_rank);
 }
-
-/*
-void make_plot(const std::string& plotname,
-               const BLOCKED_Hamiltonian& H,
-               const Evolution::BLOCKED_Probs& probs,
-               const std::vector<double>& time_vec,
-               const std::set<Basis_State>& basis,
-               std::string dir) {
-    make_probs_files(H, probs, time_vec, basis, dir);
-    plot_from_files(plotname, dir);
-
-    ILP_TYPE rank;
-    MPI_Comm_rank(MPI_COMM_WORLD, &rank);
-    if (rank == mpi::ROOT_ID) {
-        fs::remove_all(dir);
-    }
-}
-*/
 
 #endif
 #endif
@@ -386,7 +280,6 @@ void matplotlib::probs_to_plot(const Evolution::Probs& probs,
                                const std::vector<double>& time_vec,
                                const std::set<Basis_State>& basis,
                                std::vector<std::map<std::string, std::string>> keywords) {
-    //std::cout << "HERE\n";
     size_t index = 0;
     for (const auto& state: basis) {
         if (keywords.size() <= index) {
@@ -394,14 +287,8 @@ void matplotlib::probs_to_plot(const Evolution::Probs& probs,
             keywords.emplace_back(tmp);
         }
         keywords[index]["label"] = state.to_string();
-        /*
-        for (const auto& p: keywords[index]) {
-            std::cout << p.first << " " << p.second << std::endl;
-        }
-        */
         plt::plot(time_vec, probs.row(index), keywords[index]);
         index++;
-        //plt::plot(time_vec, state_probs);
     }
     plt::legend();
 }
@@ -410,7 +297,6 @@ void matplotlib::probs_to_plot(const Evolution::Probs& probs,
                                const std::vector<double>& time_vec,
                                const std::vector<std::string>& basis_str,
                                std::vector<std::map<std::string, std::string>> keywords) {
-    //std::cout << "HERE\n";
     size_t index = 0;
     for (const auto& state_str: basis_str) {
         if (keywords.size() <= index) {
@@ -418,62 +304,19 @@ void matplotlib::probs_to_plot(const Evolution::Probs& probs,
             keywords.emplace_back(tmp);
         }
         keywords[index]["label"] = state_str;
-        /*
-        for (const auto& p: keywords[index]) {
-            std::cout << p.first << " " << p.second << std::endl;
-        }
-        */
         plt::plot(time_vec, probs.row(index), keywords[index]);
         index++;
-        //plt::plot(time_vec, state_probs);
     }
     plt::legend();
 }
 
 #ifdef ENABLE_MPI
 #ifdef ENABLE_CLUSTER
-/*
-void matplotlib::probs_in_cavity_to_plot(const Evolution::BLOCKED_Probs& probs_start,
-                                const std::vector<double>& time_vec,
-                                const std::set<Basis_State>& basis_start,
-                                size_t cavity_id,
-                                std::vector<std::map<std::string, std::string>> keywords) {
-    ILP_TYPE rank;
-    MPI_Comm_rank(MPI_COMM_WORLD, &rank);
-
-    MPI_Barrier(MPI_COMM_WORLD);
-    auto p = Evolution::probs_to_cavity_probs(probs_start, basis_start, cavity_id);
-    auto probs = p.first;
-    auto basis = p.second;
-
-    size_t index = 0;
-    for (const auto& state: basis) {
-        if (rank == mpi::ROOT_ID) {
-            if (keywords.size() <= index) {
-                std::map<std::string, std::string> tmp;
-                keywords.emplace_back(tmp);
-            }
-            keywords[index]["label"] = state.to_string();
-        }
-
-        std::vector<double> probs_vec(time_vec.size());
-        for (size_t i = 0; i < time_vec.size(); i++) {
-            probs_vec[i] = probs.get(index, i);
-        }
-
-        if (rank == mpi::ROOT_ID) plt::plot(time_vec, probs_vec, keywords[index]);
-        index++;
-        //plt::plot(time_vec, state_probs);
-    }
-    if (rank == 0) plt::legend();
-}
-*/
 
 void matplotlib::probs_to_plot(const Evolution::BLOCKED_Probs& probs, 
                                const std::vector<double>& time_vec,
                                const std::set<Basis_State>& basis,
                                std::vector<std::map<std::string, std::string>> keywords) {
-    //std::cout << "HERE\n";
     ILP_TYPE rank;
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
     
@@ -485,11 +328,6 @@ void matplotlib::probs_to_plot(const Evolution::BLOCKED_Probs& probs,
                 keywords.emplace_back(tmp);
             }
             keywords[index]["label"] = state.to_string();
-            /*
-            for (const auto& p: keywords[index]) {
-                std::cout << p.first << " " << p.second << std::endl;
-            }
-            */
         }
 
         std::vector<double> probs_vec(time_vec.size());
@@ -499,7 +337,6 @@ void matplotlib::probs_to_plot(const Evolution::BLOCKED_Probs& probs,
 
         if (rank == mpi::ROOT_ID) plt::plot(time_vec, probs_vec, keywords[index]);
         index++;
-        //plt::plot(time_vec, state_probs);
     }
     if (rank == 0) plt::legend();
 }
@@ -509,7 +346,6 @@ void matplotlib::probs_to_plot(const Evolution::BLOCKED_Probs& probs,
                                const std::vector<double>& time_vec,
                                const std::vector<std::string>& basis_str,
                                std::vector<std::map<std::string, std::string>> keywords) {
-    //std::cout << "HERE\n";
     ILP_TYPE rank;
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
     
@@ -521,11 +357,6 @@ void matplotlib::probs_to_plot(const Evolution::BLOCKED_Probs& probs,
                 keywords.emplace_back(tmp);
             }
             keywords[index]["label"] = state_str;
-            /*
-            for (const auto& p: keywords[index]) {
-                std::cout << p.first << " " << p.second << std::endl;
-            }
-            */
         }
 
         std::vector<double> probs_vec(time_vec.size());
@@ -535,7 +366,6 @@ void matplotlib::probs_to_plot(const Evolution::BLOCKED_Probs& probs,
 
         if (rank == mpi::ROOT_ID) plt::plot(time_vec, probs_vec, keywords[index]);
         index++;
-        //plt::plot(time_vec, state_probs);
     }
     if (rank == 0) plt::legend();
 }
@@ -565,13 +395,8 @@ void matplotlib::rho_probs_to_plot(const Evolution::Probs& probs,
             } else {
                 keywords[index]["label"] = state_from.to_string() + " -> " + state_to.to_string();
             }
-            /*
-            for (const auto& p: keywords[index]) {
-                std::cout << p.first << " " << p.second << std::endl;
-            }
-            */
+
             plt::plot(time_vec, probs.row(index), keywords[index]);
-            //plt::plot(time_vec, state_probs);
             to++;
         }
         from++;
@@ -596,64 +421,12 @@ void matplotlib::rho_diag_to_plot(const Evolution::Probs& probs,
         }
         
         keywords[index]["label"] = state.to_string();
-        /*
-        for (const auto& p: keywords[index]) {
-            std::cout << p.first << " " << p.second << std::endl;
-        }
-        */
         plt::plot(time_vec, probs.row(index), keywords[index]);
-        //plt::plot(time_vec, state_probs);
         state_index++;
     }
 
     plt::legend();
 }
-
-/*
-void matplotlib::rho_subdiag_to_plot(const Evolution::Probs& probs,
-                                     const std::vector<double>& time_vec,
-                                     const std::set<Basis_State>& basis,
-                                     std::vector<std::map<std::string, std::string>> keywords) {
-    size_t from = 0;
-    size_t to = 0;
-    size_t basis_size = basis.size();
-    for (const auto& state_from: basis) {
-        if (state_from.get_index() == 0) {
-            from++;
-            continue;
-        }
-
-        for (const auto& state_to: basis) {
-            size_t index = from * basis_size + to;
-            if (state_to.get_index() == 0 or from >= to or probs[index][0] == -1) {
-                to++;
-                continue;
-            }
-            if (keywords.size() <= index) {
-                while(keywords.size() <= index) {
-                    std::map<std::string, std::string> tmp;
-                    keywords.emplace_back(tmp);
-                }
-            }
-
-            keywords[index]["label"] = state_from.to_string() + " -> " + state_to.to_string();
-*/
-            /*
-            for (const auto& p: keywords[index]) {
-                std::cout << p.first << " " << p.second << std::endl;
-            }
-            */
-/*
-            plt::plot(time_vec, probs.row(index), keywords[index]);
-            //plt::plot(time_vec, state_probs);
-            to++;
-        }
-        from++;
-        to = 0;
-    }
-    plt::legend();
-}
-*/
 
 void matplotlib::show(bool is_block) {
     plt::show(is_block);

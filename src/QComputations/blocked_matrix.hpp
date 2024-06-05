@@ -35,7 +35,6 @@ class BLOCKED_Matrix {
         explicit BLOCKED_Matrix(ILP_TYPE ctxt, MATRIX_TYPE type, size_t n, size_t m, T value, size_t NB = 0, size_t MB = 0);
         explicit BLOCKED_Matrix(ILP_TYPE ctxt, MATRIX_TYPE type, size_t n, size_t m, size_t NB = 0, size_t MB = 0);
         explicit BLOCKED_Matrix(ILP_TYPE ctxt, MATRIX_TYPE type, const Matrix<T>& A, size_t NB = 0, size_t MB = 0);
-        //explicit BLOCKED_Matrix(ILP_TYPE ctxt, MATRIX_TYPE type, const Matrix<T>& A, ILP_TYPE root_id, ILP_TYPE NB);
 
         // Make dims for multiply matrix
         explicit BLOCKED_Matrix(const BLOCKED_Matrix<T>& A, const BLOCKED_Matrix<T>& B);

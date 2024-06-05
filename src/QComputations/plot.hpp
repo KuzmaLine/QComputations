@@ -64,9 +64,9 @@ void make_plot(const std::string& plotname,
 
 // NEED REWORK
 
-// !!!!!!!!!!!!!! ЕСТЬ ОДНА ЗАЛУПА. ПРИ ИСПОЛЬЗОВАНИИ Parallel_QME команду make_figure 
-// !!!!!!!!!!!!!! использовать только ДО ВЫЗОВА Parallel_QME, иначе free invalid pointer по причине - хз,
-// !!!!!!!!!!!!!! интерпретатор питона тупа шлёт нахер.
+// !!!!!!!!!!!!!! Использовать команду make_figure 
+// !!!!!!!!!!!!!! использовать только ДО ВЫЗОВА Parallel_QME, иначе free invalid pointer по неизвестной причине,
+// !!!!!!!!!!!!!! интерпретатор питона жалуется непонятно на что
 namespace matplotlib {
     void make_figure(size_t x = 0, size_t y = 0, size_t dpi = QConfig::instance().dpi());
     void probs_to_plot(const Evolution::Probs& probs,

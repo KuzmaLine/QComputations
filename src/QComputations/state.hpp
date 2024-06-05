@@ -20,10 +20,6 @@
             return amplitude * std::exp(std::complex<double>(0, -1) * length * w_ph / QConfig::instance().h());
         }
 
-        const std::vector<std::string> subscript_numbers = {
-            "\u2080", "\u2081", "\u2082", "\u2083", "\u2084", "\u2085", "\u2086",
-            "\u2087", "\u2088", "\u2089"};
-
         std::vector<size_t> split_to_groups(size_t system_size, size_t parts_count) {
             assert(system_size % parts_count == 0);
 
@@ -40,32 +36,6 @@
     }
 
     std::vector<std::vector<CavityId>> update_neighbours(size_t x_size, size_t y_size, size_t z_size = 1);
-
-    const std::string PHOTONS_STR = "$N";
-    const std::string ATOMS_STR = "$M";
-    const std::string FREQ_STR = "$W";
-    const std::string DEL_STR = "$!";
-
-    /*
-    Инструкция к строковому формату.
-    $N - место задания фотонов
-    $M - место задания атомов
-    $W - место отображения частот перехода с 1 уровня на другой, если QConfig::instance().is_freq_display() == true
-    $! - разделитель, между состояниями фотонов и атомами (смысл см. в примерах)
-
-    Пример:
-    Для формата |$N>$W$!|$M> примером состояние будет
-    |0>[0-1]|1>[1-2]|2>[0-2]|0112>, то есть,
-    0 фотонов для переход с 0 уровня на 1
-    1 -''- с 1 на 2
-    2 -''- с 0 на 2
-    и состояния атомов 0112
-
-    $W можно опустить, если QConfig::instance().is_freq_display() == false
-
-    В последствии метод to_string() числа переходов с уровня на уровень переделает их в нижние индексы.
-    Метод find_states_in_string() - будет согласно формату искать в строке состояния.
-    */
 
     class Basis_State {
         public:
@@ -97,7 +67,6 @@
                                                                         max_vals_.emplace_back(max_val);}
             bool is_empty() const { return qudits_.size() == 0;}
 
-            //Basis_State operator*(const COMPLEX& c) const { auto res = *this; res.set_coef(this->get_coef() * c); return res;}
             std::string get_info() const { return info_; }
             void set_info(const std::string& str) { info_ = str; }
 
@@ -119,13 +88,9 @@
 
             size_t get_index(const std::set<Basis_State>& basis) const;
 
-            //COMPLEX get_coef() const { return coef_; }
-            //void set_coef(COMPLEX coef) { coef_ = coef; }
-
             void clear() { qudits_.resize(0); max_vals_.resize(0); groups_.resize(0); }
         protected:
             std::string info_;
-            //COMPLEX coef_ = COMPLEX(1, 0);
             std::vector<ValType> qudits_;
             std::vector<ValType> max_vals_;
             std::vector<size_t> groups_;
@@ -133,26 +98,17 @@
 
     class CHE_State: public Basis_State {
         using E_LEVEL = int;
-        //using CavityId = size_t;
         using AtomId = size_t;
 
         public:
             CHE_State() = default;
             CHE_State(const Basis_State& base): Basis_State(base), x_size_(base.get_groups_count()), y_size_(1), z_size_(1), neighbours_(update_neighbours(x_size_, y_size_, z_size_)) {}
-            //CHE_State(size_t x_size = 1, size_t y_size = 1, size_t z_size = 1);
             CHE_State(const CHE_State& state) = default;
             CHE_State(const std::vector<size_t>& grid_config);
-            //explicit CHE_State(const std::string&, const std::string& format = QConfig::instance().state_format(),
-            //            const std::string& del = QConfig::instance().state_delimeter(),
-            //            bool is_freq_display = QConfig::instance().is_freq_display());
 
             size_t x_size() const { return x_size_; }
             size_t y_size() const { return y_size_; }
             size_t z_size() const { return z_size_; }
-
-            // size_t n(CavityId id = 0, E_LEVEL e_from = 0, E_LEVEL e_to = 1) const { return grid_states_[id].n(e_from, e_to); } // get amount of photons in cavity with id = id
-            // void set_n(size_t n, CavityId id = 0, E_LEVEL e_from = 0, E_LEVEL e_to = 1) { grid_states_[id].set_n(n, e_from, e_to); } // set n photons in cavity with id = id
-            // size_t m(CavityId id) const { return grid_states_[id].m(); } // get amount of atoms in cavity with id = id
 
             // change grid shapes
             void reshape(size_t x_size, size_t y_size, size_t z_size);
@@ -169,7 +125,6 @@
 
             size_t cavities_count() const { return groups_.size(); }
             size_t cavity_atoms_count(CavityId id) const { return this->get_group_end(id) - this->get_group_start(id); }
-            //size_t cavity_size(CavityId id) const { return cavity_atoms_count(id) + 1; }
             size_t m(CavityId id) const { return cavity_atoms_count(id); }
             ValType n(CavityId id) const { return qudits_[get_group_start(id)]; }
             void set_n(ValType n, CavityId id) { qudits_[get_group_start(id)] = n; }
@@ -179,11 +134,6 @@
             CHE_State operator[](CavityId cavity_id) const { return CHE_State(this->get_group(cavity_id)); }
 
             CavityId get_index_of_cavity(size_t x, size_t y = 0, size_t z = 0) const { return z * y_size_ * x_size_ + y * x_size_ + x; }
-            
-            // Рудимент
-            // size_t get_index() const;
-            // void set_term(size_t atom_index, double term, CavityId cavity_id) { grid_states_[cavity_id].set_term(atom_index, term); }
-            // double get_term(size_t atom_index, CavityId cavity_id) const { return grid_states_[cavity_id].get_term(atom_index); }
 
             // Get index of state in basis
             size_t get_index(const std::set<CHE_State>& basis) const;
@@ -223,12 +173,6 @@
 
             std::set<CavityId> get_cavities_with_atoms() const { return cavities_with_atoms_; }
 
-            // Like a hash
-            //BigUInt to_uint() const;
-
-            // Change state to with BigUint = state_num
-            void from_uint(const BigUInt& state_num);
-
             std::vector<CavityId> get_neighbours(CavityId cavity_id) const { return neighbours_[cavity_id]; }
 
             size_t hash() const;
@@ -264,19 +208,6 @@
 
             explicit State(const std::string& state_string, ValType max_val = 1);
             explicit State(const std::string& state_string, const std::vector<ValType>& max_vals);
-
-            /*
-            operator State<Basis_State>() {
-                State<Basis_State> res;
-                res.state_vec_ = this->state_vec_;
-
-                for (const auto& st: this->state_components_) {
-                    res.state_components_.insert(Basis_State(st));
-                }
-
-                return res;
-            }
-            */
 
             State<StateType> operator*(const COMPLEX& c) const {
                 State<StateType> res(*this);
@@ -351,9 +282,7 @@
             State<Basis_State> fit_to_basis(const std::set<Basis_State>& basis) const {
                 State<Basis_State> res;
 
-                //res.state_vec_ = std::vector<COMPLEX>(basis.size(), 0);
                 res.set_vector(std::vector<COMPLEX>(basis.size(), 0));
-                //res.state_components_ = basis;
                 res.set_state_components(basis);
 
                 size_t index = 0;

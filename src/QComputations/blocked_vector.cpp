@@ -10,26 +10,6 @@
 
 namespace QComputations {
 
-/*
-template<>
-BLOCKED_Vector<COMPLEX> BLOCKED_Vector<COMPLEX>::operator*(const BLOCKED_Matrix<COMPLEX>& A) const {
-    BLOCKED_Vector<COMPLEX> y(*this, A);
-
-    mpi::parallel_zgemv(A.get_local_matrix().get_mass(), this->get_local_matrix().get_mass(), y.get_local_matrix().get_mass(), A.desc(), this->desc(), y.desc());
-
-    return y;
-}
-
-template<>
-BLOCKED_Vector<double> BLOCKED_Vector<double>::operator*(const BLOCKED_Matrix<double>& A) const {
-    BLOCKED_Vector<double> y(*this, A);
-
-    mpi::parallel_dgemv(A.get_local_matrix().get_mass(), this->get_local_matrix().get_mass(), y.get_local_matrix().get_mass(), A.desc(), this->desc(), y.desc());
-
-    return y;
-}
-*/
-
 template<>
 BLOCKED_Vector<COMPLEX> BLOCKED_Vector<COMPLEX>::operator*(COMPLEX num) const {
     BLOCKED_Vector<COMPLEX> res(*this);

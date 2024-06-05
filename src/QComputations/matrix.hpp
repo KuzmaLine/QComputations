@@ -50,8 +50,6 @@ template<typename T> class Matrix {
         Matrix() = default;
         explicit Matrix(MATRIX_STYLE matrix_style, size_t n, size_t m) : matrix_style_(matrix_style), n_(n), m_(m), mass_(n_ * m_) {}
         explicit Matrix(MATRIX_STYLE matrix_style, size_t n, size_t m, const T& init_val) : matrix_style_(matrix_style), n_(n), m_(m), mass_(n_ * m_, init_val) {}
-        //explicit Matrix(size_t n, size_t m): n_(n), m_(m), mass_(n_ * m_), matrix_style_(config::IS_C_MATRIX_STYLE) {}
-        //explicit Matrix(size_t n, size_t m, const T& init_val): n_(n), m_(m), mass_(n_ * m_, init_val), matrix_style_(config::IS_C_MATRIX_STYLE) {}
         explicit Matrix(const Matrix<T>& A): n_(A.n_), m_(A.m_), mass_(A.mass_), matrix_style_(A.matrix_style_) {}
         explicit Matrix(const std::vector<T>& mass, size_t n, size_t m, MATRIX_STYLE matrix_style): n_(n), m_(m), mass_(mass), matrix_style_(matrix_style) {}
         explicit Matrix(MATRIX_STYLE matrix_style, size_t n, size_t m, std::function<COMPLEX(size_t, size_t)> func);
@@ -69,7 +67,6 @@ template<typename T> class Matrix {
         }
 
         explicit Matrix(const std::vector<std::vector<T>>& A, MATRIX_STYLE matrix_style = DEFAULT_MATRIX_STYLE);
-        //explicit Matrix(const T* A);
 
         Matrix<T>& operator=(const Matrix<T>& A);
 
@@ -107,7 +104,6 @@ template<typename T> class Matrix {
 
         Matrix<T>& operator+=(const Matrix<T>& A);
         Matrix<T>& operator-=(const Matrix<T>& A);
-        //Matrix<T>& operator*=(const Matrix<T>& A);
 
         bool operator==(const Matrix<T>& A) const;
 
@@ -137,7 +133,6 @@ template<typename T> class Matrix {
         lapack_complex_double* to_upper_lapack() const;
         lapack_complex_double* to_lapack() const;
 
-        //void set_multiply_mode(int multiply_mode) { MULTIPLY_MODE = multiply_mode; }
         Matrix<T> submatrix(size_t n, size_t m, size_t row_index, size_t col_index) const;
         
 
@@ -155,7 +150,6 @@ template<typename T> class Matrix {
         size_t m_;
         std::vector<T> mass_;
         MATRIX_STYLE matrix_style_ = DEFAULT_MATRIX_STYLE;
-        //int MULTIPLY_MODE = config::MULTIPLY_MODE;
 };
 
 // -------------------------------- Matrix Methods ----------------------------------
@@ -408,7 +402,6 @@ std::vector<T> Matrix<T>::operator*(const std::vector<T>& v) const {
 
     for (size_t i = 0; i < n; i++) {
         for (size_t k = 0; k < n; k++) {
-            //res[i] += conj(mass_[this->get_index(i, k)]) * v[k];
             res[i] += mass_[this->get_index(i, k)] * v[k];
         }
     }
@@ -425,7 +418,6 @@ std::vector<T> operator*(const std::vector<T>& v, const Matrix<T>& A) {
 
     for (size_t i = 0; i < n; i++) {
         for (size_t k = 0; k < n; k++) {
-            //res[i] += conj(v[k]) * A[k][i];
             res[i] += v[k] * A[A.index(k, i)];
         }
     }
