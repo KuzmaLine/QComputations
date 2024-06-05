@@ -96,16 +96,19 @@
         собственных операторов и для их унификации. Работает это следующим образом.
         Вы пишите операторы в функциях следующего прототипа:
         \begin{center}
+
         \begin{mdframed}[linecolor=black, topline=true, bottomline=true,
-            leftline=false, rightline=false]
+            leftline=false, rightline=true]
             \begin{minted}[mathescape]{c++}
                 State<Some_State> some_op(const Some_State& state);
             \end{minted}
         \end{mdframed}
         \end{center}
+
         После этого, вы создаёте сам ваш оператор следующим образом:
+
         \begin{mdframed}[linecolor=black, topline=true, bottomline=true,
-            leftline=false, rightline=false]
+            leftline=false, rightline=true]
             \begin{minted}[mathescape]{c++}
 using OpType = Operator<Some_State>;
 OpType H = OpType(some_func_1_1) * OpType(some_func_1_2) * ... * 
