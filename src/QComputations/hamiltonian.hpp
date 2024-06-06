@@ -20,9 +20,9 @@ class Hamiltonian {
         explicit Hamiltonian() = default;
         size_t n() const { return H_.n(); }
         size_t size() const { return H_.n(); }
-        CHE_State grid() const { return grid_; }
-        CHE_State get_grid() const { return grid_; }
-        void set_grid(const CHE_State& grid) { grid_ = grid; }
+        TCH_State grid() const { return grid_; }
+        TCH_State get_grid() const { return grid_; }
+        void set_grid(const TCH_State& grid) { grid_ = grid; }
         std::set<Basis_State> get_basis() const { return basis_; }
         std::vector<std::pair<double, Matrix<COMPLEX>>> get_decoherence() const { return decoherence_;}
 
@@ -56,7 +56,7 @@ class Hamiltonian {
         Matrix<COMPLEX> eigenvectors_;
         std::vector<double> eigenvalues_;
         std::vector<std::pair<double, Matrix<COMPLEX>>> decoherence_;
-        CHE_State grid_;
+        TCH_State grid_;
 };
 
 template<typename StateType>
@@ -108,9 +108,9 @@ H_by_Operator<StateType>::H_by_Operator(const State<StateType>& init_state, cons
     }
 }
 
-class H_TCH : public H_by_Operator<CHE_State> {
+class H_TCH : public H_by_Operator<TCH_State> {
     public:
-        explicit H_TCH(const State<CHE_State>& state);
+        explicit H_TCH(const State<TCH_State>& state);
 };
 
 } // namespace QComputations

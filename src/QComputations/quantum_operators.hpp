@@ -205,9 +205,9 @@ State<StateType> get_qudit(const StateType& state, size_t qudit_index, size_t gr
     return res;
 }
 
-State<CHE_State> photons_transfer(const CHE_State& state);
-State<CHE_State> photons_count(const CHE_State& state);
-State<CHE_State> atoms_exc_count(const CHE_State& state);
-State<CHE_State> exc_relax_atoms(const CHE_State& state);
+State<TCH_State> photons_transfer(const TCH_State& state);
+State<TCH_State> photons_count(const TCH_State& state);
+State<TCH_State> atoms_exc_count(const TCH_State& state);
+State<TCH_State> exc_relax_atoms(const TCH_State& state);
 
 } // namespace QComputations

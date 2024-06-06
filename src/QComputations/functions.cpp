@@ -125,18 +125,6 @@ void make_rank_map(size_t size, int rank, int world_size, size_t& start_col, siz
     start_col = rank * size_per_proc + std::min(rank, rest);
 }
 
-/*
-std::set<CHE_State> Cavity_State_to_State(const std::set<Cavity_State>& st) {
-    std::set<CHE_State> res;
-
-    for (const auto& item: st) {
-        res.insert(CHE_State(item));
-    }
-
-    return res;
-}
-*/
-
 std::function<double(double)> Cubic_Spline_Interpolate(const std::vector<double>& x, const std::vector<double>& f) {
     auto begin = std::chrono::steady_clock::now();
     size_t n = x.size() - 1;
@@ -179,16 +167,6 @@ std::function<double(double)> Cubic_Spline_Interpolate(const std::vector<double>
         b[i] = (a[i] - a[i - 1]) / h[i] + h[i] / 2.0 * c[i] - h[i] * h[i] / 6.0 * d[i];
     }
 
-    /*
-    for (size_t i = 1; i <= n; i++) {
-        S[i] = std::function<double(double)> {
-            [a, b, c, d, x, i](double t) {
-                auto diff = t - x[i];
-                return a[i] + b[i] * diff + c[i] * diff * diff / 2.0 + d[i] * diff * diff * diff / 6.0; 
-            }
-        };
-    }
-    */
     std::function<double(double)> res {
         [f, x, a, b, c, d](double t) {
             if (t + QConfig::instance().eps() < x[0] or t - QConfig::instance().eps() > x[x.size() - 1]) {
@@ -303,45 +281,8 @@ Matrix<COMPLEX> FROM_lapack_complex_double_TO_Matrix(lapack_complex_double* A, l
     return res;
 }
 
-/*
-void print_state_biguint(const CHE_State& state) {
-    auto num = state.to_uint();
-    auto num_str = num.binary_str();
-
-    size_t index = 0;
-    size_t m_count = 0;
-    for (long long i = state.cavities_count() - 1; i >= 0; i--) {
-        if (state.m(i) != 0) {
-            num_str.insert(num_str.size() - state.m(i) - index, " ");
-            index += state.m(i) + 1;
-            m_count += state.m(i);
-        }
-    }
-
-    num_str = num_str.substr(num_str.size() - index + 1, num_str.size() - 1);
-
-    num >>= m_count;
-
-    for (long long i = state.cavities_count() - 1; i >= 0; i--) {
-        std::cout << num.get_num(i) << " ";
-    }
-
-    std::cout << num_str;
-}
-*/
-
 double scalar_product(const std::vector<double>& a, const std::vector<double>& b) {
     return cblas_ddot(a.size(), a.data(), 1, b.data(), 1);
-    
-    /*
-    double res = 0;
-
-    for (size_t i = 0; i < a.size(); i++) {
-        res += a[i] * b[i];
-    }
-
-    return res;
-    */
 }
 
 COMPLEX scalar_product(const std::vector<COMPLEX>& a, const std::vector<COMPLEX>& b) {
@@ -351,17 +292,6 @@ COMPLEX scalar_product(const std::vector<COMPLEX>& a, const std::vector<COMPLEX>
     zdotc(&res, &size, b.data(), &iONE, a.data(), &iONE);
 
     return res;
-    /*
-    COMPLEX res = 0;
-
-    for (size_t i = 0; i < a.size(); i++) {
-        COMPLEX tmp(b[i].real(), -(b[i].imag()));
-
-        res += a[i] * tmp;
-    }
-
-    return res;
-    */
 }
 
 
@@ -405,54 +335,6 @@ size_t get_index_from_state(vec_levels state) {
     return index;
 }
 
-/*
-matrix transpose(const matrix& A) {
-    matrix R(A.size(), std::vector<COMPLEX>(A.size()));
-
-    for (size_t i = 0; i < A.size(); i++) {
-        for (size_t j = 0; j < A.size(); j++) {
-            R[i][j] = A[j][i];
-        }
-    }
-
-    return R;
-}
-
-matrix hermit(const matrix& A) {
-    size_t n = A.size(), m = A[0].size();
-    matrix B(m, std::vector<std::complex<double>>(n));
-
-    for (size_t i = 0; i < n; i++) {
-        for (size_t j = 0; j < m; j++) {
-            B[j][i] = std::conj(A[i][j]);
-        }
-    }
-    return B;
-}
-
-*/
-
-/*
-matrix multiply(const matrix& A, const matrix& B) {
-    int n1 = A.size();
-    int m1 = A[0].size();
-    int n2 = B.size();
-    int m2 = B[0].size();
-    if (m1 != n2) {
-        throw std::runtime_error("Multiplication error: matrices have incorrect dimensions.");
-    }
-    matrix C(n1, std::vector<std::complex<double>>(m2, 0.0));
-    for (size_t i = 0; i < n1; ++i) {
-        for (size_t j = 0; j < m2; ++j) {
-            for (size_t k = 0; k < m1; ++k) {
-                C[i][j] += A[i][k] * B[k][j];
-            }
-        }
-    }
-    return C;
-}
-*/
-
 
 std::pair<double, double> givens(double a, double b, double eps) {
     if (std::abs(b) < eps) return std::make_pair(1, 0);
@@ -471,16 +353,6 @@ std::pair<double, double> givens(double a, double b, double eps) {
 
     return std::make_pair(c, s);
 }
-
-/*
-std::vector<double> divide_and_conquer(const std::vector<std::vector<double>>& A) {
-    size_t n = A.size();
-    size_t m = n / 2;
-    auto T = A;
-
-
-}
-*/
 
 // working????
 void tridiagonal_QR(Matrix<double>& T) {
@@ -501,59 +373,34 @@ void tridiagonal_QR(Matrix<double>& T) {
             T[k][i] = tmp[0][i - k];
             T[k + 1][i] = tmp[1][i - k];
         }
-        /*
-        auto t11 = T[k][k] * c - s * T[k + 1][k];
-        auto t12 = T[k][k + 1] * c - s * T[k + 1][k + 1];
-        auto t21 = T[k][k] * s + c * T[k + 1][k];
-        auto t22 = T[k][k + 1] * s + c * T[k + 1][k + 1];
-
-        T[k][k] = t11;
-        T[k][k + 1] = t12;
-        T[k + 1][k] = t21;
-        T[k + 1][k + 1] = t22;
-        */
     }
 }
 
 // Modified Gramm Schmidt
 Matrix<double> MGS (const Matrix<COMPLEX>& A, double eps = QConfig::instance().eps()) {
     auto m = A.size();
-    //std::cout << "HERE 1\n";
     Matrix<COMPLEX> v(C_STYLE, m, m, COMPLEX(0));
     v[0][0] = COMPLEX(1);
 
     Matrix<double> H(C_STYLE, m, m, double(0));
 
-    //std::cout << "HERE 2\n";
     for (size_t j = 0; j < m; j++) {
-        //std::cout << "J = " << j << std::endl;
-        //auto w = multiply_matrix_on_vector(A, v[j]);
-        //show_vector(v.row(j));
         std::vector<COMPLEX> w = A * v.row(j);
 
         for (int i = 0; i <= j; i++) {
-            //std::cout << "I = " << i << std::endl;
-            //show_vector(w);
-            //show_vector(v[i]);
             if (i >= j - 1) {
                 H[i][j] = scalar_product(w, v.row(i)).real();
             }
-            //std::cout << std::setw(15) << H[i][j] << std::endl;
-            //show_vector(multiply_vector_on_number(v[i], H[i][j]));
             w = w - (v.row(i) * std::complex<double>(H[i][j]));
-            //show_vector(w);
         }
 
         if (norm(w) < eps)  {
-            //std::cout << "EPS\n";
             return H;
         }
 
         if (j != m - 1) {
             H[j + 1][j] = norm(w);
-            //std::cout << std::setw(15) << H[j + 1][j] << std::endl;
             v.modify_row(j + 1, w / COMPLEX(H[j + 1][j]));
-            //show_vector(v[j + 1]);
         }
     }
 
@@ -634,46 +481,6 @@ std::pair<std::vector<double>, Matrix<double>> jacobi(const Matrix<double>& A, d
 // ADD FORTRAN SUPPORT
 std::pair<std::vector<double>, Matrix<COMPLEX>> Hermit_Lanczos(const Matrix<COMPLEX>& A) {
     auto m = A.size();
-    /*
-    std::vector<double> alpha(m, 0);
-    std::vector<double> betta(m, 0);
-
-    Matrix<COMPLEX> v(m, m, 0);
-    v[0][0] = COMPLEX(1);
-
-    for (size_t j = 0; j < m; j++) {
-        //std::cout << j << std::endl;
-        std::vector<COMPLEX> w = A * v.col(j);
-        alpha[j] = scalar_product(w, v.col(j)).real();
-        w = w - (v.col(j) * COMPLEX(alpha[j]));
-        if (j != 0) {
-            //w = w - (v.col(j - 1) * COMPLEX(betta[j]));
-            w = w - (v.col(j - 1) * COMPLEX(betta[j - 1]));
-        }
-
-        std::vector<COMPLEX> sum_w(m, 0);
-        for (size_t i = 0; i < j; i++) {
-            COMPLEX product = scalar_product(w, v.col(i));
-            auto v_tmp = v.col(i);
-            for (size_t k = 0; k < m; k++) {
-                sum_w[k] += v_tmp[k] * product;
-            }
-        }
-
-        w = w - sum_w;
-
-        betta[j] = norm(w);
-
-        if (betta[j] < EPS) {
-            std::cout << "EPS!\n";
-            break;
-        }
-        //std::cout << scalar_product(w, v.col(j)) << std::endl;    
-        if (j != m - 1) {
-            v.modify_col(j + 1, w / COMPLEX(betta[j]));
-        }
-    }
-    */
 
     lapack_complex_double* lapack_A = A.to_upper_lapack();
     lapack_int n = A.size();
@@ -695,55 +502,6 @@ std::pair<std::vector<double>, Matrix<COMPLEX>> Hermit_Lanczos(const Matrix<COMP
     //find eigenvalues and eigenvectors with Q matrix of matrix lapack_A -> d, lapack_A
     res = LAPACKE_zstedc(LAPACK_ROW_MAJOR, 'V', n, d, e, lapack_A, n); 
     if (res != 0) std::cout << "LAPACKE_zstedc error = " << res << std::endl;
-    /*
-    Matrix<double> H(m, m, 0);
-    H[0][0] = d[0];
-
-    for (size_t i = 1; i < m; i++) {
-        H[i][i] = d[i];
-        H[i - 1][i] = e[i - 1];
-        H[i][i - 1] = e[i - 1];
-    }
-    //std::cout << std::endl;
-    H.show(config::WIDTH);
-    */
-
-
-    //LAPACKE_dstedc(LAPACK_ROW_MAJOR, 'I', n, d, e, NULL, n);   
-    /*
-    for (const auto& num: alpha) {
-        std::cout << num << " ";
-    }
-
-    std::cout << std::endl;
-    for (const auto& num: betta) {
-        std::cout << num << " ";
-    }
-    */
-
-    /*
-    Matrix<double> H(m, m, 0);
-    H[0][0] = alpha[0];
-
-    for (size_t i = 1; i < m; i++) {
-        H[i][i] = alpha[i];
-        H[i - 1][i] = betta[i];
-        H[i][i - 1] = betta[i];
-    }
-    */
-
-    //std::cout << std::endl;
-    //return jacobi(H);
-    //auto p = jacobi(H);
-
-    //std::cout << "Here\n";
-    //std::vector<double> eigenvalues = p.first;
-    //Matrix<double> T_eigenvectors = p.second;
-
-    //Matrix<COMPLEX> eigenvectors = v * T_eigenvectors;
-
-    //auto check = v.hermit() * A * v;
-    //check.show();
 
     auto eigenvectors = FROM_lapack_complex_double_TO_Matrix(lapack_A, n, n);
     auto eigenvalues = FROM_double_TO_vector(d, n);

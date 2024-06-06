@@ -95,9 +95,9 @@ size_t Basis_State::get_index(const std::set<Basis_State>& basis) const {
     return -1;
 }
 
-// --------------------------- CHE_State -------------------------------------
+// --------------------------- TCH_State -------------------------------------
 
-void CHE_State::set_waveguide(double amplitude, double length) {
+void TCH_State::set_waveguide(double amplitude, double length) {
     waveguides_ = Matrix<std::pair<double, double>>(C_STYLE, groups_.size(), groups_.size(),
         std::make_pair(0, 0));
     for (size_t from_id = 0; from_id < groups_.size(); from_id++) {
@@ -109,7 +109,7 @@ void CHE_State::set_waveguide(double amplitude, double length) {
     }
 }
 
-void CHE_State::set_waveguide(size_t from_cavity_id, size_t to_cavity_id, double amplitude, double length) {
+void TCH_State::set_waveguide(size_t from_cavity_id, size_t to_cavity_id, double amplitude, double length) {
     waveguides_[from_cavity_id][to_cavity_id] = std::make_pair(amplitude, length);
 
     if (amplitude >= QConfig::instance().eps()) {
@@ -120,7 +120,7 @@ void CHE_State::set_waveguide(size_t from_cavity_id, size_t to_cavity_id, double
     }
 }
 
-void CHE_State::reshape(size_t x_size, size_t y_size, size_t z_size) {
+void TCH_State::reshape(size_t x_size, size_t y_size, size_t z_size) {
     assert(x_size * y_size * z_size == groups_.size());
 
     x_size_ = x_size;
@@ -133,7 +133,7 @@ void CHE_State::reshape(size_t x_size, size_t y_size, size_t z_size) {
     neighbours_ = update_neighbours(x_size_, y_size_, z_size_);
 }
 
-std::set<CavityId> CHE_State::get_cavities_with_leak() const {
+std::set<CavityId> TCH_State::get_cavities_with_leak() const {
     std::set<CavityId> cavity_set;
 
     for (size_t i = 0; i < this->cavities_count(); i++) {
@@ -147,7 +147,7 @@ std::set<CavityId> CHE_State::get_cavities_with_leak() const {
     return set_query<CavityId>(cavity_set, func);
 }
 
-std::set<CavityId> CHE_State::get_cavities_with_gain() const {
+std::set<CavityId> TCH_State::get_cavities_with_gain() const {
     std::set<CavityId> cavity_set;
 
     for (size_t i = 0; i < this->cavities_count(); i++) {
@@ -185,7 +185,7 @@ namespace {
     }
 }
 
-CHE_State::CHE_State(const std::vector<size_t>& grid_config): Basis_State(vector_sum(grid_config) + grid_config.size(), 1, che_groups_from_grid_config(grid_config)),
+TCH_State::TCH_State(const std::vector<size_t>& grid_config): Basis_State(vector_sum(grid_config) + grid_config.size(), 1, che_groups_from_grid_config(grid_config)),
                                                               gamma_leak_cavities_(grid_config.size(), 0),
                                                               gamma_gain_cavities_(grid_config.size(), 0),
                                                               waveguides_(C_STYLE, grid_config.size(),
@@ -202,7 +202,7 @@ CHE_State::CHE_State(const std::vector<size_t>& grid_config): Basis_State(vector
     }
 }
 
-size_t CHE_State::get_index(const std::set<CHE_State>& basis) const {
+size_t TCH_State::get_index(const std::set<TCH_State>& basis) const {
     size_t index = 0;
     for (const auto& state: basis) {
         if (state == *this) return index;

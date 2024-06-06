@@ -24,9 +24,9 @@ class BLOCKED_Hamiltonian {
         size_t size() const { return H_.n(); }
         size_t n_loc() const { return H_.local_n(); }
         size_t m_loc() const { return H_.local_m(); }
-        CHE_State grid() const { return grid_; }
-        CHE_State get_grid() const { return grid_; }
-        void set_grid(const CHE_State& grid) { grid_ = grid; }
+        TCH_State grid() const { return grid_; }
+        TCH_State get_grid() const { return grid_; }
+        void set_grid(const TCH_State& grid) { grid_ = grid; }
         ILP_TYPE ctxt() const { return H_.ctxt(); }
         std::set<Basis_State> get_basis() const { return basis_; }
         std::vector<std::pair<double, BLOCKED_Matrix<COMPLEX>>> get_decoherence() const { return decoherence_;}
@@ -62,7 +62,7 @@ class BLOCKED_Hamiltonian {
         BLOCKED_Matrix<COMPLEX> eigenvectors_;
         std::vector<double> eigenvalues_;
         std::vector<std::pair<double, BLOCKED_Matrix<COMPLEX>>> decoherence_;
-        CHE_State grid_;
+        TCH_State grid_;
 };
 
 template<typename StateType>
@@ -132,9 +132,9 @@ BLOCKED_H_by_Operator<StateType>::BLOCKED_H_by_Operator(ILP_TYPE ctxt, const Sta
     }
 }
 
-class BLOCKED_H_TCH : public BLOCKED_H_by_Operator<CHE_State> {
+class BLOCKED_H_TCH : public BLOCKED_H_by_Operator<TCH_State> {
     public:
-        explicit BLOCKED_H_TCH(ILP_TYPE ctxt, const State<CHE_State>& state);
+        explicit BLOCKED_H_TCH(ILP_TYPE ctxt, const State<TCH_State>& state);
 };
 
 } // namespace QComputations

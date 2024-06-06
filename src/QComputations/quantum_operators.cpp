@@ -5,10 +5,10 @@ namespace QComputations {
 
 // ---------------------------- OPEATORS ---------------------------
 
-State<CHE_State> photons_transfer(const CHE_State& st) {
-    State<CHE_State> res;
+State<TCH_State> photons_transfer(const TCH_State& st) {
+    State<TCH_State> res;
 
-    CHE_State state(st);
+    TCH_State state(st);
     for (size_t i = 0; i < state.cavities_count(); i++) {
         auto neighbours = state.get_neighbours(i);
 
@@ -40,10 +40,10 @@ State<CHE_State> photons_transfer(const CHE_State& st) {
     return res;
 }
 
-State<CHE_State> exc_relax_atoms(const CHE_State& st) {
-    State<CHE_State> res;
+State<TCH_State> exc_relax_atoms(const TCH_State& st) {
+    State<TCH_State> res;
 
-    CHE_State state(st);
+    TCH_State state(st);
 
     for (size_t i = 0; i < state.cavities_count(); i++) {
         if (state.n(i) != 0) {
@@ -68,8 +68,8 @@ State<CHE_State> exc_relax_atoms(const CHE_State& st) {
     return res;
 }
 
-State<CHE_State> photons_count(const CHE_State& state) {
-    State<CHE_State> res(state);
+State<TCH_State> photons_count(const TCH_State& state) {
+    State<TCH_State> res(state);
     res[0] = 0;
 
     for (size_t i = 0; i < state.cavities_count(); i++) {
@@ -79,8 +79,8 @@ State<CHE_State> photons_count(const CHE_State& state) {
     return res;
 }
 
-State<CHE_State> atoms_exc_count(const CHE_State& state) {
-    State<CHE_State> res(state);
+State<TCH_State> atoms_exc_count(const TCH_State& state) {
+    State<TCH_State> res(state);
     res[0] = 0;
 
     for (size_t i = 0; i < state.cavities_count(); i++) {

@@ -27,7 +27,7 @@ namespace mpi {
     struct MPI_Data {
         size_t n;
         std::function<COMPLEX(size_t, size_t)> func;
-        CHE_State state;
+        TCH_State state;
         std::vector<double> timeline;
     };
 
