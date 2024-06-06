@@ -126,11 +126,11 @@ void make_rank_map(size_t size, int rank, int world_size, size_t& start_col, siz
 }
 
 /*
-std::set<CHE_State> Cavity_State_to_State(const std::set<Cavity_State>& st) {
-    std::set<CHE_State> res;
+std::set<TCH_State> Cavity_State_to_State(const std::set<Cavity_State>& st) {
+    std::set<TCH_State> res;
 
     for (const auto& item: st) {
-        res.insert(CHE_State(item));
+        res.insert(TCH_State(item));
     }
 
     return res;
@@ -304,7 +304,7 @@ Matrix<COMPLEX> FROM_lapack_complex_double_TO_Matrix(lapack_complex_double* A, l
 }
 
 /*
-void print_state_biguint(const CHE_State& state) {
+void print_state_biguint(const TCH_State& state) {
     auto num = state.to_uint();
     auto num_str = num.binary_str();
 

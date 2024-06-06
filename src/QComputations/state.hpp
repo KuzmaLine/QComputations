@@ -131,18 +131,18 @@
             std::vector<size_t> groups_;
     };
 
-    class CHE_State: public Basis_State {
+    class TCH_State: public Basis_State {
         using E_LEVEL = int;
         //using CavityId = size_t;
         using AtomId = size_t;
 
         public:
-            CHE_State() = default;
-            CHE_State(const Basis_State& base): Basis_State(base), x_size_(base.get_groups_count()), y_size_(1), z_size_(1), neighbours_(update_neighbours(x_size_, y_size_, z_size_)) {}
-            //CHE_State(size_t x_size = 1, size_t y_size = 1, size_t z_size = 1);
-            CHE_State(const CHE_State& state) = default;
-            CHE_State(const std::vector<size_t>& grid_config);
-            //explicit CHE_State(const std::string&, const std::string& format = QConfig::instance().state_format(),
+            TCH_State() = default;
+            TCH_State(const Basis_State& base): Basis_State(base), x_size_(base.get_groups_count()), y_size_(1), z_size_(1), neighbours_(update_neighbours(x_size_, y_size_, z_size_)) {}
+            //TCH_State(size_t x_size = 1, size_t y_size = 1, size_t z_size = 1);
+            TCH_State(const TCH_State& state) = default;
+            TCH_State(const std::vector<size_t>& grid_config);
+            //explicit TCH_State(const std::string&, const std::string& format = QConfig::instance().state_format(),
             //            const std::string& del = QConfig::instance().state_delimeter(),
             //            bool is_freq_display = QConfig::instance().is_freq_display());
 
@@ -162,10 +162,10 @@
             //void set_waveguide(const Matrix<std::pair<double, double>>& A);
             void set_waveguide(size_t from_cavity_id, size_t to_cavity_id, double amplitude, double length = QConfig::instance().waveguides_length());
             // set entire state in cavity with id = id
-            void set_state(CavityId id, const CHE_State& state);
+            void set_state(CavityId id, const TCH_State& state);
 
             // add cavity to grid (Don't safe, be careful)
-            CHE_State add_state(const CHE_State& state) const;
+            TCH_State add_state(const TCH_State& state) const;
 
             size_t cavities_count() const { return groups_.size(); }
             size_t cavity_atoms_count(CavityId id) const { return this->get_group_end(id) - this->get_group_start(id); }
@@ -175,8 +175,8 @@
             void set_n(ValType n, CavityId id) { qudits_[get_group_start(id)] = n; }
 
             // Return state vector from cavity
-            CHE_State get_state_in_cavity(CavityId cavity_id) const { return CHE_State(this->get_group(cavity_id)); }
-            CHE_State operator[](CavityId cavity_id) const { return CHE_State(this->get_group(cavity_id)); }
+            TCH_State get_state_in_cavity(CavityId cavity_id) const { return TCH_State(this->get_group(cavity_id)); }
+            TCH_State operator[](CavityId cavity_id) const { return TCH_State(this->get_group(cavity_id)); }
 
             CavityId get_index_of_cavity(size_t x, size_t y = 0, size_t z = 0) const { return z * y_size_ * x_size_ + y * x_size_ + x; }
             
@@ -186,7 +186,7 @@
             // double get_term(size_t atom_index, CavityId cavity_id) const { return grid_states_[cavity_id].get_term(atom_index); }
 
             // Get index of state in basis
-            size_t get_index(const std::set<CHE_State>& basis) const;
+            size_t get_index(const std::set<TCH_State>& basis) const;
             size_t get_max_size() const;
 
             // return energy in state (photons + atoms in state one)

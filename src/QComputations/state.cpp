@@ -125,10 +125,10 @@ size_t Basis_State::get_index(const std::set<Basis_State>& basis) const {
     return -1;
 }
 
-// --------------------------- CHE_State -------------------------------------
+// --------------------------- TCH_State -------------------------------------
 
 /*
-size_t CHE_State::hash() const {
+size_t TCH_State::hash() const {
     std::hash<Cavity_State> state_hash;
     auto res = state_hash(grid_states_[0]);
 
@@ -142,7 +142,7 @@ size_t CHE_State::hash() const {
 
 // REWRITE TO REGEXP
 /*
-CHE_State::CHE_State(const std::string& grid_state, const std::string& format,
+TCH_State::TCH_State(const std::string& grid_state, const std::string& format,
              const std::string& del, bool is_freq_display) : waveguides_(C_STYLE, 0, 0,
                                                                         std::make_pair(QConfig::instance().waveguides_amplitude(),
                                                                         QConfig::instance().waveguides_length())) {
@@ -218,7 +218,7 @@ CHE_State::CHE_State(const std::string& grid_state, const std::string& format,
 }
 */
 
-void CHE_State::set_waveguide(double amplitude, double length) {
+void TCH_State::set_waveguide(double amplitude, double length) {
     waveguides_ = Matrix<std::pair<double, double>>(C_STYLE, groups_.size(), groups_.size(),
         std::make_pair(0, 0));
     for (size_t from_id = 0; from_id < groups_.size(); from_id++) {
@@ -230,7 +230,7 @@ void CHE_State::set_waveguide(double amplitude, double length) {
     }
 }
 
-void CHE_State::set_waveguide(size_t from_cavity_id, size_t to_cavity_id, double amplitude, double length) {
+void TCH_State::set_waveguide(size_t from_cavity_id, size_t to_cavity_id, double amplitude, double length) {
     waveguides_[from_cavity_id][to_cavity_id] = std::make_pair(amplitude, length);
 
     if (amplitude >= QConfig::instance().eps()) {
@@ -242,7 +242,7 @@ void CHE_State::set_waveguide(size_t from_cavity_id, size_t to_cavity_id, double
 }
 
 /*
-void CHE_State::set_waveguide(const Matrix<std::pair<double, double>>& A) {
+void TCH_State::set_waveguide(const Matrix<std::pair<double, double>>& A) {
     waveguides_ = A;
     for (size_t from_id = 0; from_id < groups_.size(); from_id++) {
         auto neighbours = neighbours_[from_id];
@@ -254,7 +254,7 @@ void CHE_State::set_waveguide(const Matrix<std::pair<double, double>>& A) {
 }
 */
 
-void CHE_State::reshape(size_t x_size, size_t y_size, size_t z_size) {
+void TCH_State::reshape(size_t x_size, size_t y_size, size_t z_size) {
     assert(x_size * y_size * z_size == groups_.size());
 
     x_size_ = x_size;
@@ -267,7 +267,7 @@ void CHE_State::reshape(size_t x_size, size_t y_size, size_t z_size) {
     neighbours_ = update_neighbours(x_size_, y_size_, z_size_);
 }
 
-std::set<CavityId> CHE_State::get_cavities_with_leak() const {
+std::set<CavityId> TCH_State::get_cavities_with_leak() const {
     std::set<CavityId> cavity_set;
 
     for (size_t i = 0; i < this->cavities_count(); i++) {
@@ -281,7 +281,7 @@ std::set<CavityId> CHE_State::get_cavities_with_leak() const {
     return set_query<CavityId>(cavity_set, func);
 }
 
-std::set<CavityId> CHE_State::get_cavities_with_gain() const {
+std::set<CavityId> TCH_State::get_cavities_with_gain() const {
     std::set<CavityId> cavity_set;
 
     for (size_t i = 0; i < this->cavities_count(); i++) {
@@ -319,7 +319,7 @@ namespace {
     }
 }
 
-CHE_State::CHE_State(const std::vector<size_t>& grid_config): Basis_State(vector_sum(grid_config) + grid_config.size(), 1, che_groups_from_grid_config(grid_config)),
+TCH_State::TCH_State(const std::vector<size_t>& grid_config): Basis_State(vector_sum(grid_config) + grid_config.size(), 1, che_groups_from_grid_config(grid_config)),
                                                               gamma_leak_cavities_(grid_config.size(), 0),
                                                               gamma_gain_cavities_(grid_config.size(), 0),
                                                               waveguides_(C_STYLE, grid_config.size(),
@@ -337,7 +337,7 @@ CHE_State::CHE_State(const std::vector<size_t>& grid_config): Basis_State(vector
     }
 }
 
-size_t CHE_State::get_index(const std::set<CHE_State>& basis) const {
+size_t TCH_State::get_index(const std::set<TCH_State>& basis) const {
     size_t index = 0;
     for (const auto& state: basis) {
         if (state == *this) return index;
@@ -348,7 +348,7 @@ size_t CHE_State::get_index(const std::set<CHE_State>& basis) const {
 }
 
 /*
-CHE_State CHE_State::get_state_in_cavity(CavityId cavity_id) const {
+TCH_State TCH_State::get_state_in_cavity(CavityId cavity_id) const {
     auto a = this->get_group_start(cavity_id);
     auto b = this->get_group_end(cavity_id);
 
@@ -360,7 +360,7 @@ CHE_State CHE_State::get_state_in_cavity(CavityId cavity_id) const {
 
     Basis_State b_state(qudits, max_vals);
 
-    CHE_State res(b_state);
+    TCH_State res(b_state);
 
     res.set_leak_for_cavity(0, this->get_leak_gamma(0));
     res.set_gain_for_cavity(0, this->get_gain_gamma(0));
@@ -370,7 +370,7 @@ CHE_State CHE_State::get_state_in_cavity(CavityId cavity_id) const {
 */
 
 /*
-size_t CHE_State::get_max_size() const {
+size_t TCH_State::get_max_size() const {
     size_t res = 0;
 
     for (long i = grid_states_.size() - 1; i >= 0 ; i--) {
@@ -383,7 +383,7 @@ size_t CHE_State::get_max_size() const {
     return res;
 }
 
-size_t CHE_State::get_grid_energy() const {
+size_t TCH_State::get_grid_energy() const {
     size_t res = 0;
 
     for (const auto& state: grid_states_) {
@@ -393,11 +393,11 @@ size_t CHE_State::get_grid_energy() const {
     return res;
 }
 
-size_t CHE_State::get_energy(CavityId cavity_id) const {
+size_t TCH_State::get_energy(CavityId cavity_id) const {
     return grid_states_[cavity_id].get_energy();
 }
 
-void CHE_State::set_state(CavityId id, const Cavity_State& state) {
+void TCH_State::set_state(CavityId id, const Cavity_State& state) {
     max_N_ -= grid_states_[id].get_energy();
     grid_states_[id] = state;
 
@@ -408,8 +408,8 @@ void CHE_State::set_state(CavityId id, const Cavity_State& state) {
     if (state.m() != 0) cavities_with_atoms_.insert(id);
 }
 
-CHE_State CHE_State::add_state(const Cavity_State& state) const {
-    CHE_State res = (*this);
+TCH_State TCH_State::add_state(const Cavity_State& state) const {
+    TCH_State res = (*this);
     res.max_N_ += state.get_energy();
 
     if (state.m() != 0) res.cavities_with_atoms_.insert(res.cavities_count());
@@ -419,11 +419,11 @@ CHE_State CHE_State::add_state(const Cavity_State& state) const {
     return res;
 }
 
-CHE_State::CHE_State(size_t x_size, size_t y_size, size_t z_size) {
+TCH_State::TCH_State(size_t x_size, size_t y_size, size_t z_size) {
     grid_states_.reserve(x_size * y_size * z_size);
 }
 
-CHE_State::CHE_State(const Cavity_State& state) {
+TCH_State::TCH_State(const Cavity_State& state) {
     grid_states_.emplace_back(state);
     x_size_ = y_size_ = z_size_ = 1;
     max_N_ = state.get_energy();
@@ -435,7 +435,7 @@ CHE_State::CHE_State(const Cavity_State& state) {
 }
 
 // Рудимент
-size_t CHE_State::get_index() const {
+size_t TCH_State::get_index() const {
     size_t index = 0;
 
     for (long i = grid_states_.size() - 1; i >= 0 ; i--) {
@@ -446,7 +446,7 @@ size_t CHE_State::get_index() const {
     return index;
 }
 
-BigUInt CHE_State::to_uint() const {
+BigUInt TCH_State::to_uint() const {
     BigUInt res(0);
 
     for (size_t i = 0; i < grid_states_.size(); i++) {
@@ -466,7 +466,7 @@ BigUInt CHE_State::to_uint() const {
     return res;
 }
 
-void CHE_State::from_uint(const BigUInt& state_num) {
+void TCH_State::from_uint(const BigUInt& state_num) {
     size_t index = 0;
     for (long long i = grid_states_.size() - 1; i >= 0; i--) {
         long long m = grid_states_[i].m();
@@ -485,7 +485,7 @@ void CHE_State::from_uint(const BigUInt& state_num) {
 */
 
 /*
-std::string CHE_State::to_string() const {
+std::string TCH_State::to_string() const {
     std::string res = "|";
 
     for (size_t i = 0; i < grid_states_.size(); i++) {

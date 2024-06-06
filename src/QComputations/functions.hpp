@@ -40,7 +40,7 @@ std::string to_string_double_with_precision(const double a_value,
 
 std::string vector_to_string(const std::vector<std::string>& inp);
 
-void print_state_biguint(const CHE_State& state);
+void print_state_biguint(const TCH_State& state);
 
 std::vector<double> FROM_double_TO_vector(double* A, lapack_int n);
 Matrix<COMPLEX> FROM_lapack_complex_double_TO_Matrix(lapack_complex_double* A, lapack_int n, lapack_int m);
@@ -79,7 +79,7 @@ bool is_zero(COMPLEX a, double eps = QConfig::instance().eps());
 bool is_digit(char c);
 size_t Ck_n(size_t k, size_t n);
 
-std::set<CHE_State> Cavity_State_to_State(const std::set<Cavity_State>& st);
+std::set<TCH_State> Cavity_State_to_State(const std::set<Cavity_State>& st);
 
 // Eigen Problem
 double off(const Matrix<double>& A);

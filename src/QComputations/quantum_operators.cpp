@@ -88,7 +88,7 @@ Basis_State check(const Basis_State& state, ValType check_val, size_t qudit_inde
 // OLD
 
 /*
-COMPLEX self_energy_photon(const CHE_State& state_from, const CHE_State& state_to, COMPLEX h) {
+COMPLEX self_energy_photon(const TCH_State& state_from, const TCH_State& state_to, COMPLEX h) {
     if (state_from == state_to) {
         COMPLEX res(0);
 
@@ -102,7 +102,7 @@ COMPLEX self_energy_photon(const CHE_State& state_from, const CHE_State& state_t
     }
 }
 
-COMPLEX self_energy_atom(const CHE_State& state_from, const CHE_State& state_to, COMPLEX h) {
+COMPLEX self_energy_atom(const TCH_State& state_from, const TCH_State& state_to, COMPLEX h) {
     if (state_from == state_to) {
         COMPLEX res(0);
 
@@ -116,7 +116,7 @@ COMPLEX self_energy_atom(const CHE_State& state_from, const CHE_State& state_to,
     }
 }
 
-COMPLEX excitation_atom(const CHE_State& state_from, const CHE_State& state_to, COMPLEX g) {
+COMPLEX excitation_atom(const TCH_State& state_from, const TCH_State& state_to, COMPLEX g) {
     long photon_pos = -1;
     long atom_pos = -1;
 
@@ -149,7 +149,7 @@ COMPLEX excitation_atom(const CHE_State& state_from, const CHE_State& state_to, 
     return g * COMPLEX(std::sqrt(state_from[photon_pos].n()));
 }
 
-COMPLEX de_excitation_atom(const CHE_State& state_from, const CHE_State& state_to, COMPLEX g) {
+COMPLEX de_excitation_atom(const TCH_State& state_from, const TCH_State& state_to, COMPLEX g) {
     long photon_pos = -1;
     long atom_pos = -1;
 
@@ -182,7 +182,7 @@ COMPLEX de_excitation_atom(const CHE_State& state_from, const CHE_State& state_t
     return g * COMPLEX(std::sqrt(state_from[photon_pos].n() + 1));
 }
 
-COMPLEX photon_exchange(const CHE_State& state_from, const CHE_State& state_to, const CHE_State& grid) {
+COMPLEX photon_exchange(const TCH_State& state_from, const TCH_State& state_to, const TCH_State& grid) {
     for (size_t i = 0; i < state_from.cavities_count(); i++) {
         for (size_t j = 0; j < state_from.m(i); j++) {
             if (state_from[i].get_qubit(j) != state_to[i].get_qubit(j)) {
@@ -246,7 +246,7 @@ COMPLEX photon_exchange(const CHE_State& state_from, const CHE_State& state_to, 
     return grid.get_gamma(photon_index_from, photon_index_to) * std::sqrt(state_from.n(photon_index_from)) * std::sqrt(state_from.n(photon_index_to) + 1);
 }
 
-COMPLEX photon_destroy(const CHE_State& state_from, const CHE_State& state_to, COMPLEX gamma) {
+COMPLEX photon_destroy(const TCH_State& state_from, const TCH_State& state_to, COMPLEX gamma) {
     auto tmp_state = state_from;
 
     bool is_founded = false;
@@ -272,7 +272,7 @@ COMPLEX photon_destroy(const CHE_State& state_from, const CHE_State& state_to, C
     return 0;
 }
 
-COMPLEX photon_create(const CHE_State& state_from, const CHE_State& state_to, COMPLEX gamma) {
+COMPLEX photon_create(const TCH_State& state_from, const TCH_State& state_to, COMPLEX gamma) {
     auto tmp_state = state_from;
 
     bool is_founded = false;
@@ -298,7 +298,7 @@ COMPLEX photon_create(const CHE_State& state_from, const CHE_State& state_to, CO
     return 0;
 }
 
-COMPLEX JC_addition(const CHE_State& state_from, const CHE_State& state_to, COMPLEX g) {
+COMPLEX JC_addition(const TCH_State& state_from, const TCH_State& state_to, COMPLEX g) {
     if (state_from.n(0) - 1 == state_to.n(0) and state_from.get_qubit(0, 0) == 1 and state_to.get_qubit(0, 0) == 0) {
         return g * sqrt(state_from.n(0));
     } else if (state_from.n(0) + 1 == state_to.n(0) and state_from.get_qubit(0, 0) == 0 and state_to.get_qubit(0, 0) == 1) {
@@ -308,7 +308,7 @@ COMPLEX JC_addition(const CHE_State& state_from, const CHE_State& state_to, COMP
     }
 }
 
-COMPLEX TCH_ADD(const CHE_State& state_from, const CHE_State& state_to, const CHE_State& grid) {
+COMPLEX TCH_ADD(const TCH_State& state_from, const TCH_State& state_to, const TCH_State& grid) {
     COMPLEX res(0);
     res += self_energy_atom(state_from, state_to);
     //std::cout << "Energy_atom PASSED\n";
@@ -323,7 +323,7 @@ COMPLEX TCH_ADD(const CHE_State& state_from, const CHE_State& state_to, const CH
     return res;
 }
 
-COMPLEX TC_ADD(const CHE_State& state_from, const CHE_State& state_to, const CHE_State& grid) {
+COMPLEX TC_ADD(const TCH_State& state_from, const TCH_State& state_to, const TCH_State& grid) {
     COMPLEX res(0);
     res += self_energy_atom(state_from, state_to);
     //std::cout << "Energy_atom PASSED\n";
@@ -337,7 +337,7 @@ COMPLEX TC_ADD(const CHE_State& state_from, const CHE_State& state_to, const CHE
     return res;
 }
 
-COMPLEX JC_ADD(const CHE_State& state_from, const CHE_State& state_to, const CHE_State& grid) {
+COMPLEX JC_ADD(const TCH_State& state_from, const TCH_State& state_to, const TCH_State& grid) {
     COMPLEX res(0);
     res += self_energy_atom(state_from, state_to);
     //std::cout << "Energy_atom PASSED\n";
@@ -352,10 +352,10 @@ COMPLEX JC_ADD(const CHE_State& state_from, const CHE_State& state_to, const CHE
 }
 */
 
-State<CHE_State> photons_transfer(const CHE_State& st) {
-    State<CHE_State> res;
+State<TCH_State> photons_transfer(const TCH_State& st) {
+    State<TCH_State> res;
 
-    CHE_State state(st);
+    TCH_State state(st);
     for (size_t i = 0; i < state.cavities_count(); i++) {
         auto neighbours = state.get_neighbours(i);
 
@@ -389,10 +389,10 @@ State<CHE_State> photons_transfer(const CHE_State& st) {
     return res;
 }
 
-State<CHE_State> exc_relax_atoms(const CHE_State& st) {
-    State<CHE_State> res;
+State<TCH_State> exc_relax_atoms(const TCH_State& st) {
+    State<TCH_State> res;
 
-    CHE_State state(st);
+    TCH_State state(st);
 
     for (size_t i = 0; i < state.cavities_count(); i++) {
         if (state.n(i) != 0) {
@@ -417,8 +417,8 @@ State<CHE_State> exc_relax_atoms(const CHE_State& st) {
     return res;
 }
 
-State<CHE_State> photons_count(const CHE_State& state) {
-    State<CHE_State> res(state);
+State<TCH_State> photons_count(const TCH_State& state) {
+    State<TCH_State> res(state);
     res[0] = 0;
 
     for (size_t i = 0; i < state.cavities_count(); i++) {
@@ -429,8 +429,8 @@ State<CHE_State> photons_count(const CHE_State& state) {
     return res;
 }
 
-State<CHE_State> atoms_exc_count(const CHE_State& state) {
-    State<CHE_State> res(state);
+State<TCH_State> atoms_exc_count(const TCH_State& state) {
+    State<TCH_State> res(state);
     res[0] = 0;
 
     for (size_t i = 0; i < state.cavities_count(); i++) {

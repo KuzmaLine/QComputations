@@ -15,16 +15,16 @@ namespace {
     typedef std::complex<double> COMPLEX;
 }
 
-std::set<CHE_State> define_basis_of_hamiltonian(const CHE_State& grid);
+std::set<TCH_State> define_basis_of_hamiltonian(const TCH_State& grid);
 
 class Hamiltonian {
     public:
         explicit Hamiltonian() = default;
         size_t n() const { return H_.n(); }
         size_t size() const { return H_.n(); }
-        CHE_State grid() const { return grid_; }
-        CHE_State get_grid() const { return grid_; }
-        void set_grid(const CHE_State& grid) { grid_ = grid; }
+        TCH_State grid() const { return grid_; }
+        TCH_State get_grid() const { return grid_; }
+        void set_grid(const TCH_State& grid) { grid_ = grid; }
         std::set<Basis_State> get_basis() const { return basis_; }
         std::vector<std::pair<double, Matrix<COMPLEX>>> get_decoherence() const { return decoherence_;}
         //void write_to_csv_file(const std::string& filename) const { H_.write_to_csv_file(filename); }
@@ -59,7 +59,7 @@ class Hamiltonian {
         Matrix<COMPLEX> eigenvectors_;
         std::vector<double> eigenvalues_;
         std::vector<std::pair<double, Matrix<COMPLEX>>> decoherence_;
-        CHE_State grid_;
+        TCH_State grid_;
 };
 
 /*
@@ -67,7 +67,7 @@ class H_by_func : public Hamiltonian {
     public:
         H_by_func(size_t n, std::function<COMPLEX(size_t, size_t)> func);
         void set_basis(const std::set<Basis_State>& basis) { basis_ = basis; }
-        void set_grid(const CHE_State& grid) { grid_ = grid; }
+        void set_grid(const TCH_State& grid) { grid_ = grid; }
     private:
         std::function<COMPLEX(size_t, size_t)> func_;
 };
@@ -76,20 +76,20 @@ class H_by_Matrix : public Hamiltonian {
     public:
         H_by_Matrix(const Matrix<COMPLEX>& H) { H_ = H; }
         void set_basis(const std::set<Basis_State>& basis) { basis_ = basis; }
-        void set_grid(const CHE_State& grid) { grid_ = grid; }
+        void set_grid(const TCH_State& grid) { grid_ = grid; }
 };
 
 // NEED UPDATE
 class H_JC : public Hamiltonian {
     public:
-        explicit H_JC(const CHE_State& state);  // Генерируется по умолчанию в RWA приближении
+        explicit H_JC(const TCH_State& state);  // Генерируется по умолчанию в RWA приближении
         void make_exact();                  // Делает гамильтониан точным
 };
 
 // NEED UPDATE
 class H_TC : public Hamiltonian {
     public:
-        explicit H_TC(const CHE_State& state);
+        explicit H_TC(const TCH_State& state);
     private:
         size_t n_;
         size_t m_;
@@ -97,7 +97,7 @@ class H_TC : public Hamiltonian {
 
 class H_TCH : public Hamiltonian {
     public:
-        H_TCH(const CHE_State& init_state);
+        H_TCH(const TCH_State& init_state);
 };
 
 */
@@ -151,9 +151,9 @@ H_by_Operator<StateType>::H_by_Operator(const State<StateType>& init_state, cons
     }
 }
 
-class H_TCH : public H_by_Operator<CHE_State> {
+class H_TCH : public H_by_Operator<TCH_State> {
     public:
-        explicit H_TCH(const State<CHE_State>& state);
+        explicit H_TCH(const State<TCH_State>& state);
 };
 
 } // namespace QComputations

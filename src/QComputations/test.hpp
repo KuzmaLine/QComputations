@@ -133,7 +133,7 @@ namespace printing {
 } // printing
 
 namespace probs_testing {
-    void check_probs(const Matrix<double>& probs, const std::set<CHE_State>& basis,
+    void check_probs(const Matrix<double>& probs, const std::set<TCH_State>& basis,
                 const std::vector<double>& time_vec, double eps = QConfig::instance().eps()) {
         for (size_t i = 0; i < time_vec.size(); i++) {
             size_t index = 0;
@@ -155,7 +155,7 @@ namespace probs_testing {
 #ifdef ENABLE_MPI
 #ifdef ENABLE_CLUSTER
 
-    void check_probs(const BLOCKED_Matrix<double>& probs, const std::set<CHE_State>& basis,
+    void check_probs(const BLOCKED_Matrix<double>& probs, const std::set<TCH_State>& basis,
                 const std::vector<double>& time_vec, double eps = QConfig::instance().eps()) {
         ILP_TYPE rank;
         MPI_Comm_rank(MPI_COMM_WORLD, &rank);

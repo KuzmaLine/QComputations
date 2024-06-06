@@ -240,34 +240,34 @@ State<StateType> get_qudit(const StateType& state, size_t qudit_index, size_t gr
     return res;
 }
 
-State<CHE_State> photons_transfer(const CHE_State& state);
-State<CHE_State> photons_count(const CHE_State& state);
-State<CHE_State> atoms_exc_count(const CHE_State& state);
-State<CHE_State> exc_relax_atoms(const CHE_State& state);
+State<TCH_State> photons_transfer(const TCH_State& state);
+State<TCH_State> photons_count(const TCH_State& state);
+State<TCH_State> atoms_exc_count(const TCH_State& state);
+State<TCH_State> exc_relax_atoms(const TCH_State& state);
 
 /*
-State<CHE_State> a_destroy(const CHE_State& state);
-State<CHE_State> a_create(const CHE_State& state);
-State<CHE_State> sigma_destroy(const CHE_State& state);
-State<CHE_State> sigma_create(const CHE_State& state);
-State<CHE_State> photons_count(const CHE_State& state);
-State<CHE_State> atoms_exc_count(const CHE_State& state);
+State<TCH_State> a_destroy(const TCH_State& state);
+State<TCH_State> a_create(const TCH_State& state);
+State<TCH_State> sigma_destroy(const TCH_State& state);
+State<TCH_State> sigma_create(const TCH_State& state);
+State<TCH_State> photons_count(const TCH_State& state);
+State<TCH_State> atoms_exc_count(const TCH_State& state);
 */
 
 // ------------------------------ СТАРЫЕ ВЕРСИИ. БУДЕТ УДАЛЕНО ---------------------------
 /*
-COMPLEX self_energy_photon(const CHE_State& state_from, const CHE_State& state_to, COMPLEX h = QConfig::instance().h());
-COMPLEX self_energy_atom(const CHE_State& state_from, const CHE_State& state_to, COMPLEX h = QConfig::instance().h());
-COMPLEX excitation_atom(const CHE_State& state_from, const CHE_State& state_to, COMPLEX g = QConfig::instance().g());
-COMPLEX de_excitation_atom(const CHE_State& state_from, const CHE_State& state_to, COMPLEX g = QConfig::instance().g());
-COMPLEX photon_exchange(const CHE_State& state_from, const CHE_State& state_to, const CHE_State& grid);
-COMPLEX photon_destroy(const CHE_State& state_from, const CHE_State& state_to, COMPLEX gamma = COMPLEX(1));
-COMPLEX photon_create(const CHE_State& state_from, const CHE_State& state_to, COMPLEX gamma = COMPLEX(1));
+COMPLEX self_energy_photon(const TCH_State& state_from, const TCH_State& state_to, COMPLEX h = QConfig::instance().h());
+COMPLEX self_energy_atom(const TCH_State& state_from, const TCH_State& state_to, COMPLEX h = QConfig::instance().h());
+COMPLEX excitation_atom(const TCH_State& state_from, const TCH_State& state_to, COMPLEX g = QConfig::instance().g());
+COMPLEX de_excitation_atom(const TCH_State& state_from, const TCH_State& state_to, COMPLEX g = QConfig::instance().g());
+COMPLEX photon_exchange(const TCH_State& state_from, const TCH_State& state_to, const TCH_State& grid);
+COMPLEX photon_destroy(const TCH_State& state_from, const TCH_State& state_to, COMPLEX gamma = COMPLEX(1));
+COMPLEX photon_create(const TCH_State& state_from, const TCH_State& state_to, COMPLEX gamma = COMPLEX(1));
 
-COMPLEX JC_addition(const CHE_State& state_from, const CHE_State& state_to, COMPLEX g = QConfig::instance().g());
-COMPLEX TCH_ADD(const CHE_State& state_from, const CHE_State& state_to, const CHE_State& grid);
-COMPLEX TC_ADD(const CHE_State& state_from, const CHE_State& state_to, const CHE_State& grid);
-COMPLEX JC_ADD(const CHE_State& state_from, const CHE_State& state_to, const CHE_State& grid);
+COMPLEX JC_addition(const TCH_State& state_from, const TCH_State& state_to, COMPLEX g = QConfig::instance().g());
+COMPLEX TCH_ADD(const TCH_State& state_from, const TCH_State& state_to, const TCH_State& grid);
+COMPLEX TC_ADD(const TCH_State& state_from, const TCH_State& state_to, const TCH_State& grid);
+COMPLEX JC_ADD(const TCH_State& state_from, const TCH_State& state_to, const TCH_State& grid);
 */
 
 } // namespace QComputations

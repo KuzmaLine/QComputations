@@ -115,8 +115,8 @@ namespace {
     }
     */
 
-    std::set<CHE_State> update_basis(const std::set<CHE_State>& basis, const std::set<CHE_State>& addition) {
-        std::set<CHE_State> res;
+    std::set<TCH_State> update_basis(const std::set<TCH_State>& basis, const std::set<TCH_State>& addition) {
+        std::set<TCH_State> res;
 
         for (const auto& basis_state: basis) {
             for (const auto& state: addition) {
@@ -194,13 +194,13 @@ namespace {
 
     // N >= 1
 /*
-std::set<CHE_State> define_basis_of_hamiltonian(const CHE_State& grid) {
-    std::set<CHE_State> basis;
+std::set<TCH_State> define_basis_of_hamiltonian(const TCH_State& grid) {
+    std::set<TCH_State> basis;
 
     long max_energy;
     for (max_energy = grid.max_N(); max_energy >= long(grid.min_N()); max_energy--) {
         //std::cout << max_energy << " " << target_N << std::endl;
-        CHE_State state = grid; // copy base structure of grid
+        TCH_State state = grid; // copy base structure of grid
 
         std::vector<size_t> energy_map(grid.cavities_count(), 0);
         energy_map[0] = max_energy;
@@ -384,7 +384,7 @@ H_JC::H_JC(const State& init_state) {
 */
 
 /*
-H_JC::H_JC(const CHE_State& grid) {
+H_JC::H_JC(const TCH_State& grid) {
     assert(grid.cavities_count() == 1 and grid.m(0) == 1);
     grid_ = grid;
 
@@ -392,7 +392,7 @@ H_JC::H_JC(const CHE_State& grid) {
     auto y_size = grid.y_size();
     auto z_size = grid.z_size();
 
-    auto basis = State_Graph<CHE_State>(grid).get_basis();
+    auto basis = State_Graph<TCH_State>(grid).get_basis();
     
     basis_ = convert_to(basis);
 
@@ -401,7 +401,7 @@ H_JC::H_JC(const CHE_State& grid) {
     size_t i = 0, j = 0;
     for (const auto& state_from: basis_) {
         for (const auto& state_to: basis_) {
-            H_[i][j] += JC_ADD(CHE_State(state_from), CHE_State(state_to), grid);
+            H_[i][j] += JC_ADD(TCH_State(state_from), TCH_State(state_to), grid);
             j++;
         }
         j = 0;
@@ -413,7 +413,7 @@ void H_JC::make_exact() {
     size_t i = 0, j = 0;
     for (const auto& state_from: basis_) {
         for (const auto& state_to: basis_) {
-            H_[i][j] += JC_addition(CHE_State(state_from), CHE_State(state_to));
+            H_[i][j] += JC_addition(TCH_State(state_from), TCH_State(state_to));
             j++;
         }
         j = 0;
@@ -421,7 +421,7 @@ void H_JC::make_exact() {
     }
 }
 
-H_TC::H_TC(const CHE_State& grid) {
+H_TC::H_TC(const TCH_State& grid) {
     assert(grid.cavities_count() == 1);
     grid_ = grid;
 
@@ -430,7 +430,7 @@ H_TC::H_TC(const CHE_State& grid) {
     auto z_size = grid.z_size();
 
     //basis_ = define_basis_of_hamiltonian(grid);
-    auto basis = State_Graph<CHE_State>(grid).get_basis();
+    auto basis = State_Graph<TCH_State>(grid).get_basis();
     basis_ = convert_to(basis);
 
     size_t size = basis_.size();
@@ -451,14 +451,14 @@ H_TC::H_TC(const CHE_State& grid) {
 
 // --------------------------- H_TCH ------------------------------------
 
-H_TCH::H_TCH(const CHE_State& grid) {
+H_TCH::H_TCH(const TCH_State& grid) {
     grid_ = grid;
 
     auto x_size = grid.x_size();
     auto y_size = grid.y_size();
     auto z_size = grid.z_size();
 
-    auto basis = State_Graph<CHE_State>(grid).get_basis();
+    auto basis = State_Graph<TCH_State>(grid).get_basis();
     basis_ = convert_to(basis);
 
     size_t size = basis_.size();
@@ -479,8 +479,8 @@ H_TCH::H_TCH(const CHE_State& grid) {
 */
 
 namespace {
-    Operator<CHE_State> H_TCH_OP() {
-        using OpType = Operator<CHE_State>;
+    Operator<TCH_State> H_TCH_OP() {
+        using OpType = Operator<TCH_State>;
 
         OpType my_H;
         my_H = my_H + OpType(photons_count) + OpType(atoms_exc_count) + OpType(exc_relax_atoms) + OpType(photons_transfer);
@@ -488,15 +488,15 @@ namespace {
         return my_H;
     }
     
-    std::vector<std::pair<double, Operator<CHE_State>>> decs(const State<CHE_State>& state) {
-        using OpType = Operator<CHE_State>;
+    std::vector<std::pair<double, Operator<TCH_State>>> decs(const State<TCH_State>& state) {
+        using OpType = Operator<TCH_State>;
 
         auto st = *(state.get_state_components().begin());
         std::vector<std::pair<double, OpType>> dec;
 
         for (size_t i = 0; i < st.cavities_count(); i++) {
             if (!is_zero(st.get_leak_gamma(i))) {
-                OperatorType<CHE_State> a_destroy_i = {[i](const CHE_State& che_state) {
+                OperatorType<TCH_State> a_destroy_i = {[i](const TCH_State& che_state) {
                     return set_qudit(che_state, che_state.n(i) - 1, 0, i) * std::sqrt(che_state.n(i));
                 }};
 
@@ -506,7 +506,7 @@ namespace {
             }
 
             if (!is_zero(st.get_gain_gamma(i))) {
-                OperatorType<CHE_State> a_create_i = {[i](const CHE_State& che_state) {
+                OperatorType<TCH_State> a_create_i = {[i](const TCH_State& che_state) {
                     return set_qudit(che_state, che_state.n(i) + 1, 0, i) * std::sqrt(che_state.n(i) + 1);
                 }};
 
@@ -520,7 +520,7 @@ namespace {
     }
 }
 
-H_TCH::H_TCH(const State<CHE_State>& state):
-                       H_by_Operator<CHE_State>(state, H_TCH_OP(), decs(state)) {}
+H_TCH::H_TCH(const State<TCH_State>& state):
+                       H_by_Operator<TCH_State>(state, H_TCH_OP(), decs(state)) {}
 
 } // namespace QComputations
