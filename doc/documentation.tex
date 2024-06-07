@@ -181,19 +181,149 @@ OpType H = OpType(some_op_1_1) * OpType(some_op_1_2) * ... *
 
     \section{Прототипы функций и классов}
 
-        Здесь рассматриваются только сами классы и их методы. Саму детальную реализацию смотреть в исходный файлах.
+        Здесь рассматриваются только сами классы и их методы. Саму детальную реализацию смотреть в исходный файлах (src/QComputations/).
 
-        В местах, где можно вставить тип \textbf{double} или \textbf{std::complex<double>}, будет написано \textbf{NumType}.
+        В местах, где можно вставить тип \textbf{double} или \textbf{std::complex<double>}, будет написано \textbf{NumType} или \textbf{T}.
 
         \subsection{Обычная матрица Matrix<T>}
+        matrix_style - хранения матрицы по строкам (Си стиль) или по столбцам (Фортрановский стиль). Файлы matrix.*
+
             \begin{mdframed}[linecolor=black, topline=true, bottomline=true,
                 leftline=false, rightline=false]
             \begin{minted}[mathescape]{c++}
+template<typename T> class Matrix {
+    public:
+        Matrix() = default;
+        // Иницианилизирует матрицу размера n x m (n - число строк, m - число столбцов)
+        explicit Matrix(MATRIX_STYLE matrix_style, size_t n, size_t m);
+        
+        // Иницианилизирует матрицу размера n x m с начальным значением во всех элементах init_val
+        explicit Matrix(MATRIX_STYLE matrix_style, size_t n, size_t m, const T& init_val);
 
+        // Конструктор копирования
+        explicit Matrix(const Matrix<T>& A);
+
+        // Если у вас хранится одномерный массив, его можно привести к виду матрицу, указав размер n и m.
+        explicit Matrix(const std::vector<T>& mass, size_t n, size_t m, MATRIX_STYLE matrix_style);
+
+        // Создать матрицу, с помощью функции типа std::function<COMPLEX(size_t i, size_t j)> - где i и j координаты ячеек матрицы.
+        explicit Matrix(MATRIX_STYLE matrix_style, size_t n, size_t m, std::function<COMPLEX(size_t, size_t)> func);
+
+        // Привести матрицу к другому типу (реализацию оставил для понимания)
+        template<typename V>
+        Matrix(const Matrix<V>& A): n_(A.n()), m_(A.m()) {
+            for (size_t i = 0; i < n_; i++) {
+                for (size_t j = 0; j < m_; j++) {
+                    mass_.emplace_back(static_cast<V>(A[i][j]));
+                }
+            }
+
+            matrix_style_ = A.get_matrix_style();
+        }
+
+        // Привести матрицу вида вектора векторов к нашему
+        explicit Matrix(const std::vector<std::vector<T>>& A, MATRIX_STYLE matrix_style = DEFAULT_MATRIX_STYLE);
+
+        Matrix<T>& operator=(const Matrix<T>& A);
+
+        // Вместо строки под номером index вставить строку v
+        void modify_row(size_t index, const std::vector<T>& v);
+
+        // Вместо столбца под номером index вставить строку v
+        void modify_col(size_t index, const std::vector<T>& v);
+
+        std::vector<T> row (size_t index) const;
+        std::vector<T> col (size_t index) const;
+        size_t n() const { return n_; }
+        size_t size() const { return n_; } // удобно для квадратных матриц
+        size_t m() const { return m_; }
+
+        // Увеличить число строк в матрице
+        void add_rows(size_t row_count);
+
+        // Увеличить число столбцов в матрице
+        void add_cols(size_t col_count);
+
+        // Удалить число строк в матрице
+        void remove_rows(size_t row_count);
+
+        // Удалить число столбцов в матрице
+        void remove_cols(size_t col_count);
+
+        void expand(size_t n); // add_rows + add_cols
+        void reduce(size_t n); // remove_rows + remove_cols
+
+        // Не добавлять шаблонные виды операторов для матриц
+        Matrix<T> operator* (const Matrix<T>& A) const;
+        Matrix<T> operator+ (const Matrix<T>& A) const;
+        Matrix<T> operator- (const Matrix<T>& A) const;
+
+        Matrix<T>& operator+=(const Matrix<T>& A);
+        Matrix<T>& operator-=(const Matrix<T>& A);
+
+        std::vector<T> operator* (const std::vector<T>& v) const;
+
+        void operator*= (const T& num);
+
+        Matrix<T> operator* (const T& num) const;
+        Matrix<T> operator+ (const T& num) const;
+        Matrix<T> operator- (const T& num) const;
+        Matrix<T> operator/ (const T& num) const;
+        void operator/= (const T& num);
+
+        bool operator==(const Matrix<T>& A) const;
+
+        // Вернуть матрицу в хранимом виде (в виде вектора)
+        std::vector<T>& get_mass() { return mass_; }
+        std::vector<T> get_mass() const { return mass_; }
+
+        // Вернуть указатель на массив
+        T* data() { return mass_.data(); }
+        const T* data() const { return mass_.data(); }
+
+        Matrix<T> transpose() const;
+        Matrix<T> hermit() const;
+        void show(size_t width = QConfig::instance().width()) const;
+    
+        // (!!!) Индексация для С стиля
+        T* operator[](size_t index_row) { return mass_.data() + index_row * m_; }; 
+        const T* operator[](size_t index_row) const { return mass_.data() + index_row * m_; };
+    
+        // (!!!) Инддексация для Фортрановского стиля
+        T& operator()(size_t index_row, size_t index_col) { return mass_.data()[index_col * n_ + index_row]; }
+        const T operator()(size_t index_row, size_t index_col) const { return mass_.data()[index_col * n_ + index_row]; }
+    
+        // Лидирующее измерение
+        size_t LD() const { return (matrix_style_ == C_STYLE ? m_ : n_); }
+
+        bool is_c_style() const { return matrix_style_ == C_STYLE; }
+        MATRIX_STYLE get_matrix_style() const { return matrix_style_; }
+        void to_fortran_style();
+        void to_c_style();
+
+        // Вернуть подматрицу размера n x m, начало которой находится по координатам row_index, col_index
+        Matrix<T> submatrix(size_t n, size_t m, size_t row_index, size_t col_index) const;
+
+        // Индексация общего вида, независимо от стиля матрицы
+        size_t index(size_t i, size_t j) const { if (matrix_style_ == C_STYLE) return i * m_ + j;
+                                                    else return j * n_ + i; }
+
+        // Получить элемент матрицы, с помощью которого также можно менять матрицу
+        T& elem(size_t i, size_t j) { return mass_.data()[this->index(i, j)]; }
+        const T elem(size_t i, size_t j) const { return mass_.data()[this->index(i, j)]; }
+
+        // Записать матрицу в файл, в формате CSV. Точность регулируется с помощью QConfig.
+        void write_to_csv_file(const std::string& filename) const;
+    private:
+        size_t n_; // Число строк
+        size_t m_; // Число столбцов
+        std::vector<T> mass_; // Массив с данными
+        MATRIX_STYLE matrix_style_ = DEFAULT_MATRIX_STYLE; // Стиль матрицы - по умолчанию С стиль.
+};
             \end{minted}
             \end{mdframed}
-        \subsection{Вспомогательные функции}
         \subsection{Блочная матрица BLOCKED\_Matrix<T>}
+        \subsection{Вспомогательные функции}
         \subsection{Понятие БАЗОВОГО состояния Basis\_State}
         \subsection{Понятие состояния State<T>}
         \subsection{Понятие оператора Operator<T>. (Правила создания оператора)}
