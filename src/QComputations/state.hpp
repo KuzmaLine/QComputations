@@ -76,6 +76,11 @@
             // добавление поддержки для разных кудитов
             explicit Basis_State(size_t qudits_count, const std::vector<ValType>& max_vals,
                                 size_t groups_count = 1);
+
+            // qudit_count - чилсо кудитов. max_val - максимальное значение их всех. groups - количество элементов в каждой группе. 
+            // В сумме должно получиться qudits_count, иначе ошибка.
+            // ВНИМАНИЕ!!! - groups потом хранится в другом виде. А именно, в нём хранятся индексы начала групп. Так сделано в целях удобства индексации.
+            // Для получения размера группы есть метод get_group_size.
             explicit Basis_State(size_t qudits_count, ValType max_val, const std::vector<size_t>& groups): qudits_(qudits_count, 0),
                                                                                                                max_vals_(qudits_count, max_val),
                                                                                                                groups_(groups) {}
@@ -378,4 +383,4 @@
             std::set<StateType> state_components_;
     };
 
-    } // namespace QComputations
+} // namespace QComputations

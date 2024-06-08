@@ -26,7 +26,7 @@ class BLOCKED_Vector: public BLOCKED_Matrix<T> {
         explicit BLOCKED_Vector(ILP_TYPE ctxt, size_t n, std::function<T(size_t, size_t)> func): BLOCKED_Matrix<T>(ctxt, GE, n, 1, func) {}
         explicit BLOCKED_Vector(ILP_TYPE ctxt, size_t n, T value, size_t NB = 0): BLOCKED_Matrix<T>(ctxt, GE, n, 1, value, NB, 1) {}
         explicit BLOCKED_Vector(ILP_TYPE ctxt, size_t n, size_t NB = 0): BLOCKED_Matrix<T>(ctxt, GE, n, 1, NB, 1) {}
-        explicit BLOCKED_Vector(ILP_TYPE ctxt, const std::vector<T>& x, ILP_TYPE root_id): BLOCKED_Matrix<T>(ctxt, Matrix<T>(x, x.size(), 1, FORTRAN_STYLE), root_id) {}
+        // explicit BLOCKED_Vector(ILP_TYPE ctxt, const std::vector<T>& x, ILP_TYPE root_id): BLOCKED_Matrix<T>(ctxt, Matrix<T>(x, x.size(), 1, FORTRAN_STYLE), root_id) {}
 
         // Сделать по размерностям результата умножения
         explicit BLOCKED_Vector(const BLOCKED_Matrix<T>& A, const BLOCKED_Vector<T>& x): BLOCKED_Vector(x.ctxt(), A.n(), 1, x.NB()) {}
@@ -103,6 +103,7 @@ COMPLEX scalar_product(const BLOCKED_Vector<COMPLEX>& a, const BLOCKED_Vector<CO
 BLOCKED_Vector<double> blocked_matrix_get_col(ILP_TYPE ctxt, const BLOCKED_Matrix<double>& A, size_t col);
 BLOCKED_Vector<double> blocked_matrix_get_row(ILP_TYPE ctxt, const BLOCKED_Matrix<double>& A, size_t row);
 BLOCKED_Vector<COMPLEX> blocked_matrix_get_col(ILP_TYPE ctxt, const BLOCKED_Matrix<COMPLEX>& A, size_t col);
+BLOCKED_Vector<COMPLEX> blocked_matrix_get_row(ILP_TYPE ctxt, const BLOCKED_Matrix<COMPLEX>& A, size_t row);
 std::vector<BLOCKED_Vector<double>> blocked_matrix_to_blocked_vectors(ILP_TYPE ctxt, const BLOCKED_Matrix<double>& A);
 std::vector<BLOCKED_Vector<COMPLEX>> blocked_matrix_to_blocked_vectors(ILP_TYPE ctxt, const BLOCKED_Matrix<COMPLEX>& A);
 

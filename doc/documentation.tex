@@ -323,12 +323,644 @@ template<typename T> class Matrix {
             \end{minted}
             \end{mdframed}
         \subsection{Блочная матрица BLOCKED\_Matrix<T>}
+
+        Блочная матрица напрямую связана с решёткой BLACS (придумка Intel OneAPI). Тип ILP_TYPE в библиотеке - это тип, зависящий от того, 
+        с помощью какой версий библиотек Intel OneAPI идёт компиляция, подробнее смотреть в самой документации Intel OneAPI. На данный момент библиотека компилируется
+        с обычными библиотеками, и ILP_TYPE=int. Реализована вспомогательная функция для инициализации решётки BLACS - init_grid()
+
+        MATRIX_TYPE - это перечисляемый тип:
+
+        \begin{mdframed}[linecolor=black, topline=true, bottomline=true,
+            leftline=false, rightline=false]
+        \begin{minted}[mathescape]{c++}
+            enum MATRIX_TYPE { GE = 120, SY = 121, HE = 122};
+        \end{minted}
+        \end{mdframed}
+
+        GE - обычная матрица. SY - симметричная. HE - эрмитовая. Как не покажется странным, в пакете Intel OneAPI нет экономии памяти на случай последних двух.
+        Элементы нижней треугольной части просто не инициализируются. (Причём обязательно)
+
+        \textbf{ПРЕДУПРЕЖДЕНИЕ. ПРИ НЕ КВАДРАТНЫХ РАЗМЕРАХ БЛОКОВ (NB, MB) НЕ РАБОТАЕТ ЭРМИТОВОЕ РАЗЛОЖЕНИЕ МАТРИЦЫ. ВЫДАЁТ НЕКОРРЕКТНУЮ ОШИБКУ.}
+
+
+        \begin{mdframed}[linecolor=black, topline=true, bottomline=true,
+            leftline=false, rightline=false]
+        \begin{minted}[mathescape]{c++}
+template <typename T>
+class BLOCKED_Matrix {
+    public:
+        explicit BLOCKED_Matrix() = default;
+
+        // ??????????????
+        explicit BLOCKED_Matrix(const BLOCKED_Matrix<T>& A, const Matrix<T>& local_matrix);
+
+        // Сгенерировать матрицу с помощью функции. NB и MB - размеры блоков (подблоков общего блока, так как блок в ядре генерируется циклически, подробнее в документации к Intel OneAPI), 
+        // значения 0 означает выбор размера блока по умолчанию. (Рекомендуется)
+        explicit BLOCKED_Matrix(ILP_TYPE ctxt, MATRIX_TYPE type, size_t n, size_t m, std::function<T(size_t, size_t)> func, size_t NB = 0, size_t MB = 0);
+
+        // Сгенерировать матрицу с начальным значанием value
+        explicit BLOCKED_Matrix(ILP_TYPE ctxt, MATRIX_TYPE type, size_t n, size_t m, T value, size_t NB = 0, size_t MB = 0);
+
+        // Сгенерировать неинициализированную матрицу
+        explicit BLOCKED_Matrix(ILP_TYPE ctxt, MATRIX_TYPE type, size_t n, size_t m, size_t NB = 0, size_t MB = 0);
+
+        // Распределить матрицу А по блокам
+        explicit BLOCKED_Matrix(ILP_TYPE ctxt, MATRIX_TYPE type, const Matrix<T>& A, size_t NB = 0, size_t MB = 0);
+
+        // Make dims for multiply matrix ??????
+        explicit BLOCKED_Matrix(const BLOCKED_Matrix<T>& A, const BLOCKED_Matrix<T>& B);
+
+        // Получить элемент по глобальным индексам i и j. (Требует участия как минимум 2 процессов. Тот, который спрашивает, и того, у кого находится блок с данным элементом)
+        T get(size_t i, size_t j) const;
+
+        // Установить элемент по глобальным индексам i и j значению num. (Требует участия как минимум 2 процессов. Тот, который приказывает установить элемент, 
+        // и того, у кого находится блок с данным элементом)
+        void set(size_t i, size_t j, T num);
+
+        // Важный элемент библиотеки Intel OneAPI, но для пользователя библиотеки QComputations бесполезный.
+        std::vector<ILP_TYPE> desc() const;
+
+        // Операторные функции. Главная цель - чтобы работать с данным классом было также легко, как с обычной матрицей.
+        BLOCKED_Matrix<T> operator*(const BLOCKED_Matrix<T>& B) const;
+        void operator*=(const BLOCKED_Matrix<T>& B);
+        BLOCKED_Matrix<T> operator*(T num) const;
+        void operator*=(T num);
+        BLOCKED_Matrix<T> operator+(const BLOCKED_Matrix<T>& B) const;
+        void operator+=(const BLOCKED_Matrix<T>& B);
+        BLOCKED_Matrix<T> operator+(T num) const;
+        void operator+=(T num);
+        BLOCKED_Matrix<T> operator-(const BLOCKED_Matrix<T>& B) const;
+        void operator-=(const BLOCKED_Matrix<T>& B);
+        BLOCKED_Matrix<T> operator-(T num) const;
+        void operator-=(T num);
+        BLOCKED_Matrix<T> operator/(T num) const;
+
+
+        // ???????????????????????????
+        std::vector<T> operator*(const std::vector<T>& A) const;
+        void operator*=(const std::vector<T>& A);
+        std::vector<T> operator+(const std::vector<T>& A) const;
+        void operator+=(const std::vector<T>& A);
+        std::vector<T> operator-(const std::vector<T>& A) const;
+        void operator-=(const std::vector<T>& A);
+    
+        // Вернуть локальный размер общего блока матрицы (число строк)
+        size_t local_n() const { return local_matrix_.n(); }
+
+        // Вернуть локальный размер общего блока матрицы (число столбцов)
+        size_t local_m() const { return local_matrix_.m(); }
+
+        // Вернуть глобальное число строк в матрице
+        size_t n() const { return n_; }
+
+        // Вернуть глобальное число столбцов в матрице
+        size_t m() const { return m_; }
+
+        // Вернуть число строк в подблоках
+        size_t NB() const { return NB_; }
+
+        // Вернуть число столбцов в подблоках
+        size_t MB() const { return MB_; }
+
+        // Вернуть BLACS сontext
+        ILP_TYPE ctxt() const { return ctxt_; }
+
+        // Вернуть тип матрицы
+        MATRIX_TYPE matrix_type() const { return matrix_type_; }
+
+        // Вернуть весь общий блок в виде одномерного массива
+        Matrix<T>& get_local_matrix() { return local_matrix_;}
+        const Matrix<T>& get_local_matrix() const { return local_matrix_;}
+
+        // Вернуть указатель на локальный элемент по локальным индексам i и j.
+        T* data(size_t i = 0, size_t j = 0) { return local_matrix_.data() + get_local_index(i, j); }
+        const T* data(size_t i = 0, size_t j = 0) const { return local_matrix_.data() + get_local_index(i, j); }
+
+        // Вернуть локальный элемент по локальный индексам i и j.
+        T& operator()(size_t i, size_t j) { return local_matrix_(i, j); }
+        const T operator()(size_t i, size_t j) const { return local_matrix_(i, j); }
+
+        // Распечатать матрицу в блочной виде, то есть каждый процесс напечатает свой блок
+        void print_distributed(const std::string& name) const;
+
+        // Распечатать матрицу в виде обычной матрицы
+        void show(size_t width = QConfig::instance().width(), ILP_TYPE root_id = mpi::ROOT_ID) const;
+
+        // Записать матрицу в файл формата CSV
+        void write_to_csv_file(const std::string& filename) const;
+
+        // Получить глобальный номер измерения по локальному
+        ILP_TYPE get_global_row(size_t i) const;
+        ILP_TYPE get_global_col(size_t j) const;
+
+        // Получить локальный номер измерения по глобальному
+        ILP_TYPE get_local_row(size_t i) const;
+        ILP_TYPE get_local_col(size_t j) const;
+
+        // Получить строку, в которой находится процессор, которому принадлежит строка под номером i.
+        ILP_TYPE get_row_proc(size_t i) const;
+
+        // Получить столбец, в которой находится процессор, которому принадлежит столбец под номером j.
+        ILP_TYPE get_col_proc(size_t j) const;
+
+        // Сделать эрмитовое преобразование матрице
+        BLOCKED_Matrix<T> hermit() const;
+
+        // Получить весь столбец целиком
+        std::vector<T> col(size_t i) const;
+
+        // Получить всю строку целиком
+        std::vector<T> row(size_t j) const;
+    protected:
+        size_t get_global_index(size_t i, size_t j) const { return j * n_ + i; }
+        size_t get_local_index(size_t i, size_t j) const { return j * local_matrix_.n() + i; }
+
+        MATRIX_TYPE matrix_type_; // Тип матрицы
+        ILP_TYPE ctxt_; // BLACS context
+        size_t n_; // Глобальное число строк матрицы
+        size_t m_; // Глобальное число столбцов в матрице
+        size_t NB_; // Число строк в подблоке
+        size_t MB_; // Число столбцов в подблоке
+        Matrix<T> local_matrix_; // Локальный общий блок матрицы
+};
+
+\end{minted}
+\end{mdframed}
+        \subsection{BLOCKED_Vector<T>}
+        Блочнораспределённый вектор. Является наследником BLOCKED_Matrix<T>. Про NB смотреть в разделе про BLOCKED_Matrix<T>.
+\begin{mdframed}[linecolor=black, topline=true, bottomline=true,
+    leftline=false, rightline=false]
+\begin{minted}[mathescape]{c++}
+template<typename T>
+class BLOCKED_Vector: public BLOCKED_Matrix<T> {
+    public:
+        explicit BLOCKED_Vector() = default;
+
+        // Распределяет вектор между процессорами (копия вектора x есть у всех)
+        explicit BLOCKED_Vector(ILP_TYPE ctxt, const std::vector<T>& x);
+
+        // ??????????????????
+        explicit BLOCKED_Vector(const BLOCKED_Vector<T>& x, const Matrix<T>& local_vector);
+
+        // Создать вектор из функции размера n.
+        explicit BLOCKED_Vector(ILP_TYPE ctxt, size_t n, std::function<T(size_t, size_t)> func);
+
+        // Создать вектор из функции размера n с начальным значением value
+        explicit BLOCKED_Vector(ILP_TYPE ctxt, size_t n, T value, size_t NB = 0);
+
+        // Создать неинициализированный вектор размера n
+        explicit BLOCKED_Vector(ILP_TYPE ctxt, size_t n, size_t NB = 0);
+
+        // Распределить вектор, хранящийся на ядре по номером root_id вектор x по всем остальным
+        explicit BLOCKED_Vector(ILP_TYPE ctxt, const std::vector<T>& x, ILP_TYPE root_id): BLOCKED_Matrix<T>(ctxt, Matrix<T>(x, x.size(), 1, FORTRAN_STYLE), root_id) {}
+
+        // Сделать по размерностям результата умножения ????????????????
+        explicit BLOCKED_Vector(const BLOCKED_Matrix<T>& A, const BLOCKED_Vector<T>& x): BLOCKED_Vector(x.ctxt(), A.n(), 1, x.NB()) {}
+
+        // Получить элемент i (выдаёт копию, не ссылку)
+        T get(size_t i) const { return this->BLOCKED_Matrix<T>::get(i, 0); }
+
+        // Установить элемент i
+        void set(size_t i, T num) { this->BLOCKED_Matrix<T>::set(i, 0, num); }
+
+        // Получить элемент i (даёт ссылку)
+        T& operator[](size_t i) { return BLOCKED_Matrix<T>::local_matrix_(i, 0); }
+        const T& operator[](size_t i) const { return BLOCKED_Matrix<T>::local_matrix_(i, 0); }
+
+        // Второй способ получения элемента i
+        T& operator()(size_t i) { return BLOCKED_Matrix<T>::local_matrix_(i, 0); }
+        const T& operator()(size_t i) const { return BLOCKED_Matrix<T>::local_matrix_(i, 0); }
+
+        // Операции с вектором
+        BLOCKED_Vector<T> operator*(const BLOCKED_Matrix<T>& A) const;
+        BLOCKED_Vector<T> operator+(const BLOCKED_Vector<T>& x) const;
+        void operator+=(const BLOCKED_Vector<T>& x);
+        BLOCKED_Vector<T> operator-(const BLOCKED_Vector<T>& x) const;
+        void operator-=(const BLOCKED_Vector<T>& x);
+        BLOCKED_Vector<T> operator*(const BLOCKED_Vector<T>& x) const;
+        BLOCKED_Vector<T> operator/(const BLOCKED_Vector<T>& x) const;
+
+        // Получить весь вектор целиком на все процессы
+        std::vector<T> get_vector() const;
+
+        BLOCKED_Vector<T> operator+(T x) const;
+        BLOCKED_Vector<T> operator-(T x) const;
+        BLOCKED_Vector<T> operator*(T x) const;
+        BLOCKED_Vector<T> operator/(T x) const;
+};
+\end{minted}
+\end{mdframed}
         \subsection{Вспомогательные функции}
+        Как было сказано в введении, версия CLUSTER является расширением одноядерной версии. Некоторые алгоритмы плохо параллелится напрямую с помощью блочного распределения, 
+        например гамильтонианы маленького размера. Их вообще лучше блочно не распределять. Вместо этого, можно попытаться распределять одноядерные версии напрямую. В директории 
+        examples лежит подобный пример - <вставить имя программы>.
+
+        Здесь приведены вспомогательные функции, как для ручного распараллеливания программы, так и для других целей. Реализации лежат в файлах functions.*, если не сказано иное.
+
+        \textbf{make_rank_map - распределение ядер по вектору}
+
+        Самое частая ситуация, которая возникала на практике. У нас есть вектор, например, с какими-нибудь параметрами для гамильтониана. Мы хотим, чтобы ядра взяли на себя равномерную нагрузку, 
+        проходя по этому вектору. То есть, допустим у нас вектор размера $n$, ядер - $p$. Тогда каждое ядро должно пройтись по $\frac{n}{p}$ элементам.
+
+        Данная функция собственно это и делает. Вместо параметро гамильтонианов может быть что угодно, например столбцы матрицы. Дальше только Ваша фантазия.
+\begin{mdframed}[linecolor=black, topline=true, bottomline=true,
+    leftline=false, rightline=false]
+\begin{minted}[mathescape]{c++}
+// size - размер вектора. rank - номер ядра процессора. world_size - общее число ядер.
+// start_col и count - переменные, в которые записывается результат. start_col - номер элемента, 
+// с которого ядро начинает, count - сколько элементов оно должно пройти.
+
+void make_rank_map(size_t size, int rank, int world_size, size_t& start_col, size_t& count);
+    \end{minted}
+\end{mdframed}
+
+Пример использования:
+
+\begin{mdframed}[linecolor=black, topline=true, bottomline=true,
+    leftline=false, rightline=false]
+\begin{minted}[mathescape]{c++}
+<<вставить пример>>
+\end{minted}
+\end{mdframed}
+
+        \textbf{init_grid, init_vector_grid, blacs_gridinfo - инициализация решёток BLACS}
+
+        Реализация в файлах mpi_functions.*
+
+\begin{mdframed}[linecolor=black, topline=true, bottomline=true,
+    leftline=false, rightline=false]
+\begin{minted}[mathescape]{c++}
+// ctxt - возвращаемое значение (контекст)
+// proc_rows - число строк в решётке процессоров
+// proc_cols - число столбцов в решётке процессоров
+// 0 - автоматический выбор значения (рекомендуется)
+
+// Пытается подогнать под квадратную решётку
+void init_grid(int& ctxt, ILP_TYPE proc_rows = 0, ILP_TYPE proc_cols = 0);
+
+// Выстраивает процессы в ряд
+void init_vector_grid(int& ctxt, ILP_TYPE proc_rows = 0, ILP_TYPE proc_cols = 0);
+
+// myrow, mycol - координаты ядра в решётке
+// Получить информацию о решётке
+void blacs_gridinfo(const ILP_TYPE& ctxt, ILP_TYPE& proc_rows, ILP_TYPE& proc_cols, ILP_TYPE& myrow, ILP_TYPE& mycol);
+\end{minted}
+\end{mdframed}
+
+
+        \textbf{blocked_matrix_get_col, blocked_matrix_get_row, blocked_matrix_to_blocked_vectors}
+
+        В какой-то момент может возникнуть такое желание, получить столбец/строку блочнораспределённой матрицы в виде блочного вектора, но уже с иным распределением. 
+        Для такой задачи придётся создавать новый контекст, об этом подробнее написано в инструкции. 
+        blocked_matrix_to_blocked_vectors делает же тоже самое, что и blocked_matrix_get_col, но для всей матрицы в целом, сохраняя блочные вектора в вектор.
+
+\begin{mdframed}[linecolor=black, topline=true, bottomline=true,
+    leftline=false, rightline=false]
+\begin{minted}[mathescape]{c++}
+// ctxt - новый контекст, согласно которому идёт распределение. То есть ядра будут работать уже с другой сеткой BLACS.
+
+BLOCKED_Vector<double> blocked_matrix_get_col(ILP_TYPE ctxt, const BLOCKED_Matrix<double>& A, size_t col);
+BLOCKED_Vector<double> blocked_matrix_get_row(ILP_TYPE ctxt, const BLOCKED_Matrix<double>& A, size_t row);
+BLOCKED_Vector<COMPLEX> blocked_matrix_get_col(ILP_TYPE ctxt, const BLOCKED_Matrix<COMPLEX>& A, size_t col);
+BLOCKED_Vector<COMPLEX> blocked_matrix_get_row(ILP_TYPE ctxt, const BLOCKED_Matrix<COMPLEX>& A, size_t row);
+std::vector<BLOCKED_Vector<double>> blocked_matrix_to_blocked_vectors(ILP_TYPE ctxt, const BLOCKED_Matrix<double>& A);
+std::vector<BLOCKED_Vector<COMPLEX>> blocked_matrix_to_blocked_vectors(ILP_TYPE ctxt, const BLOCKED_Matrix<COMPLEX>& A);
+\end{minted}
+\end{mdframed}
+
+        На данный момент, это все вспомогательная функция для ручного распределения одноядерных гамильтонианов и операторов. Далее идут вспомогательные функции для других целей.
+
+        \textbf{linspace - создать вектор времени (полностью аналогичен linspace в Python)}
+
+        Создаёт, собственно, вектор времени. На практике он маленького размера, особенно в сравнении с остальными абстракциями, поэтому распределять его нет никакого смысла. Замечу,
+         что результат всегда std::vector<double>.
+
+\begin{mdframed}[linecolor=black, topline=true, bottomline=true,
+    leftline=false, rightline=false]
+\begin{minted}[mathescape]{c++}
+// start_in - начало отрезка
+// end_in - конец отрезка 
+// num_in - количество чисел в отрезке
+
+template<typename T>
+std::vector<T> linspace(T start_in, T end_in, int num_in)
+    \end{minted}
+\end{mdframed}
+
+Пример использования:
+
+\begin{mdframed}[linecolor=black, topline=true, bottomline=true,
+    leftline=false, rightline=false]
+\begin{minted}[mathescape]{c++}
+<<вставить пример>>
+\end{minted}
+\end{mdframed}
+
+        \textbf{E_Matrix - создать единичную матрицу размера n}
+
+\begin{mdframed}[linecolor=black, topline=true, bottomline=true,
+    leftline=false, rightline=false]
+\begin{minted}[mathescape]{c++}
+// n - размер матрицы
+
+template<typename T>
+Matrix<T> E_Matrix(size_t n);
+    \end{minted}
+\end{mdframed}
+
+        \textbf{get_elem_from_set - получить элемент из set по индексу.}
+
+        Причина данного костыля весьма банальна. Нумерация столбцов и строк в гамильтониане напрямую завязана на базисе, он же в свою очередь как-то отсортирован, 
+        и данная сортировка ВЕЗДЕ должна быть одинакова. Собственно, базис хранится в std::set. Иногда получается так, что хочется взять элемент из базиса под определённым номером или выше 
+        определённого (или ниже), в общем, нужна индексация. Базисы бывают огромные, и для того, чтобы не перебирать все, отсекая не нужные, и была сделана эта функция.
+
+\begin{mdframed}[linecolor=black, topline=true, bottomline=true,
+    leftline=false, rightline=false]
+\begin{minted}[mathescape]{c++}
+// st - множество элементов
+// index - индекс элемента в множестве
+
+T get_elem_from_set(const std::set<T>& st, size_t index);
+    \end{minted}
+\end{mdframed}    
+
+        \textbf{set_query???????????????? - отсекает из множества элементы, не удовлетворяющие булевой функции}
+\begin{mdframed}[linecolor=black, topline=true, bottomline=true,
+    leftline=false, rightline=false]
+\begin{minted}[mathescape]{c++}
+// v - множество
+// func - булевая функция
+
+std::set<T> set_query(const std::set<T>& v, const std::function<bool(T)>& func);
+\end{minted}
+\end{mdframed}  
+
+        \textbf{scalar_product - скалярное произведение векторов.}
+
+У нас 2 вида векторов - обычные и блочно распределённые. Блочно распределённые реализованы в blocked_vector.*.
+
+double scalar_product(const std::vector<double>& a, const std::vector<double>& b); 
+COMPLEX scalar_product(const std::vector<COMPLEX>& a, const std::vector<COMPLEX>& b);
+
+\begin{mdframed}[linecolor=black, topline=true, bottomline=true,
+    leftline=false, rightline=false]
+\begin{minted}[mathescape]{c++}
+// <b|a>, (a, b)
+double scalar_product(const std::vector<double>& a, const std::vector<double>& b); 
+COMPLEX scalar_product(const std::vector<COMPLEX>& a, const std::vector<COMPLEX>& b);
+double scalar_product(const BLOCKED_Vector<double>& a, const BLOCKED_Vector<double>& b);
+COMPLEX scalar_product(const BLOCKED_Vector<COMPLEX>& a, const BLOCKED_Vector<COMPLEX>& b);
+\end{minted}
+\end{mdframed}
+
+        \textbf{fmin - найти минимум функции (Ищет локальный минимум)}
+
+\begin{mdframed}[linecolor=black, topline=true, bottomline=true,
+    leftline=false, rightline=false]
+\begin{minted}[mathescape]{c++}
+// f must be unimodal on [a, b]
+double fmin(std::function<double(double)> f, double a, double b, double eps = QConfig::instance().eps());
+\end{minted}
+\end{mdframed}
+
+        \textbf{fsolve - решает f(x) = target}
+
+\begin{mdframed}[linecolor=black, topline=true, bottomline=true,
+    leftline=false, rightline=false]
+\begin{minted}[mathescape]{c++}
+// Solve f(x) = target
+double fsolve(std::function<double(double)> f, double a, double b, double target = 0, double eps = QConfig::instance().eps());
+\end{minted}
+\end{mdframed}
+
+        \textbf{Cubic_Spline_Interpolate - интерполяция кубическими сплайнами. Возвращает функцию}
+
+\begin{mdframed}[linecolor=black, topline=true, bottomline=true,
+    leftline=false, rightline=false]
+\begin{minted}[mathescape]{c++}
+std::function<double(double)> Cubic_Spline_Interpolate(const std::vector<double>& x, const std::vector<double>& y);
+\end{minted}
+\end{mdframed}
+
+        \textbf{is_zero - проверяет, близко ли число к нулю. Регулируется с помощью QConfig}
+\begin{mdframed}[linecolor=black, topline=true, bottomline=true,
+    leftline=false, rightline=false]
+\begin{minted}[mathescape]{c++}
+bool is_zero(double a, double eps = QConfig::instance().eps());
+bool is_zero(COMPLEX a, double eps = QConfig::instance().eps());
+\end{minted}
+\end{mdframed}
+
+        \textbf{is_in_vector - проверить, есть ли элемент в векторе}
+
+\begin{mdframed}[linecolor=black, topline=true, bottomline=true,
+    leftline=false, rightline=false]
+\begin{minted}[mathescape]{c++}
+template<typename T>
+bool is_in_vector(const std::vector<T> v, const T& elem);
+\end{minted}
+\end{mdframed}
+
+        \textbf{Pro_Race_Algorithm????????RENAME - решить СЛАУ методом трёхдиагональной прогонки}
+
+\begin{mdframed}[linecolor=black, topline=true, bottomline=true,
+    leftline=false, rightline=false]
+\begin{minted}[mathescape]{c++}
+template<typename T>
+std::vector<T> Pro_Race_Algorithm(const Matrix<T>& B, const std::vector<T>& y);
+\end{minted}
+\end{mdframed}
+
+        \textbf{convert_to - конвертировать множество векторов от StateType к Basis_State}
+\begin{mdframed}[linecolor=black, topline=true, bottomline=true,
+    leftline=false, rightline=false]
+\begin{minted}[mathescape]{c++}
+//StateType - дочерний класс от Basis_State
+//states - множество состояний
+
+template<typename StateType>
+std::set<Basis_State> convert_to(const std::set<StateType>& states);
+\end{minted}
+\end{mdframed}
+
+        \textbf{f_vector - from {x1, x2, x3 ...} to {f(x1), f(x2), ...}}
+
+\begin{mdframed}[linecolor=black, topline=true, bottomline=true,
+    leftline=false, rightline=false]
+\begin{minted}[mathescape]{c++}
+template<typename T>
+std::vector<T> f_vector(std::function<T(T)> f, const std::vector<T>& x);
+\end{minted}
+\end{mdframed}
+
+
         \subsection{Понятие БАЗОВОГО состояния Basis\_State}
-        \subsection{Понятие состояния State<T>}
-        \subsection{Понятие оператора Operator<T>. (Правила создания оператора)}
-        \subsection{Понятие гамильтониана. (Правила создания собственного гамильтониана)}
-        \subsection{Моделирование динамики гамильтонианов. (Временно - статичных)}
+        Основа всей библиотеки. Первая версия отталкивалась от понятия оператора, но на практике оно оказалось крайне непрактичным. Данная версия берёт за основу понятие состояния. 
+        Как было видно на схеме, из Basis_State мы делаем свой StateType, а дальше всё исходит напрямую из него.
+
+\begin{mdframed}[linecolor=black, topline=true, bottomline=true,
+    leftline=false, rightline=false]
+\begin{minted}[mathescape]{c++}
+class Basis_State {
+    public:
+        // инициализация пустого состояния
+        explicit Basis_State() = default;
+
+        // groups_count делит кудиты на равные по размеру группы. max_val - максимальное значение всех кудитов
+        explicit Basis_State(size_t qudits_count, ValType max_val = 1, size_t groups_count = 1);
+
+        // добавление поддержки для разных кудитов. max_vals - вектор, в котором для каждого кубита указано его максимальное значение.
+        explicit Basis_State(size_t qudits_count, const std::vector<ValType>& max_vals,
+                            size_t groups_count = 1);
+
+        // qudit_count - чилсо кудитов. max_val - максимальное значение их всех. groups - количество элементов в каждой группе. 
+        // В сумме должно получиться qudits_count, иначе ошибка.
+        // ВНИМАНИЕ!!! - groups потом хранится в другом виде. А именно, в нём хранятся индексы последних кудитов групп. Так сделано в целях удобства индексации.
+        // Например, для |10>|001> вектор groups_ = {1, 4}
+        // Для ориентации в данном векторе сделаны отдельные методы, приведённые ниже
+        explicit Basis_State(size_t qudits_count, ValType max_val, const std::vector<size_t>& groups);
+
+        // ====== Далее идут варианты с иницализацией значений ========
+
+        // Создания состосния с инициализацией значений
+        explicit Basis_State(const std::vector<ValType>& qudits, ValType max_vals = 1, size_t groups_count = 1);
+
+        // Создание состояния с инициализация значений с поддержкой разных кудитов
+        explicit Basis_State(const std::vector<ValType>& qudits, const std::vector<ValType>& max_vals,
+                            size_t groups_count = 1);
+
+        // Создание состояния с инициализация значений с поддержкой разных кудитов + разных групп
+        explicit Basis_State(const std::vector<ValType>& qudits,  const std::vector<ValType>& max_vals,
+                            const std::vector<size_t>& groups_sizes);
+
+        // Установить кудиту значение. qudit_index - индекс кудита. group_id - номер группы (нумерация с нуля)
+        void set_qudit(ValType val, size_t qudit_index, size_t group_id = 0);
+        // Получить значение кудита
+        ValType get_qudit(size_t qudit_index, size_t group_id = 0);
+
+        // Добавить кудит. Будет добавлен к последней группе
+        void append_qudit(ValType init_val = 0, ValType max_val = 1);
+
+        // Проверка, является ли состояние пустым
+        bool is_empty();
+
+        // Получить дополнительную информацию о состоянии
+        std::string get_info();
+        // Записать дополнительную информацию о состоянии
+        void set_info(const std::string& str);
+
+
+        // Получить индексы последних кудитов групп
+        std::vector<size_t> get_groups();
+        // Получить индекс начала группы
+        size_t get_group_start(size_t group_id);
+        // Получить индекс конца группы (Например |10>|10> для 0 группы индекс конца будет 1)
+        size_t get_group_end(size_t group_id);
+        // Получить число групп
+        size_t get_groups_count();
+        // Получить размер  группы
+        size_t get_group_size(size_t group_id);
+
+        // Получить в качестве состояния отдельную группу
+        Basis_State get_group(size_t group_id) const;
+
+        // Конвертировать состояние в строку
+        std::string to_string() const;
+        // Выдаст ошибку, если состояния различаются по группам или по максимальным значениям кудитов
+        bool operator==(const Basis_State& other);
+        bool operator<(const Basis_State& other);
+        
+        // Поменять максимальное значение кудита
+        void set_max_val(ValType val, size_t qudit_index, size_t group_id = 0);
+        // Получить максимальное значение кудита
+        ValType get_max_val(size_t qudit_index, size_t group_id = 0);
+        // Получить вектор максимальных значений
+        std::vector<ValType> max_vals();
+
+        // Получить индекс состояния в базисе
+        size_t get_index(const std::set<Basis_State>& basis) const;
+
+        // Очистить состояние
+        void clear() { qudits_.resize(0); max_vals_.resize(0); groups_.resize(0); }
+    protected:
+        std::string info_; // Дополнительная информация о состоянии
+        std::vector<ValType> qudits_; // Вектор кудитов
+        std::vector<ValType> max_vals_; // Вектор максимальных значений кудитов
+        std::vector<size_t> groups_; // Вектор начала групп
+};
+
+\end{minted}
+\end{mdframed}
+        \subsection{Понятие состояния State<StateType>}
+
+        Basis_State это базисное состояние, в нём нет никакой суперпозиции. StateType - аналогично. State<StateType> же представляет собой привычное понятие состояния $|\Psi\rangle$
+
+\begin{mdframed}[linecolor=black, topline=true, bottomline=true,
+    leftline=false, rightline=false]
+\begin{minted}[mathescape]{c++}
+template<typename StateType>
+class State {
+    public:
+        // Инициализировать пустое состояние
+        explicit State() = default;
+        // Конструктор копирования
+        State(const State<StateType>& state) = default;
+        // Привести базисное состояние к обычному
+        State(const StateType& state);
+
+        // ??????????????????????????????????????????????????????????????
+        explicit State(const std::string& state_string, ValType max_val = 1);
+        explicit State(const std::string& state_string, const std::vector<ValType>& max_vals);
+
+        // Умножить состояние на коэффициент c
+        State<StateType> operator*(const COMPLEX& c);
+
+        // Сложить 2 вектора состояния. Если состояния нет в базисе - добавляется, иначе амплитуды складываются
+        void operator+=(const State<StateType>& st);
+
+        // Есть ли базисное состояние в нашем состоянии
+        bool is_in_state(const StateType& state);
+
+        // Получить амплитуду состояния под индексом index
+        COMPLEX& operator[](size_t index);
+        COMPLEX operator[](size_t index);
+
+        // Общее число состояний
+        size_t size() const { return state_vec_.size(); }
+
+        // Получить индекс базисного состояния в базисе
+        size_t get_index(const StateType& state);
+
+        // Вставить базисное состояние с амплитудой amplitude
+        void insert(const StateType& state, const COMPLEX& amplitude = COMPLEX(0, 0));
+
+        // Установить базис
+        void set_state_components(const std::set<StateType>& st);
+        // Установить вектор амплитуд
+        void set_vector(const std::vector<COMPLEX>& v);
+        // Получить базис
+        std::set<StateType> get_state_components() const;
+        // Получить вектор амплитуд
+        std::vector<COMPLEX> get_vector() const;
+
+        // Привести состояние к строковому виду
+        std::string to_string() const;
+
+        // ИСПРАВИТЬ В DYNAMIC!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        // Используется при моделировании. Гамильтониан хранит std::set<Basis_State>. Вы же в начале программы работаете с StateType
+        // Базис генерируется во время генерации гамильтониана, чтобы подогнать его под сгенерированный базис и привести его к Basis_State
+        // и был сделан данный метод
+        State<Basis_State> fit_to_basis(const std::set<Basis_State>& basis) const;
+    private:
+        std::vector<COMPLEX> state_vec_; // Вектор амплитуд
+        std::set<StateType> state_components_; // Базис состояния
+};
+\end{minted}
+\end{mdframed}
+
+        \subsection{Понятие оператора Operator<T>.}
+        \subsection{Понятие гамильтониана.}
+        \subsection{Моделирование динамики гамильтонианов.}
 
     \section{Визуализация}
 \end{document}

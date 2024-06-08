@@ -289,22 +289,6 @@ std::vector<T> f_vector(std::function<T(T)> f, const std::vector<T>& x) {
     return res;
 }
 
-// Рудимент - удалить
-template<typename T>
-void Multiply_Matrix (const Matrix<T>& A, const Matrix<T>& B, Matrix<T>& C) {
-    assert(A.m() == B.n());
-    for (size_t i = 0; i < A.n(); i++) {
-        for (size_t j = 0; j < B.m(); j++) {
-            T res(0);
-            for (size_t k = 0; k < A.m(); k++) {
-                res += A[i][k] * B[k][j];
-            }
-
-            C[i][j] = res;
-        }
-    }
-}
-
 // Не трогать!!!!!
 void cblas_MM_double_complex(COMPLEX* A, COMPLEX* B, COMPLEX* C, int n, int k, int m, double alpha, double betta);
 
