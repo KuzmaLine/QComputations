@@ -21,22 +21,19 @@ namespace {
     using COMPLEX = std::complex<double>;
 }
 
+/*
+
+Переделать весь класс операторов в дерево.
+Ход влево - умножение
+Ход вправо - сложение
+
+*/
+
 template<typename StateType>
 class Operator {
     public:
         explicit Operator(): cur_id_(-1) {}
         explicit Operator(OperatorType<StateType> op): cur_id_(0), operators_(1, std::vector<OperatorType<StateType>>(1, op)) {}
-
-        /*
-        void operator+(OperatorType<StateType> other) {
-            operators_.emplace_back(1, other);
-            cur_id_++;
-        }
-
-        void operator*(OperatorType<StateType> other) {
-            operators_[cur_id_].push_back(other);
-        }
-        */
 
         Operator<StateType> operator+(const Operator<StateType>& other) const {
             auto res = *this;
