@@ -73,8 +73,8 @@ class Operator {
 
         State<StateType> run(const State<StateType>& init_state) const;
     private:
-        int cur_id_;
-        std::vector<std::vector<OperatorType<StateType>>> operators_;
+        int cur_id_; // 
+        std::vector<std::vector<OperatorType<StateType>>> operators_; // Сам оператор
 };
 
 template<typename StateType>
@@ -98,8 +98,10 @@ State<StateType> Operator<StateType>::run(const State<StateType>& init_state) co
 
             for (int i = op.size() - 2; i >= 0; i--) {
                 for (const auto& cur_new_state: res.get_state_components()) {
-                    new_state = op[i](cur_new_state); 
+                    new_state += op[i](cur_new_state); 
                 }
+
+                res = new_state;
             }
 
             for (const auto& st: new_state.get_state_components()) {

@@ -1,0 +1,19 @@
+\begin{Verbatim}[commandchars=\\\{\},codes={\catcode`\$=3\catcode`\^=7\catcode`\_=8\relax}]
+\PYG{c+c1}{// ctxt \PYGZhy{} возвращаемое значение (контекст)}
+\PYG{c+c1}{// proc\PYGZus{}rows \PYGZhy{} число строк в решётке процессоров}
+\PYG{c+c1}{// proc\PYGZus{}cols \PYGZhy{} число столбцов в решётке процессоров}
+\PYG{c+c1}{// 0 \PYGZhy{} автоматический выбор значения (рекомендуется)}
+
+\PYG{c+c1}{// Пытается подогнать под квадратную решётку}
+\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n+nf}{init\PYGZus{}grid}\PYG{p}{(}\PYG{k+kt}{int}\PYG{o}{\PYGZam{}}\PYG{+w}{ }\PYG{n}{ctxt}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{ILP\PYGZus{}TYPE}\PYG{+w}{ }\PYG{n}{proc\PYGZus{}rows}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{ILP\PYGZus{}TYPE}\PYG{+w}{ }\PYG{n}{proc\PYGZus{}cols}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{p}{);}
+
+\PYG{c+c1}{// Выстраивает процессы в ряд}
+\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n+nf}{init\PYGZus{}vector\PYGZus{}grid}\PYG{p}{(}\PYG{k+kt}{int}\PYG{o}{\PYGZam{}}\PYG{+w}{ }\PYG{n}{ctxt}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{ILP\PYGZus{}TYPE}\PYG{+w}{ }\PYG{n}{proc\PYGZus{}rows}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{p}{,}
+\PYG{+w}{                      }\PYG{n}{ILP\PYGZus{}TYPE}\PYG{+w}{ }\PYG{n}{proc\PYGZus{}cols}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{p}{);}
+
+\PYG{c+c1}{// myrow, mycol \PYGZhy{} координаты ядра в решётке}
+\PYG{c+c1}{// Получить информацию о решётке}
+\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n+nf}{blacs\PYGZus{}gridinfo}\PYG{p}{(}\PYG{k}{const}\PYG{+w}{ }\PYG{n}{ILP\PYGZus{}TYPE}\PYG{o}{\PYGZam{}}\PYG{+w}{ }\PYG{n}{ctxt}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{ILP\PYGZus{}TYPE}\PYG{o}{\PYGZam{}}\PYG{+w}{ }\PYG{n}{proc\PYGZus{}rows}\PYG{p}{,}
+\PYG{+w}{                    }\PYG{n}{ILP\PYGZus{}TYPE}\PYG{o}{\PYGZam{}}\PYG{+w}{ }\PYG{n}{proc\PYGZus{}cols}\PYG{p}{,}
+\PYG{+w}{                    }\PYG{n}{ILP\PYGZus{}TYPE}\PYG{o}{\PYGZam{}}\PYG{+w}{ }\PYG{n}{myrow}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{ILP\PYGZus{}TYPE}\PYG{o}{\PYGZam{}}\PYG{+w}{ }\PYG{n}{mycol}\PYG{p}{);}
+\end{Verbatim}

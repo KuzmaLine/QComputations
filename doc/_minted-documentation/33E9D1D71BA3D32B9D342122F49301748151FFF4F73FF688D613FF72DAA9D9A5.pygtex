@@ -1,0 +1,6 @@
+\begin{Verbatim}[commandchars=\\\{\},codes={\catcode`\$=3\catcode`\^=7\catcode`\_=8\relax}]
+\PYG{c+c1}{// st \PYGZhy{} множество элементов}
+\PYG{c+c1}{// index \PYGZhy{} индекс элемента в множестве}
+
+\PYG{n}{T}\PYG{+w}{ }\PYG{n+nf}{get\PYGZus{}elem\PYGZus{}from\PYGZus{}set}\PYG{p}{(}\PYG{k}{const}\PYG{+w}{ }\PYG{n}{std}\PYG{o}{::}\PYG{n}{set}\PYG{o}{\PYGZlt{}}\PYG{n}{T}\PYG{o}{\PYGZgt{}\PYGZam{}}\PYG{+w}{ }\PYG{n}{st}\PYG{p}{,}\PYG{+w}{ }\PYG{k+kt}{size\PYGZus{}t}\PYG{+w}{ }\PYG{n}{index}\PYG{p}{);}
+\end{Verbatim}

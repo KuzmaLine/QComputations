@@ -1,0 +1,7 @@
+\begin{Verbatim}[commandchars=\\\{\},codes={\catcode`\$=3\catcode`\^=7\catcode`\_=8\relax}]
+\PYG{c+c1}{// size \PYGZhy{} размер вектора. rank \PYGZhy{} номер ядра процессора. world\PYGZus{}size \PYGZhy{} общее число ядер.}
+\PYG{c+c1}{// start\PYGZus{}col и count \PYGZhy{} переменные, в которые записывается результат. start\PYGZus{}col \PYGZhy{} номер элемента,}
+\PYG{c+c1}{// с которого ядро начинает, count \PYGZhy{} сколько элементов оно должно пройти.}
+
+\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n+nf}{make\PYGZus{}rank\PYGZus{}map}\PYG{p}{(}\PYG{k+kt}{size\PYGZus{}t}\PYG{+w}{ }\PYG{n}{size}\PYG{p}{,}\PYG{+w}{ }\PYG{k+kt}{int}\PYG{+w}{ }\PYG{n}{rank}\PYG{p}{,}\PYG{+w}{ }\PYG{k+kt}{int}\PYG{+w}{ }\PYG{n}{world\PYGZus{}size}\PYG{p}{,}\PYG{+w}{ }\PYG{k+kt}{size\PYGZus{}t}\PYG{o}{\PYGZam{}}\PYG{+w}{ }\PYG{n}{start\PYGZus{}col}\PYG{p}{,}\PYG{+w}{ }\PYG{k+kt}{size\PYGZus{}t}\PYG{o}{\PYGZam{}}\PYG{+w}{ }\PYG{n}{count}\PYG{p}{);}
+\end{Verbatim}

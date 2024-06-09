@@ -1,0 +1,14 @@
+\babel@toc {russian}{}\relax 
+\contentsline {section}{\numberline {1}Структура библиотеки}{3}{}%
+\contentsline {section}{\numberline {2}QConfig}{6}{}%
+\contentsline {section}{\numberline {3}Прототипы функций и классов}{9}{}%
+\contentsline {subsection}{\numberline {3.1}Обычная матрица Matrix<T>}{9}{}%
+\contentsline {subsection}{\numberline {3.2}Блочная матрица BLOCKED\_Matrix<T>}{13}{}%
+\contentsline {subsection}{\numberline {3.3}BLOCKED\_Vector<T>}{17}{}%
+\contentsline {subsection}{\numberline {3.4}Вспомогательные функции}{19}{}%
+\contentsline {subsection}{\numberline {3.5}Понятие БАЗОВОГО состояния Basis\_State}{23}{}%
+\contentsline {subsection}{\numberline {3.6}Понятие состояния State<StateType>}{25}{}%
+\contentsline {subsection}{\numberline {3.7}Понятие оператора Operator<StateType>.}{27}{}%
+\contentsline {subsection}{\numberline {3.8}Понятие гамильтониана.}{27}{}%
+\contentsline {subsection}{\numberline {3.9}Моделирование динамики гамильтонианов.}{27}{}%
+\contentsline {section}{\numberline {4}Визуализация}{27}{}%
