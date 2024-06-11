@@ -201,7 +201,7 @@ void Formule<StateType>::make_work_area() {
 // ---------------------------- OPERATORS ---------------------------
 
 template<typename StateType>
-State<StateType> set_qudit(const StateType& state, ValType val, size_t qudit_index, size_t group_id = 0, const std::string& info = "") {
+State<StateType> set_qudit(const StateType& state, ValType val, size_t qudit_index = 0, size_t group_id = 0, const std::string& info = "") {
     auto res = state;
     if (val > state.get_max_val(qudit_index, group_id) or val < 0) {
         res.clear();
@@ -213,7 +213,7 @@ State<StateType> set_qudit(const StateType& state, ValType val, size_t qudit_ind
 }
 
 template<typename StateType>
-State<StateType> sigma_x(const StateType& state, size_t qudit_index, size_t group_id = 0, const std::string& info = "") {
+State<StateType> sigma_x(const StateType& state, size_t qudit_index = 0, size_t group_id = 0, const std::string& info = "") {
     StateType res = state;
     auto qudit = state.get_qudit(qudit_index, group_id);
     assert(qudit == 0 or qudit == 1);
@@ -227,7 +227,40 @@ State<StateType> sigma_x(const StateType& state, size_t qudit_index, size_t grou
 }
 
 template<typename StateType>
-State<StateType> check(const StateType& state, ValType check_val, size_t qudit_index, size_t group_id = 0, const std::string& info = "") {
+State<StateType> sigma_y(const StateType& state, size_t qudit_index = 0, size_t group_id = 0, const std::string& info = "") {
+    StateType res = state;
+    auto qudit = state.get_qudit(qudit_index, group_id);
+    assert(qudit == 0 or qudit == 1);
+
+    if (qudit == 0) { 
+        qudit = 1;
+    } else {
+        qudit = 0;
+    }
+
+    res.set_qudit(qudit, qudit_index, group_id);
+
+    State<StateType> stateres(res);
+    stateres[0] *= COMPLEX(0, std::pow(-1, qudit + 1));
+
+    return stateres;
+}
+
+template<typename StateType>
+State<StateType> sigma_z(const StateType& state, size_t qudit_index = 0, size_t group_id = 0, const std::string& info = "") {
+    auto res = get_qudit(state, qudit_index, group_id);
+    auto qudit = state.get_qudit(qudit_index, group_id);
+    assert(qudit == 0 or qudit == 1);
+
+    if (qudit == 1) {
+        res[0] *= -1;
+    }
+
+    return res;
+}
+
+template<typename StateType>
+State<StateType> check(const StateType& state, ValType check_val, size_t qudit_index = 0, size_t group_id = 0, const std::string& info = "") {
     auto res = state;
     if (res.get_qudit(qudit_index, group_id) != check_val) {
         res.clear();
@@ -237,7 +270,7 @@ State<StateType> check(const StateType& state, ValType check_val, size_t qudit_i
 }
 
 template<typename StateType>
-State<StateType> get_qudit(const StateType& state, size_t qudit_index, size_t group_id = 0, const std::string& info = "") {
+State<StateType> get_qudit(const StateType& state, size_t qudit_index = 0, size_t group_id = 0, const std::string& info = "") {
     auto res = State<StateType>(state);
     res[0] = state.get_qudit(qudit_index, group_id);
 

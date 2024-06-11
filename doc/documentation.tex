@@ -1889,4 +1889,578 @@ python3 $SEABORN_PLOT
 \end{minted}
 \end{mdframed}
 
+        \section{Генерация базиса}
+
+        Данная библиотека предназначена для упрощения работы с квантовыми вычислениями в принципе. Базис можно вывести из начального состояния и гамильтониана (или набора операторов для дискретного
+        квантового компьютера (на гейтах)), поэтому ручная генерация базиса в библиотеке не предусмотрена (по крайне мере, в данной версии).
+
+        На текущий момент реализован ???алгоритм отбора рабочей области???. Он работает следующим образом:
+
+        Берётся начальное состояния - каждая его базисная компонента прогоняется через оператор. Состояния добавляются в базис.
+        Алгоритм работает до тех пор, пока появляются новые состояния. Реализация - файл graph.hpp
+
+\begin{mdframed}[linecolor=black, topline=true, bottomline=true,
+leftline=false, rightline=false]
+\begin{minted}[mathescape]{c++}
+template<typename StateType>
+class State_Graph {
+    public:
+        // Генерирует базис прямо в конструкторе
+        explicit State_Graph(const State<StateType>& init_state,
+                        const Operator<StateType>& A_op,
+                        const std::vector<Operator<StateType>>& operator_decoherence = {});
+
+        // Вернуть базис
+        std::set<StateType> get_basis() const { return basis_; }
+    private:
+        std::set<StateType> basis_; // Полученный базис
+};
+\end{minted}
+\end{mdframed}
+
+        \section{Реализованные модели}
+        В данной главе перечислены готовые реализации некоторых квантовых математических абстракций.
+
+        На данный момент реализованы:
+        \begin{itemize}
+            \item{Тавис-Каммингс-Хаббард. (H\_TCH, BLOCKED\_H\_TCH)}
+        \end{itemize}
+
+        \subsection{Вспомогательные функции для создания собственных операторов}
+        Функции для удобства перехода от базисного состояния StateType к суперпозиции State<StateType>.
+
+        \begin{center}
+            \textbf{set\_qudit - установка значения кудиту}
+        \end{center}
+
+        Устанавливает значению кудиту - на выход получаете данное состояния в виде State<StateType> с единичным коэффициентом.
+         В случае, если устанавливается значения >= максимальному значению кудита, то в ответ возвращается пустое состояние, то есть пустой State<StateType>.
+        Собственно, для этого и нужны максимальные значения.
+
+\begin{mdframed}[linecolor=black, topline=true, bottomline=true,
+leftline=false, rightline=false]
+\begin{minted}[mathescape]{c++}
+// state - базисное состояние
+// val - значение, которое мы устанавливаем
+// qudit index - индекс кудита в группе
+// group_id - номер группы, в котором находится кудит
+
+template<typename StateType>
+State<StateType> set_qudit(const StateType& state, ValType val, size_t qudit_index = 0, size_t group_id = 0) {
+    auto res = state; // копируем состояние
+
+    // проверяем, принадлежит ли val диапазону от 0 до максимального значения
+    if (val > state.get_max_val(qudit_index, group_id) or val < 0) {
+        res.clear(); // очистить состояние
+    } else {
+        // устаналиваем значение кудита
+        res.set_qudit(val, qudit_index, group_id);
+    }
+
+    // возвращаем результате в виде State<StateType>
+    return State<StateType>(res);
+}
+\end{minted}
+\end{mdframed}
+
+        \begin{center}
+            \textbf{get\_qudit - получить значения кудита}
+        \end{center}
+
+        Возвращает переданное в функцию состояние в виде State<StateType> с коэффициентом, равным значению запрашиваемого кудита.
+
+\begin{mdframed}[linecolor=black, topline=true, bottomline=true,
+leftline=false, rightline=false]
+\begin{minted}[mathescape]{c++}
+// state - базисное состояние
+// qudit index - индекс кудита в группе
+// group_id - номер группы, в котором находится кудит
+
+template<typename StateType>
+State<StateType> get_qudit(const StateType& state, size_t qudit_index = 0, size_t group_id = 0) {
+    auto res = State<StateType>(state); // привести состояние к
+                                        // State<StateType>
+
+    // Сделать коэффицент равным значению запрашиваемого кудита
+    res[0] = state.get_qudit(qudit_index, group_id);
+
+    return res;
+}
+\end{minted}
+\end{mdframed}
+
+        \begin{center}
+            \textbf{sigma\_x, sigma\_y, sigma\_z - операторы Паули}
+        \end{center}
+
+        Операторы Паули. Напомню, что операторы Паули выглядят следующим образом:
+
+        <вставить операторы паули>
+        
+        Внутри реализована проверка на соответсвие значения кудитов. В случае, если кудит будет иметь некорректное значение - программа завершится с ошибкой.
+
+\begin{mdframed}[linecolor=black, topline=true, bottomline=true,
+leftline=false, rightline=false]
+\begin{minted}[mathescape]{c++}
+// state - базисное состояние
+// qudit index - индекс кудита в группе
+// group_id - номер группы, в котором находится кудит
+
+template<typename StateType>
+State<StateType> sigma_x(const StateType& state, size_t qudit_index = 0, size_t group_id = 0) {
+    StateType res = state;
+    auto qudit = state.get_qudit(qudit_index, group_id);
+    assert(qudit == 0 or qudit == 1);
+
+    if (qudit == 0) qudit = 1;
+    else qudit = 0;
+
+    res.set_qudit(qudit, qudit_index, group_id);
+
+    return State<StateType>(res);
+}
+
+template<typename StateType>
+State<StateType> sigma_y(const StateType& state, size_t qudit_index = 0, size_t group_id = 0) {
+    StateType res = state;
+    auto qudit = state.get_qudit(qudit_index, group_id);
+    assert(qudit == 0 or qudit == 1);
+
+    if (qudit == 0) { 
+        qudit = 1;
+    } else {
+        qudit = 0;
+    }
+
+    res.set_qudit(qudit, qudit_index, group_id);
+
+    State<StateType> stateres(res);
+    stateres[0] *= COMPLEX(0, std::pow(-1, qudit + 1));
+
+    return stateres;
+}
+
+template<typename StateType>
+State<StateType> sigma_z(const StateType& state, size_t qudit_index = 0, size_t group_id = 0) {
+    auto res = get_qudit(state, qudit_index, group_id);
+    auto qudit = state.get_qudit(qudit_index, group_id);
+    assert(qudit == 0 or qudit == 1);
+
+    if (qudit == 1) {
+        res[0] *= -1;
+    }
+
+    return res;
+}
+\end{minted}
+\end{mdframed}
+
+        \begin{center}
+            \textbf{check???? переделать на условие - оператор проверки значения кудиту}
+        \end{center}
+
+        В некоторых задачах может возникнуть такая ситуация, что операторы работают только при определённом условии, то есть при определённых значениях кудита.
+        Данный оператор проверяет значение указанного кудита - если значение подходит под условие, тогда оператор возвращает State<StateType> с единичным коэффициентом, 
+        в противном случае возвращает пустое состояние.
+
+\begin{mdframed}[linecolor=black, topline=true, bottomline=true,
+leftline=false, rightline=false]
+\begin{minted}[mathescape]{c++}
+// state - базисное состояние
+// check_val - проверить кудит на равенство значению check_val
+// qudit index - индекс кудита в группе
+// group_id - номер группы, в котором находится кудит
+
+template<typename StateType>
+State<StateType> check(const StateType& state, ValType check_val, size_t qudit_index = 0, size_t group_id = 0, const std::string& info = "") {
+    auto res = state;
+    if (res.get_qudit(qudit_index, group_id) != check_val) {
+        res.clear();
+    }
+
+    return State<StateType>(res);
+}
+
+?????? функция ??????
+\end{minted}
+\end{mdframed}
+
+        \subsection{TCH. Модель Тависа-Каммингса-Хаббарда}
+
+        Модель Тависа-Каммингса-Хаббарда - это модель оптических полостей. Модель проверена экспериментально, например, на Рабиевских осцилляциях для 2 полостей.
+
+        Формула $H_{TCH}$ следующая:
+
+        $H_{TCH} = \sum \limits_{k = 1}^{P}(\hbar{w_{ph}}{a_k}{a^{\dagger}_k} + {\hbar}{w_{at}}{\sum\limits_{i = 1}^{m_k}(\sigma_{k,i}\sigma^{\dagger}_{k,i})}
+		+ {g}\sum\limits_{i=1}^{m_k}({a_k}\sigma^{\dagger}_{k,i} + a^{\dagger}_k\sigma_{k,i}))
+		+ \sum\limits_{i = 1}^{P}(\sum\limits_{j = 1, j \neq i}^{P}({\gamma_{ij}}{a_i}a^{\dagger}_j + \overline{{\gamma_{ij}}}a^{\dagger}_i{a_j}))$, где
+
+		$g$ - амплитуда перехода между возбуждённым и основным состояними атомов, (на самом деле для каждого атома это число уникально, но мы пока условимся, что у нас атомы индентичны)
+
+		$w_{ph}$ - частота фотонов, $w_{at}$ - частота атомов (у нас они будут равны 1 для более демонстративных картин)
+
+		$m_k$ - число атомов в полости $k$
+
+        $a^{\dagger}$ - оператор создания фотонов: $a^{\dagger}|n\rangle = sqrt(n + 1)|n + 1\rangle$
+        $a$ - оператор уничтожения фотонов: $a|n\rangle = sqrt(n)|n - 1\rangle$
+        $\sigma$ - оператор релаксации атома: $\sigma|1\rangle = |0\rangle$, $\sigma|0\rangle = 0$
+        $\sigma^{\dagger}$ - оператор возбуждения атома: $\sigma^{\dagger}|0\rangle = |1\rangle$, $\sigma^{\dagger}|1\rangle = 0$
+
+        Начнём с реализации (файлы state.*) самого состояния TCH\_State:
+        Перенести реализацию????????????????????????????????????????????????????
+
+\begin{mdframed}[linecolor=black, topline=true, bottomline=true,
+leftline=false, rightline=false]
+\begin{minted}[mathescape]{c++}
+class TCH_State: public Basis_State {
+    using E_LEVEL = int; // Для значений атомов
+    using AtomId = size_t; // Для индексации кудитов
+
+    public:
+        TCH_State() = default;
+        // Создать из базисного состояния линию полостей
+        TCH_State(const Basis_State& base): 
+                 Basis_State(base),
+                 x_size_(base.get_groups_count()),
+                 y_size_(1), z_size_(1),
+                 neighbours_(update_neighbours(x_size_, y_size_, z_size_)) {}
+
+        // Конструктор копирования
+        TCH_State(const TCH_State& state) = default;
+
+        // Создать состояние с количеством атомов в каждой полости, согласно grid_config
+        // Пример: Для grid_config = {3, 2} конструктор создаст состояние с 2 полостями,
+        // с 3 и 2 атомами соответственно
+        TCH_State(const std::vector<size_t>& grid_config);
+
+        // Вернуть размеры решётки, на случай, если она у вас в виде куба
+        // Если граф произвольный, то придётся адаптировать
+        size_t x_size() const { return x_size_; }
+        size_t y_size() const { return y_size_; }
+        size_t z_size() const { return z_size_; }
+
+        // Поменять размеры полостей
+        // Сделана проверка на соответсвие числу полостей
+        void reshape(size_t x_size, size_t y_size, size_t z_size);
+
+        // Функции для управления волноводами
+        void set_waveguide(double amplitude, double length);
+        void set_waveguide(size_t from_cavity_id, size_t to_cavity_id,
+                           double amplitude,
+                           double length = QConfig::instance().waveguides_length());
+
+        // Вернуть количество полостей
+        size_t cavities_count() const { return groups_.size(); }
+        // Вернуть количество атомов в полости
+        size_t cavity_atoms_count(CavityId id) const
+              { return this->get_group_end(id) - this->get_group_start(id); }
+        size_t m(CavityId id) const { return cavity_atoms_count(id); }
+
+        // Вернуть количество фотонов в полости
+        ValType n(CavityId id) const { return qudits_[get_group_start(id)]; }
+        // Установить количество фотонов в полости
+        void set_n(ValType n, CavityId id) { qudits_[get_group_start(id)] = n; }
+
+        // Получить состояние в полости в качестве TCH_State
+        TCH_State get_state_in_cavity(CavityId cavity_id) const { return TCH_State(this->get_group(cavity_id)); }
+        TCH_State operator[](CavityId cavity_id) const { return TCH_State(this->get_group(cavity_id)); }
+
+        // Получить индекс полости в кубической индексации
+        CavityId get_index_of_cavity(size_t x, size_t y = 0, size_t z = 0) const { return z * y_size_ * x_size_ + y * x_size_ + x; }
+
+        // Получить индекс состояния в базисе
+        size_t get_index(const std::set<TCH_State>& basis) const;
+
+        // Получить интенсивность утечки фотонов из полости
+        double get_leak_gamma(CavityId id) const { return gamma_leak_cavities_[id]; }\
+        // Получить интенсивность притока фотонов из полости
+        double get_gain_gamma(CavityId id) const { return gamma_gain_cavities_[id]; }
+
+        // Установить интенсивность утечки фотонов из полости
+        void set_leak_for_cavity(CavityId id, double gamma) { gamma_leak_cavities_[id] = gamma;}
+        // Установить интенсивность притока фотонов из полости
+        void set_gain_for_cavity(CavityId id, double gamma) { gamma_gain_cavities_[id] = gamma;}
+
+        // Получить полости, в которых есть утечка
+        std::set<CavityId> get_cavities_with_leak() const;
+        // Получить полости, в которых есть приток
+        std::set<CavityId> get_cavities_with_gain() const;
+
+        // Получить интенсивность волновода из полости в полость
+        COMPLEX get_gamma(CavityId from_id, CavityId to_id) const {
+            bool is_conj = false;
+            if (from_id > to_id) {
+                auto tmp = from_id;
+                from_id = to_id;
+                to_id = tmp;
+                is_conj = true;
+            }
+            auto res = gamma(waveguides_[from_id][to_id].first, waveguides_[from_id][to_id].second, QConfig::instance().w());
+
+            if (is_conj) {
+                res = std::conj(res);
+            }
+
+            return res;
+        }
+
+        // Получить полости, в которых есть атомы
+        std::set<CavityId> get_cavities_with_atoms() const { return cavities_with_atoms_; }
+
+        // Получить номера соседей для данной полости
+        std::vector<CavityId> get_neighbours(CavityId cavity_id) const { return neighbours_[cavity_id]; }
+    private:
+        size_t x_size_; // Размеры решётки
+        size_t y_size_;
+        size_t z_size_;
+
+        std::set<CavityId> cavities_with_atoms_; // Полости с атомами
+        Matrix<std::pair<double, double>> waveguides_; // Матрица волноводов
+        std::vector<std::vector<CavityId>> neighbours_; // Соседи для каждой полости
+        std::vector<double> gamma_leak_cavities_; // Интенсивности утечек фотонов
+        std::vector<double> gamma_gain_cavities_; // Интенсивности притока фотонов
+};
+\end{minted}
+\end{mdframed}
+
+        Реализация операторов в библиотеке оптимизирована до суммы 4-ёх операторов:
+        \begin{itemize}
+            \item{Оператора энергии поля (photons\_count ~ $E_{PH}$)}
+            \item{Оператора энергии атомов (atoms\_exc\_count ~ $E_{AT}$)}
+            \item{Оператор возбуждения и релаксации атомов внутри полости (exc\_relax\_atoms ~ $UD$ (UP DOWN))}
+            \item{Оператор перехода фотонов из полости в полость (photons\_transfer ~ $PH_{TRANS}$)}
+        \end{itemize}
+
+        Итоговая формула:
+        $H_{TCH} = E_{PH} + E_{AT} + UD + PH_{TRANS}$
+
+        Реализация каждого оператора:
+
+        \begin{center}
+            \textbf{photons\_count}
+        \end{center}
+
+        Реализовывает оператор ${\hbar}{w_{at}}$
+
+\begin{mdframed}[linecolor=black, topline=true, bottomline=true,
+leftline=false, rightline=false]
+\begin{minted}[mathescape]{c++}
+State<TCH_State> photons_count(const TCH_State& state) {
+    State<TCH_State> res(state);
+    res[0] = 0;
+
+    // Проходимся по всем полостям
+    for (size_t i = 0; i < state.cavities_count(); i++) {
+        // В коэффициент прибавляем все кудиты, соответствующие фотонам в каждой полости
+        res[0] += state.get_qudit(0, i) * QConfig::instance().h() * QConfig::instance().w();
+    }
+
+    return res;
+}
+\end{minted}
+\end{mdframed}
+            
+        \begin{center}
+            \textbf{atoms\_exc\_count}
+        \end{center}
+
+        Реализовывает оператор ${\hbar}{w_{at}}{\sum\limits_{i = 1}^{m_k}(\sigma_{k,i}\sigma^{\dagger}_{k,i})}$
+
+\begin{mdframed}[linecolor=black, topline=true, bottomline=true,
+leftline=false, rightline=false]
+\begin{minted}[mathescape]{c++}
+State<TCH_State> atoms_exc_count(const TCH_State& state) {
+    State<TCH_State> res(state);
+    res[0] = 0;
+
+    // Проходимся по всей полостям
+    for (size_t i = 0; i < state.cavities_count(); i++) {
+        // Перебираем все атомы в полости
+        for (size_t j = 1; j <= state.m(i); j++) {
+            // Суммируем все значения кудитов атомов в полости
+            res[0] += state.get_qudit(j, i) * QConfig::instance().h() * QConfig::instance().w();
+        }
+    }
+
+    return res;
+}
+\end{minted}
+\end{mdframed}
+
+        \begin{center}
+            \textbf{exc\_relax\_atoms}
+        \end{center}
+
+        Описываем взаимодействие атомов с полем, то есть оператор ${g}\sum\limits_{i=1}^{m_k}({a_k}\sigma^{\dagger}_{k,i} + a^{\dagger}_k\sigma_{k,i})$
+
+\begin{mdframed}[linecolor=black, topline=true, bottomline=true,
+leftline=false, rightline=false]
+\begin{minted}[mathescape]{c++}
+State<TCH_State> exc_relax_atoms(const TCH_State& st) {
+    // Создаём пустое состояние State<TCH_State>
+    State<TCH_State> res;
+
+    // Копируем состояние
+    TCH_State state(st);
+
+    for (size_t i = 0; i < state.cavities_count(); i++) {
+        // Проверяем, есть в полости фотоны
+        if (state.n(i) != 0) {
+            // Если есть убираем 1
+            state.set_n(state.n(i) - 1, i);
+
+            // Переносим его в каждый не возбуждённый атом по порядку
+            for (size_t j = 1; j <= state.m(i); j++) {
+                if (state.get_qudit(j, i) == 0) {
+                    // Суммируем результат
+                    res += set_qudit(state, 1, j, i) * QConfig::instance().g() * std::sqrt(state.n(i) + 1);
+                }
+            }
+
+            // Возвращаем фотон обратно
+            state.set_n(state.n(i) + 1, i);
+        }
+
+        for (size_t j = 1; j <= state.m(i); j++) {
+            // Если в полости есть возбуждённый атом, описываем его релаксацию
+            if (state.get_qudit(j, i) == 1) {
+                state.set_qudit(0, j, i);
+                res += set_qudit(state, state.n(i) + 1, 0, i) * QConfig::instance().g() * std::sqrt(state.n(i) + 1);
+                state.set_qudit(1, j, i);
+            }
+        }
+    }
+
+    return res;
+}
+\end{minted}
+\end{mdframed}
+
+        \begin{center}
+            \textbf{photons\_transfer}
+        \end{center}
+
+        Описываем данный оператор $\sum\limits_{i = 1}^{P}(\sum\limits_{j = 1, j \neq i}^{P}({\gamma_{ij}}{a_i}a^{\dagger}_j + \overline{{\gamma_{ij}}}a^{\dagger}_i{a_j}))$
+\begin{mdframed}[linecolor=black, topline=true, bottomline=true,
+leftline=false, rightline=false]
+\begin{minted}[mathescape]{c++}
+State<TCH_State> photons_transfer(const TCH_State& st) {
+    // Создаём пустое состояние
+    State<TCH_State> res;
+
+    // Копируем базовое состояние
+    TCH_State state(st);
+
+    // Проходимся по всем полостям
+    for (size_t i = 0; i < state.cavities_count(); i++) {
+        // Получаем все полости, в которые может улететь фотон
+        auto neighbours = state.get_neighbours(i);
+
+        // Перебираем всех соседей
+        for (auto cavity_id: neighbours) {
+            // Мы должны просуммировать лишь 1 раз, ведь при переборе мы встретим
+            // каждую пару 2 раза, отсюда и это условие
+            if (i < cavity_id) {
+                if (state.n(i) != 0) {
+                    state.set_n(state.n(i) - 1, i);
+
+                    res += set_qudit(state, state.n(cavity_id) + 1, 0, cavity_id) 
+                            * state.get_gamma(i, cavity_id) * std::sqrt(state.n(i) + 1)
+                            * std::sqrt(state.n(cavity_id) + 1);
+
+                    state.set_n(state.n(i) + 1, i);
+                }
+    
+                if (state.n(cavity_id) != 0) {
+                    state.set_n(state.n(i) + 1, i);
+
+                    res += set_qudit(state, state.n(cavity_id) - 1, 0, cavity_id)
+                    * state.get_gamma(cavity_id, i) * std::sqrt(state.n(i))
+                    * std::sqrt(state.n(cavity_id));
+
+                    state.set_n(state.n(i) - 1, i);
+                }
+            }
+        } 
+    }
+
+    return res;
+}
+\end{minted}
+\end{mdframed}
+
+    Теперь разберём генерацию гамильтонианов.
+
+    \begin{center}
+        \textbf{H\_TCH}
+    \end{center}
+
+    Разберём реализацию одноядерного гамильтониана. Замечу следующее: так как мы генерируем гамильтониан через операторы - H\_TCH является дочерним классом H\_by\_Operator<TCH\_State>
+\begin{mdframed}[linecolor=black, topline=true, bottomline=true,
+leftline=false, rightline=false]
+\begin{minted}[mathescape]{c++}
+class H_TCH : public H_by_Operator<TCH_State> {
+    public:
+        explicit H_TCH(const State<TCH_State>& state);
+};
+
+namespace {
+    // Функция возвращает сам оператор H_TCH
+    Operator<TCH_State> H_TCH_OP() {
+        using OpType = Operator<TCH_State>;
+
+        OpType my_H;
+        my_H = my_H + OpType(photons_count) + OpType(atoms_exc_count) + OpType(exc_relax_atoms) + OpType(photons_transfer);
+
+        return my_H;
+    }
+    
+    // Описывает операторы декогеренции
+    std::vector<std::pair<double, Operator<TCH_State>>> decs(const State<TCH_State>& state) {
+        using OpType = Operator<TCH_State>;
+
+        // Получаем пример состояния
+        auto st = *(state.get_state_components().begin());
+        std::vector<std::pair<double, OpType>> dec;
+
+        // Перебираем все полости
+        for (size_t i = 0; i < st.cavities_count(); i++) {
+            // Проверяем утечки
+            if (!is_zero(st.get_leak_gamma(i))) {
+                // Описываем оператор утечки фотонов
+                OperatorType<TCH_State> a_destroy_i = {[i](const TCH_State& che_state) {
+                    return set_qudit(che_state, che_state.n(i) - 1, 0, i) * std::sqrt(che_state.n(i));
+                }};
+
+                // Создаём оператор
+                OpType my_A_out(a_destroy_i);
+
+                // Добавляем его к вектор декогеренций
+                dec.emplace_back(std::make_pair(st.get_leak_gamma(i), my_A_out));
+            }
+
+            // Проверяем притоки
+            if (!is_zero(st.get_gain_gamma(i))) {
+                // Создаём оператор притока фотонов
+                OperatorType<TCH_State> a_create_i = {[i](const TCH_State& che_state) {
+                    return set_qudit(che_state, che_state.n(i) + 1, 0, i) * std::sqrt(che_state.n(i) + 1);
+                }};
+
+                // Создаём оператор
+                OpType my_A_in(a_create_i);
+
+                // Добавляем его к вектор декогеренций
+                dec.emplace_back(std::make_pair(st.get_gain_gamma(i), my_A_in));
+            }
+        }
+
+        return dec;
+    }
+}
+
+H_TCH::H_TCH(const State<TCH_State>& state):
+                       H_by_Operator<TCH_State>(state, H_TCH_OP(), decs(state)) {}
+\end{minted}
+\end{mdframed}
+
 \end{document}

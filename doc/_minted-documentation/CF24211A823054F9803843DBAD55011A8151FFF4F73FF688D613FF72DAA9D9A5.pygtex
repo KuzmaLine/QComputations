@@ -1,0 +1,110 @@
+\begin{Verbatim}[commandchars=\\\{\},codes={\catcode`\$=3\catcode`\^=7\catcode`\_=8\relax}]
+\PYG{k}{class}\PYG{+w}{ }\PYG{n+nc}{TCH\PYGZus{}State}\PYG{o}{:}\PYG{+w}{ }\PYG{k}{public}\PYG{+w}{ }\PYG{n}{Basis\PYGZus{}State}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{    }\PYG{k}{using}\PYG{+w}{ }\PYG{n}{E\PYGZus{}LEVEL}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{k+kt}{int}\PYG{p}{;}\PYG{+w}{ }\PYG{c+c1}{// Для значений атомов}
+\PYG{+w}{    }\PYG{k}{using}\PYG{+w}{ }\PYG{n}{AtomId}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{k+kt}{size\PYGZus{}t}\PYG{p}{;}\PYG{+w}{ }\PYG{c+c1}{// Для индексации кудитов}
+
+\PYG{+w}{    }\PYG{k}{public}\PYG{o}{:}
+\PYG{+w}{        }\PYG{n}{TCH\PYGZus{}State}\PYG{p}{()}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{k}{default}\PYG{p}{;}
+\PYG{+w}{        }\PYG{c+c1}{// Создать из базисного состояния линию полостей}
+\PYG{+w}{        }\PYG{n}{TCH\PYGZus{}State}\PYG{p}{(}\PYG{k}{const}\PYG{+w}{ }\PYG{n}{Basis\PYGZus{}State}\PYG{o}{\PYGZam{}}\PYG{+w}{ }\PYG{n}{base}\PYG{p}{)}\PYG{o}{:}
+\PYG{+w}{                 }\PYG{n}{Basis\PYGZus{}State}\PYG{p}{(}\PYG{n}{base}\PYG{p}{),}
+\PYG{+w}{                 }\PYG{n}{x\PYGZus{}size\PYGZus{}}\PYG{p}{(}\PYG{n}{base}\PYG{p}{.}\PYG{n}{get\PYGZus{}groups\PYGZus{}count}\PYG{p}{()),}
+\PYG{+w}{                 }\PYG{n}{y\PYGZus{}size\PYGZus{}}\PYG{p}{(}\PYG{l+m+mi}{1}\PYG{p}{),}\PYG{+w}{ }\PYG{n}{z\PYGZus{}size\PYGZus{}}\PYG{p}{(}\PYG{l+m+mi}{1}\PYG{p}{),}
+\PYG{+w}{                 }\PYG{n}{neighbours\PYGZus{}}\PYG{p}{(}\PYG{n}{update\PYGZus{}neighbours}\PYG{p}{(}\PYG{n}{x\PYGZus{}size\PYGZus{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{y\PYGZus{}size\PYGZus{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{z\PYGZus{}size\PYGZus{}}\PYG{p}{))}\PYG{+w}{ }\PYG{p}{\PYGZob{}\PYGZcb{}}
+
+\PYG{+w}{        }\PYG{c+c1}{// Конструктор копирования}
+\PYG{+w}{        }\PYG{n}{TCH\PYGZus{}State}\PYG{p}{(}\PYG{k}{const}\PYG{+w}{ }\PYG{n}{TCH\PYGZus{}State}\PYG{o}{\PYGZam{}}\PYG{+w}{ }\PYG{n}{state}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{k}{default}\PYG{p}{;}
+
+\PYG{+w}{        }\PYG{c+c1}{// Создать состояние с количеством атомов в каждой полости, согласно grid\PYGZus{}config}
+\PYG{+w}{        }\PYG{c+c1}{// Пример: Для grid\PYGZus{}config = \PYGZob{}3, 2\PYGZcb{} конструктор создаст состояние с 2 полостями,}
+\PYG{+w}{        }\PYG{c+c1}{// с 3 и 2 атомами соответственно}
+\PYG{+w}{        }\PYG{n}{TCH\PYGZus{}State}\PYG{p}{(}\PYG{k}{const}\PYG{+w}{ }\PYG{n}{std}\PYG{o}{::}\PYG{n}{vector}\PYG{o}{\PYGZlt{}}\PYG{k+kt}{size\PYGZus{}t}\PYG{o}{\PYGZgt{}\PYGZam{}}\PYG{+w}{ }\PYG{n}{grid\PYGZus{}config}\PYG{p}{);}
+
+\PYG{+w}{        }\PYG{c+c1}{// Вернуть размеры решётки, на случай, если она у вас в виде куба}
+\PYG{+w}{        }\PYG{c+c1}{// Если граф произвольный, то придётся адаптировать}
+\PYG{+w}{        }\PYG{k+kt}{size\PYGZus{}t}\PYG{+w}{ }\PYG{n+nf}{x\PYGZus{}size}\PYG{p}{()}\PYG{+w}{ }\PYG{k}{const}\PYG{+w}{ }\PYG{p}{\PYGZob{}}\PYG{+w}{ }\PYG{k}{return}\PYG{+w}{ }\PYG{n}{x\PYGZus{}size\PYGZus{}}\PYG{p}{;}\PYG{+w}{ }\PYG{p}{\PYGZcb{}}
+\PYG{+w}{        }\PYG{k+kt}{size\PYGZus{}t}\PYG{+w}{ }\PYG{n+nf}{y\PYGZus{}size}\PYG{p}{()}\PYG{+w}{ }\PYG{k}{const}\PYG{+w}{ }\PYG{p}{\PYGZob{}}\PYG{+w}{ }\PYG{k}{return}\PYG{+w}{ }\PYG{n}{y\PYGZus{}size\PYGZus{}}\PYG{p}{;}\PYG{+w}{ }\PYG{p}{\PYGZcb{}}
+\PYG{+w}{        }\PYG{k+kt}{size\PYGZus{}t}\PYG{+w}{ }\PYG{n+nf}{z\PYGZus{}size}\PYG{p}{()}\PYG{+w}{ }\PYG{k}{const}\PYG{+w}{ }\PYG{p}{\PYGZob{}}\PYG{+w}{ }\PYG{k}{return}\PYG{+w}{ }\PYG{n}{z\PYGZus{}size\PYGZus{}}\PYG{p}{;}\PYG{+w}{ }\PYG{p}{\PYGZcb{}}
+
+\PYG{+w}{        }\PYG{c+c1}{// Поменять размеры полостей}
+\PYG{+w}{        }\PYG{c+c1}{// Сделана проверка на соответсвие числу полостей}
+\PYG{+w}{        }\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n+nf}{reshape}\PYG{p}{(}\PYG{k+kt}{size\PYGZus{}t}\PYG{+w}{ }\PYG{n}{x\PYGZus{}size}\PYG{p}{,}\PYG{+w}{ }\PYG{k+kt}{size\PYGZus{}t}\PYG{+w}{ }\PYG{n}{y\PYGZus{}size}\PYG{p}{,}\PYG{+w}{ }\PYG{k+kt}{size\PYGZus{}t}\PYG{+w}{ }\PYG{n}{z\PYGZus{}size}\PYG{p}{);}
+
+\PYG{+w}{        }\PYG{c+c1}{// Функции для управления волноводами}
+\PYG{+w}{        }\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n+nf}{set\PYGZus{}waveguide}\PYG{p}{(}\PYG{k+kt}{double}\PYG{+w}{ }\PYG{n}{amplitude}\PYG{p}{,}\PYG{+w}{ }\PYG{k+kt}{double}\PYG{+w}{ }\PYG{n}{length}\PYG{p}{);}
+\PYG{+w}{        }\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n+nf}{set\PYGZus{}waveguide}\PYG{p}{(}\PYG{k+kt}{size\PYGZus{}t}\PYG{+w}{ }\PYG{n}{from\PYGZus{}cavity\PYGZus{}id}\PYG{p}{,}\PYG{+w}{ }\PYG{k+kt}{size\PYGZus{}t}\PYG{+w}{ }\PYG{n}{to\PYGZus{}cavity\PYGZus{}id}\PYG{p}{,}
+\PYG{+w}{                           }\PYG{k+kt}{double}\PYG{+w}{ }\PYG{n}{amplitude}\PYG{p}{,}
+\PYG{+w}{                           }\PYG{k+kt}{double}\PYG{+w}{ }\PYG{n}{length}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{QConfig}\PYG{o}{::}\PYG{n}{instance}\PYG{p}{().}\PYG{n}{waveguides\PYGZus{}length}\PYG{p}{());}
+
+\PYG{+w}{        }\PYG{c+c1}{// Вернуть количество полостей}
+\PYG{+w}{        }\PYG{k+kt}{size\PYGZus{}t}\PYG{+w}{ }\PYG{n+nf}{cavities\PYGZus{}count}\PYG{p}{()}\PYG{+w}{ }\PYG{k}{const}\PYG{+w}{ }\PYG{p}{\PYGZob{}}\PYG{+w}{ }\PYG{k}{return}\PYG{+w}{ }\PYG{n}{groups\PYGZus{}}\PYG{p}{.}\PYG{n}{size}\PYG{p}{();}\PYG{+w}{ }\PYG{p}{\PYGZcb{}}
+\PYG{+w}{        }\PYG{c+c1}{// Вернуть количество атомов в полости}
+\PYG{+w}{        }\PYG{k+kt}{size\PYGZus{}t}\PYG{+w}{ }\PYG{n+nf}{cavity\PYGZus{}atoms\PYGZus{}count}\PYG{p}{(}\PYG{n}{CavityId}\PYG{+w}{ }\PYG{n}{id}\PYG{p}{)}\PYG{+w}{ }\PYG{k}{const}
+\PYG{+w}{              }\PYG{p}{\PYGZob{}}\PYG{+w}{ }\PYG{k}{return}\PYG{+w}{ }\PYG{k}{this}\PYG{o}{\PYGZhy{}\PYGZgt{}}\PYG{n}{get\PYGZus{}group\PYGZus{}end}\PYG{p}{(}\PYG{n}{id}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{\PYGZhy{}}\PYG{+w}{ }\PYG{k}{this}\PYG{o}{\PYGZhy{}\PYGZgt{}}\PYG{n}{get\PYGZus{}group\PYGZus{}start}\PYG{p}{(}\PYG{n}{id}\PYG{p}{);}\PYG{+w}{ }\PYG{p}{\PYGZcb{}}
+\PYG{+w}{        }\PYG{k+kt}{size\PYGZus{}t}\PYG{+w}{ }\PYG{n+nf}{m}\PYG{p}{(}\PYG{n}{CavityId}\PYG{+w}{ }\PYG{n}{id}\PYG{p}{)}\PYG{+w}{ }\PYG{k}{const}\PYG{+w}{ }\PYG{p}{\PYGZob{}}\PYG{+w}{ }\PYG{k}{return}\PYG{+w}{ }\PYG{n}{cavity\PYGZus{}atoms\PYGZus{}count}\PYG{p}{(}\PYG{n}{id}\PYG{p}{);}\PYG{+w}{ }\PYG{p}{\PYGZcb{}}
+
+\PYG{+w}{        }\PYG{c+c1}{// Вернуть количество фотонов в полости}
+\PYG{+w}{        }\PYG{n}{ValType}\PYG{+w}{ }\PYG{n+nf}{n}\PYG{p}{(}\PYG{n}{CavityId}\PYG{+w}{ }\PYG{n}{id}\PYG{p}{)}\PYG{+w}{ }\PYG{k}{const}\PYG{+w}{ }\PYG{p}{\PYGZob{}}\PYG{+w}{ }\PYG{k}{return}\PYG{+w}{ }\PYG{n}{qudits\PYGZus{}}\PYG{p}{[}\PYG{n}{get\PYGZus{}group\PYGZus{}start}\PYG{p}{(}\PYG{n}{id}\PYG{p}{)];}\PYG{+w}{ }\PYG{p}{\PYGZcb{}}
+\PYG{+w}{        }\PYG{c+c1}{// Установить количество фотонов в полости}
+\PYG{+w}{        }\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n+nf}{set\PYGZus{}n}\PYG{p}{(}\PYG{n}{ValType}\PYG{+w}{ }\PYG{n}{n}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{CavityId}\PYG{+w}{ }\PYG{n}{id}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}\PYG{+w}{ }\PYG{n}{qudits\PYGZus{}}\PYG{p}{[}\PYG{n}{get\PYGZus{}group\PYGZus{}start}\PYG{p}{(}\PYG{n}{id}\PYG{p}{)]}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{n}\PYG{p}{;}\PYG{+w}{ }\PYG{p}{\PYGZcb{}}
+
+\PYG{+w}{        }\PYG{c+c1}{// Получить состояние в полости в качестве TCH\PYGZus{}State}
+\PYG{+w}{        }\PYG{n}{TCH\PYGZus{}State}\PYG{+w}{ }\PYG{n+nf}{get\PYGZus{}state\PYGZus{}in\PYGZus{}cavity}\PYG{p}{(}\PYG{n}{CavityId}\PYG{+w}{ }\PYG{n}{cavity\PYGZus{}id}\PYG{p}{)}\PYG{+w}{ }\PYG{k}{const}\PYG{+w}{ }\PYG{p}{\PYGZob{}}\PYG{+w}{ }\PYG{k}{return}\PYG{+w}{ }\PYG{n}{TCH\PYGZus{}State}\PYG{p}{(}\PYG{k}{this}\PYG{o}{\PYGZhy{}\PYGZgt{}}\PYG{n}{get\PYGZus{}group}\PYG{p}{(}\PYG{n}{cavity\PYGZus{}id}\PYG{p}{));}\PYG{+w}{ }\PYG{p}{\PYGZcb{}}
+\PYG{+w}{        }\PYG{n}{TCH\PYGZus{}State}\PYG{+w}{ }\PYG{k}{operator}\PYG{p}{[](}\PYG{n}{CavityId}\PYG{+w}{ }\PYG{n}{cavity\PYGZus{}id}\PYG{p}{)}\PYG{+w}{ }\PYG{k}{const}\PYG{+w}{ }\PYG{p}{\PYGZob{}}\PYG{+w}{ }\PYG{k}{return}\PYG{+w}{ }\PYG{n}{TCH\PYGZus{}State}\PYG{p}{(}\PYG{k}{this}\PYG{o}{\PYGZhy{}\PYGZgt{}}\PYG{n}{get\PYGZus{}group}\PYG{p}{(}\PYG{n}{cavity\PYGZus{}id}\PYG{p}{));}\PYG{+w}{ }\PYG{p}{\PYGZcb{}}
+
+\PYG{+w}{        }\PYG{c+c1}{// Получить индекс полости в кубической индексации}
+\PYG{+w}{        }\PYG{n}{CavityId}\PYG{+w}{ }\PYG{n}{get\PYGZus{}index\PYGZus{}of\PYGZus{}cavity}\PYG{p}{(}\PYG{k+kt}{size\PYGZus{}t}\PYG{+w}{ }\PYG{n}{x}\PYG{p}{,}\PYG{+w}{ }\PYG{k+kt}{size\PYGZus{}t}\PYG{+w}{ }\PYG{n}{y}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{p}{,}\PYG{+w}{ }\PYG{k+kt}{size\PYGZus{}t}\PYG{+w}{ }\PYG{n}{z}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{p}{)}\PYG{+w}{ }\PYG{k}{const}\PYG{+w}{ }\PYG{p}{\PYGZob{}}\PYG{+w}{ }\PYG{k}{return}\PYG{+w}{ }\PYG{n}{z}\PYG{+w}{ }\PYG{o}{*}\PYG{+w}{ }\PYG{n}{y\PYGZus{}size\PYGZus{}}\PYG{+w}{ }\PYG{o}{*}\PYG{+w}{ }\PYG{n}{x\PYGZus{}size\PYGZus{}}\PYG{+w}{ }\PYG{o}{+}\PYG{+w}{ }\PYG{n}{y}\PYG{+w}{ }\PYG{o}{*}\PYG{+w}{ }\PYG{n}{x\PYGZus{}size\PYGZus{}}\PYG{+w}{ }\PYG{o}{+}\PYG{+w}{ }\PYG{n}{x}\PYG{p}{;}\PYG{+w}{ }\PYG{p}{\PYGZcb{}}
+
+\PYG{+w}{        }\PYG{c+c1}{// Получить индекс состояния в базисе}
+\PYG{+w}{        }\PYG{k+kt}{size\PYGZus{}t}\PYG{+w}{ }\PYG{n}{get\PYGZus{}index}\PYG{p}{(}\PYG{k}{const}\PYG{+w}{ }\PYG{n}{std}\PYG{o}{::}\PYG{n}{set}\PYG{o}{\PYGZlt{}}\PYG{n}{TCH\PYGZus{}State}\PYG{o}{\PYGZgt{}\PYGZam{}}\PYG{+w}{ }\PYG{n}{basis}\PYG{p}{)}\PYG{+w}{ }\PYG{k}{const}\PYG{p}{;}
+
+\PYG{+w}{        }\PYG{c+c1}{// Получить интенсивность утечки фотонов из полости}
+\PYG{+w}{        }\PYG{k+kt}{double}\PYG{+w}{ }\PYG{n+nf}{get\PYGZus{}leak\PYGZus{}gamma}\PYG{p}{(}\PYG{n}{CavityId}\PYG{+w}{ }\PYG{n}{id}\PYG{p}{)}\PYG{+w}{ }\PYG{k}{const}\PYG{+w}{ }\PYG{p}{\PYGZob{}}\PYG{+w}{ }\PYG{k}{return}\PYG{+w}{ }\PYG{n}{gamma\PYGZus{}leak\PYGZus{}cavities\PYGZus{}}\PYG{p}{[}\PYG{n}{id}\PYG{p}{];}\PYG{+w}{ }\PYG{p}{\PYGZcb{}}\PYGZbs{}
+\PYG{+w}{        }\PYG{c+c1}{// Получить интенсивность притока фотонов из полости}
+\PYG{+w}{        }\PYG{k+kt}{double}\PYG{+w}{ }\PYG{n+nf}{get\PYGZus{}gain\PYGZus{}gamma}\PYG{p}{(}\PYG{n}{CavityId}\PYG{+w}{ }\PYG{n}{id}\PYG{p}{)}\PYG{+w}{ }\PYG{k}{const}\PYG{+w}{ }\PYG{p}{\PYGZob{}}\PYG{+w}{ }\PYG{k}{return}\PYG{+w}{ }\PYG{n}{gamma\PYGZus{}gain\PYGZus{}cavities\PYGZus{}}\PYG{p}{[}\PYG{n}{id}\PYG{p}{];}\PYG{+w}{ }\PYG{p}{\PYGZcb{}}
+
+\PYG{+w}{        }\PYG{c+c1}{// Установить интенсивность утечки фотонов из полости}
+\PYG{+w}{        }\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n+nf}{set\PYGZus{}leak\PYGZus{}for\PYGZus{}cavity}\PYG{p}{(}\PYG{n}{CavityId}\PYG{+w}{ }\PYG{n}{id}\PYG{p}{,}\PYG{+w}{ }\PYG{k+kt}{double}\PYG{+w}{ }\PYG{n}{gamma}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}\PYG{+w}{ }\PYG{n}{gamma\PYGZus{}leak\PYGZus{}cavities\PYGZus{}}\PYG{p}{[}\PYG{n}{id}\PYG{p}{]}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{gamma}\PYG{p}{;\PYGZcb{}}
+\PYG{+w}{        }\PYG{c+c1}{// Установить интенсивность притока фотонов из полости}
+\PYG{+w}{        }\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n+nf}{set\PYGZus{}gain\PYGZus{}for\PYGZus{}cavity}\PYG{p}{(}\PYG{n}{CavityId}\PYG{+w}{ }\PYG{n}{id}\PYG{p}{,}\PYG{+w}{ }\PYG{k+kt}{double}\PYG{+w}{ }\PYG{n}{gamma}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}\PYG{+w}{ }\PYG{n}{gamma\PYGZus{}gain\PYGZus{}cavities\PYGZus{}}\PYG{p}{[}\PYG{n}{id}\PYG{p}{]}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{gamma}\PYG{p}{;\PYGZcb{}}
+
+\PYG{+w}{        }\PYG{c+c1}{// Получить полости, в которых есть утечка}
+\PYG{+w}{        }\PYG{n}{std}\PYG{o}{::}\PYG{n}{set}\PYG{o}{\PYGZlt{}}\PYG{n}{CavityId}\PYG{o}{\PYGZgt{}}\PYG{+w}{ }\PYG{n}{get\PYGZus{}cavities\PYGZus{}with\PYGZus{}leak}\PYG{p}{()}\PYG{+w}{ }\PYG{k}{const}\PYG{p}{;}
+\PYG{+w}{        }\PYG{c+c1}{// Получить полости, в которых есть приток}
+\PYG{+w}{        }\PYG{n}{std}\PYG{o}{::}\PYG{n}{set}\PYG{o}{\PYGZlt{}}\PYG{n}{CavityId}\PYG{o}{\PYGZgt{}}\PYG{+w}{ }\PYG{n}{get\PYGZus{}cavities\PYGZus{}with\PYGZus{}gain}\PYG{p}{()}\PYG{+w}{ }\PYG{k}{const}\PYG{p}{;}
+
+\PYG{+w}{        }\PYG{c+c1}{// Получить интенсивность волновода из полости в полость}
+\PYG{+w}{        }\PYG{n}{COMPLEX}\PYG{+w}{ }\PYG{n+nf}{get\PYGZus{}gamma}\PYG{p}{(}\PYG{n}{CavityId}\PYG{+w}{ }\PYG{n}{from\PYGZus{}id}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{CavityId}\PYG{+w}{ }\PYG{n}{to\PYGZus{}id}\PYG{p}{)}\PYG{+w}{ }\PYG{k}{const}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{            }\PYG{k+kt}{bool}\PYG{+w}{ }\PYG{n}{is\PYGZus{}conj}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n+nb}{false}\PYG{p}{;}
+\PYG{+w}{            }\PYG{k}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{from\PYGZus{}id}\PYG{+w}{ }\PYG{o}{\PYGZgt{}}\PYG{+w}{ }\PYG{n}{to\PYGZus{}id}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{                }\PYG{k}{auto}\PYG{+w}{ }\PYG{n}{tmp}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{from\PYGZus{}id}\PYG{p}{;}
+\PYG{+w}{                }\PYG{n}{from\PYGZus{}id}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{to\PYGZus{}id}\PYG{p}{;}
+\PYG{+w}{                }\PYG{n}{to\PYGZus{}id}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{tmp}\PYG{p}{;}
+\PYG{+w}{                }\PYG{n}{is\PYGZus{}conj}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n+nb}{true}\PYG{p}{;}
+\PYG{+w}{            }\PYG{p}{\PYGZcb{}}
+\PYG{+w}{            }\PYG{k}{auto}\PYG{+w}{ }\PYG{n}{res}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{gamma}\PYG{p}{(}\PYG{n}{waveguides\PYGZus{}}\PYG{p}{[}\PYG{n}{from\PYGZus{}id}\PYG{p}{][}\PYG{n}{to\PYGZus{}id}\PYG{p}{].}\PYG{n}{first}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{waveguides\PYGZus{}}\PYG{p}{[}\PYG{n}{from\PYGZus{}id}\PYG{p}{][}\PYG{n}{to\PYGZus{}id}\PYG{p}{].}\PYG{n}{second}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{QConfig}\PYG{o}{::}\PYG{n}{instance}\PYG{p}{().}\PYG{n}{w}\PYG{p}{());}
+
+\PYG{+w}{            }\PYG{k}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{is\PYGZus{}conj}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{                }\PYG{n}{res}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{std}\PYG{o}{::}\PYG{n}{conj}\PYG{p}{(}\PYG{n}{res}\PYG{p}{);}
+\PYG{+w}{            }\PYG{p}{\PYGZcb{}}
+
+\PYG{+w}{            }\PYG{k}{return}\PYG{+w}{ }\PYG{n}{res}\PYG{p}{;}
+\PYG{+w}{        }\PYG{p}{\PYGZcb{}}
+
+\PYG{+w}{        }\PYG{c+c1}{// Получить полости, в которых есть атомы}
+\PYG{+w}{        }\PYG{n}{std}\PYG{o}{::}\PYG{n}{set}\PYG{o}{\PYGZlt{}}\PYG{n}{CavityId}\PYG{o}{\PYGZgt{}}\PYG{+w}{ }\PYG{n}{get\PYGZus{}cavities\PYGZus{}with\PYGZus{}atoms}\PYG{p}{()}\PYG{+w}{ }\PYG{k}{const}\PYG{+w}{ }\PYG{p}{\PYGZob{}}\PYG{+w}{ }\PYG{k}{return}\PYG{+w}{ }\PYG{n}{cavities\PYGZus{}with\PYGZus{}atoms\PYGZus{}}\PYG{p}{;}\PYG{+w}{ }\PYG{p}{\PYGZcb{}}
+
+\PYG{+w}{        }\PYG{c+c1}{// Получить номера соседей для данной полости}
+\PYG{+w}{        }\PYG{n}{std}\PYG{o}{::}\PYG{n}{vector}\PYG{o}{\PYGZlt{}}\PYG{n}{CavityId}\PYG{o}{\PYGZgt{}}\PYG{+w}{ }\PYG{n}{get\PYGZus{}neighbours}\PYG{p}{(}\PYG{n}{CavityId}\PYG{+w}{ }\PYG{n}{cavity\PYGZus{}id}\PYG{p}{)}\PYG{+w}{ }\PYG{k}{const}\PYG{+w}{ }\PYG{p}{\PYGZob{}}\PYG{+w}{ }\PYG{k}{return}\PYG{+w}{ }\PYG{n}{neighbours\PYGZus{}}\PYG{p}{[}\PYG{n}{cavity\PYGZus{}id}\PYG{p}{];}\PYG{+w}{ }\PYG{p}{\PYGZcb{}}
+\PYG{+w}{    }\PYG{k}{private}\PYG{o}{:}
+\PYG{+w}{        }\PYG{k+kt}{size\PYGZus{}t}\PYG{+w}{ }\PYG{n}{x\PYGZus{}size\PYGZus{}}\PYG{p}{;}\PYG{+w}{ }\PYG{c+c1}{// Размеры решётки}
+\PYG{+w}{        }\PYG{k+kt}{size\PYGZus{}t}\PYG{+w}{ }\PYG{n}{y\PYGZus{}size\PYGZus{}}\PYG{p}{;}
+\PYG{+w}{        }\PYG{k+kt}{size\PYGZus{}t}\PYG{+w}{ }\PYG{n}{z\PYGZus{}size\PYGZus{}}\PYG{p}{;}
+
+\PYG{+w}{        }\PYG{n}{std}\PYG{o}{::}\PYG{n}{set}\PYG{o}{\PYGZlt{}}\PYG{n}{CavityId}\PYG{o}{\PYGZgt{}}\PYG{+w}{ }\PYG{n}{cavities\PYGZus{}with\PYGZus{}atoms\PYGZus{}}\PYG{p}{;}\PYG{+w}{ }\PYG{c+c1}{// Полости с атомами}
+\PYG{+w}{        }\PYG{n}{Matrix}\PYG{o}{\PYGZlt{}}\PYG{n}{std}\PYG{o}{::}\PYG{n}{pair}\PYG{o}{\PYGZlt{}}\PYG{k+kt}{double}\PYG{p}{,}\PYG{+w}{ }\PYG{k+kt}{double}\PYG{o}{\PYGZgt{}\PYGZgt{}}\PYG{+w}{ }\PYG{n}{waveguides\PYGZus{}}\PYG{p}{;}\PYG{+w}{ }\PYG{c+c1}{// Матрица волноводов}
+\PYG{+w}{        }\PYG{n}{std}\PYG{o}{::}\PYG{n}{vector}\PYG{o}{\PYGZlt{}}\PYG{n}{std}\PYG{o}{::}\PYG{n}{vector}\PYG{o}{\PYGZlt{}}\PYG{n}{CavityId}\PYG{o}{\PYGZgt{}\PYGZgt{}}\PYG{+w}{ }\PYG{n}{neighbours\PYGZus{}}\PYG{p}{;}\PYG{+w}{ }\PYG{c+c1}{// Соседи для каждой полости}
+\PYG{+w}{        }\PYG{n}{std}\PYG{o}{::}\PYG{n}{vector}\PYG{o}{\PYGZlt{}}\PYG{k+kt}{double}\PYG{o}{\PYGZgt{}}\PYG{+w}{ }\PYG{n}{gamma\PYGZus{}leak\PYGZus{}cavities\PYGZus{}}\PYG{p}{;}\PYG{+w}{ }\PYG{c+c1}{// Интенсивности утечек фотонов}
+\PYG{+w}{        }\PYG{n}{std}\PYG{o}{::}\PYG{n}{vector}\PYG{o}{\PYGZlt{}}\PYG{k+kt}{double}\PYG{o}{\PYGZgt{}}\PYG{+w}{ }\PYG{n}{gamma\PYGZus{}gain\PYGZus{}cavities\PYGZus{}}\PYG{p}{;}\PYG{+w}{ }\PYG{c+c1}{// Интенсивности притока фотонов}
+\PYG{p}{\PYGZcb{};}
+\end{Verbatim}

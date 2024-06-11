@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2022/dev/Debian) (preloaded format=pdflatex 2024.4.8)  11 JUN 2024 14:24
+This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2022/dev/Debian) (preloaded format=pdflatex 2024.4.8)  11 JUN 2024 20:07
 entering extended mode
  \write18 enabled.
  %&-line parsing enabled.
@@ -1199,7 +1199,122 @@ Package mdframed Info: mdframed detected package amsthm
 
 
 (./_minted-documentation/82F53D5974668C0BF4CA2D36046699FCF76B5A2279F420FFD2F801
-CF8CD9148B.pygtex) [40] (./documentation.aux)
+CF8CD9148B.pygtex)
+Package mdframed Info: mdframed detected package amsthm 
+ changed the theorem header of amsthm
+(mdframed)              on input line 1903.
+\openout3 = `documentation.pyg'.
+
+
+(./_minted-documentation/4FA1D59C04E8ED94D32BAC65B6A293238151FFF4F73FF688D613FF
+72DAA9D9A5.pygtex)
+Overfull \hbox (53.94727pt too wide) in paragraph at lines 1930--1931
+\T2A/cmr/m/n/12 Функции для удоб-ства пе-ре-хо-да от ба-зис-но-го со-сто-я-ния 
+StateType к су-пер-по-зи-ции State<StateType>. 
+ []
+
+[40]
+Overfull \hbox (47.58432pt too wide) in paragraph at lines 1936--1939
+[]\T2A/cmr/m/n/12 Устанавливает зна-че-нию ку-ди-ту - на вы-ход по-лу-ча-е-те д
+ан-ное со-сто-я-ния в ви-де State<StateType>
+ []
+
+
+Overfull \hbox (30.61882pt too wide) in paragraph at lines 1936--1939
+\T2A/cmr/m/n/12 му зна-че-нию ку-ди-та, то в от-вет воз-вра-ща-ет-ся пу-стое со
+-сто-я-ние, то есть пу-стой State<StateType>.
+ []
+
+Package mdframed Info: mdframed detected package amsthm 
+ changed the theorem header of amsthm
+(mdframed)              on input line 1941.
+\openout3 = `documentation.pyg'.
+
+
+(./_minted-documentation/0300496C48E2ADEDA5907FDBB7240F078151FFF4F73FF688D613FF
+72DAA9D9A5.pygtex)
+Package mdframed Info: mdframed detected package amsthm 
+ changed the theorem header of amsthm
+(mdframed)              on input line 1973.
+\openout3 = `documentation.pyg'.
+
+
+(./_minted-documentation/2074547EA0CC6F0A48236E87AF1DEE7F8151FFF4F73FF688D613FF
+72DAA9D9A5.pygtex) [41]
+Package mdframed Info: mdframed detected package amsthm 
+ changed the theorem header of amsthm
+(mdframed)              on input line 2003.
+\openout3 = `documentation.pyg'.
+
+
+(./_minted-documentation/571440B515781883BD4CBCA1D48858658151FFF4F73FF688D613FF
+72DAA9D9A5.pygtex) [42]
+Package mdframed Info: mdframed detected package amsthm 
+ changed the theorem header of amsthm
+(mdframed)              on input line 2067.
+\openout3 = `documentation.pyg'.
+
+
+(./_minted-documentation/07CD241D6A2BE411602626C38B2393E78151FFF4F73FF688D613FF
+72DAA9D9A5.pygtex) [43]
+Package mdframed Info: mdframed detected package amsthm 
+ changed the theorem header of amsthm
+(mdframed)              on input line 2113.
+\openout3 = `documentation.pyg'.
+
+
+(./_minted-documentation/CF24211A823054F9803843DBAD55011A8151FFF4F73FF688D613FF
+72DAA9D9A5.pygtex) [44] [45]
+Package mdframed Info: mdframed detected package amsthm 
+ changed the theorem header of amsthm
+(mdframed)              on input line 2246.
+\openout3 = `documentation.pyg'.
+
+
+(./_minted-documentation/880C1447C158E8CA77B7E19439FB0AEF8151FFF4F73FF688D613FF
+72DAA9D9A5.pygtex) [46]
+Package mdframed Info: mdframed detected package amsthm 
+ changed the theorem header of amsthm
+(mdframed)              on input line 2270.
+\openout3 = `documentation.pyg'.
+
+
+(./_minted-documentation/553C369CFE9EAF6068EE293CC757A2AF8151FFF4F73FF688D613FF
+72DAA9D9A5.pygtex)
+Package mdframed Info: mdframed detected package amsthm 
+ changed the theorem header of amsthm
+(mdframed)              on input line 2297.
+\openout3 = `documentation.pyg'.
+
+
+(./_minted-documentation/AA873124B6942D97759A865E51C3FAED8151FFF4F73FF688D613FF
+72DAA9D9A5.pygtex) [47]
+Package mdframed Info: mdframed detected package amsthm 
+ changed the theorem header of amsthm
+(mdframed)              on input line 2345.
+\openout3 = `documentation.pyg'.
+
+
+(./_minted-documentation/5082B2E49DA2A94C29945D7F8FEC96188151FFF4F73FF688D613FF
+72DAA9D9A5.pygtex) [48]
+Overfull \hbox (103.20207pt too wide) in paragraph at lines 2398--2400
+\T2A/cmr/m/n/12 не-ри-ру-ем га-миль-то-ни-ан че-рез опе-ра-то-ры - H_TCH яв-ля-
+ет-ся до-чер-ним клас-сом H_by_Operator<TCH_State>
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2398--2400
+
+ []
+
+Package mdframed Info: mdframed detected package amsthm 
+ changed the theorem header of amsthm
+(mdframed)              on input line 2400.
+\openout3 = `documentation.pyg'.
+
+
+(./_minted-documentation/50DE365658485146C8FA903734B6D5E18151FFF4F73FF688D613FF
+72DAA9D9A5.pygtex) [49] [50] [51] (./documentation.aux)
 
 LaTeX Font Warning: Some font shapes were not available, defaults substituted.
 
@@ -1207,13 +1322,13 @@ runsystem(rm documentation.pyg)...executed.
 
  ) 
 Here is how much of TeX's memory you used:
- 10651 strings out of 478287
- 205919 string characters out of 5849290
- 621430 words of memory out of 5000000
- 28478 multiletter control sequences out of 15000+600000
+ 10721 strings out of 478287
+ 211856 string characters out of 5849290
+ 622233 words of memory out of 5000000
+ 28515 multiletter control sequences out of 15000+600000
  484558 words of font info for 61 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 75i,6n,81p,723b,698s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 75i,6n,81p,872b,698s stack positions out of 5000i,500n,10000p,200000b,80000s
 {/usr/share/texmf/fonts/enc/dvips/cm-super/cm-super-t2a.enc}{/usr/share/texmf
 /fonts/enc/dvips/cm-super/cm-super-ts1.enc}</usr/share/texlive/texmf-dist/fonts
 /type1/public/amsfonts/cm/cmex10.pfb></usr/share/texlive/texmf-dist/fonts/type1
@@ -1231,10 +1346,10 @@ ic/cm-super/sfbx1440.pfb></usr/share/texmf/fonts/type1/public/cm-super/sfbx1728
 mf/fonts/type1/public/cm-super/sfrm1200.pfb></usr/share/texmf/fonts/type1/publi
 c/cm-super/sfss1200.pfb></usr/share/texmf/fonts/type1/public/cm-super/sfsx1728.
 pfb></usr/share/texmf/fonts/type1/public/cm-super/sftt1200.pfb>
-Output written on documentation.pdf (40 pages, 381708 bytes).
+Output written on documentation.pdf (51 pages, 415880 bytes).
 PDF statistics:
- 221 PDF objects out of 1000 (max. 8388607)
- 149 compressed objects within 2 object streams
+ 256 PDF objects out of 1000 (max. 8388607)
+ 173 compressed objects within 2 object streams
  0 named destinations out of 1000 (max. 500000)
  25 words of extra memory for PDF output out of 10000 (max. 10000000)
 
