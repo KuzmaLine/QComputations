@@ -16,7 +16,9 @@
 \PYG{+w}{            }\PYG{k}{for}\PYG{+w}{ }\PYG{p}{(}\PYG{k+kt}{size\PYGZus{}t}\PYG{+w}{ }\PYG{n}{j}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{;}\PYG{+w}{ }\PYG{n}{j}\PYG{+w}{ }\PYG{o}{\PYGZlt{}=}\PYG{+w}{ }\PYG{n}{state}\PYG{p}{.}\PYG{n}{m}\PYG{p}{(}\PYG{n}{i}\PYG{p}{);}\PYG{+w}{ }\PYG{n}{j}\PYG{o}{++}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
 \PYG{+w}{                }\PYG{k}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{state}\PYG{p}{.}\PYG{n}{get\PYGZus{}qudit}\PYG{p}{(}\PYG{n}{j}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{i}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{==}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
 \PYG{+w}{                    }\PYG{c+c1}{// Суммируем результат}
-\PYG{+w}{                    }\PYG{n}{res}\PYG{+w}{ }\PYG{o}{+=}\PYG{+w}{ }\PYG{n}{set\PYGZus{}qudit}\PYG{p}{(}\PYG{n}{state}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{j}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{i}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{*}\PYG{+w}{ }\PYG{n}{QConfig}\PYG{o}{::}\PYG{n}{instance}\PYG{p}{().}\PYG{n}{g}\PYG{p}{()}\PYG{+w}{ }\PYG{o}{*}\PYG{+w}{ }\PYG{n}{std}\PYG{o}{::}\PYG{n}{sqrt}\PYG{p}{(}\PYG{n}{state}\PYG{p}{.}\PYG{n}{n}\PYG{p}{(}\PYG{n}{i}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{+}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{);}
+\PYG{+w}{                    }\PYG{n}{res}\PYG{+w}{ }\PYG{o}{+=}\PYG{+w}{ }\PYG{n}{set\PYGZus{}qudit}\PYG{p}{(}\PYG{n}{state}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{j}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{i}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{*}
+\PYG{+w}{                    }\PYG{n}{QConfig}\PYG{o}{::}\PYG{n}{instance}\PYG{p}{().}\PYG{n}{g}\PYG{p}{()}\PYG{+w}{ }\PYG{o}{*}
+\PYG{+w}{                    }\PYG{n}{std}\PYG{o}{::}\PYG{n}{sqrt}\PYG{p}{(}\PYG{n}{state}\PYG{p}{.}\PYG{n}{n}\PYG{p}{(}\PYG{n}{i}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{+}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{);}
 \PYG{+w}{                }\PYG{p}{\PYGZcb{}}
 \PYG{+w}{            }\PYG{p}{\PYGZcb{}}
 
@@ -28,7 +30,9 @@
 \PYG{+w}{            }\PYG{c+c1}{// Если в полости есть возбуждённый атом, описываем его релаксацию}
 \PYG{+w}{            }\PYG{k}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{state}\PYG{p}{.}\PYG{n}{get\PYGZus{}qudit}\PYG{p}{(}\PYG{n}{j}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{i}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{==}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
 \PYG{+w}{                }\PYG{n}{state}\PYG{p}{.}\PYG{n}{set\PYGZus{}qudit}\PYG{p}{(}\PYG{l+m+mi}{0}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{j}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{i}\PYG{p}{);}
-\PYG{+w}{                }\PYG{n}{res}\PYG{+w}{ }\PYG{o}{+=}\PYG{+w}{ }\PYG{n}{set\PYGZus{}qudit}\PYG{p}{(}\PYG{n}{state}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{state}\PYG{p}{.}\PYG{n}{n}\PYG{p}{(}\PYG{n}{i}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{+}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{i}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{*}\PYG{+w}{ }\PYG{n}{QConfig}\PYG{o}{::}\PYG{n}{instance}\PYG{p}{().}\PYG{n}{g}\PYG{p}{()}\PYG{+w}{ }\PYG{o}{*}\PYG{+w}{ }\PYG{n}{std}\PYG{o}{::}\PYG{n}{sqrt}\PYG{p}{(}\PYG{n}{state}\PYG{p}{.}\PYG{n}{n}\PYG{p}{(}\PYG{n}{i}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{+}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{);}
+\PYG{+w}{                }\PYG{n}{res}\PYG{+w}{ }\PYG{o}{+=}\PYG{+w}{ }\PYG{n}{set\PYGZus{}qudit}\PYG{p}{(}\PYG{n}{state}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{state}\PYG{p}{.}\PYG{n}{n}\PYG{p}{(}\PYG{n}{i}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{+}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{i}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{*}
+\PYG{+w}{                        }\PYG{n}{QConfig}\PYG{o}{::}\PYG{n}{instance}\PYG{p}{().}\PYG{n}{g}\PYG{p}{()}\PYG{+w}{ }\PYG{o}{*}
+\PYG{+w}{                        }\PYG{n}{std}\PYG{o}{::}\PYG{n}{sqrt}\PYG{p}{(}\PYG{n}{state}\PYG{p}{.}\PYG{n}{n}\PYG{p}{(}\PYG{n}{i}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{+}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{);}
 \PYG{+w}{                }\PYG{n}{state}\PYG{p}{.}\PYG{n}{set\PYGZus{}qudit}\PYG{p}{(}\PYG{l+m+mi}{1}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{j}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{i}\PYG{p}{);}
 \PYG{+w}{            }\PYG{p}{\PYGZcb{}}
 \PYG{+w}{        }\PYG{p}{\PYGZcb{}}

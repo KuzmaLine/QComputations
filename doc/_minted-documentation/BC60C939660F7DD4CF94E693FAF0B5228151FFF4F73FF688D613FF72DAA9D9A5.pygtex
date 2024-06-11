@@ -5,8 +5,11 @@
 
 \PYG{+w}{    }\PYG{c+c1}{// Проходимся по всем полостям}
 \PYG{+w}{    }\PYG{k}{for}\PYG{+w}{ }\PYG{p}{(}\PYG{k+kt}{size\PYGZus{}t}\PYG{+w}{ }\PYG{n}{i}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{p}{;}\PYG{+w}{ }\PYG{n}{i}\PYG{+w}{ }\PYG{o}{\PYGZlt{}}\PYG{+w}{ }\PYG{n}{state}\PYG{p}{.}\PYG{n}{cavities\PYGZus{}count}\PYG{p}{();}\PYG{+w}{ }\PYG{n}{i}\PYG{o}{++}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
-\PYG{+w}{        }\PYG{c+c1}{// В коэффициент прибавляем все кудиты, соответствующие фотонам в каждой полости}
-\PYG{+w}{        }\PYG{n}{res}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{]}\PYG{+w}{ }\PYG{o}{+=}\PYG{+w}{ }\PYG{n}{state}\PYG{p}{.}\PYG{n}{get\PYGZus{}qudit}\PYG{p}{(}\PYG{l+m+mi}{0}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{i}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{*}\PYG{+w}{ }\PYG{n}{QConfig}\PYG{o}{::}\PYG{n}{instance}\PYG{p}{().}\PYG{n}{h}\PYG{p}{()}\PYG{+w}{ }\PYG{o}{*}\PYG{+w}{ }\PYG{n}{QConfig}\PYG{o}{::}\PYG{n}{instance}\PYG{p}{().}\PYG{n}{w}\PYG{p}{();}
+\PYG{+w}{        }\PYG{c+c1}{// В коэффициент прибавляем все кудиты,}
+\PYG{+w}{        }\PYG{c+c1}{// соответствующие фотонам в каждой полости}
+\PYG{+w}{        }\PYG{n}{res}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{]}\PYG{+w}{ }\PYG{o}{+=}\PYG{+w}{ }\PYG{n}{state}\PYG{p}{.}\PYG{n}{get\PYGZus{}qudit}\PYG{p}{(}\PYG{l+m+mi}{0}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{i}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{*}
+\PYG{+w}{                  }\PYG{n}{QConfig}\PYG{o}{::}\PYG{n}{instance}\PYG{p}{().}\PYG{n}{h}\PYG{p}{()}\PYG{+w}{ }\PYG{o}{*}
+\PYG{+w}{                  }\PYG{n}{QConfig}\PYG{o}{::}\PYG{n}{instance}\PYG{p}{().}\PYG{n}{w}\PYG{p}{();}
 \PYG{+w}{    }\PYG{p}{\PYGZcb{}}
 
 \PYG{+w}{    }\PYG{k}{return}\PYG{+w}{ }\PYG{n}{res}\PYG{p}{;}

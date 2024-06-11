@@ -4,7 +4,9 @@
 \PYG{c+c1}{// group\PYGZus{}id \PYGZhy{} номер группы, в котором находится кудит}
 
 \PYG{k}{template}\PYG{o}{\PYGZlt{}}\PYG{k}{typename}\PYG{+w}{ }\PYG{n+nc}{StateType}\PYG{o}{\PYGZgt{}}
-\PYG{n}{State}\PYG{o}{\PYGZlt{}}\PYG{n}{StateType}\PYG{o}{\PYGZgt{}}\PYG{+w}{ }\PYG{n}{sigma\PYGZus{}x}\PYG{p}{(}\PYG{k}{const}\PYG{+w}{ }\PYG{n}{StateType}\PYG{o}{\PYGZam{}}\PYG{+w}{ }\PYG{n}{state}\PYG{p}{,}\PYG{+w}{ }\PYG{k+kt}{size\PYGZus{}t}\PYG{+w}{ }\PYG{n}{qudit\PYGZus{}index}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{p}{,}\PYG{+w}{ }\PYG{k+kt}{size\PYGZus{}t}\PYG{+w}{ }\PYG{n}{group\PYGZus{}id}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{n}{State}\PYG{o}{\PYGZlt{}}\PYG{n}{StateType}\PYG{o}{\PYGZgt{}}\PYG{+w}{ }\PYG{n}{sigma\PYGZus{}x}\PYG{p}{(}\PYG{k}{const}\PYG{+w}{ }\PYG{n}{StateType}\PYG{o}{\PYGZam{}}\PYG{+w}{ }\PYG{n}{state}\PYG{p}{,}
+\PYG{+w}{                         }\PYG{k+kt}{size\PYGZus{}t}\PYG{+w}{ }\PYG{n}{qudit\PYGZus{}index}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{p}{,}
+\PYG{+w}{                         }\PYG{k+kt}{size\PYGZus{}t}\PYG{+w}{ }\PYG{n}{group\PYGZus{}id}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
 \PYG{+w}{    }\PYG{n}{StateType}\PYG{+w}{ }\PYG{n}{res}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{state}\PYG{p}{;}
 \PYG{+w}{    }\PYG{k}{auto}\PYG{+w}{ }\PYG{n}{qudit}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{state}\PYG{p}{.}\PYG{n}{get\PYGZus{}qudit}\PYG{p}{(}\PYG{n}{qudit\PYGZus{}index}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{group\PYGZus{}id}\PYG{p}{);}
 \PYG{+w}{    }\PYG{n}{assert}\PYG{p}{(}\PYG{n}{qudit}\PYG{+w}{ }\PYG{o}{==}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{+w}{ }\PYG{k}{or}\PYG{+w}{ }\PYG{n}{qudit}\PYG{+w}{ }\PYG{o}{==}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{);}
@@ -18,7 +20,9 @@
 \PYG{p}{\PYGZcb{}}
 
 \PYG{k}{template}\PYG{o}{\PYGZlt{}}\PYG{k}{typename}\PYG{+w}{ }\PYG{n+nc}{StateType}\PYG{o}{\PYGZgt{}}
-\PYG{n}{State}\PYG{o}{\PYGZlt{}}\PYG{n}{StateType}\PYG{o}{\PYGZgt{}}\PYG{+w}{ }\PYG{n}{sigma\PYGZus{}y}\PYG{p}{(}\PYG{k}{const}\PYG{+w}{ }\PYG{n}{StateType}\PYG{o}{\PYGZam{}}\PYG{+w}{ }\PYG{n}{state}\PYG{p}{,}\PYG{+w}{ }\PYG{k+kt}{size\PYGZus{}t}\PYG{+w}{ }\PYG{n}{qudit\PYGZus{}index}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{p}{,}\PYG{+w}{ }\PYG{k+kt}{size\PYGZus{}t}\PYG{+w}{ }\PYG{n}{group\PYGZus{}id}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{n}{State}\PYG{o}{\PYGZlt{}}\PYG{n}{StateType}\PYG{o}{\PYGZgt{}}\PYG{+w}{ }\PYG{n}{sigma\PYGZus{}y}\PYG{p}{(}\PYG{k}{const}\PYG{+w}{ }\PYG{n}{StateType}\PYG{o}{\PYGZam{}}\PYG{+w}{ }\PYG{n}{state}\PYG{p}{,}
+\PYG{+w}{                         }\PYG{k+kt}{size\PYGZus{}t}\PYG{+w}{ }\PYG{n}{qudit\PYGZus{}index}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{p}{,}
+\PYG{+w}{                         }\PYG{k+kt}{size\PYGZus{}t}\PYG{+w}{ }\PYG{n}{group\PYGZus{}id}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
 \PYG{+w}{    }\PYG{n}{StateType}\PYG{+w}{ }\PYG{n}{res}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{state}\PYG{p}{;}
 \PYG{+w}{    }\PYG{k}{auto}\PYG{+w}{ }\PYG{n}{qudit}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{state}\PYG{p}{.}\PYG{n}{get\PYGZus{}qudit}\PYG{p}{(}\PYG{n}{qudit\PYGZus{}index}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{group\PYGZus{}id}\PYG{p}{);}
 \PYG{+w}{    }\PYG{n}{assert}\PYG{p}{(}\PYG{n}{qudit}\PYG{+w}{ }\PYG{o}{==}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{+w}{ }\PYG{k}{or}\PYG{+w}{ }\PYG{n}{qudit}\PYG{+w}{ }\PYG{o}{==}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{);}
@@ -38,7 +42,9 @@
 \PYG{p}{\PYGZcb{}}
 
 \PYG{k}{template}\PYG{o}{\PYGZlt{}}\PYG{k}{typename}\PYG{+w}{ }\PYG{n+nc}{StateType}\PYG{o}{\PYGZgt{}}
-\PYG{n}{State}\PYG{o}{\PYGZlt{}}\PYG{n}{StateType}\PYG{o}{\PYGZgt{}}\PYG{+w}{ }\PYG{n}{sigma\PYGZus{}z}\PYG{p}{(}\PYG{k}{const}\PYG{+w}{ }\PYG{n}{StateType}\PYG{o}{\PYGZam{}}\PYG{+w}{ }\PYG{n}{state}\PYG{p}{,}\PYG{+w}{ }\PYG{k+kt}{size\PYGZus{}t}\PYG{+w}{ }\PYG{n}{qudit\PYGZus{}index}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{p}{,}\PYG{+w}{ }\PYG{k+kt}{size\PYGZus{}t}\PYG{+w}{ }\PYG{n}{group\PYGZus{}id}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{n}{State}\PYG{o}{\PYGZlt{}}\PYG{n}{StateType}\PYG{o}{\PYGZgt{}}\PYG{+w}{ }\PYG{n}{sigma\PYGZus{}z}\PYG{p}{(}\PYG{k}{const}\PYG{+w}{ }\PYG{n}{StateType}\PYG{o}{\PYGZam{}}\PYG{+w}{ }\PYG{n}{state}\PYG{p}{,}
+\PYG{+w}{                         }\PYG{k+kt}{size\PYGZus{}t}\PYG{+w}{ }\PYG{n}{qudit\PYGZus{}index}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{p}{,}
+\PYG{+w}{                         }\PYG{k+kt}{size\PYGZus{}t}\PYG{+w}{ }\PYG{n}{group\PYGZus{}id}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
 \PYG{+w}{    }\PYG{k}{auto}\PYG{+w}{ }\PYG{n}{res}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{get\PYGZus{}qudit}\PYG{p}{(}\PYG{n}{state}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{qudit\PYGZus{}index}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{group\PYGZus{}id}\PYG{p}{);}
 \PYG{+w}{    }\PYG{k}{auto}\PYG{+w}{ }\PYG{n}{qudit}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{state}\PYG{p}{.}\PYG{n}{get\PYGZus{}qudit}\PYG{p}{(}\PYG{n}{qudit\PYGZus{}index}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{group\PYGZus{}id}\PYG{p}{);}
 \PYG{+w}{    }\PYG{n}{assert}\PYG{p}{(}\PYG{n}{qudit}\PYG{+w}{ }\PYG{o}{==}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{+w}{ }\PYG{k}{or}\PYG{+w}{ }\PYG{n}{qudit}\PYG{+w}{ }\PYG{o}{==}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{);}

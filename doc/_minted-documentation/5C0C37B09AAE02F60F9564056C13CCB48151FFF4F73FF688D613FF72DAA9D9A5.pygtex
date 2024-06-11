@@ -4,8 +4,8 @@
 \PYG{+w}{    }\PYG{k}{public}\PYG{o}{:}
 \PYG{+w}{        }\PYG{c+c1}{// Генерирует базис прямо в конструкторе}
 \PYG{+w}{        }\PYG{k}{explicit}\PYG{+w}{ }\PYG{n}{State\PYGZus{}Graph}\PYG{p}{(}\PYG{k}{const}\PYG{+w}{ }\PYG{n}{State}\PYG{o}{\PYGZlt{}}\PYG{n}{StateType}\PYG{o}{\PYGZgt{}\PYGZam{}}\PYG{+w}{ }\PYG{n}{init\PYGZus{}state}\PYG{p}{,}
-\PYG{+w}{                        }\PYG{k}{const}\PYG{+w}{ }\PYG{n}{Operator}\PYG{o}{\PYGZlt{}}\PYG{n}{StateType}\PYG{o}{\PYGZgt{}\PYGZam{}}\PYG{+w}{ }\PYG{n}{A\PYGZus{}op}\PYG{p}{,}
-\PYG{+w}{                        }\PYG{k}{const}\PYG{+w}{ }\PYG{n}{std}\PYG{o}{::}\PYG{n}{vector}\PYG{o}{\PYGZlt{}}\PYG{n}{Operator}\PYG{o}{\PYGZlt{}}\PYG{n}{StateType}\PYG{o}{\PYGZgt{}\PYGZgt{}\PYGZam{}}\PYG{+w}{ }\PYG{n}{operator\PYGZus{}decoherence}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{p}{\PYGZob{}\PYGZcb{});}
+\PYG{+w}{            }\PYG{k}{const}\PYG{+w}{ }\PYG{n}{Operator}\PYG{o}{\PYGZlt{}}\PYG{n}{StateType}\PYG{o}{\PYGZgt{}\PYGZam{}}\PYG{+w}{ }\PYG{n}{A\PYGZus{}op}\PYG{p}{,}
+\PYG{+w}{            }\PYG{k}{const}\PYG{+w}{ }\PYG{n}{std}\PYG{o}{::}\PYG{n}{vector}\PYG{o}{\PYGZlt{}}\PYG{n}{Operator}\PYG{o}{\PYGZlt{}}\PYG{n}{StateType}\PYG{o}{\PYGZgt{}\PYGZgt{}\PYGZam{}}\PYG{+w}{ }\PYG{n}{operator\PYGZus{}decoherence}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{p}{\PYGZob{}\PYGZcb{});}
 
 \PYG{+w}{        }\PYG{c+c1}{// Вернуть базис}
 \PYG{+w}{        }\PYG{n}{std}\PYG{o}{::}\PYG{n}{set}\PYG{o}{\PYGZlt{}}\PYG{n}{StateType}\PYG{o}{\PYGZgt{}}\PYG{+w}{ }\PYG{n}{get\PYGZus{}basis}\PYG{p}{()}\PYG{+w}{ }\PYG{k}{const}\PYG{+w}{ }\PYG{p}{\PYGZob{}}\PYG{+w}{ }\PYG{k}{return}\PYG{+w}{ }\PYG{n}{basis\PYGZus{}}\PYG{p}{;}\PYG{+w}{ }\PYG{p}{\PYGZcb{}}

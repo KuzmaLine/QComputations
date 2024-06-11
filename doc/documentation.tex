@@ -1386,7 +1386,8 @@ class Hamiltonian {
         }
 
         // Вывести гамильтониан
-        void show(size_t width = QConfig::instance().width()) const { H_.show(width); }
+        void show(size_t width = QConfig::instance().width()) const
+                  { H_.show(width); }
     protected:
         bool is_calculated_eigen_ = false; // Служебная переменная,
                                            // чтобы не пересчитывать
@@ -1419,7 +1420,7 @@ class H_by_Operator: public Hamiltonian {
     public:
         explicit H_by_Operator(const State<StateType>& init_state, 
                                const Operator<StateType>& H_op,
-                               const std::vector<std::pair<double, Operator<StateType>>>&
+      const std::vector<std::pair<double, Operator<StateType>>>&
                                decoherence = {});
 };
 
@@ -1463,10 +1464,12 @@ public:
     std::set<Basis_State> get_basis() const { return basis_; }
 
     // Вернуть операторы декогеренции вместе с их интенсивностями
-    std::vector<std::pair<double, BLOCKED_Matrix<COMPLEX>>> get_decoherence() const { return decoherence_;}
+    std::vector<std::pair<double, BLOCKED_Matrix<COMPLEX>>>
+             get_decoherence() const { return decoherence_;}
 
     // Записать гамильтониан в файл
-    void write_to_csv_file(const std::string& filename) const { H_.write_to_csv_file(filename); }
+    void write_to_csv_file(const std::string& filename) const
+                        { H_.write_to_csv_file(filename); }
 
     // Найти его спектральное разложние
     void virtual eigen() {
@@ -1495,13 +1498,16 @@ public:
                ILP_TYPE root_id = mpi::ROOT_ID) const
                 { H_.show(width, root_id); }
     // Вывести гамильтониан поблочно
-    void print_distributed(const std::string& name) const { H_.print_distributed(name); }
+    void print_distributed(const std::string& name) const
+                             { H_.print_distributed(name); }
 
     // Вернуть локальную матрицу
-    Matrix<COMPLEX> get_local_matrix() const { return H_.get_local_matrix(); }
+    Matrix<COMPLEX> get_local_matrix() const
+             { return H_.get_local_matrix(); }
 
     // Вернуть гамильтониан как блочную матрицу
-    BLOCKED_Matrix<COMPLEX> get_blocked_matrix() const { return H_; }
+    BLOCKED_Matrix<COMPLEX> get_blocked_matrix() const
+                                         { return H_; }
 protected:
     bool is_calculated_eigen_ = false; // Служебная переменная,
                                        // чтобы не пересчитывать
@@ -1532,7 +1538,8 @@ protected:
 template<typename StateType>
 class BLOCKED_H_by_Operator: public BLOCKED_Hamiltonian {
     public:
-        explicit BLOCKED_H_by_Operator(ILP_TYPE ctxt, const State<StateType>& init_state,
+        explicit BLOCKED_H_by_Operator(ILP_TYPE ctxt,
+                                       const State<StateType>& init_state,
                                        const Operator<StateType>& H_op,
                                        const std::vector<std::pair<double,
                                        Operator<StateType>>>& decoherence = {});
@@ -1642,14 +1649,20 @@ BLOCKED_Probs quantum_master_equation(const State<Basis_State>& init_state,
 // На выходе вы получите пару: Вероятности и
 // итоговый базис в группе
 
-std::pair<Probs, std::set<Basis_State>> probs_to_cavity_probs(const Probs& probs,
-                            const std::set<Basis_State>& basis, size_t cavity_id);
+std::pair<Probs, std::set<Basis_State>> probs_to_cavity_probs(
+                            const Probs& probs,
+                            const std::set<Basis_State>& basis,
+                            size_t cavity_id);
 
-std::pair<BLOCKED_Probs, std::set<Basis_State>> probs_to_group_probs(const BLOCKED_Probs& probs,
-                                        const std::set<Basis_State>& basis, size_t group_id);
+std::pair<BLOCKED_Probs, std::set<Basis_State>> probs_to_group_probs(
+                            const BLOCKED_Probs& probs,
+                            const std::set<Basis_State>& basis,
+                            size_t group_id);
 
-std::pair<BLOCKED_Probs, std::set<Basis_State>> probs_to_cavity_probs(const BLOCKED_Probs& probs,
-                                        const std::set<Basis_State>& basis, size_t cavity_id);
+std::pair<BLOCKED_Probs, std::set<Basis_State>> probs_to_cavity_probs(
+                            const BLOCKED_Probs& probs,
+                            const std::set<Basis_State>& basis,
+                            size_t cavity_id);
 \end{minted}
 \end{mdframed}
 
@@ -1671,7 +1684,8 @@ std::pair<BLOCKED_Probs, std::set<Basis_State>> probs_to_cavity_probs(const BLOC
 // Создать фигуру определённого размера.
 // нулевые значения - выбор значений по умолчанию
 // (ЛУЧШЕ ВСЕГО ПИСАТЬ ДО МОДЕЛИРОВАНИЯ)
-void make_figure(size_t x = 0, size_t y = 0, size_t dpi = QConfig::instance().dpi());
+void make_figure(size_t x = 0, size_t y = 0,
+                 size_t dpi = QConfig::instance().dpi());
 
 // Создать график вероятностей
 void probs_to_plot(const Evolution::Probs& probs,
@@ -1781,16 +1795,20 @@ leftline=false, rightline=false]
 // filename - ?????????????
 
 // Записать гамильтониан в CSV файл.
-void hamiltonian_to_file(const std::string& filename, const Hamiltonian& H, std::string dir = "");
+void hamiltonian_to_file(const std::string& filename,
+                         const Hamiltonian& H, std::string dir = "");
 
 // Записать базис в CSV файл.
-void basis_to_file(const std::string& filename, const std::set<Basis_State>& basis, std::string dir = "");
+void basis_to_file(const std::string& filename,
+                   const std::set<Basis_State>& basis, std::string dir = "");
 
 // Записать время в CSV файл.
-void time_vec_to_file(const std::string& filename, const std::vector<double>& time_vec, std::string dir = "");
+void time_vec_to_file(const std::string& filename,
+                      const std::vector<double>& time_vec, std::string dir = "");
 
 // Записать вероятности в CSV файл.
-void probs_to_file(const std::string& filename, const Evolution::Probs& probs, std::string dir = "");
+void probs_to_file(const std::string& filename,
+                   const Evolution::Probs& probs, std::string dir = "");
 
 // Создать набор файлов в ????????????
 void make_probs_files(const Hamiltonian& H,
@@ -1811,25 +1829,42 @@ void make_probs_files(const Hamiltonian& H,
 // находящиеся на всех ядрах, а именно: время и базис
 
 // Записать гамильтониан в CSV файл. main_rank???????????????????????????????
-void hamiltonian_to_file(const std::string& filename, const BLOCKED_Hamiltonian& H, std::string dir = "", ILP_TYPE main_rank = 0);
+void hamiltonian_to_file(const std::string& filename,
+                         const BLOCKED_Hamiltonian& H,
+                         std::string dir = "", ILP_TYPE main_rank = 0);
 
 // Записать вероятности в CSV файл.
-void probs_to_file(const std::string& filename, const Evolution::BLOCKED_Probs& probs, std::string dir = "");
+void probs_to_file(const std::string& filename,
+                   const Evolution::BLOCKED_Probs& probs,
+                   std::string dir = "");
 
 // ??????????????????????
-void plot_from_files(const std::string& plotname, std::string dir, const std::string& python_script_path = QConfig::instance().python_script_path());
+void plot_from_files(const std::string& plotname,
+                     std::string dir,
+                     const std::string& python_script_path =
+                          QConfig::instance().python_script_path());
 
 // Записать базис в CSV файл ядром main_rank
-void basis_to_file(const std::string& filename, const std::set<Basis_State>& basis, std::string dir = "", ILP_TYPE main_rank = 0);
+void basis_to_file(const std::string& filename,
+                   const std::set<Basis_State>& basis,
+                   std::string dir = "",
+                   ILP_TYPE main_rank = 0);
 
 // Записать время в CSV файл ядром main_rank
-void time_vec_to_file(const std::string& filename, const std::vector<double>& time_vec, std::string dir = "", ILP_TYPE main_rank = 0);
+void time_vec_to_file(const std::string& filename,
+                      const std::vector<double>& time_vec,
+                      std::string dir = "", ILP_TYPE main_rank = 0);
 
-// Записать вероятности в CSV файл, находящиеся в виде одноядерной матрицы на ядре main_rank
-void probs_to_file(const std::string& filename, const Evolution::Probs& probs, std::string dir = "", ILP_TYPE main_rank = 0);
+// Записать вероятности в CSV файл, находящиеся в виде одноядерной
+// матрицы на ядре main_rank
+void probs_to_file(const std::string& filename,
+                   const Evolution::Probs& probs,
+                   std::string dir = "", ILP_TYPE main_rank = 0);
 
 // Записать гамильтониан в CSV файл ядром main_rank
-void hamiltonian_to_file(const std::string& filename, const Hamiltonian& H, std::string dir = "", ILP_TYPE main_rank = 0);
+void hamiltonian_to_file(const std::string& filename,
+                         const Hamiltonian& H,
+                         std::string dir = "", ILP_TYPE main_rank = 0);
 
 // Записать результаты в файлы CSV файлы, хранящиеся полностью на ядре main_rank
 void make_probs_files(const Hamiltonian& H,
@@ -1907,8 +1942,8 @@ class State_Graph {
     public:
         // Генерирует базис прямо в конструкторе
         explicit State_Graph(const State<StateType>& init_state,
-                        const Operator<StateType>& A_op,
-                        const std::vector<Operator<StateType>>& operator_decoherence = {});
+            const Operator<StateType>& A_op,
+            const std::vector<Operator<StateType>>& operator_decoherence = {});
 
         // Вернуть базис
         std::set<StateType> get_basis() const { return basis_; }
@@ -1946,7 +1981,10 @@ leftline=false, rightline=false]
 // group_id - номер группы, в котором находится кудит
 
 template<typename StateType>
-State<StateType> set_qudit(const StateType& state, ValType val, size_t qudit_index = 0, size_t group_id = 0) {
+State<StateType> set_qudit(const StateType& state,
+                           ValType val,
+                           size_t qudit_index = 0,
+                           size_t group_id = 0) {
     auto res = state; // копируем состояние
 
     // проверяем, принадлежит ли val диапазону от 0 до максимального значения
@@ -1977,7 +2015,9 @@ leftline=false, rightline=false]
 // group_id - номер группы, в котором находится кудит
 
 template<typename StateType>
-State<StateType> get_qudit(const StateType& state, size_t qudit_index = 0, size_t group_id = 0) {
+State<StateType> get_qudit(const StateType& state,
+                           size_t qudit_index = 0,
+                           size_t group_id = 0) {
     auto res = State<StateType>(state); // привести состояние к
                                         // State<StateType>
 
@@ -2007,7 +2047,9 @@ leftline=false, rightline=false]
 // group_id - номер группы, в котором находится кудит
 
 template<typename StateType>
-State<StateType> sigma_x(const StateType& state, size_t qudit_index = 0, size_t group_id = 0) {
+State<StateType> sigma_x(const StateType& state,
+                         size_t qudit_index = 0,
+                         size_t group_id = 0) {
     StateType res = state;
     auto qudit = state.get_qudit(qudit_index, group_id);
     assert(qudit == 0 or qudit == 1);
@@ -2021,7 +2063,9 @@ State<StateType> sigma_x(const StateType& state, size_t qudit_index = 0, size_t 
 }
 
 template<typename StateType>
-State<StateType> sigma_y(const StateType& state, size_t qudit_index = 0, size_t group_id = 0) {
+State<StateType> sigma_y(const StateType& state,
+                         size_t qudit_index = 0,
+                         size_t group_id = 0) {
     StateType res = state;
     auto qudit = state.get_qudit(qudit_index, group_id);
     assert(qudit == 0 or qudit == 1);
@@ -2041,7 +2085,9 @@ State<StateType> sigma_y(const StateType& state, size_t qudit_index = 0, size_t 
 }
 
 template<typename StateType>
-State<StateType> sigma_z(const StateType& state, size_t qudit_index = 0, size_t group_id = 0) {
+State<StateType> sigma_z(const StateType& state,
+                         size_t qudit_index = 0,
+                         size_t group_id = 0) {
     auto res = get_qudit(state, qudit_index, group_id);
     auto qudit = state.get_qudit(qudit_index, group_id);
     assert(qudit == 0 or qudit == 1);
@@ -2072,7 +2118,10 @@ leftline=false, rightline=false]
 // group_id - номер группы, в котором находится кудит
 
 template<typename StateType>
-State<StateType> check(const StateType& state, ValType check_val, size_t qudit_index = 0, size_t group_id = 0, const std::string& info = "") {
+State<StateType> check(const StateType& state,
+                       ValType check_val,
+                       size_t qudit_index = 0,
+                       size_t group_id = 0) {
     auto res = state;
     if (res.get_qudit(qudit_index, group_id) != check_val) {
         res.clear();
@@ -2102,9 +2151,14 @@ State<StateType> check(const StateType& state, ValType check_val, size_t qudit_i
 		$m_k$ - число атомов в полости $k$
 
         $a^{\dagger}$ - оператор создания фотонов: $a^{\dagger}|n\rangle = sqrt(n + 1)|n + 1\rangle$
+
         $a$ - оператор уничтожения фотонов: $a|n\rangle = sqrt(n)|n - 1\rangle$
+
         $\sigma$ - оператор релаксации атома: $\sigma|1\rangle = |0\rangle$, $\sigma|0\rangle = 0$
+
         $\sigma^{\dagger}$ - оператор возбуждения атома: $\sigma^{\dagger}|0\rangle = |1\rangle$, $\sigma^{\dagger}|1\rangle = 0$
+
+        $\gamma_{ij} = |\gamma_{ij}|e^{-i\alpha l}$ - интенсивность волноводов
 
         Начнём с реализации (файлы state.*) самого состояния TCH\_State:
         Перенести реализацию????????????????????????????????????????????????????
@@ -2128,8 +2182,10 @@ class TCH_State: public Basis_State {
         // Конструктор копирования
         TCH_State(const TCH_State& state) = default;
 
-        // Создать состояние с количеством атомов в каждой полости, согласно grid_config
-        // Пример: Для grid_config = {3, 2} конструктор создаст состояние с 2 полостями,
+        // Создать состояние с количеством атомов в каждой полости,
+        // согласно grid_config
+        // Пример: Для grid_config = {3, 2} конструктор создаст
+        // состояние с 2 полостями,
         // с 3 и 2 атомами соответственно
         TCH_State(const std::vector<size_t>& grid_config);
 
@@ -2162,24 +2218,31 @@ class TCH_State: public Basis_State {
         void set_n(ValType n, CavityId id) { qudits_[get_group_start(id)] = n; }
 
         // Получить состояние в полости в качестве TCH_State
-        TCH_State get_state_in_cavity(CavityId cavity_id) const { return TCH_State(this->get_group(cavity_id)); }
-        TCH_State operator[](CavityId cavity_id) const { return TCH_State(this->get_group(cavity_id)); }
+        TCH_State get_state_in_cavity(CavityId cavity_id) const 
+                    { return TCH_State(this->get_group(cavity_id)); }
+        TCH_State operator[](CavityId cavity_id) const 
+                    { return TCH_State(this->get_group(cavity_id)); }
 
         // Получить индекс полости в кубической индексации
-        CavityId get_index_of_cavity(size_t x, size_t y = 0, size_t z = 0) const { return z * y_size_ * x_size_ + y * x_size_ + x; }
+        CavityId get_index_of_cavity(size_t x, size_t y = 0, size_t z = 0) const
+                             { return z * y_size_ * x_size_ + y * x_size_ + x; }
 
         // Получить индекс состояния в базисе
         size_t get_index(const std::set<TCH_State>& basis) const;
 
         // Получить интенсивность утечки фотонов из полости
-        double get_leak_gamma(CavityId id) const { return gamma_leak_cavities_[id]; }\
+        double get_leak_gamma(CavityId id) const 
+                        { return gamma_leak_cavities_[id]; }
         // Получить интенсивность притока фотонов из полости
-        double get_gain_gamma(CavityId id) const { return gamma_gain_cavities_[id]; }
+        double get_gain_gamma(CavityId id) const 
+                        { return gamma_gain_cavities_[id]; }
 
         // Установить интенсивность утечки фотонов из полости
-        void set_leak_for_cavity(CavityId id, double gamma) { gamma_leak_cavities_[id] = gamma;}
+        void set_leak_for_cavity(CavityId id, double gamma)
+                         { gamma_leak_cavities_[id] = gamma;}
         // Установить интенсивность притока фотонов из полости
-        void set_gain_for_cavity(CavityId id, double gamma) { gamma_gain_cavities_[id] = gamma;}
+        void set_gain_for_cavity(CavityId id, double gamma)
+                         { gamma_gain_cavities_[id] = gamma;}
 
         // Получить полости, в которых есть утечка
         std::set<CavityId> get_cavities_with_leak() const;
@@ -2195,7 +2258,9 @@ class TCH_State: public Basis_State {
                 to_id = tmp;
                 is_conj = true;
             }
-            auto res = gamma(waveguides_[from_id][to_id].first, waveguides_[from_id][to_id].second, QConfig::instance().w());
+            auto res = gamma(waveguides_[from_id][to_id].first,
+                             waveguides_[from_id][to_id].second,
+                             QConfig::instance().w());
 
             if (is_conj) {
                 res = std::conj(res);
@@ -2205,10 +2270,12 @@ class TCH_State: public Basis_State {
         }
 
         // Получить полости, в которых есть атомы
-        std::set<CavityId> get_cavities_with_atoms() const { return cavities_with_atoms_; }
+        std::set<CavityId> get_cavities_with_atoms() const 
+                                { return cavities_with_atoms_; }
 
         // Получить номера соседей для данной полости
-        std::vector<CavityId> get_neighbours(CavityId cavity_id) const { return neighbours_[cavity_id]; }
+        std::vector<CavityId> get_neighbours(CavityId cavity_id) const 
+                                { return neighbours_[cavity_id]; }
     private:
         size_t x_size_; // Размеры решётки
         size_t y_size_;
@@ -2251,8 +2318,11 @@ State<TCH_State> photons_count(const TCH_State& state) {
 
     // Проходимся по всем полостям
     for (size_t i = 0; i < state.cavities_count(); i++) {
-        // В коэффициент прибавляем все кудиты, соответствующие фотонам в каждой полости
-        res[0] += state.get_qudit(0, i) * QConfig::instance().h() * QConfig::instance().w();
+        // В коэффициент прибавляем все кудиты,
+        // соответствующие фотонам в каждой полости
+        res[0] += state.get_qudit(0, i) * 
+                  QConfig::instance().h() * 
+                  QConfig::instance().w();
     }
 
     return res;
@@ -2278,7 +2348,9 @@ State<TCH_State> atoms_exc_count(const TCH_State& state) {
         // Перебираем все атомы в полости
         for (size_t j = 1; j <= state.m(i); j++) {
             // Суммируем все значения кудитов атомов в полости
-            res[0] += state.get_qudit(j, i) * QConfig::instance().h() * QConfig::instance().w();
+            res[0] += state.get_qudit(j, i) * 
+                      QConfig::instance().h() * 
+                      QConfig::instance().w();
         }
     }
 
@@ -2313,7 +2385,9 @@ State<TCH_State> exc_relax_atoms(const TCH_State& st) {
             for (size_t j = 1; j <= state.m(i); j++) {
                 if (state.get_qudit(j, i) == 0) {
                     // Суммируем результат
-                    res += set_qudit(state, 1, j, i) * QConfig::instance().g() * std::sqrt(state.n(i) + 1);
+                    res += set_qudit(state, 1, j, i) * 
+                    QConfig::instance().g() * 
+                    std::sqrt(state.n(i) + 1);
                 }
             }
 
@@ -2325,7 +2399,9 @@ State<TCH_State> exc_relax_atoms(const TCH_State& st) {
             // Если в полости есть возбуждённый атом, описываем его релаксацию
             if (state.get_qudit(j, i) == 1) {
                 state.set_qudit(0, j, i);
-                res += set_qudit(state, state.n(i) + 1, 0, i) * QConfig::instance().g() * std::sqrt(state.n(i) + 1);
+                res += set_qudit(state, state.n(i) + 1, 0, i) * 
+                        QConfig::instance().g() * 
+                        std::sqrt(state.n(i) + 1);
                 state.set_qudit(1, j, i);
             }
         }
@@ -2364,9 +2440,13 @@ State<TCH_State> photons_transfer(const TCH_State& st) {
                 if (state.n(i) != 0) {
                     state.set_n(state.n(i) - 1, i);
 
-                    res += set_qudit(state, state.n(cavity_id) + 1, 0, cavity_id) 
-                            * state.get_gamma(i, cavity_id) * std::sqrt(state.n(i) + 1)
-                            * std::sqrt(state.n(cavity_id) + 1);
+                    res += set_qudit(state,
+                                     state.n(cavity_id) + 1,
+                                     0,
+                                     cavity_id) *
+                            state.get_gamma(i, cavity_id) * 
+                            std::sqrt(state.n(i) + 1) *
+                            std::sqrt(state.n(cavity_id) + 1);
 
                     state.set_n(state.n(i) + 1, i);
                 }
@@ -2374,9 +2454,13 @@ State<TCH_State> photons_transfer(const TCH_State& st) {
                 if (state.n(cavity_id) != 0) {
                     state.set_n(state.n(i) + 1, i);
 
-                    res += set_qudit(state, state.n(cavity_id) - 1, 0, cavity_id)
-                    * state.get_gamma(cavity_id, i) * std::sqrt(state.n(i))
-                    * std::sqrt(state.n(cavity_id));
+                    res += set_qudit(state,
+                                     state.n(cavity_id) - 1,
+                                     0,
+                                     cavity_id) *
+                    state.get_gamma(cavity_id, i) * 
+                    std::sqrt(state.n(i)) *
+                    std::sqrt(state.n(cavity_id));
 
                     state.set_n(state.n(i) - 1, i);
                 }
@@ -2410,13 +2494,17 @@ namespace {
         using OpType = Operator<TCH_State>;
 
         OpType my_H;
-        my_H = my_H + OpType(photons_count) + OpType(atoms_exc_count) + OpType(exc_relax_atoms) + OpType(photons_transfer);
+        my_H = my_H + OpType(photons_count) + 
+               OpType(atoms_exc_count) + 
+               OpType(exc_relax_atoms) + 
+               OpType(photons_transfer);
 
         return my_H;
     }
     
     // Описывает операторы декогеренции
-    std::vector<std::pair<double, Operator<TCH_State>>> decs(const State<TCH_State>& state) {
+    std::vector<std::pair<double, Operator<TCH_State>>> 
+                        decs(const State<TCH_State>& state) {
         using OpType = Operator<TCH_State>;
 
         // Получаем пример состояния
@@ -2428,8 +2516,11 @@ namespace {
             // Проверяем утечки
             if (!is_zero(st.get_leak_gamma(i))) {
                 // Описываем оператор утечки фотонов
-                OperatorType<TCH_State> a_destroy_i = {[i](const TCH_State& che_state) {
-                    return set_qudit(che_state, che_state.n(i) - 1, 0, i) * std::sqrt(che_state.n(i));
+                OperatorType<TCH_State> a_destroy_i = 
+                {[i](const TCH_State& che_state) {
+                    return set_qudit(che_state,
+                    che_state.n(i) - 1,
+                    0, i) * std::sqrt(che_state.n(i));
                 }};
 
                 // Создаём оператор
@@ -2442,8 +2533,11 @@ namespace {
             // Проверяем притоки
             if (!is_zero(st.get_gain_gamma(i))) {
                 // Создаём оператор притока фотонов
-                OperatorType<TCH_State> a_create_i = {[i](const TCH_State& che_state) {
-                    return set_qudit(che_state, che_state.n(i) + 1, 0, i) * std::sqrt(che_state.n(i) + 1);
+                OperatorType<TCH_State> a_create_i = 
+                {[i](const TCH_State& che_state) {
+                    return set_qudit(che_state,
+                                     che_state.n(i) + 1,
+                                     0, i) * std::sqrt(che_state.n(i) + 1);
                 }};
 
                 // Создаём оператор

@@ -19,9 +19,13 @@
 \PYG{+w}{                }\PYG{k}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{state}\PYG{p}{.}\PYG{n}{n}\PYG{p}{(}\PYG{n}{i}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{!=}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
 \PYG{+w}{                    }\PYG{n}{state}\PYG{p}{.}\PYG{n}{set\PYGZus{}n}\PYG{p}{(}\PYG{n}{state}\PYG{p}{.}\PYG{n}{n}\PYG{p}{(}\PYG{n}{i}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{\PYGZhy{}}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{i}\PYG{p}{);}
 
-\PYG{+w}{                    }\PYG{n}{res}\PYG{+w}{ }\PYG{o}{+=}\PYG{+w}{ }\PYG{n}{set\PYGZus{}qudit}\PYG{p}{(}\PYG{n}{state}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{state}\PYG{p}{.}\PYG{n}{n}\PYG{p}{(}\PYG{n}{cavity\PYGZus{}id}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{+}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{cavity\PYGZus{}id}\PYG{p}{)}
-\PYG{+w}{                            }\PYG{o}{*}\PYG{+w}{ }\PYG{n}{state}\PYG{p}{.}\PYG{n}{get\PYGZus{}gamma}\PYG{p}{(}\PYG{n}{i}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{cavity\PYGZus{}id}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{*}\PYG{+w}{ }\PYG{n}{std}\PYG{o}{::}\PYG{n}{sqrt}\PYG{p}{(}\PYG{n}{state}\PYG{p}{.}\PYG{n}{n}\PYG{p}{(}\PYG{n}{i}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{+}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{)}
-\PYG{+w}{                            }\PYG{o}{*}\PYG{+w}{ }\PYG{n}{std}\PYG{o}{::}\PYG{n}{sqrt}\PYG{p}{(}\PYG{n}{state}\PYG{p}{.}\PYG{n}{n}\PYG{p}{(}\PYG{n}{cavity\PYGZus{}id}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{+}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{);}
+\PYG{+w}{                    }\PYG{n}{res}\PYG{+w}{ }\PYG{o}{+=}\PYG{+w}{ }\PYG{n}{set\PYGZus{}qudit}\PYG{p}{(}\PYG{n}{state}\PYG{p}{,}
+\PYG{+w}{                                     }\PYG{n}{state}\PYG{p}{.}\PYG{n}{n}\PYG{p}{(}\PYG{n}{cavity\PYGZus{}id}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{+}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{,}
+\PYG{+w}{                                     }\PYG{l+m+mi}{0}\PYG{p}{,}
+\PYG{+w}{                                     }\PYG{n}{cavity\PYGZus{}id}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{*}
+\PYG{+w}{                            }\PYG{n}{state}\PYG{p}{.}\PYG{n}{get\PYGZus{}gamma}\PYG{p}{(}\PYG{n}{i}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{cavity\PYGZus{}id}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{*}
+\PYG{+w}{                            }\PYG{n}{std}\PYG{o}{::}\PYG{n}{sqrt}\PYG{p}{(}\PYG{n}{state}\PYG{p}{.}\PYG{n}{n}\PYG{p}{(}\PYG{n}{i}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{+}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{*}
+\PYG{+w}{                            }\PYG{n}{std}\PYG{o}{::}\PYG{n}{sqrt}\PYG{p}{(}\PYG{n}{state}\PYG{p}{.}\PYG{n}{n}\PYG{p}{(}\PYG{n}{cavity\PYGZus{}id}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{+}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{);}
 
 \PYG{+w}{                    }\PYG{n}{state}\PYG{p}{.}\PYG{n}{set\PYGZus{}n}\PYG{p}{(}\PYG{n}{state}\PYG{p}{.}\PYG{n}{n}\PYG{p}{(}\PYG{n}{i}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{+}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{i}\PYG{p}{);}
 \PYG{+w}{                }\PYG{p}{\PYGZcb{}}
@@ -29,9 +33,13 @@
 \PYG{+w}{                }\PYG{k}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{state}\PYG{p}{.}\PYG{n}{n}\PYG{p}{(}\PYG{n}{cavity\PYGZus{}id}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{!=}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
 \PYG{+w}{                    }\PYG{n}{state}\PYG{p}{.}\PYG{n}{set\PYGZus{}n}\PYG{p}{(}\PYG{n}{state}\PYG{p}{.}\PYG{n}{n}\PYG{p}{(}\PYG{n}{i}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{+}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{i}\PYG{p}{);}
 
-\PYG{+w}{                    }\PYG{n}{res}\PYG{+w}{ }\PYG{o}{+=}\PYG{+w}{ }\PYG{n}{set\PYGZus{}qudit}\PYG{p}{(}\PYG{n}{state}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{state}\PYG{p}{.}\PYG{n}{n}\PYG{p}{(}\PYG{n}{cavity\PYGZus{}id}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{\PYGZhy{}}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{cavity\PYGZus{}id}\PYG{p}{)}
-\PYG{+w}{                    }\PYG{o}{*}\PYG{+w}{ }\PYG{n}{state}\PYG{p}{.}\PYG{n}{get\PYGZus{}gamma}\PYG{p}{(}\PYG{n}{cavity\PYGZus{}id}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{i}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{*}\PYG{+w}{ }\PYG{n}{std}\PYG{o}{::}\PYG{n}{sqrt}\PYG{p}{(}\PYG{n}{state}\PYG{p}{.}\PYG{n}{n}\PYG{p}{(}\PYG{n}{i}\PYG{p}{))}
-\PYG{+w}{                    }\PYG{o}{*}\PYG{+w}{ }\PYG{n}{std}\PYG{o}{::}\PYG{n}{sqrt}\PYG{p}{(}\PYG{n}{state}\PYG{p}{.}\PYG{n}{n}\PYG{p}{(}\PYG{n}{cavity\PYGZus{}id}\PYG{p}{));}
+\PYG{+w}{                    }\PYG{n}{res}\PYG{+w}{ }\PYG{o}{+=}\PYG{+w}{ }\PYG{n}{set\PYGZus{}qudit}\PYG{p}{(}\PYG{n}{state}\PYG{p}{,}
+\PYG{+w}{                                     }\PYG{n}{state}\PYG{p}{.}\PYG{n}{n}\PYG{p}{(}\PYG{n}{cavity\PYGZus{}id}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{\PYGZhy{}}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{,}
+\PYG{+w}{                                     }\PYG{l+m+mi}{0}\PYG{p}{,}
+\PYG{+w}{                                     }\PYG{n}{cavity\PYGZus{}id}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{*}
+\PYG{+w}{                    }\PYG{n}{state}\PYG{p}{.}\PYG{n}{get\PYGZus{}gamma}\PYG{p}{(}\PYG{n}{cavity\PYGZus{}id}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{i}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{*}
+\PYG{+w}{                    }\PYG{n}{std}\PYG{o}{::}\PYG{n}{sqrt}\PYG{p}{(}\PYG{n}{state}\PYG{p}{.}\PYG{n}{n}\PYG{p}{(}\PYG{n}{i}\PYG{p}{))}\PYG{+w}{ }\PYG{o}{*}
+\PYG{+w}{                    }\PYG{n}{std}\PYG{o}{::}\PYG{n}{sqrt}\PYG{p}{(}\PYG{n}{state}\PYG{p}{.}\PYG{n}{n}\PYG{p}{(}\PYG{n}{cavity\PYGZus{}id}\PYG{p}{));}
 
 \PYG{+w}{                    }\PYG{n}{state}\PYG{p}{.}\PYG{n}{set\PYGZus{}n}\PYG{p}{(}\PYG{n}{state}\PYG{p}{.}\PYG{n}{n}\PYG{p}{(}\PYG{n}{i}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{\PYGZhy{}}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{i}\PYG{p}{);}
 \PYG{+w}{                }\PYG{p}{\PYGZcb{}}

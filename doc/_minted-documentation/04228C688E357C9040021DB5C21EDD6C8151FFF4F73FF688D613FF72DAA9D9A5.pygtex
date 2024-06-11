@@ -24,10 +24,12 @@
 \PYG{+w}{    }\PYG{n}{std}\PYG{o}{::}\PYG{n}{set}\PYG{o}{\PYGZlt{}}\PYG{n}{Basis\PYGZus{}State}\PYG{o}{\PYGZgt{}}\PYG{+w}{ }\PYG{n}{get\PYGZus{}basis}\PYG{p}{()}\PYG{+w}{ }\PYG{k}{const}\PYG{+w}{ }\PYG{p}{\PYGZob{}}\PYG{+w}{ }\PYG{k}{return}\PYG{+w}{ }\PYG{n}{basis\PYGZus{}}\PYG{p}{;}\PYG{+w}{ }\PYG{p}{\PYGZcb{}}
 
 \PYG{+w}{    }\PYG{c+c1}{// Вернуть операторы декогеренции вместе с их интенсивностями}
-\PYG{+w}{    }\PYG{n}{std}\PYG{o}{::}\PYG{n}{vector}\PYG{o}{\PYGZlt{}}\PYG{n}{std}\PYG{o}{::}\PYG{n}{pair}\PYG{o}{\PYGZlt{}}\PYG{k+kt}{double}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{BLOCKED\PYGZus{}Matrix}\PYG{o}{\PYGZlt{}}\PYG{n}{COMPLEX}\PYG{o}{\PYGZgt{}\PYGZgt{}\PYGZgt{}}\PYG{+w}{ }\PYG{n}{get\PYGZus{}decoherence}\PYG{p}{()}\PYG{+w}{ }\PYG{k}{const}\PYG{+w}{ }\PYG{p}{\PYGZob{}}\PYG{+w}{ }\PYG{k}{return}\PYG{+w}{ }\PYG{n}{decoherence\PYGZus{}}\PYG{p}{;\PYGZcb{}}
+\PYG{+w}{    }\PYG{n}{std}\PYG{o}{::}\PYG{n}{vector}\PYG{o}{\PYGZlt{}}\PYG{n}{std}\PYG{o}{::}\PYG{n}{pair}\PYG{o}{\PYGZlt{}}\PYG{k+kt}{double}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{BLOCKED\PYGZus{}Matrix}\PYG{o}{\PYGZlt{}}\PYG{n}{COMPLEX}\PYG{o}{\PYGZgt{}\PYGZgt{}\PYGZgt{}}
+\PYG{+w}{             }\PYG{n}{get\PYGZus{}decoherence}\PYG{p}{()}\PYG{+w}{ }\PYG{k}{const}\PYG{+w}{ }\PYG{p}{\PYGZob{}}\PYG{+w}{ }\PYG{k}{return}\PYG{+w}{ }\PYG{n}{decoherence\PYGZus{}}\PYG{p}{;\PYGZcb{}}
 
 \PYG{+w}{    }\PYG{c+c1}{// Записать гамильтониан в файл}
-\PYG{+w}{    }\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n}{write\PYGZus{}to\PYGZus{}csv\PYGZus{}file}\PYG{p}{(}\PYG{k}{const}\PYG{+w}{ }\PYG{n}{std}\PYG{o}{::}\PYG{n}{string}\PYG{o}{\PYGZam{}}\PYG{+w}{ }\PYG{n}{filename}\PYG{p}{)}\PYG{+w}{ }\PYG{k}{const}\PYG{+w}{ }\PYG{p}{\PYGZob{}}\PYG{+w}{ }\PYG{n}{H\PYGZus{}}\PYG{p}{.}\PYG{n}{write\PYGZus{}to\PYGZus{}csv\PYGZus{}file}\PYG{p}{(}\PYG{n}{filename}\PYG{p}{);}\PYG{+w}{ }\PYG{p}{\PYGZcb{}}
+\PYG{+w}{    }\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n}{write\PYGZus{}to\PYGZus{}csv\PYGZus{}file}\PYG{p}{(}\PYG{k}{const}\PYG{+w}{ }\PYG{n}{std}\PYG{o}{::}\PYG{n}{string}\PYG{o}{\PYGZam{}}\PYG{+w}{ }\PYG{n}{filename}\PYG{p}{)}\PYG{+w}{ }\PYG{k}{const}
+\PYG{+w}{                        }\PYG{p}{\PYGZob{}}\PYG{+w}{ }\PYG{n}{H\PYGZus{}}\PYG{p}{.}\PYG{n}{write\PYGZus{}to\PYGZus{}csv\PYGZus{}file}\PYG{p}{(}\PYG{n}{filename}\PYG{p}{);}\PYG{+w}{ }\PYG{p}{\PYGZcb{}}
 
 \PYG{+w}{    }\PYG{c+c1}{// Найти его спектральное разложние}
 \PYG{+w}{    }\PYG{k+kt}{void}\PYG{+w}{ }\PYG{k}{virtual}\PYG{+w}{ }\PYG{n}{eigen}\PYG{p}{()}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
@@ -56,13 +58,16 @@
 \PYG{+w}{               }\PYG{n}{ILP\PYGZus{}TYPE}\PYG{+w}{ }\PYG{n}{root\PYGZus{}id}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{mpi}\PYG{o}{::}\PYG{n}{ROOT\PYGZus{}ID}\PYG{p}{)}\PYG{+w}{ }\PYG{k}{const}
 \PYG{+w}{                }\PYG{p}{\PYGZob{}}\PYG{+w}{ }\PYG{n}{H\PYGZus{}}\PYG{p}{.}\PYG{n}{show}\PYG{p}{(}\PYG{n}{width}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{root\PYGZus{}id}\PYG{p}{);}\PYG{+w}{ }\PYG{p}{\PYGZcb{}}
 \PYG{+w}{    }\PYG{c+c1}{// Вывести гамильтониан поблочно}
-\PYG{+w}{    }\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n}{print\PYGZus{}distributed}\PYG{p}{(}\PYG{k}{const}\PYG{+w}{ }\PYG{n}{std}\PYG{o}{::}\PYG{n}{string}\PYG{o}{\PYGZam{}}\PYG{+w}{ }\PYG{n}{name}\PYG{p}{)}\PYG{+w}{ }\PYG{k}{const}\PYG{+w}{ }\PYG{p}{\PYGZob{}}\PYG{+w}{ }\PYG{n}{H\PYGZus{}}\PYG{p}{.}\PYG{n}{print\PYGZus{}distributed}\PYG{p}{(}\PYG{n}{name}\PYG{p}{);}\PYG{+w}{ }\PYG{p}{\PYGZcb{}}
+\PYG{+w}{    }\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n}{print\PYGZus{}distributed}\PYG{p}{(}\PYG{k}{const}\PYG{+w}{ }\PYG{n}{std}\PYG{o}{::}\PYG{n}{string}\PYG{o}{\PYGZam{}}\PYG{+w}{ }\PYG{n}{name}\PYG{p}{)}\PYG{+w}{ }\PYG{k}{const}
+\PYG{+w}{                             }\PYG{p}{\PYGZob{}}\PYG{+w}{ }\PYG{n}{H\PYGZus{}}\PYG{p}{.}\PYG{n}{print\PYGZus{}distributed}\PYG{p}{(}\PYG{n}{name}\PYG{p}{);}\PYG{+w}{ }\PYG{p}{\PYGZcb{}}
 
 \PYG{+w}{    }\PYG{c+c1}{// Вернуть локальную матрицу}
-\PYG{+w}{    }\PYG{n}{Matrix}\PYG{o}{\PYGZlt{}}\PYG{n}{COMPLEX}\PYG{o}{\PYGZgt{}}\PYG{+w}{ }\PYG{n}{get\PYGZus{}local\PYGZus{}matrix}\PYG{p}{()}\PYG{+w}{ }\PYG{k}{const}\PYG{+w}{ }\PYG{p}{\PYGZob{}}\PYG{+w}{ }\PYG{k}{return}\PYG{+w}{ }\PYG{n}{H\PYGZus{}}\PYG{p}{.}\PYG{n}{get\PYGZus{}local\PYGZus{}matrix}\PYG{p}{();}\PYG{+w}{ }\PYG{p}{\PYGZcb{}}
+\PYG{+w}{    }\PYG{n}{Matrix}\PYG{o}{\PYGZlt{}}\PYG{n}{COMPLEX}\PYG{o}{\PYGZgt{}}\PYG{+w}{ }\PYG{n}{get\PYGZus{}local\PYGZus{}matrix}\PYG{p}{()}\PYG{+w}{ }\PYG{k}{const}
+\PYG{+w}{             }\PYG{p}{\PYGZob{}}\PYG{+w}{ }\PYG{k}{return}\PYG{+w}{ }\PYG{n}{H\PYGZus{}}\PYG{p}{.}\PYG{n}{get\PYGZus{}local\PYGZus{}matrix}\PYG{p}{();}\PYG{+w}{ }\PYG{p}{\PYGZcb{}}
 
 \PYG{+w}{    }\PYG{c+c1}{// Вернуть гамильтониан как блочную матрицу}
-\PYG{+w}{    }\PYG{n}{BLOCKED\PYGZus{}Matrix}\PYG{o}{\PYGZlt{}}\PYG{n}{COMPLEX}\PYG{o}{\PYGZgt{}}\PYG{+w}{ }\PYG{n}{get\PYGZus{}blocked\PYGZus{}matrix}\PYG{p}{()}\PYG{+w}{ }\PYG{k}{const}\PYG{+w}{ }\PYG{p}{\PYGZob{}}\PYG{+w}{ }\PYG{k}{return}\PYG{+w}{ }\PYG{n}{H\PYGZus{}}\PYG{p}{;}\PYG{+w}{ }\PYG{p}{\PYGZcb{}}
+\PYG{+w}{    }\PYG{n}{BLOCKED\PYGZus{}Matrix}\PYG{o}{\PYGZlt{}}\PYG{n}{COMPLEX}\PYG{o}{\PYGZgt{}}\PYG{+w}{ }\PYG{n}{get\PYGZus{}blocked\PYGZus{}matrix}\PYG{p}{()}\PYG{+w}{ }\PYG{k}{const}
+\PYG{+w}{                                         }\PYG{p}{\PYGZob{}}\PYG{+w}{ }\PYG{k}{return}\PYG{+w}{ }\PYG{n}{H\PYGZus{}}\PYG{p}{;}\PYG{+w}{ }\PYG{p}{\PYGZcb{}}
 \PYG{k}{protected}\PYG{o}{:}
 \PYG{+w}{    }\PYG{k+kt}{bool}\PYG{+w}{ }\PYG{n}{is\PYGZus{}calculated\PYGZus{}eigen\PYGZus{}}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n+nb}{false}\PYG{p}{;}\PYG{+w}{ }\PYG{c+c1}{// Служебная переменная,}
 \PYG{+w}{                                       }\PYG{c+c1}{// чтобы не пересчитывать}

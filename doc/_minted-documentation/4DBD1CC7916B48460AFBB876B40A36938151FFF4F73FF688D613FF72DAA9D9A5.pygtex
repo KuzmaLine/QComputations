@@ -5,7 +5,10 @@
 \PYG{c+c1}{// group\PYGZus{}id \PYGZhy{} номер группы, в котором находится кудит}
 
 \PYG{k}{template}\PYG{o}{\PYGZlt{}}\PYG{k}{typename}\PYG{+w}{ }\PYG{n+nc}{StateType}\PYG{o}{\PYGZgt{}}
-\PYG{n}{State}\PYG{o}{\PYGZlt{}}\PYG{n}{StateType}\PYG{o}{\PYGZgt{}}\PYG{+w}{ }\PYG{n}{set\PYGZus{}qudit}\PYG{p}{(}\PYG{k}{const}\PYG{+w}{ }\PYG{n}{StateType}\PYG{o}{\PYGZam{}}\PYG{+w}{ }\PYG{n}{state}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{ValType}\PYG{+w}{ }\PYG{n}{val}\PYG{p}{,}\PYG{+w}{ }\PYG{k+kt}{size\PYGZus{}t}\PYG{+w}{ }\PYG{n}{qudit\PYGZus{}index}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{p}{,}\PYG{+w}{ }\PYG{k+kt}{size\PYGZus{}t}\PYG{+w}{ }\PYG{n}{group\PYGZus{}id}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{n}{State}\PYG{o}{\PYGZlt{}}\PYG{n}{StateType}\PYG{o}{\PYGZgt{}}\PYG{+w}{ }\PYG{n}{set\PYGZus{}qudit}\PYG{p}{(}\PYG{k}{const}\PYG{+w}{ }\PYG{n}{StateType}\PYG{o}{\PYGZam{}}\PYG{+w}{ }\PYG{n}{state}\PYG{p}{,}
+\PYG{+w}{                           }\PYG{n}{ValType}\PYG{+w}{ }\PYG{n}{val}\PYG{p}{,}
+\PYG{+w}{                           }\PYG{k+kt}{size\PYGZus{}t}\PYG{+w}{ }\PYG{n}{qudit\PYGZus{}index}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{p}{,}
+\PYG{+w}{                           }\PYG{k+kt}{size\PYGZus{}t}\PYG{+w}{ }\PYG{n}{group\PYGZus{}id}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
 \PYG{+w}{    }\PYG{k}{auto}\PYG{+w}{ }\PYG{n}{res}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{state}\PYG{p}{;}\PYG{+w}{ }\PYG{c+c1}{// копируем состояние}
 
 \PYG{+w}{    }\PYG{c+c1}{// проверяем, принадлежит ли val диапазону от 0 до максимального значения}

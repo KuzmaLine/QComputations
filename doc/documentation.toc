@@ -16,8 +16,8 @@
 \contentsline {section}{\numberline {5}Визуализация}{34}{}%
 \contentsline {subsection}{\numberline {5.1}Модификация вероятностей (Probs)}{34}{}%
 \contentsline {subsection}{\numberline {5.2}Способ 1. Python API}{35}{}%
-\contentsline {subsection}{\numberline {5.3}Способ 2. Файловая система. Seaborn}{37}{}%
-\contentsline {section}{\numberline {6}Генерация базиса}{40}{}%
-\contentsline {section}{\numberline {7}Реализованные модели}{40}{}%
+\contentsline {subsection}{\numberline {5.3}Способ 2. Файловая система. Seaborn}{38}{}%
+\contentsline {section}{\numberline {6}Генерация базиса}{41}{}%
+\contentsline {section}{\numberline {7}Реализованные модели}{41}{}%
 \contentsline {subsection}{\numberline {7.1}Вспомогательные функции для создания собственных операторов}{41}{}%
-\contentsline {subsection}{\numberline {7.2}TCH. Модель Тависа-Каммингса-Хаббарда}{43}{}%
+\contentsline {subsection}{\numberline {7.2}TCH. Модель Тависа-Каммингса-Хаббарда}{44}{}%

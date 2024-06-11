@@ -2,7 +2,8 @@
 \PYG{c+c1}{// Создать фигуру определённого размера.}
 \PYG{c+c1}{// нулевые значения \PYGZhy{} выбор значений по умолчанию}
 \PYG{c+c1}{// (ЛУЧШЕ ВСЕГО ПИСАТЬ ДО МОДЕЛИРОВАНИЯ)}
-\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n+nf}{make\PYGZus{}figure}\PYG{p}{(}\PYG{k+kt}{size\PYGZus{}t}\PYG{+w}{ }\PYG{n}{x}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{p}{,}\PYG{+w}{ }\PYG{k+kt}{size\PYGZus{}t}\PYG{+w}{ }\PYG{n}{y}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{p}{,}\PYG{+w}{ }\PYG{k+kt}{size\PYGZus{}t}\PYG{+w}{ }\PYG{n}{dpi}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{QConfig}\PYG{o}{::}\PYG{n}{instance}\PYG{p}{().}\PYG{n}{dpi}\PYG{p}{());}
+\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n+nf}{make\PYGZus{}figure}\PYG{p}{(}\PYG{k+kt}{size\PYGZus{}t}\PYG{+w}{ }\PYG{n}{x}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{p}{,}\PYG{+w}{ }\PYG{k+kt}{size\PYGZus{}t}\PYG{+w}{ }\PYG{n}{y}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{p}{,}
+\PYG{+w}{                 }\PYG{k+kt}{size\PYGZus{}t}\PYG{+w}{ }\PYG{n}{dpi}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{QConfig}\PYG{o}{::}\PYG{n}{instance}\PYG{p}{().}\PYG{n}{dpi}\PYG{p}{());}
 
 \PYG{c+c1}{// Создать график вероятностей}
 \PYG{k+kt}{void}\PYG{+w}{ }\PYG{n+nf}{probs\PYGZus{}to\PYGZus{}plot}\PYG{p}{(}\PYG{k}{const}\PYG{+w}{ }\PYG{n}{Evolution}\PYG{o}{::}\PYG{n}{Probs}\PYG{o}{\PYGZam{}}\PYG{+w}{ }\PYG{n}{probs}\PYG{p}{,}

@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2022/dev/Debian) (preloaded format=pdflatex 2024.4.8)  11 JUN 2024 20:07
+This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2022/dev/Debian) (preloaded format=pdflatex 2024.4.8)  11 JUN 2024 21:05
 entering extended mode
  \write18 enabled.
  %&-line parsing enabled.
@@ -1094,60 +1094,61 @@ Package mdframed Info: mdframed detected package amsthm
 \openout3 = `documentation.pyg'.
 
 
-(./_minted-documentation/E4F7F065DFB6FF67CACADE05EEAC9F848151FFF4F73FF688D613FF
+(./_minted-documentation/E0CB6351EE2787D25F6E3789D979F85B8151FFF4F73FF688D613FF
 72DAA9D9A5.pygtex) [29]
 Package mdframed Info: mdframed detected package amsthm 
  changed the theorem header of amsthm
-(mdframed)              on input line 1410.
+(mdframed)              on input line 1411.
 \openout3 = `documentation.pyg'.
 
 
-(./_minted-documentation/3EC75610D8611F74CA6BA28DD918A2AB8151FFF4F73FF688D613FF
+(./_minted-documentation/598FB8EF011ECEE5C30DB614C24522A78151FFF4F73FF688D613FF
 72DAA9D9A5.pygtex) [30]
 Package mdframed Info: mdframed detected package amsthm 
  changed the theorem header of amsthm
-(mdframed)              on input line 1439.
+(mdframed)              on input line 1440.
 \openout3 = `documentation.pyg'.
 
 
-(./_minted-documentation/F58D3B8F309C00AD25899A83D0520C1D8151FFF4F73FF688D613FF
-72DAA9D9A5.pygtex) [31]
+(./_minted-documentation/04228C688E357C9040021DB5C21EDD6C8151FFF4F73FF688D613FF
+72DAA9D9A5.pygtex) [31] [32]
 Package mdframed Info: mdframed detected package amsthm 
  changed the theorem header of amsthm
-(mdframed)              on input line 1524.
+(mdframed)              on input line 1530.
 \openout3 = `documentation.pyg'.
 
 
-(./_minted-documentation/6C4280428D2DB84B2BBD7C7C54FB1AF48151FFF4F73FF688D613FF
-72DAA9D9A5.pygtex) [32]
-Overfull \hbox (31.66196pt too wide) in paragraph at lines 1546--1548
+(./_minted-documentation/AF430D22A82DA5E930D9270F77A81CEB8151FFF4F73FF688D613FF
+72DAA9D9A5.pygtex)
+Package mdframed Info: Not enough space on this page on input line 1548.
+
+Overfull \hbox (31.66196pt too wide) in paragraph at lines 1553--1555
 []\T2A/cmr/m/n/12 –еализовано мо-де-ли-ро-ва-ние с по-мо-щью двух урав-не-ний. 
 ”рав-не-ние ЎрЉ-дин-ге-ра (schrodinger)
  []
 
 
-Overfull \hbox (43.08131pt too wide) in paragraph at lines 1546--1548
+Overfull \hbox (43.08131pt too wide) in paragraph at lines 1553--1555
 \T2A/cmr/m/n/12 че-рез спек-траль-ное раз-ло-же-ние и че-рез ос-нов-ное кван-то
 -вое урав-не-ние (quantum_master_equation),
  []
 
 Package mdframed Info: mdframed detected package amsthm 
  changed the theorem header of amsthm
-(mdframed)              on input line 1557.
+(mdframed)              on input line 1564.
 \openout3 = `documentation.pyg'.
 
 
 (./_minted-documentation/AB8A83EDFDC30C6374C798CE9E69B9938151FFF4F73FF688D613FF
-72DAA9D9A5.pygtex)
-Overfull \hbox (32.08948pt too wide) in paragraph at lines 1587--1589
+72DAA9D9A5.pygtex) [33]
+Overfull \hbox (32.08948pt too wide) in paragraph at lines 1594--1596
 \T2A/cmr/m/n/12 стью.  ак этим поль-зо-вать-с€, смот-реть в ин-струк-ции ??????
 ???????????????????????????????????? 
  []
 
-[33]
 Package mdframed Info: mdframed detected package amsthm 
  changed the theorem header of amsthm
-(mdframed)              on input line 1591.
+(mdframed)              on input line 1598.
 \openout3 = `documentation.pyg'.
 
 
@@ -1155,107 +1156,104 @@ Package mdframed Info: mdframed detected package amsthm
 72DAA9D9A5.pygtex)
 Package mdframed Info: mdframed detected package amsthm 
  changed the theorem header of amsthm
-(mdframed)              on input line 1627.
+(mdframed)              on input line 1634.
 \openout3 = `documentation.pyg'.
 
 
-(./_minted-documentation/D1E2E452C85991D635EEEF37B701D6D28151FFF4F73FF688D613FF
+(./_minted-documentation/6D87B0092B369255C89040CAA288633A8151FFF4F73FF688D613FF
 72DAA9D9A5.pygtex) [34]
+Package mdframed Info: Not enough space on this page on input line 1667.
 Package mdframed Info: mdframed detected package amsthm 
  changed the theorem header of amsthm
-(mdframed)              on input line 1669.
+(mdframed)              on input line 1682.
 \openout3 = `documentation.pyg'.
 
 
-(./_minted-documentation/22C78ACC2EF9B57426611DEC5F37E6868151FFF4F73FF688D613FF
-72DAA9D9A5.pygtex) [35] [36]
-Overfull \hbox (37.28809pt too wide) in paragraph at lines 1766--1769
+(./_minted-documentation/1626BB510040DE70694158A5066E08408151FFF4F73FF688D613FF
+72DAA9D9A5.pygtex) [35]
+Package mdframed Info: Not enough space on this page on input line 1777.
+ [36]
+Overfull \hbox (37.28809pt too wide) in paragraph at lines 1780--1783
 \T2A/cmr/m/n/12 скрип-та, ко-то-рый бу-дет на-хо-дить-с€ по-сле уста-нов-ки в п
 е-ре-мен-ной окру-же-ни€ $SEABORN_PLOT.
  []
 
+[37]
 Package mdframed Info: mdframed detected package amsthm 
  changed the theorem header of amsthm
-(mdframed)              on input line 1778.
+(mdframed)              on input line 1792.
 \openout3 = `documentation.pyg'.
 
 
-(./_minted-documentation/779B14526B4D3168C0AD6F50A58EFAA18151FFF4F73FF688D613FF
-72DAA9D9A5.pygtex) [37]
-Package mdframed Info: Not enough space on this page on input line 1851.
- [38]
+(./_minted-documentation/F6A06CFC8F9F6564256FAB61EB9309E68151FFF4F73FF688D613FF
+72DAA9D9A5.pygtex) [38] [39]
 Package mdframed Info: mdframed detected package amsthm 
  changed the theorem header of amsthm
-(mdframed)              on input line 1856.
+(mdframed)              on input line 1891.
 \openout3 = `documentation.pyg'.
 
 
 (./_minted-documentation/91A8A0B231C0B68749170F571B0C8B8A8151FFF4F73FF688D613FF
-72DAA9D9A5.pygtex) [39]
+72DAA9D9A5.pygtex)
 Package mdframed Info: mdframed detected package amsthm 
  changed the theorem header of amsthm
-(mdframed)              on input line 1886.
+(mdframed)              on input line 1921.
 \openout3 = `documentation.pyg'.
 
 
 (./_minted-documentation/82F53D5974668C0BF4CA2D36046699FCF76B5A2279F420FFD2F801
-CF8CD9148B.pygtex)
+CF8CD9148B.pygtex) [40]
 Package mdframed Info: mdframed detected package amsthm 
  changed the theorem header of amsthm
-(mdframed)              on input line 1903.
+(mdframed)              on input line 1938.
 \openout3 = `documentation.pyg'.
 
 
-(./_minted-documentation/4FA1D59C04E8ED94D32BAC65B6A293238151FFF4F73FF688D613FF
+(./_minted-documentation/5C0C37B09AAE02F60F9564056C13CCB48151FFF4F73FF688D613FF
 72DAA9D9A5.pygtex)
-Overfull \hbox (53.94727pt too wide) in paragraph at lines 1930--1931
+Overfull \hbox (53.94727pt too wide) in paragraph at lines 1965--1966
 \T2A/cmr/m/n/12 ‘ункции дл€ удоб-ства пе-ре-хо-да от ба-зис-но-го со-сто-€-ни€ 
 StateType к су-пер-по-зи-ции State<StateType>. 
  []
 
-[40]
-Overfull \hbox (47.58432pt too wide) in paragraph at lines 1936--1939
+
+Overfull \hbox (47.58432pt too wide) in paragraph at lines 1971--1974
 []\T2A/cmr/m/n/12 ”станавливает зна-че-нию ку-ди-ту - на вы-ход по-лу-ча-е-те д
 ан-ное со-сто-€-ни€ в ви-де State<StateType>
  []
 
 
-Overfull \hbox (30.61882pt too wide) in paragraph at lines 1936--1939
+Overfull \hbox (30.61882pt too wide) in paragraph at lines 1971--1974
 \T2A/cmr/m/n/12 му зна-че-нию ку-ди-та, то в от-вет воз-вра-ща-ет-с€ пу-стое со
 -сто-€-ние, то есть пу-стой State<StateType>.
  []
 
 Package mdframed Info: mdframed detected package amsthm 
  changed the theorem header of amsthm
-(mdframed)              on input line 1941.
+(mdframed)              on input line 1976.
 \openout3 = `documentation.pyg'.
 
 
-(./_minted-documentation/0300496C48E2ADEDA5907FDBB7240F078151FFF4F73FF688D613FF
+(./_minted-documentation/4DBD1CC7916B48460AFBB876B40A36938151FFF4F73FF688D613FF
 72DAA9D9A5.pygtex)
+Package mdframed Info: Not enough space on this page on input line 2002.
+ [41]
+Package mdframed Info: Not enough space on this page on input line 2002.
 Package mdframed Info: mdframed detected package amsthm 
  changed the theorem header of amsthm
-(mdframed)              on input line 1973.
+(mdframed)              on input line 2011.
 \openout3 = `documentation.pyg'.
 
 
-(./_minted-documentation/2074547EA0CC6F0A48236E87AF1DEE7F8151FFF4F73FF688D613FF
-72DAA9D9A5.pygtex) [41]
-Package mdframed Info: mdframed detected package amsthm 
- changed the theorem header of amsthm
-(mdframed)              on input line 2003.
-\openout3 = `documentation.pyg'.
-
-
-(./_minted-documentation/571440B515781883BD4CBCA1D48858658151FFF4F73FF688D613FF
+(./_minted-documentation/7AE6319AD97649A59FCFE241FF6CC20B8151FFF4F73FF688D613FF
 72DAA9D9A5.pygtex) [42]
 Package mdframed Info: mdframed detected package amsthm 
  changed the theorem header of amsthm
-(mdframed)              on input line 2067.
+(mdframed)              on input line 2043.
 \openout3 = `documentation.pyg'.
 
 
-(./_minted-documentation/07CD241D6A2BE411602626C38B2393E78151FFF4F73FF688D613FF
+(./_minted-documentation/ED1ECB98A6A9713EFAF63C63FB2225808151FFF4F73FF688D613FF
 72DAA9D9A5.pygtex) [43]
 Package mdframed Info: mdframed detected package amsthm 
  changed the theorem header of amsthm
@@ -1263,58 +1261,66 @@ Package mdframed Info: mdframed detected package amsthm
 \openout3 = `documentation.pyg'.
 
 
-(./_minted-documentation/CF24211A823054F9803843DBAD55011A8151FFF4F73FF688D613FF
-72DAA9D9A5.pygtex) [44] [45]
+(./_minted-documentation/C27E58096969D0FD2B74EEC0BBC8B31B8151FFF4F73FF688D613FF
+72DAA9D9A5.pygtex) [44]
 Package mdframed Info: mdframed detected package amsthm 
  changed the theorem header of amsthm
-(mdframed)              on input line 2246.
+(mdframed)              on input line 2167.
 \openout3 = `documentation.pyg'.
 
 
-(./_minted-documentation/880C1447C158E8CA77B7E19439FB0AEF8151FFF4F73FF688D613FF
-72DAA9D9A5.pygtex) [46]
+(./_minted-documentation/0BCF5A67F795A24316A09878008DD7CB8151FFF4F73FF688D613FF
+72DAA9D9A5.pygtex) [45] [46] [47]
 Package mdframed Info: mdframed detected package amsthm 
  changed the theorem header of amsthm
-(mdframed)              on input line 2270.
+(mdframed)              on input line 2313.
 \openout3 = `documentation.pyg'.
 
 
-(./_minted-documentation/553C369CFE9EAF6068EE293CC757A2AF8151FFF4F73FF688D613FF
+(./_minted-documentation/BC60C939660F7DD4CF94E693FAF0B5228151FFF4F73FF688D613FF
 72DAA9D9A5.pygtex)
 Package mdframed Info: mdframed detected package amsthm 
  changed the theorem header of amsthm
-(mdframed)              on input line 2297.
+(mdframed)              on input line 2340.
 \openout3 = `documentation.pyg'.
 
 
-(./_minted-documentation/AA873124B6942D97759A865E51C3FAED8151FFF4F73FF688D613FF
-72DAA9D9A5.pygtex) [47]
+(./_minted-documentation/0EAC36B49319CC4D14BADD94396B98E18151FFF4F73FF688D613FF
+72DAA9D9A5.pygtex) [48]
 Package mdframed Info: mdframed detected package amsthm 
  changed the theorem header of amsthm
-(mdframed)              on input line 2345.
+(mdframed)              on input line 2369.
 \openout3 = `documentation.pyg'.
 
 
-(./_minted-documentation/5082B2E49DA2A94C29945D7F8FEC96188151FFF4F73FF688D613FF
-72DAA9D9A5.pygtex) [48]
-Overfull \hbox (103.20207pt too wide) in paragraph at lines 2398--2400
+(./_minted-documentation/16E85784BB211C9C0B3B7A688C5CEFD78151FFF4F73FF688D613FF
+72DAA9D9A5.pygtex) [49]
+Package mdframed Info: mdframed detected package amsthm 
+ changed the theorem header of amsthm
+(mdframed)              on input line 2421.
+\openout3 = `documentation.pyg'.
+
+
+(./_minted-documentation/63FBE643B92A9F9BAD8254182933C1238151FFF4F73FF688D613FF
+72DAA9D9A5.pygtex) [50]
+Overfull \hbox (103.20207pt too wide) in paragraph at lines 2482--2484
 \T2A/cmr/m/n/12 не-ри-ру-ем га-миль-то-ни-ан че-рез опе-ра-то-ры - H_TCH €в-л€-
 ет-с€ до-чер-ним клас-сом H_by_Operator<TCH_State>
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 2398--2400
+Underfull \hbox (badness 10000) in paragraph at lines 2482--2484
 
  []
 
 Package mdframed Info: mdframed detected package amsthm 
  changed the theorem header of amsthm
-(mdframed)              on input line 2400.
+(mdframed)              on input line 2484.
 \openout3 = `documentation.pyg'.
 
 
-(./_minted-documentation/50DE365658485146C8FA903734B6D5E18151FFF4F73FF688D613FF
-72DAA9D9A5.pygtex) [49] [50] [51] (./documentation.aux)
+(./_minted-documentation/83AD8A182EBFF341C0B241D12DA100038151FFF4F73FF688D613FF
+72DAA9D9A5.pygtex) [51] [52] (./documentation.aux)
 
 LaTeX Font Warning: Some font shapes were not available, defaults substituted.
 
@@ -1328,7 +1334,7 @@ Here is how much of TeX's memory you used:
  28515 multiletter control sequences out of 15000+600000
  484558 words of font info for 61 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 75i,6n,81p,872b,698s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 75i,6n,81p,537b,698s stack positions out of 5000i,500n,10000p,200000b,80000s
 {/usr/share/texmf/fonts/enc/dvips/cm-super/cm-super-t2a.enc}{/usr/share/texmf
 /fonts/enc/dvips/cm-super/cm-super-ts1.enc}</usr/share/texlive/texmf-dist/fonts
 /type1/public/amsfonts/cm/cmex10.pfb></usr/share/texlive/texmf-dist/fonts/type1
@@ -1346,10 +1352,10 @@ ic/cm-super/sfbx1440.pfb></usr/share/texmf/fonts/type1/public/cm-super/sfbx1728
 mf/fonts/type1/public/cm-super/sfrm1200.pfb></usr/share/texmf/fonts/type1/publi
 c/cm-super/sfss1200.pfb></usr/share/texmf/fonts/type1/public/cm-super/sfsx1728.
 pfb></usr/share/texmf/fonts/type1/public/cm-super/sftt1200.pfb>
-Output written on documentation.pdf (51 pages, 415880 bytes).
+Output written on documentation.pdf (52 pages, 416713 bytes).
 PDF statistics:
- 256 PDF objects out of 1000 (max. 8388607)
- 173 compressed objects within 2 object streams
+ 259 PDF objects out of 1000 (max. 8388607)
+ 175 compressed objects within 2 object streams
  0 named destinations out of 1000 (max. 500000)
  25 words of extra memory for PDF output out of 10000 (max. 10000000)
 
