@@ -95,14 +95,6 @@ std::string make_state_regex_pattern(const std::string& format, bool is_freq_dis
     return regex_begin->str();
 }
 
-void show_basis(const std::set<Cavity_State>& basis) {
-    for (const auto& state: basis) {
-        std::cout << std::setw(QConfig::instance().width()) << state.to_string() << " ";
-    }
-
-    std::cout << std::endl;
-}
-
 void show_basis(const std::set<Basis_State>& basis) {
     for (const auto& state: basis) {
         std::cout << std::setw(QConfig::instance().width()) << state.to_string() << " ";
@@ -124,18 +116,6 @@ void make_rank_map(size_t size, int rank, int world_size, size_t& start_col, siz
 
     start_col = rank * size_per_proc + std::min(rank, rest);
 }
-
-/*
-std::set<TCH_State> Cavity_State_to_State(const std::set<Cavity_State>& st) {
-    std::set<TCH_State> res;
-
-    for (const auto& item: st) {
-        res.insert(TCH_State(item));
-    }
-
-    return res;
-}
-*/
 
 std::function<double(double)> Cubic_Spline_Interpolate(const std::vector<double>& x, const std::vector<double>& f) {
     auto begin = std::chrono::steady_clock::now();

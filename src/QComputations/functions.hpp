@@ -79,8 +79,6 @@ bool is_zero(COMPLEX a, double eps = QConfig::instance().eps());
 bool is_digit(char c);
 size_t Ck_n(size_t k, size_t n);
 
-std::set<TCH_State> Cavity_State_to_State(const std::set<Cavity_State>& st);
-
 // Eigen Problem
 double off(const Matrix<double>& A);
 std::pair<double, double> givens(double a, double b, double eps = QConfig::instance().eps());
@@ -98,7 +96,6 @@ double fsolve(std::function<double(double)> f, double a, double b, double target
 // f must be unimodal on [a, b]
 double fmin(std::function<double(double)> f, double a, double b, double eps = QConfig::instance().eps());
 
-void show_basis(const std::set<Cavity_State>& basis);
 void show_basis(const std::set<Basis_State>& basis);
 
 // <b|a>, (a, b)

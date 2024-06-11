@@ -5,7 +5,6 @@
     #include <complex>
     #include <cassert>
     #include <set>
-    #include "cavity_state.hpp"
     #include "matrix.hpp"
     #include "big_uint.hpp"
     #include <algorithm>

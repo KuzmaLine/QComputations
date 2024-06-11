@@ -144,6 +144,9 @@ Matrix<COMPLEX> operator_to_matrix(const Operator<StateType>& op, const std::set
     return A;
 }
 
+
+#ifdef ENABLE_MPI
+#ifdef ENABLE_CLUSTER
 template<typename StateType>
 BLOCKED_Matrix<COMPLEX> operator_to_matrix(ILP_TYPE ctxt, const Operator<StateType>& op, const std::set<StateType>& basis) {
     size_t dim = basis.size();
@@ -174,6 +177,8 @@ BLOCKED_Matrix<COMPLEX> operator_to_matrix(ILP_TYPE ctxt, const Operator<StateTy
 
     return A;
 }
+#endif
+#endif
 
 /*
 template<typename StateType>

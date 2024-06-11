@@ -5,7 +5,7 @@
 namespace QComputations {
 
 // Рудимент - УБРАТЬ (Осторожно с private переменной QConfig)
-enum MULTIPLY_ALGS {COMMON_MODE = 0}
+enum MULTIPLY_ALGS {COMMON_MODE = 0};
 namespace {
     const std::string angle_bracket_right = "\u29FD";
     enum FIG_PARAMS {FIG_WIDTH = 19, FIG_HEIGHT = 10, DPI = 80};

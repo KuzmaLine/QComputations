@@ -162,6 +162,7 @@ namespace {
         }
     }
 
+    /*
     Cavity_State get_energy_state(size_t energy, size_t m) {
         std::vector<int> state_vec(m, 0);
         for (size_t i = 0; i < std::min(m, energy); i++) {
@@ -190,6 +191,7 @@ namespace {
             return true;
         }
     }
+    */
 }
 
     // N >= 1

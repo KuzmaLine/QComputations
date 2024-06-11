@@ -7,6 +7,7 @@
 #include "config.hpp"
 #include "matrix.hpp"
 #include "graph.hpp"
+#include "functions.hpp"
 #include "quantum_operators.hpp"
 
 namespace QComputations {
