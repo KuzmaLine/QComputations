@@ -1766,24 +1766,126 @@ void probs_in_cavity_to_plot(const Evolution::BLOCKED_Probs& probs,
         Данный способ более универсален и поддерживает параллельную генерацию графиков. Все результаты записываются в файлы формата CSV.
          Далее они обрабатываются с помощью скрипта, который будет находиться после установки в переменной окружения \$SEABORN\_PLOT. Настройки для 
          данного скрипта находится в конфигурационном файле, путь к которому находится в переменной \$SEABORN\_CONFIG.
+
+         Начнём с команд для создания файлов. \textbf{\$SEABORN\_PLOT работает только с файлами, созданными с помощью make\_probs\_files!}
+
+         Настройки QConfig для записи CSV файлов:
+         \begin{itemize}
+            \item{}
+            \item{}
+         \end{itemize}
 \begin{mdframed}[linecolor=black, topline=true, bottomline=true,
 leftline=false, rightline=false]
 \begin{minted}[mathescape]{c++}
+// dir - в какую директорию записывать результаты
+// filename - ?????????????
+
+// Записать гамильтониан в CSV файл.
+void hamiltonian_to_file(const std::string& filename, const Hamiltonian& H, std::string dir = "");
+
+// Записать базис в CSV файл.
+void basis_to_file(const std::string& filename, const std::set<Basis_State>& basis, std::string dir = "");
+
+// Записать время в CSV файл.
+void time_vec_to_file(const std::string& filename, const std::vector<double>& time_vec, std::string dir = "");
+
+// Записать вероятности в CSV файл.
+void probs_to_file(const std::string& filename, const Evolution::Probs& probs, std::string dir = "");
+
+// Создать набор файлов в ????????????
+void make_probs_files(const Hamiltonian& H,
+                        const Evolution::Probs& probs,
+                        const std::vector<double>& time_vec,
+                        const std::set<Basis_State>& basis,
+                        std::string dir = "");
+
+
+// BLOCKED версии. Некоторые функции замещены из одноядерной версии
+// а именнно:
+// hamiltonian_to_file
+// probs_to_file
+// time_vec_to_file
+// basis_to_file
+// make_probs_files
+// main_rank - процесс, который будет записывать данные,
+// находящиеся на всех ядрах, а именно: время и базис
+
+// Записать гамильтониан в CSV файл. main_rank???????????????????????????????
+void hamiltonian_to_file(const std::string& filename, const BLOCKED_Hamiltonian& H, std::string dir = "", ILP_TYPE main_rank = 0);
+
+// Записать вероятности в CSV файл.
+void probs_to_file(const std::string& filename, const Evolution::BLOCKED_Probs& probs, std::string dir = "");
+
+// ??????????????????????
+void plot_from_files(const std::string& plotname, std::string dir, const std::string& python_script_path = QConfig::instance().python_script_path());
+
+// Записать базис в CSV файл ядром main_rank
+void basis_to_file(const std::string& filename, const std::set<Basis_State>& basis, std::string dir = "", ILP_TYPE main_rank = 0);
+
+// Записать время в CSV файл ядром main_rank
+void time_vec_to_file(const std::string& filename, const std::vector<double>& time_vec, std::string dir = "", ILP_TYPE main_rank = 0);
+
+// Записать вероятности в CSV файл, находящиеся в виде одноядерной матрицы на ядре main_rank
+void probs_to_file(const std::string& filename, const Evolution::Probs& probs, std::string dir = "", ILP_TYPE main_rank = 0);
+
+// Записать гамильтониан в CSV файл ядром main_rank
+void hamiltonian_to_file(const std::string& filename, const Hamiltonian& H, std::string dir = "", ILP_TYPE main_rank = 0);
+
+// Записать результаты в файлы CSV файлы, хранящиеся полностью на ядре main_rank
+void make_probs_files(const Hamiltonian& H,
+                        const Evolution::Probs& probs,
+                        const std::vector<double>& time_vec,
+                        const std::set<Basis_State>& basis,
+                        std::string dir = "",
+                        ILP_TYPE main_rank = 0);
+
+// Записать результаты в CSV файлы, хранящиеся блочно распределённо
+void make_probs_files(const BLOCKED_Hamiltonian& H,
+                        const Evolution::BLOCKED_Probs& probs,
+                        const std::vector<double>& time_vec,
+                        const std::set<Basis_State>& basis,
+                        std::string dir = "",
+                        ILP_TYPE main_rank = 0);
 
 \end{minted}
 \end{mdframed}
 
+        Теперь описание самого скрипта. Настройки хранятся в конфигурационном файле, хранящимся на пути \$SEABORN\_CONFIG. Пример выглядит он следующим образом:
+
 \begin{mdframed}[linecolor=black, topline=true, bottomline=true,
 leftline=false, rightline=false]
 \begin{minted}[mathescape]{c++}
+{
+    "format": "png",
+    "filename": "original.png",
+    "width": "19",
+    "height": "10",
+    "dir": "original",
+    "dirs": "amplitude*",
+    "frames": "20",
+    "interval": "100"
+}
 
 \end{minted}
 \end{mdframed}
 
+        \begin{itemize}
+            \item{format - формат результата файла. Поддерживаются png, jpg и gif. Для генерации gif смотреть пример - <???????????????????>}
+            \item{filename - Имя результирующего файла}
+            \item{width, height - размер итогово изображения. 1 примерно равен 100 пикселям (вопросы к питону)}
+            \item{dir??????????????}
+            \item{dirs - делает обход по директориям, подходящими под данное описание. Обрабатывает их все согласно формату}
+            \item{frames - для генерации gif. Сколько всего кадроф нужно отрисовать}
+            \item{interval - для генерации gif. Интервал времени в миллисекундах между кадрами.}
+        \end{itemize}
+
+
+        Вызов команды для генерации графиков происходит по следующей команде:
+
 \begin{mdframed}[linecolor=black, topline=true, bottomline=true,
 leftline=false, rightline=false]
-\begin{minted}[mathescape]{c++}
-
+\begin{minted}[mathescape]{bash}
+python3 $SEABORN_PLOT
 \end{minted}
 \end{mdframed}
 

@@ -1,0 +1,13 @@
+\begin{Verbatim}[commandchars=\\\{\},codes={\catcode`\$=3\catcode`\^=7\catcode`\_=8\relax}]
+\PYG{p}{\PYGZob{}}
+\PYG{+w}{    }\PYG{l+s}{\PYGZdq{}format\PYGZdq{}}\PYG{o}{:}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}png\PYGZdq{}}\PYG{p}{,}
+\PYG{+w}{    }\PYG{l+s}{\PYGZdq{}filename\PYGZdq{}}\PYG{o}{:}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}original.png\PYGZdq{}}\PYG{p}{,}
+\PYG{+w}{    }\PYG{l+s}{\PYGZdq{}width\PYGZdq{}}\PYG{o}{:}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}19\PYGZdq{}}\PYG{p}{,}
+\PYG{+w}{    }\PYG{l+s}{\PYGZdq{}height\PYGZdq{}}\PYG{o}{:}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}10\PYGZdq{}}\PYG{p}{,}
+\PYG{+w}{    }\PYG{l+s}{\PYGZdq{}dir\PYGZdq{}}\PYG{o}{:}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}original\PYGZdq{}}\PYG{p}{,}
+\PYG{+w}{    }\PYG{l+s}{\PYGZdq{}dirs\PYGZdq{}}\PYG{o}{:}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}amplitude*\PYGZdq{}}\PYG{p}{,}
+\PYG{+w}{    }\PYG{l+s}{\PYGZdq{}frames\PYGZdq{}}\PYG{o}{:}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}20\PYGZdq{}}\PYG{p}{,}
+\PYG{+w}{    }\PYG{l+s}{\PYGZdq{}interval\PYGZdq{}}\PYG{o}{:}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}100\PYGZdq{}}
+\PYG{p}{\PYGZcb{}}
+
+\end{Verbatim}
