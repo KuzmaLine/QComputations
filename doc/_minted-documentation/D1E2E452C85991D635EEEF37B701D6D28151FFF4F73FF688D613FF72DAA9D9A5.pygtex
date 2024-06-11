@@ -1,0 +1,26 @@
+\begin{Verbatim}[commandchars=\\\{\},codes={\catcode`\$=3\catcode`\^=7\catcode`\_=8\relax}]
+\PYG{c+c1}{// Функции, сводящие результаты к конкретной группе кудитов}
+\PYG{c+c1}{// Например: базис |10\PYGZgt{}|0\PYGZgt{}, |11\PYGZgt{}|1\PYGZgt{}, |00\PYGZgt{}|0\PYGZgt{}}
+\PYG{c+c1}{// Если мы хотим получить просто вероятности того, что в 2 группе}
+\PYG{c+c1}{// будет |0\PYGZgt{} или |1\PYGZgt{} и нам не важно, что в 1 группе, то здесь}
+\PYG{c+c1}{// помогут эти функции}
+
+\PYG{c+c1}{// probs \PYGZhy{} вероятности}
+\PYG{c+c1}{// basis \PYGZhy{} базис, на котором, собственно}
+\PYG{c+c1}{// производились расчёты}
+\PYG{c+c1}{// (Можно получить просто через метод гамильтониана}
+\PYG{c+c1}{// get\PYGZus{}basis() )}
+\PYG{c+c1}{// cavity\PYGZus{}id, group\PYGZus{}id \PYGZhy{} номер полости, группы}
+
+\PYG{c+c1}{// На выходе вы получите пару: Вероятности и}
+\PYG{c+c1}{// итоговый базис в группе}
+
+\PYG{n}{std}\PYG{o}{::}\PYG{n}{pair}\PYG{o}{\PYGZlt{}}\PYG{n}{Probs}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{std}\PYG{o}{::}\PYG{n}{set}\PYG{o}{\PYGZlt{}}\PYG{n}{Basis\PYGZus{}State}\PYG{o}{\PYGZgt{}\PYGZgt{}}\PYG{+w}{ }\PYG{n}{probs\PYGZus{}to\PYGZus{}cavity\PYGZus{}probs}\PYG{p}{(}\PYG{k}{const}\PYG{+w}{ }\PYG{n}{Probs}\PYG{o}{\PYGZam{}}\PYG{+w}{ }\PYG{n}{probs}\PYG{p}{,}
+\PYG{+w}{                            }\PYG{k}{const}\PYG{+w}{ }\PYG{n}{std}\PYG{o}{::}\PYG{n}{set}\PYG{o}{\PYGZlt{}}\PYG{n}{Basis\PYGZus{}State}\PYG{o}{\PYGZgt{}\PYGZam{}}\PYG{+w}{ }\PYG{n}{basis}\PYG{p}{,}\PYG{+w}{ }\PYG{k+kt}{size\PYGZus{}t}\PYG{+w}{ }\PYG{n}{cavity\PYGZus{}id}\PYG{p}{);}
+
+\PYG{n}{std}\PYG{o}{::}\PYG{n}{pair}\PYG{o}{\PYGZlt{}}\PYG{n}{BLOCKED\PYGZus{}Probs}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{std}\PYG{o}{::}\PYG{n}{set}\PYG{o}{\PYGZlt{}}\PYG{n}{Basis\PYGZus{}State}\PYG{o}{\PYGZgt{}\PYGZgt{}}\PYG{+w}{ }\PYG{n}{probs\PYGZus{}to\PYGZus{}group\PYGZus{}probs}\PYG{p}{(}\PYG{k}{const}\PYG{+w}{ }\PYG{n}{BLOCKED\PYGZus{}Probs}\PYG{o}{\PYGZam{}}\PYG{+w}{ }\PYG{n}{probs}\PYG{p}{,}
+\PYG{+w}{                                        }\PYG{k}{const}\PYG{+w}{ }\PYG{n}{std}\PYG{o}{::}\PYG{n}{set}\PYG{o}{\PYGZlt{}}\PYG{n}{Basis\PYGZus{}State}\PYG{o}{\PYGZgt{}\PYGZam{}}\PYG{+w}{ }\PYG{n}{basis}\PYG{p}{,}\PYG{+w}{ }\PYG{k+kt}{size\PYGZus{}t}\PYG{+w}{ }\PYG{n}{group\PYGZus{}id}\PYG{p}{);}
+
+\PYG{n}{std}\PYG{o}{::}\PYG{n}{pair}\PYG{o}{\PYGZlt{}}\PYG{n}{BLOCKED\PYGZus{}Probs}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{std}\PYG{o}{::}\PYG{n}{set}\PYG{o}{\PYGZlt{}}\PYG{n}{Basis\PYGZus{}State}\PYG{o}{\PYGZgt{}\PYGZgt{}}\PYG{+w}{ }\PYG{n}{probs\PYGZus{}to\PYGZus{}cavity\PYGZus{}probs}\PYG{p}{(}\PYG{k}{const}\PYG{+w}{ }\PYG{n}{BLOCKED\PYGZus{}Probs}\PYG{o}{\PYGZam{}}\PYG{+w}{ }\PYG{n}{probs}\PYG{p}{,}
+\PYG{+w}{                                        }\PYG{k}{const}\PYG{+w}{ }\PYG{n}{std}\PYG{o}{::}\PYG{n}{set}\PYG{o}{\PYGZlt{}}\PYG{n}{Basis\PYGZus{}State}\PYG{o}{\PYGZgt{}\PYGZam{}}\PYG{+w}{ }\PYG{n}{basis}\PYG{p}{,}\PYG{+w}{ }\PYG{k+kt}{size\PYGZus{}t}\PYG{+w}{ }\PYG{n}{cavity\PYGZus{}id}\PYG{p}{);}
+\end{Verbatim}

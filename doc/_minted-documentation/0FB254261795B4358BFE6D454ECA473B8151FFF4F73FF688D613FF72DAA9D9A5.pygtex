@@ -4,5 +4,5 @@
 \PYG{c+c1}{// num\PYGZus{}in \PYGZhy{} количество чисел в отрезке}
 
 \PYG{k}{template}\PYG{o}{\PYGZlt{}}\PYG{k}{typename}\PYG{+w}{ }\PYG{n+nc}{T}\PYG{o}{\PYGZgt{}}
-\PYG{n}{std}\PYG{o}{::}\PYG{n}{vector}\PYG{o}{\PYGZlt{}}\PYG{n}{T}\PYG{o}{\PYGZgt{}}\PYG{+w}{ }\PYG{n}{linspace}\PYG{p}{(}\PYG{n}{T}\PYG{+w}{ }\PYG{n}{start\PYGZus{}in}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{T}\PYG{+w}{ }\PYG{n}{end\PYGZus{}in}\PYG{p}{,}\PYG{+w}{ }\PYG{k+kt}{int}\PYG{+w}{ }\PYG{n}{num\PYGZus{}in}\PYG{p}{)}
+\PYG{n}{std}\PYG{o}{::}\PYG{n}{vector}\PYG{o}{\PYGZlt{}}\PYG{k+kt}{double}\PYG{o}{\PYGZgt{}}\PYG{+w}{ }\PYG{n}{linspace}\PYG{p}{(}\PYG{n}{T}\PYG{+w}{ }\PYG{n}{start\PYGZus{}in}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{T}\PYG{+w}{ }\PYG{n}{end\PYGZus{}in}\PYG{p}{,}\PYG{+w}{ }\PYG{k+kt}{int}\PYG{+w}{ }\PYG{n}{num\PYGZus{}in}\PYG{p}{)}
 \end{Verbatim}

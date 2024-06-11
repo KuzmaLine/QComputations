@@ -8,7 +8,12 @@
 \contentsline {subsection}{\numberline {3.4}Вспомогательные функции}{19}{}%
 \contentsline {subsection}{\numberline {3.5}Понятие БАЗОВОГО состояния Basis\_State}{23}{}%
 \contentsline {subsection}{\numberline {3.6}Понятие состояния State<StateType>}{25}{}%
-\contentsline {subsection}{\numberline {3.7}Понятие оператора Operator<StateType>.}{27}{}%
-\contentsline {subsection}{\numberline {3.8}Понятие гамильтониана.}{27}{}%
-\contentsline {subsection}{\numberline {3.9}Моделирование динамики гамильтонианов.}{27}{}%
-\contentsline {section}{\numberline {4}Визуализация}{27}{}%
+\contentsline {subsection}{\numberline {3.7}Понятие оператора Operator<StateType>. РЕАЛИЗАЦИЯ?????????????????????????????????}{27}{}%
+\contentsline {subsection}{\numberline {3.8}Понятие гамильтониана}{28}{}%
+\contentsline {subsection}{\numberline {3.9}Hamiltonian}{29}{}%
+\contentsline {subsection}{\numberline {3.10}BLOCKED\_Hamiltonian}{31}{}%
+\contentsline {section}{\numberline {4}Моделирование динамики гамильтонианов}{33}{}%
+\contentsline {section}{\numberline {5}Визуализация}{34}{}%
+\contentsline {subsection}{\numberline {5.1}Модификация вероятностей (Probs)}{34}{}%
+\contentsline {subsection}{\numberline {5.2}Способ 1. Python API}{35}{}%
+\contentsline {subsection}{\numberline {5.3}Способ 2. Файловая система. Seaborn}{37}{}%

@@ -1,0 +1,24 @@
+\begin{Verbatim}[commandchars=\\\{\},codes={\catcode`\$=3\catcode`\^=7\catcode`\_=8\relax}]
+\PYG{c+c1}{// init\PYGZus{}state \PYGZhy{} начальное состояние}
+\PYG{c+c1}{// time\PYGZus{}vec \PYGZhy{} вектор времени}
+
+\PYG{n}{Probs}\PYG{+w}{ }\PYG{n+nf}{schrodinger}\PYG{p}{(}\PYG{k}{const}\PYG{+w}{ }\PYG{n}{State}\PYG{o}{\PYGZlt{}}\PYG{n}{Basis\PYGZus{}State}\PYG{o}{\PYGZgt{}\PYGZam{}}\PYG{+w}{ }\PYG{n}{init\PYGZus{}state}\PYG{p}{,}
+\PYG{+w}{                  }\PYG{n}{Hamiltonian}\PYG{o}{\PYGZam{}}\PYG{+w}{ }\PYG{n}{H}\PYG{p}{,}
+\PYG{+w}{                  }\PYG{k}{const}\PYG{+w}{ }\PYG{n}{std}\PYG{o}{::}\PYG{n}{vector}\PYG{o}{\PYGZlt{}}\PYG{k+kt}{double}\PYG{o}{\PYGZgt{}\PYGZam{}}\PYG{+w}{ }\PYG{n}{time\PYGZus{}vec}\PYG{p}{);}
+
+\PYG{n}{BLOCKED\PYGZus{}Probs}\PYG{+w}{ }\PYG{n+nf}{schrodinger}\PYG{p}{(}\PYG{k}{const}\PYG{+w}{ }\PYG{n}{State}\PYG{o}{\PYGZlt{}}\PYG{n}{Basis\PYGZus{}State}\PYG{o}{\PYGZgt{}\PYGZam{}}\PYG{+w}{ }\PYG{n}{init\PYGZus{}state}\PYG{p}{,}
+\PYG{+w}{                          }\PYG{n}{BLOCKED\PYGZus{}Hamiltonian}\PYG{o}{\PYGZam{}}\PYG{+w}{ }\PYG{n}{H}\PYG{p}{,}
+\PYG{+w}{                          }\PYG{k}{const}\PYG{+w}{ }\PYG{n}{std}\PYG{o}{::}\PYG{n}{vector}\PYG{o}{\PYGZlt{}}\PYG{k+kt}{double}\PYG{o}{\PYGZgt{}\PYGZam{}}\PYG{+w}{ }\PYG{n}{time\PYGZus{}vec}\PYG{p}{);}
+
+\PYG{c+c1}{// is\PYGZus{}full\PYGZus{}rho \PYGZhy{} если включено, то метод возвра??????????????????????????}
+
+\PYG{n}{Probs}\PYG{+w}{ }\PYG{n+nf}{quantum\PYGZus{}master\PYGZus{}equation}\PYG{p}{(}\PYG{k}{const}\PYG{+w}{ }\PYG{n}{State}\PYG{o}{\PYGZlt{}}\PYG{n}{Basis\PYGZus{}State}\PYG{o}{\PYGZgt{}\PYGZam{}}\PYG{+w}{ }\PYG{n}{init\PYGZus{}state}\PYG{p}{,}
+\PYG{+w}{                        }\PYG{n}{Hamiltonian}\PYG{o}{\PYGZam{}}\PYG{+w}{ }\PYG{n}{H}\PYG{p}{,}
+\PYG{+w}{                        }\PYG{k}{const}\PYG{+w}{ }\PYG{n}{std}\PYG{o}{::}\PYG{n}{vector}\PYG{o}{\PYGZlt{}}\PYG{k+kt}{double}\PYG{o}{\PYGZgt{}\PYGZam{}}\PYG{+w}{ }\PYG{n}{time\PYGZus{}vec}\PYG{p}{,}
+\PYG{+w}{                        }\PYG{k+kt}{bool}\PYG{+w}{ }\PYG{n}{is\PYGZus{}full\PYGZus{}rho}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n+nb}{false}\PYG{p}{);}
+
+\PYG{n}{BLOCKED\PYGZus{}Probs}\PYG{+w}{ }\PYG{n+nf}{quantum\PYGZus{}master\PYGZus{}equation}\PYG{p}{(}\PYG{k}{const}\PYG{+w}{ }\PYG{n}{State}\PYG{o}{\PYGZlt{}}\PYG{n}{Basis\PYGZus{}State}\PYG{o}{\PYGZgt{}\PYGZam{}}\PYG{+w}{ }\PYG{n}{init\PYGZus{}state}\PYG{p}{,}
+\PYG{+w}{                            }\PYG{n}{BLOCKED\PYGZus{}Hamiltonian}\PYG{o}{\PYGZam{}}\PYG{+w}{ }\PYG{n}{H}\PYG{p}{,}
+\PYG{+w}{                            }\PYG{k}{const}\PYG{+w}{ }\PYG{n}{std}\PYG{o}{::}\PYG{n}{vector}\PYG{o}{\PYGZlt{}}\PYG{k+kt}{double}\PYG{o}{\PYGZgt{}\PYGZam{}}\PYG{+w}{ }\PYG{n}{time\PYGZus{}vec}\PYG{p}{,}
+\PYG{+w}{                            }\PYG{k+kt}{bool}\PYG{+w}{ }\PYG{n}{is\PYGZus{}full\PYGZus{}rho}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n+nb}{false}\PYG{p}{);}
+\end{Verbatim}
