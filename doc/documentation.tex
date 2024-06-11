@@ -1246,7 +1246,7 @@ class State {
 \end{minted}
 \end{mdframed}
 
-        \subsection{Понятие оператора Operator<StateType>.}
+        \subsection{Понятие оператора Operator<StateType>. РЕАЛИЗАЦИЯ?????????????????????????????????}
         Operator<StateType> - основополагающий класс всей библиотеки. Идея заключается в следующем.
         Многие операторы представляют собой не матричное описание, а описание в виде "под воздействием данного оператора кудит такой-то увеличивается на единицу"
          или вообще в виде функции, или в виде $A|\Psi\rangle = |\Phi\rangle$. 
@@ -1254,8 +1254,6 @@ class State {
         Также, естественно, сделать взаимодействие операторов и матриц, то есть, чтобы матрицу можно было превратить в оператор и наоборот.
 
         Пример написания собственных операторов в виде функций представлено в файле <вставить имя файла> в директории examples.
-
-        В основе реализации лежит
 \begin{mdframed}[linecolor=black, topline=true, bottomline=true,
     leftline=false, rightline=false]
 \begin{minted}[mathescape]{c++}
@@ -1307,8 +1305,486 @@ class Operator {
 };
 \end{minted}
 \end{mdframed}
-        \subsection{Понятие гамильтониана.}
-        \subsection{Моделирование динамики гамильтонианов.}
+        \subsection{Понятие гамильтониана}
+        Основополагающим понятием в квантовых вычислениях является наблюдаемое энергии под названием гамильтониан. Вектор $|\Psi\rangle$ эволюционирует 
+        под его воздействием согласно уравнению Шредингера: $i|\dot{\Psi}(t)\rangle\hbar = H|\Psi(0)\rangle$
 
+        В библиотеке было много способов генерации гамильтониана, но на практике самым удобным и универсальным 
+        (так как он фактически повторяет математическую нотацию), это с помощью операторов.
+
+        Также в процессе генерации гамильтониана генерируется ещё и базис с помощью ??алгоритма отбора рабочей области??, реализация которого лежит в файле graph.hpp,
+        который берёт начальное состояние, а
+        потом просто прогоняет его через оператор до тех пор, пока не перестанут появляться новые состояния. Данный алгоритм работает и для непрерывных задач при условии их дискретизации.
+        Данный алгоритм избавляет от надобности в принципе следить за базисом как таковым, ведь, по своей сути, он появляется из самой эволюции, или точнее, из гамильтониана и начального состояния.
+        Генерация вручную допускает огромное число ошибок, потому в данной библиотеке (по крайне мере, в данной версии) в принципе не предусмотрено,
+        чтобы базис задавался вручную. В этой библиотеке нужно только описывать операторы и структуры состояний. Этого достаточно, чтобы дальше вывести всё остальное.
+
+        Реализовано 2 гамильтониана:
+        \begin{itemize}
+            \item{Hamiltonian (вся матрица хранится полностью)}
+            \item{BLOCKED_Hamiltonian (матрица хранится блочно распределённо)}
+        \end{itemize}
+
+        Оба этих класса не обладают собственными генераторами или конструкторами. Для этого реализованы дочерние классы.
+
+        \subsection{Hamiltonian}
+
+        Для Hamiltonian реализованы конструкторы через дочерние классы:
+        \begin{itemize}
+            \item{Hamiltonian_by_Operator<StateType>}
+        \end{itemize}
+
+\begin{mdframed}[linecolor=black, topline=true, bottomline=true,
+    leftline=false, rightline=false]
+\begin{minted}[mathescape]{c++}
+class Hamiltonian {
+    public:
+        // Лучше не использовать, способ через установку
+        // всех параметров вручную не отработан
+        explicit Hamiltonian() = default;
+
+        // Получить размер матрицы
+        size_t n() const { return H_.n(); }
+
+        // Второе название метода
+        size_t size() const { return H_.n(); }
+
+        // Получить базис
+        std::set<Basis_State> get_basis() const { return basis_; }
+
+        // Получить матрицу гамильтониана
+        Matrix<COMPLEX> get_matrix() const { return H_; }
+
+        // Получить операторы декогеренции вместе с их интенсивностями
+        std::vector<std::pair<double, Matrix<COMPLEX>>> get_decoherence() const
+                                                 { return decoherence_;}
+
+        // Записать гамильтониан в файл
+        void write_to_csv_file(const std::string& filename) const
+                 { H_.write_to_csv_file(filename); }
+
+        // Найти спектральное разложение
+        void virtual eigen() {
+            if (!is_calculated_eigen_) {
+                auto p = Hermit_Lanczos(H_);
+                eigenvalues_ = p.first;
+                eigenvectors_ = p.second;
+                is_calculated_eigen_ = true;
+            }
+        }
+
+        // Найти собственные значения
+        std::vector<double> virtual eigenvalues() {
+            this->eigen();
+            return eigenvalues_;
+        }
+
+        // Найти собственные вектора
+        Matrix<COMPLEX> virtual eigenvectors() {
+            this->eigen();
+            return eigenvectors_;
+        }
+
+        // Вывести гамильтониан
+        void show(size_t width = QConfig::instance().width()) const { H_.show(width); }
+    protected:
+        bool is_calculated_eigen_ = false; // Служебная переменная,
+                                           // чтобы не пересчитывать
+                                           // несколько раз
+                                           // спектральное разложение
+        std::set<Basis_State> basis_;      // Базис
+        Matrix<COMPLEX> H_;                // Сам гамильтониан
+        Matrix<COMPLEX> eigenvectors_;     // Его собственные вектора
+        std::vector<double> eigenvalues_;  // Его собственные значения
+
+        // Операторы декогеренции и их интенсивности
+        std::vector<std::pair<double, Matrix<COMPLEX>>> decoherence_;
+};
+
+\end{minted}
+\end{mdframed}
+
+Дочерний класс для генерации гамильтониана с помощью операторов
+
+\begin{mdframed}[linecolor=black, topline=true, bottomline=true,
+    leftline=false, rightline=false]
+\begin{minted}[mathescape]{c++}
+// init_state - начальное состояние
+// H_op - оператор гамильтониана
+// decoherence - вектор пар из интенсивностей и
+// оператор декогеренции
+
+template<typename StateType>
+class H_by_Operator: public Hamiltonian {
+    public:
+        explicit H_by_Operator(const State<StateType>& init_state, 
+                               const Operator<StateType>& H_op,
+                               const std::vector<std::pair<double, Operator<StateType>>>&
+                               decoherence = {});
+};
+
+\end{minted}
+\end{mdframed}
+
+
+
+        \subsection{BLOCKED_Hamiltonian}
+
+        Для BLOCKED_Hamiltonian:
+        \begin{itemize}
+            \item{BLOCKED_Hamiltonian_by_Operator<StateType>}
+        \end{itemize}
+
+\begin{mdframed}[linecolor=black, topline=true, bottomline=true,
+    leftline=false, rightline=false]
+\begin{minted}[mathescape]{c++}
+
+class BLOCKED_Hamiltonian {
+public:
+    // Лучше не использовать, способ через установку
+    // всех параметров вручную не отработан
+    explicit BLOCKED_Hamiltonian() = default;
+
+    // Общий размер матрицы
+    size_t n() const { return H_.n(); }
+
+    // Общий размер матрицы
+    size_t size() const { return H_.n(); }
+
+    // Вернуть число строк в локальном блоке
+    size_t n_loc() const { return H_.local_n(); }
+    // Вернуть число столбцов в локальном блоке
+    size_t m_loc() const { return H_.local_m(); }
+
+    // Вернуть контекст BLACS, в котором лежит гамильтониан
+    ILP_TYPE ctxt() const { return H_.ctxt(); }
+
+    // Вернуть базис
+    std::set<Basis_State> get_basis() const { return basis_; }
+
+    // Вернуть операторы декогеренции вместе с их интенсивностями
+    std::vector<std::pair<double, BLOCKED_Matrix<COMPLEX>>> get_decoherence() const { return decoherence_;}
+
+    // Записать гамильтониан в файл
+    void write_to_csv_file(const std::string& filename) const { H_.write_to_csv_file(filename); }
+
+    // Найти его спектральное разложние
+    void virtual eigen() {
+        if (!is_calculated_eigen_) {
+            auto p = Hermit_Lanczos(H_);
+            eigenvalues_ = p.first;
+            eigenvectors_ = p.second;
+            is_calculated_eigen_ = true;
+        }
+    }
+
+    // Вернуть собственные значения гамильтониана
+    std::vector<double> virtual eigenvalues() {
+        this->eigen();
+        return eigenvalues_;
+    }
+
+    // Вернуть собственные вектора гамильтониана
+    BLOCKED_Matrix<COMPLEX> virtual eigenvectors() {
+        this->eigen();
+        return eigenvectors_;
+    }
+
+    // Вывести гамильтониан
+    void show(size_t width = QConfig::instance().width(),
+               ILP_TYPE root_id = mpi::ROOT_ID) const
+                { H_.show(width, root_id); }
+    // Вывести гамильтониан поблочно
+    void print_distributed(const std::string& name) const { H_.print_distributed(name); }
+
+    // Вернуть локальную матрицу
+    Matrix<COMPLEX> get_local_matrix() const { return H_.get_local_matrix(); }
+
+    // Вернуть гамильтониан как блочную матрицу
+    BLOCKED_Matrix<COMPLEX> get_blocked_matrix() const { return H_; }
+protected:
+    bool is_calculated_eigen_ = false; // Служебная переменная,
+                                       // чтобы не пересчитывать
+                                       // несколько раз
+                                       // спектральное разложение
+    std::set<Basis_State> basis_;      // Базис
+    BLOCKED_Matrix<COMPLEX> H_;        // Сам гамильтониан
+    BLOCKED_Matrix<COMPLEX> eigenvectors_; // Собственные вектора
+    std::vector<double> eigenvalues_; // Собственные значения
+
+    // Оператор декогеренции и их интенсивности
+    std::vector<std::pair<double, BLOCKED_Matrix<COMPLEX>>> decoherence_;
+};
+
+\end{minted}
+\end{mdframed}
+
+        Дочерний класс для генерации гамильтониана с помощью операторов
+\begin{mdframed}[linecolor=black, topline=true, bottomline=true,
+    leftline=false, rightline=false]
+\begin{minted}[mathescape]{c++}
+// ctxt - контекст BLACS
+// init_state - начальное состояние
+// H_op - оператор гамильтониана
+// decoherence - вектор пар из интенсивностей и
+// оператор декогеренции
+
+template<typename StateType>
+class BLOCKED_H_by_Operator: public BLOCKED_Hamiltonian {
+    public:
+        explicit BLOCKED_H_by_Operator(ILP_TYPE ctxt, const State<StateType>& init_state,
+                                       const Operator<StateType>& H_op,
+                                       const std::vector<std::pair<double,
+                                       Operator<StateType>>>& decoherence = {});
+};
+\end{minted}
+\end{mdframed}
+
+        \section{Моделирование динамики гамильтонианов}
+        После генерации гамильтониана мы готовы к его моделированию.
+
+        Реализовано моделирование с помощью двух уравнений. Уравнение Шрёдингера (schrodinger) через спектральное разложение и через основное квантовое уравнение (quantum_master_equation),
+        которое в библиотеке решается с помощью метода Рунге-Кутта (выбор пал из-за очень простой реализации (реализован в файле functions.hpp)).
+
+        Оба методы реализованы как для обычного гамильтониана (Hamiltonian), так и для блочного (BLOCKED_Hamiltonian).
+
+        quantum_master_equation паралеллится только с помощью блочных матриц, но, при размере подблоков матрицы (NB, MB) <= 32, вместо ускорения будет видно сильное замедление, поэтому при 
+        маленьких гамильтонианах не следует использовать в принципе разбиение. Библиотека в принципе распараллелена на нитях в самом Intel OneAPI.
+
+        schrodinger разберём подробнее. При Hamiltonian по умолчанию он не параллелится, но при вызове
+
+\begin{mdframed}[linecolor=black, topline=true, bottomline=true,
+    leftline=false, rightline=false]
+\begin{minted}[mathescape]{c++}
+        
+QConfig::instance().enable_time_parallel_schrodinger()
+
+// чтобы отключить - написать с disable
+\end{minted}
+\end{mdframed}
+
+        все ядра распараллелят только свой кусок времени, то есть будет линейное ускорение. Это работает, так как решение уравнение шредингера явно представлено в следующем виде:
+
+        $|\Psi(t)\rangle = \sum\limits_{i=0}^{N-1}(\langle\Phi_i|\Psi(0)\rangle e^{-\frac{i}{\hbar}E_it}|\Phi_i\rangle)$, где
+
+        $E_i$ - собственное число гамильтониана $H$,
+    
+        $|\Phi_i\rangle$ - собственный вектор, соответствующий $E_i$,
+    
+        $N$ - размерность гамильтониана $H$
+        
+        (\textbf{Вызов функции в таком случае должен произойти на всех ядрах, иначе возникнет тупик!})
+
+        При блочном распределении schrodinger просто работает исключительно в блочных нотациях. Ускорение также близится к линейному.
+
+        Реализации обоих методов лежат в dynamics.*
+
+        В качестве результатов вы получаете вещественную матрицу, хранящую вероятности каждого состояния в каждый момент времени.
+
+        По строкам - состояния сверху вниз в том же порядке, что и в базисе.
+        По столбцам - вектор времени.
+
+        Обращаю внимание, что вещественная матрица имеет новый особый контекст. По ядрам будут распределеный строки, то есть каждое ядро хранит вероятности состояния полностью.
+        Как этим пользоваться, смотреть в инструкции ??????????????????????????????????????????
+
+\begin{mdframed}[linecolor=black, topline=true, bottomline=true,
+    leftline=false, rightline=false]
+\begin{minted}[mathescape]{c++}
+// init_state - начальное состояние
+// time_vec - вектор времени
+
+Probs schrodinger(const State<Basis_State>& init_state,
+                  Hamiltonian& H,
+                  const std::vector<double>& time_vec);
+
+BLOCKED_Probs schrodinger(const State<Basis_State>& init_state,
+                          BLOCKED_Hamiltonian& H,
+                          const std::vector<double>& time_vec);
+
+// is_full_rho - если включено, то метод возвра??????????????????????????
+
+Probs quantum_master_equation(const State<Basis_State>& init_state,
+                        Hamiltonian& H,
+                        const std::vector<double>& time_vec,
+                        bool is_full_rho = false);
+
+BLOCKED_Probs quantum_master_equation(const State<Basis_State>& init_state,
+                            BLOCKED_Hamiltonian& H,
+                            const std::vector<double>& time_vec,
+                            bool is_full_rho = false);
+\end{minted}
+\end{mdframed}
     \section{Визуализация}
+
+    После моделирования вы получается вещественную матрицу вероятностей. По строкам у неё состояния базиса сверху вниз, сортировка полностью совпадает с сортировкой в базисе.
+    По столбцам - вектор времени time_vec (см. главу Моделирование динамики гамильтонианов).
+
+    \subsection{Модификация вероятностей (Probs)}
+
+    Сначала перечислим вспомогательные методы для преобразования данной матрицы. Реализация в файлах dynamic.*
+
+\begin{mdframed}[linecolor=black, topline=true, bottomline=true,
+    leftline=false, rightline=false]
+\begin{minted}[mathescape]{c++}
+// Функции, сводящие результаты к конкретной группе кудитов
+// Например: базис |10>|0>, |11>|1>, |00>|0>
+// Если мы хотим получить просто вероятности того, что в 2 группе 
+// будет |0> или |1> и нам не важно, что в 1 группе, то здесь
+// помогут эти функции
+
+// probs - вероятности
+// basis - базис, на котором, собственно
+// производились расчёты
+// (Можно получить просто через метод гамильтониана
+// get_basis() )
+// cavity_id, group_id - номер полости, группы
+
+// На выходе вы получите пару: Вероятности и
+// итоговый базис в группе
+
+std::pair<Probs, std::set<Basis_State>> probs_to_cavity_probs(const Probs& probs,
+                            const std::set<Basis_State>& basis, size_t cavity_id);
+
+std::pair<BLOCKED_Probs, std::set<Basis_State>> probs_to_group_probs(const BLOCKED_Probs& probs,
+                                        const std::set<Basis_State>& basis, size_t group_id);
+
+std::pair<BLOCKED_Probs, std::set<Basis_State>> probs_to_cavity_probs(const BLOCKED_Probs& probs,
+                                        const std::set<Basis_State>& basis, size_t cavity_id);
+\end{minted}
+\end{mdframed}
+
+    На данный момент визуализировать результат можно 2 способами.
+
+    \subsection{Способ 1. Python API}
+
+    К большому сожалению, распараллелить этот способ мне не удалось, поэтому большой график может долго создаваться
+
+    Данный способ работает с помощью интерпретатора Python. Обращаю внимание, что данный способ работает исключительно с Intel Python, который также есть в пакете Intel OneAPI.
+    (Иначе просто не скомпилится). Данный способ особо удобен при не распределённых гамильтонианах, так как для создания графиков требуется буквально одна команда. 
+    Смотреть подробнее в примерах ????????????????????????????????
+
+    Во всех функциях, генерирующее графики, есть такой аргумент как keywords. С помощью данного аргумента можно настраивать дополнительные любые аргументы к графикам. Какие именно - подробнее 
+    в документации к Matplotlib Python. Пример с применением данного способа - <???????????????????????????>
+\begin{mdframed}[linecolor=black, topline=true, bottomline=true,
+    leftline=false, rightline=false]
+\begin{minted}[mathescape]{c++}
+// Создать фигуру определённого размера.
+// нулевые значения - выбор значений по умолчанию
+// (ЛУЧШЕ ВСЕГО ПИСАТЬ ДО МОДЕЛИРОВАНИЯ)
+void make_figure(size_t x = 0, size_t y = 0, size_t dpi = QConfig::instance().dpi());
+
+// Создать график вероятностей
+void probs_to_plot(const Evolution::Probs& probs,
+                    const std::vector<double>& time_vec,
+                    const std::set<Basis_State>& basis,
+                    std::vector<std::map<std::string, std::string>> keywords = {});
+
+// Создать график вероятностей, но написать вместо базисов другие строки
+void probs_to_plot(const Evolution::Probs& probs,
+                    const std::vector<double>& time_vec,
+                    const std::vector<std::string>& basis_str,
+                    std::vector<std::map<std::string, std::string>> keywords = {});
+
+// Создать собственный график
+template<typename T, typename V>
+void plot(const std::vector<T>& x,
+            const std::vector<V>& y,
+            std::map<std::string, std::string> keywords = {});
+
+// Дать название графику (не название файлу)
+void title(const std::string& name);
+// Подписать ось x
+void xlabel(const std::string& name);
+// Подписать ось y
+void ylabel(const std::string& name);
+// Подписать ось z (Только для трёхмерных графиков)
+void zlabel(const std::string& name);
+
+
+// Создать трёхмерный график
+void surface(const std::vector<std::vector<double>>& x,
+            const std::vector<std::vector<double>>& y,
+            const std::vector<std::vector<double>>& z,
+            std::map<std::string, std::string> keywords = {});
+
+// График всех элементов матрицы плотности 
+void rho_probs_to_plot(const Evolution::Probs& probs,
+                const std::vector<double>& time_vec,
+                const std::set<Basis_State>& basis,
+                std::vector<std::map<std::string, std::string>> keywords = {});
+
+// График только диагональных элементов
+void rho_diag_to_plot(const Evolution::Probs& probs,
+               const std::vector<double>& time_vec,
+               const std::set<Basis_State>& basis,
+               std::vector<std::map<std::string, std::string>> keywords = {});
+
+// График только недиагональных элементов
+void rho_subdiag_to_plot(const Evolution::Probs& probs,
+                  const std::vector<double>& time_vec,
+                  const std::set<Basis_State>& basis,
+                  std::vector<std::map<std::string, std::string>> keywords = {});
+
+// Создать график для конкретной группы
+void probs_in_cavity_to_plot(const Evolution::Probs& probs,
+                     const std::vector<double>& time_vec,
+                     const std::set<Basis_State>& basis,
+                     size_t cavity_id,
+                     std::vector<std::map<std::string, std::string>> keywords = {});
+
+// Вывести график
+void show(bool is_block = true);
+// Сохранить график в файл
+void savefig(const std::string& filename, size_t dpi = QConfig::instance().dpi());
+// Включить решётку на графике
+void grid(bool is_enable = true);
+
+// BLOCKED_Probs
+
+// Создать график для вероятностей
+void probs_to_plot(const Evolution::BLOCKED_Probs& probs,
+    const std::vector<double>& time_vec,
+    const std::set<Basis_State>& basis,
+    std::vector<std::map<std::string, std::string>> keywords = {});
+
+// Создать график для вероятностей, но с возможность переименования базиса
+void probs_to_plot(const Evolution::BLOCKED_Probs& probs,
+    const std::vector<double>& time_vec,
+    const std::vector<std::string>& basis_str,
+    std::vector<std::map<std::string, std::string>> keywords = {});
+
+// Создать график вероятностей в конкретной группе
+void probs_in_cavity_to_plot(const Evolution::BLOCKED_Probs& probs,
+    const std::vector<double>& time_vec,
+    const std::set<Basis_State>& basis,
+    size_t cavity_id,
+    std::vector<std::map<std::string, std::string>> keywords = {});
+\end{minted}
+\end{mdframed}
+
+        \subsection{Способ 2. Файловая система. Seaborn}
+        Данный способ более универсален и поддерживает параллельную генерацию графиков. Все результаты записываются в файлы формата CSV.
+         Далее они обрабатываются с помощью скрипта, который будет находиться после установки в переменной окружения \$SEABORN\_PLOT. Настройки для 
+         данного скрипта находится в конфигурационном файле, путь к которому находится в переменной \$SEABORN_CONFIG.
+\begin{mdframed}[linecolor=black, topline=true, bottomline=true,
+leftline=false, rightline=false]
+\begin{minted}[mathescape]{c++}
+
+\end{minted}
+\end{mdframed}
+
+\begin{mdframed}[linecolor=black, topline=true, bottomline=true,
+leftline=false, rightline=false]
+\begin{minted}[mathescape]{c++}
+
+\end{minted}
+\end{mdframed}
+
+\begin{mdframed}[linecolor=black, topline=true, bottomline=true,
+leftline=false, rightline=false]
+\begin{minted}[mathescape]{c++}
+
+\end{minted}
+\end{mdframed}
+
 \end{document}
