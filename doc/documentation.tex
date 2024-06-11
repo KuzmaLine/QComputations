@@ -1322,7 +1322,7 @@ class Operator {
         Реализовано 2 гамильтониана:
         \begin{itemize}
             \item{Hamiltonian (вся матрица хранится полностью)}
-            \item{BLOCKED_Hamiltonian (матрица хранится блочно распределённо)}
+            \item{BLOCKED\_Hamiltonian (матрица хранится блочно распределённо)}
         \end{itemize}
 
         Оба этих класса не обладают собственными генераторами или конструкторами. Для этого реализованы дочерние классы.
@@ -1331,7 +1331,7 @@ class Operator {
 
         Для Hamiltonian реализованы конструкторы через дочерние классы:
         \begin{itemize}
-            \item{Hamiltonian_by_Operator<StateType>}
+            \item{Hamiltonian\_by\_Operator<StateType>}
         \end{itemize}
 
 \begin{mdframed}[linecolor=black, topline=true, bottomline=true,
@@ -1428,11 +1428,11 @@ class H_by_Operator: public Hamiltonian {
 
 
 
-        \subsection{BLOCKED_Hamiltonian}
+        \subsection{BLOCKED\_Hamiltonian}
 
-        Для BLOCKED_Hamiltonian:
+        Для BLOCKED\_Hamiltonian:
         \begin{itemize}
-            \item{BLOCKED_Hamiltonian_by_Operator<StateType>}
+            \item{BLOCKED\_Hamiltonian\_by\_Operator<StateType>}
         \end{itemize}
 
 \begin{mdframed}[linecolor=black, topline=true, bottomline=true,
@@ -1543,12 +1543,12 @@ class BLOCKED_H_by_Operator: public BLOCKED_Hamiltonian {
         \section{Моделирование динамики гамильтонианов}
         После генерации гамильтониана мы готовы к его моделированию.
 
-        Реализовано моделирование с помощью двух уравнений. Уравнение Шрёдингера (schrodinger) через спектральное разложение и через основное квантовое уравнение (quantum_master_equation),
+        Реализовано моделирование с помощью двух уравнений. Уравнение Шрёдингера (schrodinger) через спектральное разложение и через основное квантовое уравнение (quantum\_master\_equation),
         которое в библиотеке решается с помощью метода Рунге-Кутта (выбор пал из-за очень простой реализации (реализован в файле functions.hpp)).
 
-        Оба методы реализованы как для обычного гамильтониана (Hamiltonian), так и для блочного (BLOCKED_Hamiltonian).
+        Оба методы реализованы как для обычного гамильтониана (Hamiltonian), так и для блочного (BLOCKED\_Hamiltonian).
 
-        quantum_master_equation паралеллится только с помощью блочных матриц, но, при размере подблоков матрицы (NB, MB) <= 32, вместо ускорения будет видно сильное замедление, поэтому при 
+        quantum\_master\_equation паралеллится только с помощью блочных матриц, но, при размере подблоков матрицы (NB, MB) <= 32, вместо ускорения будет видно сильное замедление, поэтому при 
         маленьких гамильтонианах не следует использовать в принципе разбиение. Библиотека в принципе распараллелена на нитях в самом Intel OneAPI.
 
         schrodinger разберём подробнее. При Hamiltonian по умолчанию он не параллелится, но при вызове
@@ -1617,7 +1617,7 @@ BLOCKED_Probs quantum_master_equation(const State<Basis_State>& init_state,
     \section{Визуализация}
 
     После моделирования вы получается вещественную матрицу вероятностей. По строкам у неё состояния базиса сверху вниз, сортировка полностью совпадает с сортировкой в базисе.
-    По столбцам - вектор времени time_vec (см. главу Моделирование динамики гамильтонианов).
+    По столбцам - вектор времени time\_vec (см. главу Моделирование динамики гамильтонианов).
 
     \subsection{Модификация вероятностей (Probs)}
 
@@ -1765,7 +1765,7 @@ void probs_in_cavity_to_plot(const Evolution::BLOCKED_Probs& probs,
         \subsection{Способ 2. Файловая система. Seaborn}
         Данный способ более универсален и поддерживает параллельную генерацию графиков. Все результаты записываются в файлы формата CSV.
          Далее они обрабатываются с помощью скрипта, который будет находиться после установки в переменной окружения \$SEABORN\_PLOT. Настройки для 
-         данного скрипта находится в конфигурационном файле, путь к которому находится в переменной \$SEABORN_CONFIG.
+         данного скрипта находится в конфигурационном файле, путь к которому находится в переменной \$SEABORN\_CONFIG.
 \begin{mdframed}[linecolor=black, topline=true, bottomline=true,
 leftline=false, rightline=false]
 \begin{minted}[mathescape]{c++}

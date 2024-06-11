@@ -1,0 +1,67 @@
+\begin{Verbatim}[commandchars=\\\{\},codes={\catcode`\$=3\catcode`\^=7\catcode`\_=8\relax}]
+\PYG{k}{template}\PYG{o}{\PYGZlt{}}\PYG{k}{typename}\PYG{+w}{ }\PYG{n+nc}{StateType}\PYG{o}{\PYGZgt{}}
+\PYG{k}{class}\PYG{+w}{ }\PYG{n+nc}{State}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{    }\PYG{k}{public}\PYG{o}{:}
+\PYG{+w}{        }\PYG{c+c1}{// Инициализировать пустое состояние}
+\PYG{+w}{        }\PYG{k}{explicit}\PYG{+w}{ }\PYG{n}{State}\PYG{p}{()}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{k}{default}\PYG{p}{;}
+\PYG{+w}{        }\PYG{c+c1}{// Конструктор копирования}
+\PYG{+w}{        }\PYG{n}{State}\PYG{p}{(}\PYG{k}{const}\PYG{+w}{ }\PYG{n}{State}\PYG{o}{\PYGZlt{}}\PYG{n}{StateType}\PYG{o}{\PYGZgt{}\PYGZam{}}\PYG{+w}{ }\PYG{n}{state}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{k}{default}\PYG{p}{;}
+\PYG{+w}{        }\PYG{c+c1}{// Привести базисное состояние к обычному}
+\PYG{+w}{        }\PYG{n}{State}\PYG{p}{(}\PYG{k}{const}\PYG{+w}{ }\PYG{n}{StateType}\PYG{o}{\PYGZam{}}\PYG{+w}{ }\PYG{n}{state}\PYG{p}{);}
+
+\PYG{+w}{        }\PYG{c+c1}{// ??????????????????????????????????????????????????????????????}
+\PYG{+w}{        }\PYG{k}{explicit}\PYG{+w}{ }\PYG{n}{State}\PYG{p}{(}\PYG{k}{const}\PYG{+w}{ }\PYG{n}{std}\PYG{o}{::}\PYG{n}{string}\PYG{o}{\PYGZam{}}\PYG{+w}{ }\PYG{n}{state\PYGZus{}string}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{ValType}\PYG{+w}{ }\PYG{n}{max\PYGZus{}val}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{);}
+\PYG{+w}{        }\PYG{k}{explicit}\PYG{+w}{ }\PYG{n}{State}\PYG{p}{(}\PYG{k}{const}\PYG{+w}{ }\PYG{n}{std}\PYG{o}{::}\PYG{n}{string}\PYG{o}{\PYGZam{}}\PYG{+w}{ }\PYG{n}{state\PYGZus{}string}\PYG{p}{,}
+\PYG{+w}{                       }\PYG{k}{const}\PYG{+w}{ }\PYG{n}{std}\PYG{o}{::}\PYG{n}{vector}\PYG{o}{\PYGZlt{}}\PYG{n}{ValType}\PYG{o}{\PYGZgt{}\PYGZam{}}\PYG{+w}{ }\PYG{n}{max\PYGZus{}vals}\PYG{p}{);}
+
+\PYG{+w}{        }\PYG{c+c1}{// Умножить состояние на коэффициент c}
+\PYG{+w}{        }\PYG{n}{State}\PYG{o}{\PYGZlt{}}\PYG{n}{StateType}\PYG{o}{\PYGZgt{}}\PYG{+w}{ }\PYG{k}{operator}\PYG{o}{*}\PYG{p}{(}\PYG{k}{const}\PYG{+w}{ }\PYG{n}{COMPLEX}\PYG{o}{\PYGZam{}}\PYG{+w}{ }\PYG{n}{c}\PYG{p}{);}
+
+\PYG{+w}{        }\PYG{c+c1}{// Сложить 2 вектора состояния.}
+\PYG{+w}{        }\PYG{c+c1}{// Если состояния нет в базисе \PYGZhy{} добавляется,}
+\PYG{+w}{        }\PYG{c+c1}{// иначе амплитуды складываются}
+\PYG{+w}{        }\PYG{k+kt}{void}\PYG{+w}{ }\PYG{k}{operator}\PYG{o}{+=}\PYG{p}{(}\PYG{k}{const}\PYG{+w}{ }\PYG{n}{State}\PYG{o}{\PYGZlt{}}\PYG{n}{StateType}\PYG{o}{\PYGZgt{}\PYGZam{}}\PYG{+w}{ }\PYG{n}{st}\PYG{p}{);}
+
+\PYG{+w}{        }\PYG{c+c1}{// Есть ли базисное состояние в нашем состоянии}
+\PYG{+w}{        }\PYG{k+kt}{bool}\PYG{+w}{ }\PYG{n+nf}{is\PYGZus{}in\PYGZus{}state}\PYG{p}{(}\PYG{k}{const}\PYG{+w}{ }\PYG{n}{StateType}\PYG{o}{\PYGZam{}}\PYG{+w}{ }\PYG{n}{state}\PYG{p}{);}
+
+\PYG{+w}{        }\PYG{c+c1}{// Получить амплитуду состояния под индексом index}
+\PYG{+w}{        }\PYG{n}{COMPLEX}\PYG{o}{\PYGZam{}}\PYG{+w}{ }\PYG{k}{operator}\PYG{p}{[](}\PYG{k+kt}{size\PYGZus{}t}\PYG{+w}{ }\PYG{n}{index}\PYG{p}{);}
+\PYG{+w}{        }\PYG{n}{COMPLEX}\PYG{+w}{ }\PYG{k}{operator}\PYG{p}{[](}\PYG{k+kt}{size\PYGZus{}t}\PYG{+w}{ }\PYG{n}{index}\PYG{p}{);}
+
+\PYG{+w}{        }\PYG{c+c1}{// Общее число состояний}
+\PYG{+w}{        }\PYG{k+kt}{size\PYGZus{}t}\PYG{+w}{ }\PYG{n+nf}{size}\PYG{p}{()}\PYG{+w}{ }\PYG{k}{const}\PYG{+w}{ }\PYG{p}{\PYGZob{}}\PYG{+w}{ }\PYG{k}{return}\PYG{+w}{ }\PYG{n}{state\PYGZus{}vec\PYGZus{}}\PYG{p}{.}\PYG{n}{size}\PYG{p}{();}\PYG{+w}{ }\PYG{p}{\PYGZcb{}}
+
+\PYG{+w}{        }\PYG{c+c1}{// Получить индекс базисного состояния в базисе}
+\PYG{+w}{        }\PYG{k+kt}{size\PYGZus{}t}\PYG{+w}{ }\PYG{n+nf}{get\PYGZus{}index}\PYG{p}{(}\PYG{k}{const}\PYG{+w}{ }\PYG{n}{StateType}\PYG{o}{\PYGZam{}}\PYG{+w}{ }\PYG{n}{state}\PYG{p}{);}
+
+\PYG{+w}{        }\PYG{c+c1}{// Вставить базисное состояние с амплитудой amplitude}
+\PYG{+w}{        }\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n+nf}{insert}\PYG{p}{(}\PYG{k}{const}\PYG{+w}{ }\PYG{n}{StateType}\PYG{o}{\PYGZam{}}\PYG{+w}{ }\PYG{n}{state}\PYG{p}{,}
+\PYG{+w}{                    }\PYG{k}{const}\PYG{+w}{ }\PYG{n}{COMPLEX}\PYG{o}{\PYGZam{}}\PYG{+w}{ }\PYG{n}{amplitude}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{COMPLEX}\PYG{p}{(}\PYG{l+m+mi}{0}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{p}{));}
+
+\PYG{+w}{        }\PYG{c+c1}{// Установить базис}
+\PYG{+w}{        }\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n+nf}{set\PYGZus{}state\PYGZus{}components}\PYG{p}{(}\PYG{k}{const}\PYG{+w}{ }\PYG{n}{std}\PYG{o}{::}\PYG{n}{set}\PYG{o}{\PYGZlt{}}\PYG{n}{StateType}\PYG{o}{\PYGZgt{}\PYGZam{}}\PYG{+w}{ }\PYG{n}{st}\PYG{p}{);}
+\PYG{+w}{        }\PYG{c+c1}{// Установить вектор амплитуд}
+\PYG{+w}{        }\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n+nf}{set\PYGZus{}vector}\PYG{p}{(}\PYG{k}{const}\PYG{+w}{ }\PYG{n}{std}\PYG{o}{::}\PYG{n}{vector}\PYG{o}{\PYGZlt{}}\PYG{n}{COMPLEX}\PYG{o}{\PYGZgt{}\PYGZam{}}\PYG{+w}{ }\PYG{n}{v}\PYG{p}{);}
+\PYG{+w}{        }\PYG{c+c1}{// Получить базис}
+\PYG{+w}{        }\PYG{n}{std}\PYG{o}{::}\PYG{n}{set}\PYG{o}{\PYGZlt{}}\PYG{n}{StateType}\PYG{o}{\PYGZgt{}}\PYG{+w}{ }\PYG{n}{get\PYGZus{}state\PYGZus{}components}\PYG{p}{()}\PYG{+w}{ }\PYG{k}{const}\PYG{p}{;}
+\PYG{+w}{        }\PYG{c+c1}{// Получить вектор амплитуд}
+\PYG{+w}{        }\PYG{n}{std}\PYG{o}{::}\PYG{n}{vector}\PYG{o}{\PYGZlt{}}\PYG{n}{COMPLEX}\PYG{o}{\PYGZgt{}}\PYG{+w}{ }\PYG{n}{get\PYGZus{}vector}\PYG{p}{()}\PYG{+w}{ }\PYG{k}{const}\PYG{p}{;}
+
+\PYG{+w}{        }\PYG{c+c1}{// Привести состояние к строковому виду}
+\PYG{+w}{        }\PYG{n}{std}\PYG{o}{::}\PYG{n}{string}\PYG{+w}{ }\PYG{n+nf}{to\PYGZus{}string}\PYG{p}{()}\PYG{+w}{ }\PYG{k}{const}\PYG{p}{;}
+
+\PYG{+w}{        }\PYG{c+c1}{// ИСПРАВИТЬ В DYNAMIC!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!}
+\PYG{+w}{        }\PYG{c+c1}{// Используется при моделировании.}
+\PYG{+w}{        }\PYG{c+c1}{// Гамильтониан хранит std::set\PYGZlt{}Basis\PYGZus{}State\PYGZgt{}.}
+\PYG{+w}{        }\PYG{c+c1}{// Вы же в начале программы работаете с StateType}
+\PYG{+w}{        }\PYG{c+c1}{// Базис генерируется во время генерации гамильтониана,}
+\PYG{+w}{        }\PYG{c+c1}{// чтобы подогнать его под сгенерированный базис}
+\PYG{+w}{        }\PYG{c+c1}{// и привести его к Basis\PYGZus{}State,}
+\PYG{+w}{        }\PYG{c+c1}{// и был сделан данный метод}
+\PYG{+w}{        }\PYG{n}{State}\PYG{o}{\PYGZlt{}}\PYG{n}{Basis\PYGZus{}State}\PYG{o}{\PYGZgt{}}\PYG{+w}{ }\PYG{n}{fit\PYGZus{}to\PYGZus{}basis}\PYG{p}{(}\PYG{k}{const}\PYG{+w}{ }\PYG{n}{std}\PYG{o}{::}\PYG{n}{set}\PYG{o}{\PYGZlt{}}\PYG{n}{Basis\PYGZus{}State}\PYG{o}{\PYGZgt{}\PYGZam{}}\PYG{+w}{ }\PYG{n}{basis}\PYG{p}{)}\PYG{+w}{ }\PYG{k}{const}\PYG{p}{;}
+\PYG{+w}{    }\PYG{k}{private}\PYG{o}{:}
+\PYG{+w}{        }\PYG{n}{std}\PYG{o}{::}\PYG{n}{vector}\PYG{o}{\PYGZlt{}}\PYG{n}{COMPLEX}\PYG{o}{\PYGZgt{}}\PYG{+w}{ }\PYG{n}{state\PYGZus{}vec\PYGZus{}}\PYG{p}{;}\PYG{+w}{ }\PYG{c+c1}{// Вектор амплитуд}
+\PYG{+w}{        }\PYG{n}{std}\PYG{o}{::}\PYG{n}{set}\PYG{o}{\PYGZlt{}}\PYG{n}{StateType}\PYG{o}{\PYGZgt{}}\PYG{+w}{ }\PYG{n}{state\PYGZus{}components\PYGZus{}}\PYG{p}{;}\PYG{+w}{ }\PYG{c+c1}{// Базис состояния}
+\PYG{p}{\PYGZcb{};}
+\end{Verbatim}

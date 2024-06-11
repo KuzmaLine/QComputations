@@ -1,0 +1,6 @@
+\begin{Verbatim}[commandchars=\\\{\},codes={\catcode`\$=3\catcode`\^=7\catcode`\_=8\relax}]
+
+\PYG{n}{QConfig}\PYG{o}{::}\PYG{n}{instance}\PYG{p}{().}\PYG{n}{enable\PYGZus{}time\PYGZus{}parallel\PYGZus{}schrodinger}\PYG{p}{()}
+
+\PYG{c+c1}{// чтобы отключить \PYGZhy{} написать с disable}
+\end{Verbatim}
