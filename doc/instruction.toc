@@ -1,0 +1,11 @@
+\babel@toc {russian}{}\relax 
+\contentsline {section}{\numberline {1}Введение}{3}{}%
+\contentsline {section}{\numberline {2}Матрицы}{4}{}%
+\contentsline {section}{\numberline {3}QConfig}{5}{}%
+\contentsline {section}{\numberline {4}Базисное состояние и суперпозиция}{5}{}%
+\contentsline {section}{\numberline {5}Операторы}{6}{}%
+\contentsline {section}{\numberline {6}Гамильтониан}{7}{}%
+\contentsline {section}{\numberline {7}Моделирование}{7}{}%
+\contentsline {section}{\numberline {8}Визуализация}{8}{}%
+\contentsline {section}{\numberline {9}Инструкция к параллелизации}{8}{}%
+\contentsline {subsection}{\numberline {9.1}Маленькие базисы}{9}{}%

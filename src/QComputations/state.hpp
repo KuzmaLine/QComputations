@@ -105,6 +105,7 @@
             std::string get_info() const { return info_; }
             void set_info(const std::string& str) { info_ = str; }
 
+            size_t qudits_count() const { return qudits_.size();}
 
             std::vector<size_t> get_groups() const { return groups_; }
             size_t get_group_start(size_t group_id) const { return ((group_id == 0) ? 0 : groups_[group_id - 1] + 1);}
@@ -123,13 +124,9 @@
 
             size_t get_index(const std::set<Basis_State>& basis) const;
 
-            //COMPLEX get_coef() const { return coef_; }
-            //void set_coef(COMPLEX coef) { coef_ = coef; }
-
             void clear() { qudits_.resize(0); max_vals_.resize(0); groups_.resize(0); }
         protected:
             std::string info_;
-            //COMPLEX coef_ = COMPLEX(1, 0);
             std::vector<ValType> qudits_;
             std::vector<ValType> max_vals_;
             std::vector<size_t> groups_;
@@ -314,6 +311,8 @@
 
             COMPLEX& operator[](size_t index) { return state_vec_[index];}
             COMPLEX operator[](size_t index) const { return state_vec_[index];}
+            COMPLEX& operator[](const StateType& st) { return state_vec_[this->get_index(st)];}
+            COMPLEX operator[](const StateType& st) const { return state_vec_[this->get_index(st)];}
             size_t size() const { return state_vec_.size(); }
 
             size_t get_index(const StateType& state) const {
@@ -376,6 +375,11 @@
                 }
 
                 return res;
+            }
+
+            void clear() {
+                state_vec_.resize(0);
+                state_components_.clear();
             }
         private:
             std::vector<COMPLEX> state_vec_;

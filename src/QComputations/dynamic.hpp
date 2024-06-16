@@ -15,7 +15,6 @@
 
 namespace QComputations {
 
-namespace Evolution {
     using COMPLEX = std::complex<double>;
     using Probs = Matrix<double>;
     using Rho = Matrix<COMPLEX>;
@@ -101,6 +100,5 @@ namespace Evolution {
 #endif
 #endif
     // TO BE CONTINUED...
-}
 
 } // namespace QComputations

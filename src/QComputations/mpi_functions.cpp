@@ -41,6 +41,22 @@ extern "C" {
 
 namespace QComputations {
 
+#ifdef ENABLE_CLUSTER
+bool is_main_proc() {
+    ILP_TYPE rank;
+    MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+
+    return rank == 0;
+}
+
+bool get_proc_rank() {
+    ILP_TYPE rank;
+    MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+
+    return rank;
+}
+#endif
+
 std::vector<COMPLEX> mpi::bcast_vector_complex(const std::vector<COMPLEX>& v) {
     int rank;
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);

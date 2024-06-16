@@ -4,10 +4,17 @@
 #include "config.hpp"
 #include <functional>
 #include "blocked_matrix.hpp"
+#include <stack>
 
 namespace QComputations {
 
 namespace {
+template<typename T>
+void _printName(std::function<State<T>(const T&)> func, const std::string& funcName){
+    std::cout << funcName << std::endl;
+}
+#define printName(f) _printName(f, #f)
+
 #ifdef MKL_ILP64
     using ILP_TYPE = long long;
 #else
@@ -15,7 +22,9 @@ namespace {
 #endif
 
     template<typename StateType>
-        using OperatorType = std::function<State<StateType>(const StateType& state)>;
+        using OperatorT = std::function<State<StateType>(const StateType& state)>;
+    //template<typename StateType>
+        //using OperatorT = std::function<State<StateType>(const State<StateType>& state)>;      
 
     using ValType = int;
     using COMPLEX = std::complex<double>;
@@ -31,86 +40,181 @@ namespace {
 
 template<typename StateType>
 class Operator {
+    using OperatorType = OperatorT<StateType>;
+
     public:
-        explicit Operator(): cur_id_(-1) {}
-        explicit Operator(OperatorType<StateType> op): cur_id_(0), operators_(1, std::vector<OperatorType<StateType>>(1, op)) {}
+        explicit Operator() = default;
+        Operator(State<StateType>(*op)(const StateType&)) { root_ = new OperatorNode(op);}
+        Operator(OperatorType op) { root_ = new OperatorNode(op);}
 
-        Operator<StateType> operator+(const Operator<StateType>& other) const {
-            auto res = *this;
-
-            res.cur_id_ = this->operators_.size() + other.operators_.size();
-
-            for (size_t i = 0; i < other.operators_.size(); i++) {
-                res.operators_.push_back(other.operators_[i]);
+        Operator<StateType> operator+(Operator<StateType> other) {
+            OperatorNode* cur_node = this->root_;
+            while(cur_node->right != NULL) {
+                cur_node = cur_node->right;
             }
 
-            return res;
+            if (this->root_ != NULL) {
+                other.root_->insert_up(cur_node);
+                cur_node->right = other.root_;
+            }
+
+            return (*this);
         }
 
-        Operator<StateType> operator*(const Operator<StateType>& other) const {
-            Operator<StateType> res(*this);
-            assert(other.operators_.size() <= 1);
+        Operator<StateType> operator*(Operator<StateType> other) {
+            std::stack<OperatorNode*> st;
+            OperatorNode* cur_op = this->root_;
 
-            for (const auto& op: other.operators_) {
-                for (const auto& cur_op: op) {
-                    res.operators_[res.cur_id_].push_back(cur_op);
+            while (cur_op != NULL or !st.empty()) {
+                while (cur_op != NULL) {
+                    st.push(cur_op);
+                    cur_op = cur_op->left;
                 }
+
+                if (st.top()->left == NULL) {
+                    other.root_->insert_up(st.top());
+                    st.top()->left = other.root_;
+                }
+
+                cur_op = st.top()->right;
+                st.pop();
             }
-            return res;
+
+            return (*this);
         }
 
         Operator<StateType> operator*(const COMPLEX& num) {
-            OperatorType<StateType> func = {[num](const StateType& state) {
+            OperatorType func = {[num](const StateType& state) {
                 return State<StateType>(state) * num;
             }};
 
-            return (*this) * Operator<StateType>(func);
+            return  Operator<StateType>(func) * (*this);
         }
 
-
         State<StateType> run(const State<StateType>& init_state) const;
+        void show() const;
     private:
-        int cur_id_; // 
-        std::vector<std::vector<OperatorType<StateType>>> operators_; // Сам оператор
+        void refresh_tree() const;
+
+        struct OperatorNode {
+            OperatorNode(OperatorType op): func_(op) {}
+            OperatorNode(State<StateType>(*op)(const StateType&)): func_(op) {}
+
+            OperatorNode* up() { 
+                if (up_.size() == 0) return this;
+                which_way_++;
+                return up_[which_way_ % up_.size()];
+            }
+
+            void insert_up(OperatorNode* up) {
+                up_.emplace_back(up);
+            }
+
+            State<StateType> invoke(const State<StateType>& st) const;
+
+            OperatorType func_;
+            std::vector<OperatorNode*> up_;
+            OperatorNode* left = NULL; // умножение
+            OperatorNode* right = NULL; // Сложение
+
+            mutable State<StateType> cur_res_;
+            mutable int from_tree_ = 0; // 0 - не спускался
+                                // 1 - пройден левый путь
+                                // 2 - пройден правый путь
+                                // 3 - пройдены обе ветви
+            mutable int which_way_ = -1; // По какому пути нужно пройти вверх
+        };
+
+        OperatorNode* root_ = NULL; // Корневой оператор
 };
 
 template<typename StateType>
-State<StateType> Operator<StateType>::run(const State<StateType>& init_state) const {
-    State<StateType> states_ = init_state;
-
-    for (size_t i = 0; i < states_.size(); ++i) {
-        states_[i] = 0;
+State<StateType> Operator<StateType>::OperatorNode::invoke(const State<StateType>& st) const {
+    State<StateType> res;
+    for (const auto& cur_state: st.get_state_components()) {
+        res += this->func_(cur_state) * st[cur_state];
     }
 
-    //std::cout << states_.to_string() << std::endl;
+    return res;
+}
 
-    for (const auto& op: operators_) {
-        for (const auto& cur_state: init_state.get_state_components())  {
-            State<StateType> new_state;
 
-            //std::cout << cur_state.to_string() << std::endl;
-            auto res = op[op.size() - 1](cur_state);
-            //std::cout << res.to_string() << std::endl;
-            new_state = res;
+template<typename StateType>
+void Operator<StateType>::refresh_tree() const {
+    std::stack<OperatorNode*> st;
+    OperatorNode* cur_op = this->root_;
 
-            for (int i = op.size() - 2; i >= 0; i--) {
-                for (const auto& cur_new_state: res.get_state_components()) {
-                    new_state += op[i](cur_new_state); 
-                }
+    while (cur_op != NULL or !st.empty()) {
+        while (cur_op != NULL) {
+            cur_op->from_tree_ = 0;
+            cur_op->which_way_ = -1;
+            cur_op->cur_res_.clear();
 
-                res = new_state;
+            st.push(cur_op);
+            cur_op = cur_op->left;
+        }
+
+        cur_op = st.top()->right;
+        st.pop();
+    }
+}
+
+
+template<typename StateType>
+void Operator<StateType>::show() const {
+    std::stack<OperatorNode*> st;
+    OperatorNode* cur_op = this->root_;
+
+    while (cur_op != NULL or !st.empty()) {
+        while (cur_op != NULL) {
+            st.push(cur_op);
+            cur_op = cur_op->left;
+        }
+
+        printName(cur_op->func_);
+        cur_op = st.top()->right;
+        st.pop();
+    }
+}
+
+template<typename StateType>
+State<StateType> Operator<StateType>::run(const State<StateType>& init_state) const {
+    OperatorNode* cur_op = this->root_;
+    this->refresh_tree();
+    cur_op = this->root_;
+
+    while(this->root_->from_tree_ != 3) {
+        if (cur_op->from_tree_ == 0 and cur_op->left != NULL) {
+            cur_op->from_tree_ = 1;
+            cur_op = cur_op->left;
+
+        } else if (cur_op->from_tree_ == 0 and cur_op->left == NULL) {
+            cur_op->from_tree_ = 2;
+            cur_op->cur_res_ = cur_op->invoke(init_state);
+
+            if (cur_op->right == NULL) {
+                cur_op->from_tree_ = 3;
+                cur_op = cur_op->up();
+            } else {
+                cur_op = cur_op->right;
             }
-
-            for (const auto& st: new_state.get_state_components()) {
-                states_.insert(st);
-                states_[states_.get_index(st)] += new_state[new_state.get_index(st)];
-            }
-
-            //std::cout << states_.to_string() << std::endl;
+        } else if (cur_op->from_tree_ == 1 and cur_op->right != NULL) {
+            cur_op->from_tree_ = 2;
+            cur_op->cur_res_ = cur_op->invoke(cur_op->left->cur_res_);
+            cur_op = cur_op->right;
+        } else if (cur_op->from_tree_ == 1 and cur_op->right == NULL) {
+            cur_op->from_tree_ = 3;
+            cur_op->cur_res_ = cur_op->invoke(cur_op->left->cur_res_);
+            cur_op = cur_op->up();
+        } else if (cur_op->from_tree_ == 2) {
+            cur_op->from_tree_ = 3;
+            cur_op->cur_res_ += cur_op->right->cur_res_;
+        } else if (cur_op->from_tree_ == 3) {
+            cur_op = cur_op->up();
         }
     }
 
-    return states_;
+    return root_->cur_res_;
 }
 
 template<typename StateType>

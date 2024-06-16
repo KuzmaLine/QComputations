@@ -25,6 +25,12 @@ namespace {
 
 namespace QComputations {
 
+#ifdef ENABLE_CLUSTER
+bool is_main_proc();
+
+bool get_proc_rank();
+#endif
+
 namespace mpi {
     struct MPI_Data {
         size_t n;

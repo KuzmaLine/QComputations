@@ -59,5 +59,5 @@ function(create_build_target TARGET_NAME PYTHON_FLAG)
 endfunction()
 
 # Create build targets
-create_build_target(QComputations_CPU_CLUSTER ON)
-create_build_target(QComputations_CPU_CLUSTER_NO_PLOTS OFF)
+#create_build_target(QComputations_CPU_CLUSTER ON)
+#create_build_target(QComputations_CPU_CLUSTER_NO_PLOTS OFF)

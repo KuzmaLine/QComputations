@@ -15,10 +15,10 @@ void basis_to_file(const std::string& filename, const std::set<Basis_State>& bas
 
 void time_vec_to_file(const std::string& filename, const std::vector<double>& time_vec, std::string dir = "");
 
-void probs_to_file(const std::string& filename, const Evolution::Probs& probs, std::string dir = "");
+void probs_to_file(const std::string& filename, const Probs& probs, std::string dir = "");
 
 void make_probs_files(const Hamiltonian& H,
-                      const Evolution::Probs& probs,
+                      const Probs& probs,
                       const std::vector<double>& time_vec,
                       const std::set<Basis_State>& basis,
                       std::string dir = "");
@@ -29,22 +29,22 @@ void make_probs_files(const Hamiltonian& H,
 #ifdef ENABLE_CLUSTER
 
 void hamiltonian_to_file(const std::string& filename, const BLOCKED_Hamiltonian& H, std::string dir = "", ILP_TYPE main_rank = 0);
-void probs_to_file(const std::string& filename, const Evolution::BLOCKED_Probs& probs, std::string dir = "");
+void probs_to_file(const std::string& filename, const BLOCKED_Probs& probs, std::string dir = "");
 void plot_from_files(const std::string& plotname, std::string dir, const std::string& python_script_path = QConfig::instance().python_script_path());
 void basis_to_file(const std::string& filename, const std::set<Basis_State>& basis, std::string dir = "", ILP_TYPE main_rank = 0);
 void time_vec_to_file(const std::string& filename, const std::vector<double>& time_vec, std::string dir = "", ILP_TYPE main_rank = 0);
-void probs_to_file(const std::string& filename, const Evolution::Probs& probs, std::string dir = "", ILP_TYPE main_rank = 0);
+void probs_to_file(const std::string& filename, const Probs& probs, std::string dir = "", ILP_TYPE main_rank = 0);
 void hamiltonian_to_file(const std::string& filename, const Hamiltonian& H, std::string dir = "", ILP_TYPE main_rank = 0);
 
 void make_probs_files(const Hamiltonian& H,
-                      const Evolution::Probs& probs,
+                      const Probs& probs,
                       const std::vector<double>& time_vec,
                       const std::set<Basis_State>& basis,
                       std::string dir = "",
                       ILP_TYPE main_rank = 0);
 
 void make_probs_files(const BLOCKED_Hamiltonian& H,
-                      const Evolution::BLOCKED_Probs& probs,
+                      const BLOCKED_Probs& probs,
                       const std::vector<double>& time_vec,
                       const std::set<Basis_State>& basis,
                       std::string dir = "",
@@ -52,7 +52,7 @@ void make_probs_files(const BLOCKED_Hamiltonian& H,
 
 void make_plot(const std::string& plotname,
                const BLOCKED_Hamiltonian& H,
-               const Evolution::BLOCKED_Probs& probs,
+               const BLOCKED_Probs& probs,
                const std::vector<double>& time_vec,
                const std::set<Basis_State>& basis,
                std::string dir);
@@ -69,11 +69,11 @@ void make_plot(const std::string& plotname,
 // !!!!!!!!!!!!!! интерпретатор питона тупа шлёт нахер.
 namespace matplotlib {
     void make_figure(size_t x = 0, size_t y = 0, size_t dpi = QConfig::instance().dpi());
-    void probs_to_plot(const Evolution::Probs& probs,
+    void probs_to_plot(const Probs& probs,
                        const std::vector<double>& time_vec,
                        const std::set<Basis_State>& basis,
                        std::vector<std::map<std::string, std::string>> keywords = {});
-    void probs_to_plot(const Evolution::Probs& probs,
+    void probs_to_plot(const Probs& probs,
                        const std::vector<double>& time_vec,
                        const std::vector<std::string>& basis_str,
                        std::vector<std::map<std::string, std::string>> keywords = {});
@@ -92,34 +92,34 @@ namespace matplotlib {
                 std::map<std::string, std::string> keywords = {});
  #ifdef ENABLE_MPI
  #ifdef ENABLE_CLUSTER
-    void probs_to_plot(const Evolution::BLOCKED_Probs& probs,
+    void probs_to_plot(const BLOCKED_Probs& probs,
                        const std::vector<double>& time_vec,
                        const std::set<Basis_State>& basis,
                        std::vector<std::map<std::string, std::string>> keywords = {});
-    void probs_to_plot(const Evolution::BLOCKED_Probs& probs,
+    void probs_to_plot(const BLOCKED_Probs& probs,
                        const std::vector<double>& time_vec,
                        const std::vector<std::string>& basis_str,
                        std::vector<std::map<std::string, std::string>> keywords = {});
-    void probs_in_cavity_to_plot(const Evolution::BLOCKED_Probs& probs,
+    void probs_in_cavity_to_plot(const BLOCKED_Probs& probs,
                                  const std::vector<double>& time_vec,
                                  const std::set<Basis_State>& basis,
                                  size_t cavity_id,
                                  std::vector<std::map<std::string, std::string>> keywords = {});
  #endif
  #endif
-    void rho_probs_to_plot(const Evolution::Probs& probs,
+    void rho_probs_to_plot(const Probs& probs,
                            const std::vector<double>& time_vec,
                            const std::set<Basis_State>& basis,
                            std::vector<std::map<std::string, std::string>> keywords = {});
-    void rho_diag_to_plot(const Evolution::Probs& probs,
+    void rho_diag_to_plot(const Probs& probs,
                           const std::vector<double>& time_vec,
                           const std::set<Basis_State>& basis,
                           std::vector<std::map<std::string, std::string>> keywords = {});
-    void rho_subdiag_to_plot(const Evolution::Probs& probs,
+    void rho_subdiag_to_plot(const Probs& probs,
                              const std::vector<double>& time_vec,
                              const std::set<Basis_State>& basis,
                              std::vector<std::map<std::string, std::string>> keywords = {});
-    void probs_in_cavity_to_plot(const Evolution::Probs& probs,
+    void probs_in_cavity_to_plot(const Probs& probs,
                                 const std::vector<double>& time_vec,
                                 const std::set<Basis_State>& basis,
                                 size_t cavity_id,

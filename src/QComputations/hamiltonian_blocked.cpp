@@ -31,7 +31,7 @@ namespace {
 
         for (size_t i = 0; i < st.cavities_count(); i++) {
             if (!is_zero(st.get_leak_gamma(i))) {
-                OperatorType<TCH_State> a_destroy_i = {[i](const TCH_State& che_state) {
+                std::function<State<TCH_State>(const TCH_State&)> a_destroy_i = {[i](const TCH_State& che_state) {
                     return set_qudit(che_state, che_state.n(i) - 1, 0, i) * std::sqrt(che_state.n(i));
                 }};
 
@@ -41,7 +41,7 @@ namespace {
             }
 
             if (!is_zero(st.get_gain_gamma(i))) {
-                OperatorType<TCH_State> a_create_i = {[i](const TCH_State& che_state) {
+                std::function<State<TCH_State>(const TCH_State&)> a_create_i = {[i](const TCH_State& che_state) {
                     return set_qudit(che_state, che_state.n(i) + 1, 0, i) * std::sqrt(che_state.n(i) + 1);
                 }};
 
