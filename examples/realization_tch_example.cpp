@@ -46,11 +46,33 @@ class TC_State : public Basis_State {
 
         void set_g(double g) { g_ = g;}
         double g() const { return g_;}
+
+        std::string to_string() const override;
+
+        bool operator<(const Basis_State& other) const override {
+            TC_State* b = (TC_State*)(&other);
+
+            if (this->n() < b->n()) return false;
+            else if (this->n() == b->n()) {
+                for (size_t i = 0; i < this->m(); i++) {
+                    if (this->get_atom(i) < b->get_atom(i)) return false;
+                    else if (this->get_atom(i) > b->get_atom(i)) return true;
+                }
+            }
+
+            return true;
+        }
     private:
         double leak_; // Интенсивность утечки фотонов
         double gain_; // Интенсивность притока фотонов
         double g_ = QConfig::instance().g(); // Сила взаимодействия электронов с полем
 };
+
+std::string TC_State::to_string() const {
+    auto res = this->Basis_State::to_string();
+    res[res.size() - 1] = '}';
+    return res;
+}
 
 State<TC_State> photons_count(const TC_State& st) {
     return get_qudit(st, 0);
@@ -88,6 +110,10 @@ State<TC_State> exc_relax_atoms(const TC_State& st) {
     return res;
 }
 
+State<TC_State> a_destroy(const TC_State& st) {
+    return set_qudit(st, st.n() - 1, 0) * std::sqrt(st.n());
+}
+
 int main(int argc, char** argv) {
 #ifdef MPI_VERSION
     MPI_Init(&argc, &argv);
@@ -95,19 +121,34 @@ int main(int argc, char** argv) {
     using OpType = Operator<TC_State>;
     double h = QConfig::instance().h();
     double w = QConfig::instance().w();
+    double g_leak = 0.01;
     std::cout << "h = " << h << " w = " << w << std::endl;
 
     TC_State state(2);
-    state.set_atom(1, 0);
-    
+    state.set_max_photons(2);
+    state.set_n(2);
     std::cout << "Вывод состояния: " << state.to_string() << std::endl;
 
-    OpType H = (OpType(atoms_count) * h * w + OpType(photons_count) * h * w + OpType(exc_relax_atoms)) * double(3);
+    OpType H_op; 
+    H_op = H_op + OpType(atoms_count) * h * w + OpType(photons_count) * h * w + OpType(exc_relax_atoms);
 
-    //H.show();
-    auto res = H.run(State<TC_State>(state));
+    auto res = H_op.run(State<TC_State>(state));
 
     std::cout << "Вывод состояния: " << res.to_string() << std::endl;
+
+    std::vector<std::pair<double, OpType>> dec;
+    OpType A_out(a_destroy);
+    dec.emplace_back(g_leak, A_out);
+
+    std::vector<OpType> dec_op = {A_out};
+    auto basis = State_Graph<TC_State>(state, H_op, dec_op).get_basis();
+    auto A = operator_to_matrix(A_out, basis);
+    A.show();
+
+    H_by_Operator<TC_State> H(state, H_op, dec);
+
+    show_basis(H.get_basis());
+    H.show();
 
 #ifdef MPI_VERSION
     MPI_Finalize();

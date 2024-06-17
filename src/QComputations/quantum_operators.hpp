@@ -48,6 +48,9 @@ class Operator {
         Operator(OperatorType op) { root_ = new OperatorNode(op);}
 
         Operator<StateType> operator+(Operator<StateType> other) {
+            if (other.root_ == NULL) return (*this);
+            if (this->root_ == NULL) return other;
+
             OperatorNode* cur_node = this->root_;
             while(cur_node->right != NULL) {
                 cur_node = cur_node->right;
@@ -62,6 +65,9 @@ class Operator {
         }
 
         Operator<StateType> operator*(Operator<StateType> other) {
+            if (other.root_ == NULL) return (*this);
+            if (this->root_ == NULL) assert(false); // Пустой оператор умножить на не пустой?
+
             std::stack<OperatorNode*> st;
             OperatorNode* cur_op = this->root_;
 
@@ -84,6 +90,8 @@ class Operator {
         }
 
         Operator<StateType> operator*(const COMPLEX& num) {
+            if (this->root_ == NULL) assert(false); // Пустой оператор умножить на число?
+
             OperatorType func = {[num](const StateType& state) {
                 return State<StateType>(state) * num;
             }};
@@ -131,8 +139,9 @@ class Operator {
 template<typename StateType>
 State<StateType> Operator<StateType>::OperatorNode::invoke(const State<StateType>& st) const {
     State<StateType> res;
-    for (const auto& cur_state: st.get_state_components()) {
-        res += this->func_(cur_state) * st[cur_state];
+
+    for (auto cur_state: st.get_state_components()) {
+        res += this->func_(*cur_state) * st[*cur_state];
     }
 
     return res;
@@ -180,8 +189,6 @@ void Operator<StateType>::show() const {
 template<typename StateType>
 State<StateType> Operator<StateType>::run(const State<StateType>& init_state) const {
     OperatorNode* cur_op = this->root_;
-    this->refresh_tree();
-    cur_op = this->root_;
 
     while(this->root_->from_tree_ != 3) {
         if (cur_op->from_tree_ == 0 and cur_op->left != NULL) {
@@ -214,32 +221,27 @@ State<StateType> Operator<StateType>::run(const State<StateType>& init_state) co
         }
     }
 
-    return root_->cur_res_;
+    auto res = root_->cur_res_.copy();
+    this->refresh_tree();
+
+    return res;
 }
 
 template<typename StateType>
-Matrix<COMPLEX> operator_to_matrix(const Operator<StateType>& op, const std::set<StateType>& basis) {
+Matrix<COMPLEX> operator_to_matrix(const Operator<StateType>& op, const BasisType<StateType>& basis) {
     size_t dim = basis.size();
 
     std::function<COMPLEX(size_t i, size_t j)> func = {
         [&basis, &op](size_t i, size_t j) {
-            auto state_from = get_elem_from_set(basis, j);
-            auto state_to = get_elem_from_set(basis, i);
-            auto res_state = op.run(State<StateType>(state_from));
+            auto state_from = get_state_from_basis(basis, j);
+            auto state_to = get_state_from_basis(basis, i);
+            auto res_state = op.run(State<StateType>(*state_from));
             
-            COMPLEX res = COMPLEX(0, 0);
-
-            size_t index = 0;
-            for (const auto& state: res_state.get_state_components()) {
-                if (state == state_to) {
-                    res = res_state[index];
-                    break;
-                }
-
-                index++;
+            if (res_state.is_in_state(*state_to)) {
+                return res_state[*state_to];
+            } else {
+                return COMPLEX(0, 0);
             }
-
-            return res;
         }
     };
 
@@ -252,28 +254,20 @@ Matrix<COMPLEX> operator_to_matrix(const Operator<StateType>& op, const std::set
 #ifdef ENABLE_MPI
 #ifdef ENABLE_CLUSTER
 template<typename StateType>
-BLOCKED_Matrix<COMPLEX> operator_to_matrix(ILP_TYPE ctxt, const Operator<StateType>& op, const std::set<StateType>& basis) {
+BLOCKED_Matrix<COMPLEX> operator_to_matrix(ILP_TYPE ctxt, const Operator<StateType>& op, const BasisType<StateType>& basis) {
     size_t dim = basis.size();
 
     std::function<COMPLEX(size_t i, size_t j)> func = {
         [&basis, &op](size_t i, size_t j) {
-            auto state_from = get_elem_from_set(basis, j);
-            auto state_to = get_elem_from_set(basis, i);
-            auto res_state = op.run(State<StateType>(state_from));
+            auto state_from = get_state_from_basis(basis, j);
+            auto state_to = get_state_from_basis(basis, i);
+            auto res_state = op.run(State<StateType>(*state_from));
             
-            COMPLEX res = COMPLEX(0, 0);
-
-            size_t index = 0;
-            for (const auto& state: res_state.get_state_components()) {
-                if (state == state_to) {
-                    res = res_state[index];
-                    break;
-                }
-
-                index++;
+            if (res_state.is_in_state(*state_to)) {
+                return res_state[*state_to];
+            } else {
+                return COMPLEX(0, 0);
             }
-
-            return res;
         }
     };
 

@@ -20,8 +20,8 @@ namespace QComputations {
     using Rho = Matrix<COMPLEX>;
 
     // (!!!) REPLACE TO QUANTUM OPERATORS
-    Matrix<COMPLEX> create_A_destroy(const std::set<Basis_State>& basis, size_t cavity_id);
-    Matrix<COMPLEX> create_A_create(const std::set<Basis_State>& basis, size_t cavity_id);
+    Matrix<COMPLEX> create_A_destroy(const BasisType<Basis_State>& basis, size_t cavity_id);
+    Matrix<COMPLEX> create_A_create(const BasisType<Basis_State>& basis, size_t cavity_id);
 
     // Create rho of pure state (rho = |ksi><ksi|)
     Rho create_init_rho(const std::vector<COMPLEX>& init_state);
@@ -53,19 +53,19 @@ namespace QComputations {
                                    const std::vector<double>& gamma_vec,
                                    double target);
     
-    std::pair<Probs, std::set<Basis_State>> probs_to_cavity_probs(const Probs& probs,
-                                            const std::set<Basis_State>& basis, size_t cavity_id);
+    std::pair<Probs, BasisType<Basis_State>> probs_to_cavity_probs(const Probs& probs,
+                                            const BasisType<Basis_State>& basis, size_t cavity_id);
 
 #ifdef ENABLE_MPI
 #ifdef ENABLE_CLUSTER
     using BLOCKED_Probs = BLOCKED_Matrix<double>;
     using BLOCKED_Rho = BLOCKED_Matrix<COMPLEX>;
 
-    std::pair<BLOCKED_Probs, std::set<Basis_State>> probs_to_group_probs(const BLOCKED_Probs& probs,
-                                                const std::set<Basis_State>& basis, size_t group_id);
+    std::pair<BLOCKED_Probs, BasisType<Basis_State>> probs_to_group_probs(const BLOCKED_Probs& probs,
+                                                const BasisType<Basis_State>& basis, size_t group_id);
 
-    std::pair<BLOCKED_Probs, std::set<Basis_State>> probs_to_cavity_probs(const BLOCKED_Probs& probs,
-                                                const std::set<Basis_State>& basis, size_t cavity_id);
+    std::pair<BLOCKED_Probs, BasisType<Basis_State>> probs_to_cavity_probs(const BLOCKED_Probs& probs,
+                                                const BasisType<Basis_State>& basis, size_t cavity_id);
 
     BLOCKED_Rho create_BLOCKED_init_rho(ILP_TYPE ctxt, const std::vector<COMPLEX>& init_state);
 

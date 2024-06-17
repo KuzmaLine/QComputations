@@ -26,7 +26,7 @@ class Hamiltonian {
         TCH_State grid() const { return grid_; }
         TCH_State get_grid() const { return grid_; }
         void set_grid(const TCH_State& grid) { grid_ = grid; }
-        std::set<Basis_State> get_basis() const { return basis_; }
+        BasisType<Basis_State> get_basis() const { return basis_; }
         std::vector<std::pair<double, Matrix<COMPLEX>>> get_decoherence() const { return decoherence_;}
         //void write_to_csv_file(const std::string& filename) const { H_.write_to_csv_file(filename); }
 
@@ -55,7 +55,7 @@ class Hamiltonian {
         void write_to_csv_file(const std::string& filename) const { H_.write_to_csv_file(filename); }
     protected:
         bool is_calculated_eigen_ = false;
-        std::set<Basis_State> basis_;
+        BasisType<Basis_State> basis_;
         Matrix<COMPLEX> H_;
         Matrix<COMPLEX> eigenvectors_;
         std::vector<double> eigenvalues_;
@@ -125,23 +125,15 @@ H_by_Operator<StateType>::H_by_Operator(const State<StateType>& init_state, cons
 
     std::function<COMPLEX(size_t i, size_t j)> func = {
         [&basis, &H_op](size_t i, size_t j) {
-            auto state_from = get_elem_from_set<StateType>(basis, j);
-            auto state_to = get_elem_from_set<StateType>(basis, i);
-            auto res_state = H_op.run(State<StateType>(state_from));
+            auto state_from = get_state_from_basis<StateType>(basis, j);
+            auto state_to = get_state_from_basis<StateType>(basis, i);
+            auto res_state = H_op.run(State<StateType>(*state_from));
             
-            COMPLEX res = COMPLEX(0, 0);
-
-            size_t index = 0;
-            for (const auto& state: res_state.get_state_components()) {
-                if (state == state_to) {
-                    res = res_state[index];
-                    break;
-                }
-
-                index++;
+            if (res_state.is_in_state(*state_to)) {
+                return res_state[*state_to];
+            } else {
+                return COMPLEX(0, 0);
             }
-
-            return res;
         }
     };
 

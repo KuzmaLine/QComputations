@@ -341,11 +341,12 @@ Probs quantum_master_equation(const State<Basis_State>& init_state,
     return probs;
 }
 
-std::pair<Probs, std::set<Basis_State>> probs_to_cavity_probs(const Probs& probs,
-                                                          const std::set<Basis_State>& basis, size_t cavity_id) {
-    std::set<Basis_State> basis_res;
-    for (auto& cur_state: basis) {
-        basis_res.insert(cur_state.get_group(cavity_id));
+// Переделать на шаблоны
+std::pair<Probs, BasisType<Basis_State>> probs_to_cavity_probs(const Probs& probs,
+                                                          const BasisType<Basis_State>& basis, size_t cavity_id) {
+    BasisType<Basis_State> basis_res;
+    for (auto cur_state: basis) {
+        basis_res.insert(std::shared_ptr<Basis_State>(new Basis_State(cur_state->get_group(cavity_id))));
     }
 
     size_t m = probs.m();
@@ -353,7 +354,7 @@ std::pair<Probs, std::set<Basis_State>> probs_to_cavity_probs(const Probs& probs
 
     for (size_t t = 0; t < probs.m(); t++) {
         for (size_t i = 0; i < probs.n(); i++) {
-            size_t res_index = Basis_State(get_elem_from_set(basis, i)).get_group(cavity_id).get_index(basis_res);
+            size_t res_index = Basis_State(*get_state_from_basis(basis, i)).get_group(cavity_id).get_index(basis_res);
             res[res_index][t] += probs.elem(i, t);
         }
     }
@@ -448,9 +449,9 @@ BLOCKED_Probs schrodinger(const std::vector<COMPLEX>& init_state, BLOCKED_Hamilt
 }
 */
 
-
- std::pair<BLOCKED_Probs, std::set<Basis_State>> probs_to_cavity_probs(const BLOCKED_Probs& probs,
-                                                          const std::set<Basis_State>& basis, size_t cavity_id) {
+// Переделать на шаблоны
+ std::pair<BLOCKED_Probs, BasisType<Basis_State>> probs_to_cavity_probs(const BLOCKED_Probs& probs,
+                                                          const BasisType<Basis_State>& basis, size_t cavity_id) {
     ILP_TYPE rank, world_size;
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
     MPI_Comm_size(MPI_COMM_WORLD, &world_size);
@@ -459,14 +460,14 @@ BLOCKED_Probs schrodinger(const std::vector<COMPLEX>& init_state, BLOCKED_Hamilt
     ILP_TYPE proc_rows, proc_cols, myrow, mycol;
     mpi::blacs_gridinfo(probs.ctxt(), proc_rows, proc_cols, myrow, mycol);
 
-    std::set<Basis_State> basis_res;
-    for (auto& cur_state: basis) {
-        basis_res.insert(cur_state.get_group(cavity_id));
+    BasisType<Basis_State> basis_res;
+    for (auto cur_state: basis) {
+        basis_res.insert(std::shared_ptr<Basis_State>(new Basis_State(cur_state->get_group(cavity_id))));
     }
 
     std::vector<size_t> inplace_states(basis_res.size(), 0);
-    for (auto& cur_state: basis) {
-        size_t res_index = cur_state.get_group(cavity_id).get_index(basis_res);
+    for (auto cur_state: basis) {
+        size_t res_index = cur_state->get_group(cavity_id).get_index(basis_res);
         inplace_states[res_index] += 1;
     }
 
@@ -484,7 +485,7 @@ BLOCKED_Probs schrodinger(const std::vector<COMPLEX>& init_state, BLOCKED_Hamilt
 
     for (size_t i_local = 0; i_local < probs.local_n(); i_local++) {            
         auto i = probs.get_global_row(i_local);
-        size_t res_index = Basis_State(get_elem_from_set(basis, i)).get_group(cavity_id).get_index(basis_res);
+        size_t res_index = Basis_State(*get_state_from_basis(basis, i)).get_group(cavity_id).get_index(basis_res);
         auto proc_row = res.get_row_proc(res_index);
         auto res_local_row = res.get_local_row(res_index);
 
@@ -538,13 +539,13 @@ BLOCKED_Rho create_BLOCKED_init_rho(ILP_TYPE ctxt, const std::vector<COMPLEX>& i
     return rho;
 }
 
-BLOCKED_Matrix<COMPLEX> create_BLOCKED_A_destroy(ILP_TYPE ctxt, const std::set<Basis_State>& basis, size_t cavity_id) {
+BLOCKED_Matrix<COMPLEX> create_BLOCKED_A_destroy(ILP_TYPE ctxt, const BasisType<Basis_State>& basis, size_t cavity_id) {
     size_t dim = basis.size();
 
     std::function<COMPLEX(size_t i, size_t j)> func = {
     [&basis, &cavity_id](size_t i, size_t j) {
-        auto state_from = get_elem_from_set(basis, j);
-        auto state_to = get_elem_from_set(basis, i);
+        auto state_from = get_state_from_basis(basis, j);
+        auto state_to = get_state_from_basis(basis, i);
 
         //if (state_from.n(cavity_id) != 0 and state_from.n(cavity_id) == state_to.n(cavity_id) + 1) return photon_destroy(state_from, state_to);
         //else return COMPLEX(0);
@@ -614,13 +615,13 @@ BLOCKED_Matrix<COMPLEX> create_A_term(ILP_TYPE ctxt, const std::set<Basis_State>
 }
 */
 
-BLOCKED_Matrix<COMPLEX> create_BLOCKED_A_create(ILP_TYPE ctxt, const std::set<Basis_State>& basis, size_t cavity_id) {
+BLOCKED_Matrix<COMPLEX> create_BLOCKED_A_create(ILP_TYPE ctxt, const BasisType<Basis_State>& basis, size_t cavity_id) {
     size_t dim = basis.size();
 
     std::function<COMPLEX(size_t i, size_t j)> func = {
     [&basis, &cavity_id](size_t i, size_t j) {
-        auto state_from = get_elem_from_set(basis, j);
-        auto state_to = get_elem_from_set(basis, i);
+        auto state_from = get_state_from_basis(basis, j);
+        auto state_to = get_state_from_basis(basis, i);
 
         //if (state_to.n(cavity_id) != 0 and state_from.n(cavity_id) == state_to.n(cavity_id) - 1) return photon_create(state_from, state_to);
         //else return COMPLEX(0);

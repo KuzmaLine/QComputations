@@ -96,7 +96,14 @@ double fsolve(std::function<double(double)> f, double a, double b, double target
 // f must be unimodal on [a, b]
 double fmin(std::function<double(double)> f, double a, double b, double eps = QConfig::instance().eps());
 
-void show_basis(const std::set<Basis_State>& basis);
+template<typename StateType>
+void show_basis(const BasisType<StateType>& basis) {
+    for (const auto& state: basis) {
+        std::cout << std::setw(QConfig::instance().width()) << state->to_string() << " ";
+    }
+
+    std::cout << std::endl;
+}
 
 // <b|a>, (a, b)
 double scalar_product(const std::vector<double>& a, const std::vector<double>& b); 
@@ -194,6 +201,14 @@ T get_elem_from_set(const std::set<T>& st, size_t index) {
     return *it;
 }
 
+template<typename T>
+std::shared_ptr<T> get_state_from_basis(const BasisType<T>& st, size_t index) {
+    auto it = st.begin();
+    std::advance(it, index);
+    return *it;
+}
+
+
 // На соплях работает, сука, не трогать
 // Need optimization
 template<typename T, typename V>
@@ -263,10 +278,10 @@ void show_vector(const std::vector<T>& v) {
 }
 
 template<typename StateType>
-std::set<Basis_State> convert_to(const std::set<StateType>& states) {
-    std::set<Basis_State> res;
-    for (const auto& st: states) {
-        res.insert(Basis_State(st));
+BasisType<Basis_State> convert_to(const BasisType<StateType>& states) {
+    BasisType<Basis_State> res;
+    for (auto st: states) {
+        res.insert(st);
     }
 
     return res;

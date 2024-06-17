@@ -133,6 +133,9 @@ struct std::hash<std::map<int, std::vector<int>>> {
   }
 };
 
+//bool operator()(const QComputations::Basis_State* a, const QComputations::Basis_State* b) {
+//    return (a->Basis_State::operator<(*b));
+//}
 
 /*
 template<>

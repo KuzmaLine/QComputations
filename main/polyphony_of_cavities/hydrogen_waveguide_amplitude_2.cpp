@@ -144,8 +144,7 @@ int main(int argc, char** argv) {
 
     //std::cout << state.to_string() << std::endl;
 
-    OpType my_H;
-    my_H = my_H + OpType(H_dist) + OpType(H_bond) + OpType(prot_transfer) + OpType(bond_energy);
+    OpType my_H = OpType(H_dist) + OpType(H_bond) + OpType(prot_transfer) + OpType(bond_energy);
 
     /*
     OpType my_A_in(A_in);
@@ -163,18 +162,22 @@ int main(int argc, char** argv) {
     double a = 0.001, b = 0.03;
     auto amplitude_range = linspace(a, b, steps_count);
 
+    std::cout << "HERE\n";
     H_by_Operator H(State(one_state), my_H);
+    std::cout << "HERE_H\n";
 
-    auto probs = Evolution::quantum_master_equation(State(one_state).fit_to_basis(H.get_basis()), H, time_vec);
+    auto probs = schrodinger(State(one_state).fit_to_basis(H.get_basis()), H, time_vec);
 
     if (rank == 0) {
         std::cout << "calculated\n";
         make_probs_files(H, probs, time_vec, H.get_basis(), "hydrogen_waveguide_amplitude_2/original_g_bond=" + std::to_string(state.get_g_bond().real()), rank);
     }
 
+    MPI_Finalize();
+    return 0;
+
     size_t start, count;
     make_rank_map(amplitude_range.size(), rank, world_size, start, count);
-
 
     for (size_t i = start; i < count + start; i++) {
         auto amplitude = amplitude_range[i];
@@ -185,13 +188,13 @@ int main(int argc, char** argv) {
 
         //H.show();
 
-        probs = Evolution::quantum_master_equation(State(state).fit_to_basis(H.get_basis()), H, time_vec);
+        probs = schrodinger(State(state).fit_to_basis(H.get_basis()), H, time_vec);
 
         //basis_to_file("basis_check.csv", H.get_basis());    
         make_probs_files(H, probs, time_vec, H.get_basis(), "hydrogen_waveguide_amplitude_2/hyd_g_bond=" + std::to_string(state.get_g_bond().real()) + "_amplitude_" + std::to_string(amplitude), rank);
 
-        auto p_0 = Evolution::probs_to_cavity_probs(probs, H.get_basis(), 0);
-        auto p_1 = Evolution::probs_to_cavity_probs(probs, H.get_basis(), 1);
+        auto p_0 = probs_to_cavity_probs(probs, H.get_basis(), 0);
+        auto p_1 = probs_to_cavity_probs(probs, H.get_basis(), 1);
 
         make_probs_files(H, p_0.first, time_vec, p_0.second, "hydrogen_waveguide_amplitude_2/0_hyd_g_bond=" + std::to_string(state.get_g_bond().real()) + "_amplitude_" + std::to_string(amplitude), rank);
         make_probs_files(H, p_1.first, time_vec, p_1.second, "hydrogen_waveguide_amplitude_2/1_hyd_g_bond=" + std::to_string(state.get_g_bond().real()) + "_amplitude_" + std::to_string(amplitude), rank);

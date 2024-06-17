@@ -12,9 +12,25 @@
 namespace QComputations {
 
 template<typename StateType>
-bool is_in_basis(const std::set<StateType>& basis, const StateType& state) {
-    return std::find(basis.begin(), basis.end(), state) != basis.end();
+bool is_in_basis(const BasisType<StateType>& basis, std::shared_ptr<StateType> state) {
+    for (auto st: basis) {
+        if (st->n() == 99 and st->get_atom(1) == 0 and state->n() == 99 and state->get_atom(1) == 0) {
+            std::cout << "HERE_TRY\n";   
+        }
+        if ((*st) == (*state)) {
+            return true;
+        }
+
+        if (st->n() == 99 and st->get_atom(1) == 0 and state->n() == 99 and state->get_atom(1) == 0) {
+            std::cout << "HERE_FALSE\n";   
+        }
+    }
+
+    return false;
 }
+
+template<>
+bool is_in_basis<TCH_State>(const BasisType<TCH_State>& basis, std::shared_ptr<TCH_State> state);
 
 template<typename StateType>
 class State_Graph {
@@ -24,9 +40,9 @@ class State_Graph {
                         const std::vector<Operator<StateType>>& operator_decoherence = {});
         void show() const;
 
-        std::set<StateType> get_basis() const { return basis_; }
+        BasisType<StateType> get_basis() const { return basis_; }
     private:
-        std::set<StateType> basis_;
+        BasisType<StateType> basis_;
 };
 
 template<typename StateType>
@@ -35,9 +51,9 @@ State_Graph<StateType>::State_Graph(const State<StateType>& init_state,
                          const std::vector<Operator<StateType>>& operator_decoherence) {
     auto state_components = init_state.get_state_components();
     std::queue<StateType> state_queue;
-    for (const auto& state: state_components) {
+    for (auto state: state_components) {
         basis_.insert(state);
-        state_queue.push(state);
+        state_queue.push(*state);
     }
 
     while (!state_queue.empty()) {
@@ -45,20 +61,23 @@ State_Graph<StateType>::State_Graph(const State<StateType>& init_state,
         state_queue.pop();
         auto res = A_op.run(State<StateType>(state));
 
-        for (const auto& st: res.get_state_components()) {
-            if (!is_in_basis<StateType>(basis_, st)) {
-                basis_.insert(st);
-                state_queue.push(st);
+
+        for (auto st: res.get_state_components()) {
+            if (!is_in_basis(basis_, st)) {
+                basis_.insert(std::shared_ptr<StateType>(new StateType(*st)));
+                //basis_.insert(st);
+                state_queue.push(*st);
             }
         }
 
         for (const auto& op: operator_decoherence) {
-            res = op.run(State<StateType>(state));
+            auto new_res = op.run(State<StateType>(state));
 
-            for (const auto& st: res.get_state_components()) {
+            for (auto st: new_res.get_state_components()) {
                 if (!is_in_basis(basis_, st)) {
-                    basis_.insert(st);
-                    state_queue.push(st);
+                    basis_.insert(std::shared_ptr<StateType>(new StateType(*st)));
+                    //basis_.insert(st);
+                    state_queue.push(*st);
                 }
             }
         }

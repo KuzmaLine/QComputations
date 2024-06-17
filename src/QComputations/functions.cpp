@@ -95,14 +95,6 @@ std::string make_state_regex_pattern(const std::string& format, bool is_freq_dis
     return regex_begin->str();
 }
 
-void show_basis(const std::set<Basis_State>& basis) {
-    for (const auto& state: basis) {
-        std::cout << std::setw(QConfig::instance().width()) << state.to_string() << " ";
-    }
-
-    std::cout << std::endl;
-}
-
 void make_rank_map(size_t size, int rank, int world_size, size_t& start_col, size_t& count) {
     size_t size_per_proc = size / world_size;
     count = size_per_proc;

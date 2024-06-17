@@ -115,10 +115,10 @@ Basis_State Basis_State::get_group(size_t group_id) const {
     return Basis_State(qudits, max_vals_);
 }
 
-size_t Basis_State::get_index(const std::set<Basis_State>& basis) const {
+size_t Basis_State::get_index(const BasisType<Basis_State>& basis) const {
     size_t index = 0;
-    for (const auto& state: basis) {
-        if (state == *this) return index;
+    for (auto state: basis) {
+        if (*state == *this) return index;
         index++;
     }
 

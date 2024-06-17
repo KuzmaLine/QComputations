@@ -8,6 +8,7 @@
     #include "matrix.hpp"
     #include "big_uint.hpp"
     #include <algorithm>
+    #include <memory>
 
     namespace QComputations {
 
@@ -66,10 +67,22 @@
     Метод find_states_in_string() - будет согласно формату искать в строке состояния.
     */
 
+    struct State_Comparator {
+        template<typename StateType>
+        bool operator()(const std::shared_ptr<StateType> a, const std::shared_ptr<StateType> b) const {
+            return *a < *b;
+        }
+    };
+
+    template<typename StateType>
+        using BasisType = std::set<std::shared_ptr<StateType>, State_Comparator>;
+
     class Basis_State {
         public:
             // инициализация пустого состояния
             explicit Basis_State() = default;
+            Basis_State(const Basis_State& other) = default;
+
             // groups_count делит кудиты на равные по размеру группы
             explicit Basis_State(size_t qudits_count, ValType max_val = 1, size_t groups_count = 1);
             // добавление поддержки для разных кудитов
@@ -114,15 +127,15 @@
             size_t get_group_size(size_t group_id) const { return this->get_group_end(group_id) - this->get_group_start(group_id) + 1; }
             Basis_State get_group(size_t group_id) const;
 
-            std::string to_string() const;
-            bool operator==(const Basis_State& other) const { assert(max_vals_ == other.max_vals_ and groups_ == other.groups_); return qudits_ == other.qudits_; }
-            bool operator<(const Basis_State& other) const { return this->to_string() > other.to_string(); }
+            virtual std::string to_string() const;
+            virtual bool operator==(const Basis_State& other) const { assert(max_vals_ == other.max_vals_ and groups_ == other.groups_); return qudits_ == other.qudits_; }
+            virtual bool operator<(const Basis_State& other) const { return this->to_string() > other.to_string(); }
             
             void set_max_val(ValType val, size_t qudit_index, size_t group_id = 0) { max_vals_[this->get_group_start(group_id) + qudit_index] = val; }
             ValType get_max_val(size_t qudit_index, size_t group_id = 0) const { return max_vals_[this->get_group_start(group_id) + qudit_index]; }
             std::vector<ValType> max_vals() const { return max_vals_; }
 
-            size_t get_index(const std::set<Basis_State>& basis) const;
+            size_t get_index(const BasisType<Basis_State>& basis) const;
 
             void clear() { qudits_.resize(0); max_vals_.resize(0); groups_.resize(0); }
         protected:
@@ -259,7 +272,7 @@
             State(const StateType& state) {
                 if (!state.is_empty()) {
                     state_vec_.emplace_back(1, 0);
-                    state_components_.insert(state);
+                    state_components_.insert(std::shared_ptr<StateType>(new StateType(state)));
                 }
             }
 
@@ -284,7 +297,7 @@
 
                 size_t index = 0;
 
-                for (StateType st: res.state_components_) {
+                for (auto st: res.state_components_) {
                     res.state_vec_[index] *= c;
                     
                     index++;
@@ -294,19 +307,23 @@
             }
 
             void operator+=(const State<StateType>& st) {
-                for (const auto& component: st.get_state_components()) {
-                    if (!is_in_state(component)) {
-                        this->insert(component, st[st.get_index(component)]);
+                for (auto component: st.get_state_components()) {
+                    if (!is_in_state(*component)) {
+                        this->insert(*component, st[st.get_index(*component)]);
                     } else {
-                        (*this)[this->get_index(component)] += st[st.get_index(component)];
+                        (*this)[this->get_index(*component)] += st[st.get_index(*component)];
                     }
                 }
             }
 
             bool is_in_state(const StateType& state) {
-                auto it = std::find(state_components_.begin(), state_components_.end(), state);
+                for (auto st: state_components_) {
+                    if (*st == state) {
+                        return true;
+                    }
+                }
 
-                return it != state_components_.end();
+                return false;
             }
 
             COMPLEX& operator[](size_t index) { return state_vec_[index];}
@@ -316,32 +333,40 @@
             size_t size() const { return state_vec_.size(); }
 
             size_t get_index(const StateType& state) const {
-                auto it = std::find(state_components_.begin(), state_components_.end(), state);
-                return std::distance(state_components_.begin(), it);
+                size_t index = 0;
+                for (auto st: state_components_) {
+                    if (*st == state) {
+                        return index;
+                    }
+
+                    index++;
+                }
+
+                return index;
             }
 
             void insert(const StateType& state, const COMPLEX& amplitude = COMPLEX(0, 0)) {
-                if (std::find(state_components_.begin(), state_components_.end(), state) == state_components_.end()) {
-                    state_components_.insert(state);
+                if (!is_in_state(state)) {
+                    state_components_.insert(std::shared_ptr<StateType>(new StateType(state)));
                     state_vec_.insert(state_vec_.begin() + this->get_index(state), amplitude);
                 }
             }
 
-            void set_state_components(const std::set<StateType>& st) { state_components_ = st; }
+            void set_state_components(const BasisType<StateType>& st) { state_components_ = st; }
             void set_vector(const std::vector<COMPLEX>& v) { state_vec_ = v; }
-            std::set<StateType> get_state_components() const { return state_components_; }
+            BasisType<StateType> get_state_components() const { return state_components_; }
             std::vector<COMPLEX> get_vector() const { return state_vec_;}
 
             std::string to_string() const {
                 std::string res;
 
                 size_t index = 0;
-                for (const auto& st: state_components_) {
+                for (auto st: state_components_) {
                     res += "(" + std::to_string(state_vec_[index].real()) + " + " + std::to_string(state_vec_[index].imag()) + "j)";
                     index++;
 
                     res += " * ";
-                    res += st.to_string();
+                    res += st->to_string();
 
                     if (index != state_components_.size()) {
                         res += " + ";
@@ -351,19 +376,20 @@
                 return res;
             }
 
-            State<Basis_State> fit_to_basis(const std::set<Basis_State>& basis) const {
+            State<Basis_State> fit_to_basis(const BasisType<StateType>& basis) const {
                 State<Basis_State> res;
 
+                std::cout << "HERE_FIT\n";
                 //res.state_vec_ = std::vector<COMPLEX>(basis.size(), 0);
                 res.set_vector(std::vector<COMPLEX>(basis.size(), 0));
                 //res.state_components_ = basis;
                 res.set_state_components(basis);
 
                 size_t index = 0;
-                for (const auto& state: basis) {
+                for (auto state: basis) {
                     size_t my_index = 0;
-                    for (const auto& my_state: this->state_components_) {
-                        if (state == Basis_State(my_state)) {
+                    for (auto my_state: this->state_components_) {
+                        if ((*state).Basis_State::operator==(Basis_State(*my_state))) {
                             res[index] = this->state_vec_[my_index];
                             break;
                         }
@@ -377,13 +403,28 @@
                 return res;
             }
 
+            // Полное копирование. Память выделяется ещё раз
+            State<StateType> copy() const {
+                State<StateType> res;
+                for (auto st: this->state_components_) {
+                    res.insert(*st, (*this)[*st]);
+                }
+
+                return res;
+            }
+
             void clear() {
                 state_vec_.resize(0);
+
+                //for (auto p: state_components_) {
+                //    delete p;
+                //}
+
                 state_components_.clear();
             }
         private:
             std::vector<COMPLEX> state_vec_;
-            std::set<StateType> state_components_;
+            BasisType<StateType> state_components_;
     };
 
 } // namespace QComputations

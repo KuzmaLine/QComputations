@@ -496,25 +496,25 @@ namespace {
         auto st = *(state.get_state_components().begin());
         std::vector<std::pair<double, OpType>> dec;
 
-        for (size_t i = 0; i < st.cavities_count(); i++) {
-            if (!is_zero(st.get_leak_gamma(i))) {
+        for (size_t i = 0; i < st->cavities_count(); i++) {
+            if (!is_zero(st->get_leak_gamma(i))) {
                 std::function<State<TCH_State>(const TCH_State&)> a_destroy_i = {[i](const TCH_State& che_state) {
                     return set_qudit(che_state, che_state.n(i) - 1, 0, i) * std::sqrt(che_state.n(i));
                 }};
 
                 OpType my_A_out(a_destroy_i);
 
-                dec.emplace_back(std::make_pair(st.get_leak_gamma(i), my_A_out));
+                dec.emplace_back(std::make_pair(st->get_leak_gamma(i), my_A_out));
             }
 
-            if (!is_zero(st.get_gain_gamma(i))) {
+            if (!is_zero(st->get_gain_gamma(i))) {
                 std::function<State<TCH_State>(const TCH_State&)> a_create_i = {[i](const TCH_State& che_state) {
                     return set_qudit(che_state, che_state.n(i) + 1, 0, i) * std::sqrt(che_state.n(i) + 1);
                 }};
 
                 OpType my_A_in(a_create_i);
 
-                dec.emplace_back(std::make_pair(st.get_gain_gamma(i), my_A_in));
+                dec.emplace_back(std::make_pair(st->get_gain_gamma(i), my_A_in));
             }
         }
 
