@@ -233,6 +233,27 @@ std::vector<V> Runge_Kutt_4(const std::vector<T>& x, const V& y0, std::function<
     return y;
 }
 
+
+template<typename T, typename V>
+std::vector<V> Runge_Kutt_2(const std::vector<T>& x, const V& y0, std::function<V(T, V)> f) {
+    size_t len = x.size();
+    std::vector<V> y(len);
+    y[0] = y0;
+
+    for (size_t i = 0; i < len - 1; i++) {
+        //if (i % (len / 100) == 0) std::cout << i << " " << len << std::endl;
+        //std::cout << i << " " << y[i] << " ";
+        T h = x[i + 1] - x[i];
+
+        V k1 = f(x[i], y[i]);
+        V k2 = f(x[i] + h, y[i] + k1 * h);
+        y[i + 1] = y[i]  + (k1 + k2) * (h / 2.0);
+        //std::cout << h << " " << y[i + 1] << " " << 2 * x[i + 1] << std::endl;
+    }
+
+    return y;
+}
+
 template<typename T>
 bool is_in_vector(const std::vector<T> v, const T& elem) {
     return std::find(v.begin(), v.end(), elem) != v.end();

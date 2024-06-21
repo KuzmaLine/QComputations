@@ -97,13 +97,12 @@ template<typename T> class Matrix {
 
         std::vector<T> operator* (const std::vector<T>& v) const;
 
-        void operator*= (const T& num);
-
         Matrix<T> operator* (const T& num) const;
+        Matrix<T>& operator*= (T num);
         Matrix<T> operator+ (const T& num) const;
         Matrix<T> operator- (const T& num) const;
         Matrix<T> operator/ (const T& num) const;
-        void operator/= (const T& num);
+        Matrix<T>& operator/= (T num);
 
         Matrix<T>& operator+=(const Matrix<T>& A);
         Matrix<T>& operator-=(const Matrix<T>& A);
@@ -131,6 +130,7 @@ template<typename T> class Matrix {
         size_t LD() const { return (matrix_style_ == C_STYLE ? m_ : n_); }
         bool is_c_style() const { return matrix_style_ == C_STYLE; }
         MATRIX_STYLE get_matrix_style() const { return matrix_style_; }
+        MATRIX_STYLE matrix_style() const { return matrix_style_; }
         void to_fortran_style();
         void to_c_style();
 
@@ -335,6 +335,7 @@ Matrix<T> Matrix<T>::operator- (const Matrix<T>& A) const {
     return res;
 }
 
+/*
 template<typename T>
 void Matrix<T>::operator*= (const T& num) {
     for (size_t i = 0; i < n_; i++) {
@@ -343,6 +344,7 @@ void Matrix<T>::operator*= (const T& num) {
         }
     }
 }
+*/
 
 template<typename T>
 Matrix<T> Matrix<T>::operator- (const T& num) const {
@@ -370,6 +372,7 @@ Matrix<T> Matrix<T>::operator/ (const T& num) const {
     return res;
 }
 
+/*
 template<typename T>
 void Matrix<T>::operator/= (const T& num) {
     for (size_t i = 0; i < n_; i++) {
@@ -378,6 +381,7 @@ void Matrix<T>::operator/= (const T& num) {
         }
     }
 }
+*/
 
 template<typename T>
 Matrix<T> Matrix<T>::operator* (const T& num) const {
@@ -551,10 +555,37 @@ void Matrix<T>::show(size_t width) const {
     std::cout << std::endl;
 }
 
+/*-------------------------- FUNCTIONS -------------------- */
+
+
+template<typename T>
+void optimized_multiply(const Matrix<T>& A, const Matrix<T>& B, Matrix<T>& C,
+                        T alpha, T betta, char trans_A = 'N', char trans_B = 'N');
+
+template<>
+void optimized_multiply(const Matrix<double>& A, const Matrix<double>& B, Matrix<double>& C,
+                         double alpha, double betta, char trans_A, char trans_B);
+
+template<>
+void optimized_multiply(const Matrix<COMPLEX>& A, const Matrix<COMPLEX>& B, Matrix<COMPLEX>& C,
+                        COMPLEX alpha, COMPLEX betta, char trans_A, char trans_B);
+
+std::vector<Matrix<COMPLEX>> OPT_Runge_Kutt_4(const std::vector<double>& x,
+                                        const Matrix<COMPLEX>& y0,
+                                        std::function<void(double, const Matrix<COMPLEX>&, Matrix<COMPLEX>&)> f);
+
+std::vector<Matrix<COMPLEX>> OPT_Runge_Kutt_2(const std::vector<double>& x,
+                                        const Matrix<COMPLEX>& y0,
+                                        std::function<void(double, const Matrix<COMPLEX>&, Matrix<COMPLEX>&)> f);
+
+
+/* ------------------------- DON'T TOUCH -------------------- */
+
 template<>
 lapack_complex_double* Matrix<COMPLEX>::to_upper_lapack() const;
 
 template<>
 lapack_complex_double* Matrix<COMPLEX>::to_lapack() const;
+
 
 } // namespace QComputations

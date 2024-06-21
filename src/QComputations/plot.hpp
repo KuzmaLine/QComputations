@@ -11,7 +11,7 @@ namespace QComputations {
 
 void hamiltonian_to_file(const std::string& filename, const Hamiltonian& H, std::string dir = "");
 
-void basis_to_file(const std::string& filename, const std::set<Basis_State>& basis, std::string dir = "");
+void basis_to_file(const std::string& filename, const BasisType<Basis_State>& basis, std::string dir = "");
 
 void time_vec_to_file(const std::string& filename, const std::vector<double>& time_vec, std::string dir = "");
 
@@ -20,7 +20,7 @@ void probs_to_file(const std::string& filename, const Probs& probs, std::string 
 void make_probs_files(const Hamiltonian& H,
                       const Probs& probs,
                       const std::vector<double>& time_vec,
-                      const std::set<Basis_State>& basis,
+                      const BasisType<Basis_State>& basis,
                       std::string dir = "");
 
 #endif
@@ -31,7 +31,7 @@ void make_probs_files(const Hamiltonian& H,
 void hamiltonian_to_file(const std::string& filename, const BLOCKED_Hamiltonian& H, std::string dir = "", ILP_TYPE main_rank = 0);
 void probs_to_file(const std::string& filename, const BLOCKED_Probs& probs, std::string dir = "");
 void plot_from_files(const std::string& plotname, std::string dir, const std::string& python_script_path = QConfig::instance().python_script_path());
-void basis_to_file(const std::string& filename, const std::set<Basis_State>& basis, std::string dir = "", ILP_TYPE main_rank = 0);
+void basis_to_file(const std::string& filename, const BasisType<Basis_State>& basis, std::string dir = "", ILP_TYPE main_rank = 0);
 void time_vec_to_file(const std::string& filename, const std::vector<double>& time_vec, std::string dir = "", ILP_TYPE main_rank = 0);
 void probs_to_file(const std::string& filename, const Probs& probs, std::string dir = "", ILP_TYPE main_rank = 0);
 void hamiltonian_to_file(const std::string& filename, const Hamiltonian& H, std::string dir = "", ILP_TYPE main_rank = 0);
@@ -39,14 +39,14 @@ void hamiltonian_to_file(const std::string& filename, const Hamiltonian& H, std:
 void make_probs_files(const Hamiltonian& H,
                       const Probs& probs,
                       const std::vector<double>& time_vec,
-                      const std::set<Basis_State>& basis,
+                      const BasisType<Basis_State>& basis,
                       std::string dir = "",
                       ILP_TYPE main_rank = 0);
 
 void make_probs_files(const BLOCKED_Hamiltonian& H,
                       const BLOCKED_Probs& probs,
                       const std::vector<double>& time_vec,
-                      const std::set<Basis_State>& basis,
+                      const BasisType<Basis_State>& basis,
                       std::string dir = "",
                       ILP_TYPE main_rank = 0);
 
@@ -54,7 +54,7 @@ void make_plot(const std::string& plotname,
                const BLOCKED_Hamiltonian& H,
                const BLOCKED_Probs& probs,
                const std::vector<double>& time_vec,
-               const std::set<Basis_State>& basis,
+               const BasisType<Basis_State>& basis,
                std::string dir);
 
 #endif
@@ -71,7 +71,7 @@ namespace matplotlib {
     void make_figure(size_t x = 0, size_t y = 0, size_t dpi = QConfig::instance().dpi());
     void probs_to_plot(const Probs& probs,
                        const std::vector<double>& time_vec,
-                       const std::set<Basis_State>& basis,
+                       const BasisType<Basis_State>& basis,
                        std::vector<std::map<std::string, std::string>> keywords = {});
     void probs_to_plot(const Probs& probs,
                        const std::vector<double>& time_vec,
@@ -94,7 +94,7 @@ namespace matplotlib {
  #ifdef ENABLE_CLUSTER
     void probs_to_plot(const BLOCKED_Probs& probs,
                        const std::vector<double>& time_vec,
-                       const std::set<Basis_State>& basis,
+                       const BasisType<Basis_State>& basis,
                        std::vector<std::map<std::string, std::string>> keywords = {});
     void probs_to_plot(const BLOCKED_Probs& probs,
                        const std::vector<double>& time_vec,
@@ -102,32 +102,33 @@ namespace matplotlib {
                        std::vector<std::map<std::string, std::string>> keywords = {});
     void probs_in_cavity_to_plot(const BLOCKED_Probs& probs,
                                  const std::vector<double>& time_vec,
-                                 const std::set<Basis_State>& basis,
+                                 const BasisType<Basis_State>& basis,
                                  size_t cavity_id,
                                  std::vector<std::map<std::string, std::string>> keywords = {});
  #endif
  #endif
     void rho_probs_to_plot(const Probs& probs,
                            const std::vector<double>& time_vec,
-                           const std::set<Basis_State>& basis,
+                           const BasisType<Basis_State>& basis,
                            std::vector<std::map<std::string, std::string>> keywords = {});
     void rho_diag_to_plot(const Probs& probs,
                           const std::vector<double>& time_vec,
-                          const std::set<Basis_State>& basis,
+                          const BasisType<Basis_State>& basis,
                           std::vector<std::map<std::string, std::string>> keywords = {});
     void rho_subdiag_to_plot(const Probs& probs,
                              const std::vector<double>& time_vec,
-                             const std::set<Basis_State>& basis,
+                             const BasisType<Basis_State>& basis,
                              std::vector<std::map<std::string, std::string>> keywords = {});
     void probs_in_cavity_to_plot(const Probs& probs,
                                 const std::vector<double>& time_vec,
-                                const std::set<Basis_State>& basis,
+                                const BasisType<Basis_State>& basis,
                                 size_t cavity_id,
                                 std::vector<std::map<std::string, std::string>> keywords = {});
 
     void show(bool is_block = true);
     void savefig(const std::string& filename, size_t dpi = QConfig::instance().dpi());
     void grid(bool is_enable = true);
+    void legend();
 }
 
 #endif

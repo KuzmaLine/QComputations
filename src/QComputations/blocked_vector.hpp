@@ -24,8 +24,8 @@ class BLOCKED_Vector: public BLOCKED_Matrix<T> {
         explicit BLOCKED_Vector(ILP_TYPE ctxt, const std::vector<T>& x): BLOCKED_Matrix<T>(ctxt, GE, Matrix<T>(x, x.size(), 1, FORTRAN_STYLE)) {};
         explicit BLOCKED_Vector(const BLOCKED_Vector<T>& x, const Matrix<T>& local_vector);
         explicit BLOCKED_Vector(ILP_TYPE ctxt, size_t n, std::function<T(size_t, size_t)> func): BLOCKED_Matrix<T>(ctxt, GE, n, 1, func) {}
-        explicit BLOCKED_Vector(ILP_TYPE ctxt, size_t n, T value, size_t NB = 0): BLOCKED_Matrix<T>(ctxt, GE, n, 1, value, NB, 1) {}
-        explicit BLOCKED_Vector(ILP_TYPE ctxt, size_t n, size_t NB = 0): BLOCKED_Matrix<T>(ctxt, GE, n, 1, NB, 1) {}
+        explicit BLOCKED_Vector(ILP_TYPE ctxt, size_t n, size_t NB = 0): BLOCKED_Matrix<T>(ctxt, GE, n, 1, size_t(NB), size_t(1)) {}
+        explicit BLOCKED_Vector(ILP_TYPE ctxt, size_t n, T value, size_t NB = 0): BLOCKED_Matrix<T>(ctxt, GE, n, 1, T(value), size_t(NB), size_t(1)) {}
         // explicit BLOCKED_Vector(ILP_TYPE ctxt, const std::vector<T>& x, ILP_TYPE root_id): BLOCKED_Matrix<T>(ctxt, Matrix<T>(x, x.size(), 1, FORTRAN_STYLE), root_id) {}
 
         // Сделать по размерностям результата умножения
@@ -98,7 +98,9 @@ BLOCKED_Vector<T> BLOCKED_Vector<T>::operator/(T num) const {
 
 // ----------------------------------------- FUNCTIONS --------------------------------------
 
+// a * b
 double scalar_product(const BLOCKED_Vector<double>& a, const BLOCKED_Vector<double>& b);
+// <a|b>
 COMPLEX scalar_product(const BLOCKED_Vector<COMPLEX>& a, const BLOCKED_Vector<COMPLEX>& b);
 BLOCKED_Vector<double> blocked_matrix_get_col(ILP_TYPE ctxt, const BLOCKED_Matrix<double>& A, size_t col);
 BLOCKED_Vector<double> blocked_matrix_get_row(ILP_TYPE ctxt, const BLOCKED_Matrix<double>& A, size_t row);

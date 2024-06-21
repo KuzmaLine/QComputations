@@ -1,3 +1,5 @@
+#define MKL_Complex16 std::complex<double>
+
 #include "matrix.hpp"
 #include <iostream>
 #include <mkl_cblas.h>
@@ -13,6 +15,13 @@ namespace {
     using COMPLEX = std::complex<double>;
 }
 
+/*
+extern "C" {
+    void zgeadd_(const COMPLEX*, ILP_TYPE*, char*, const COMPLEX*, ILP_TYPE*, char*, COMPLEX*, ILP_TYPE*, ILP_TYPE*, ILP_TYPE*);
+    void dgeadd_(const double*, ILP_TYPE*, char*, const double*, ILP_TYPE*, char*, double*, ILP_TYPE*, ILP_TYPE*, ILP_TYPE*);
+    //dgeadd(this->data(), this->LD(), 'N', A.data(), A.LD(), 'N', res.data(), res.LD(), this->n_, this->m_);
+}
+*/
 //#ifndef ENABLE_MPI
 template<>
 Matrix<double> Matrix<double>::operator* (const Matrix<double>& A) const {
@@ -55,6 +64,80 @@ Matrix<COMPLEX> Matrix<COMPLEX>::operator* (const Matrix<COMPLEX>& A) const {
                 this->LD(), A.mass_.data(), A.LD(), &betta,
                 res.mass_.data(), res.LD());
     return res;
+}
+
+/*
+template<>
+Matrix<double> Matrix<double>::operator+(const Matrix<double>& A) const {
+    assert(this->n_ == A.n_ and this->m_ == A.m_);
+    Matrix<double> res(this->get_matrix_style(), A.n_, A.m_);
+
+    char N = 'N';
+    ILP_TYPE n = this->n();
+    ILP_TYPE m = this->m();
+    ILP_TYPE TLD = this->LD();
+    ILP_TYPE ALD = A.LD();
+    ILP_TYPE resLD = res.LD();
+    dgeadd_(this->data(), &TLD, &N, A.data(), &ALD, &N, res.data(), &resLD, &n, &m);
+    return res;
+}
+
+template<>
+Matrix<COMPLEX> Matrix<COMPLEX>::operator+(const Matrix<COMPLEX>& A) const {
+    assert(this->n_ == A.n_ and this->m_ == A.m_);
+    Matrix<COMPLEX> res(this->get_matrix_style(), A.n_, A.m_);
+
+    char N = 'N';
+    ILP_TYPE n = this->n();
+    ILP_TYPE m = this->m();
+    ILP_TYPE TLD = this->LD();
+    ILP_TYPE ALD = A.LD();
+    ILP_TYPE resLD = res.LD();
+    zgeadd_(this->data(), &TLD, &N, A.data(), &ALD, &N, res.data(), &resLD, &n, &m);
+    return res;
+}
+*/
+
+template<>
+Matrix<double>& Matrix<double>::operator*=(double num) {
+    ILP_TYPE iONE = 1;
+
+    ILP_TYPE size = this->n() * this->m();
+    dscal(&size, &num, this->data(), &iONE);
+
+    return *this;
+}
+
+template<>
+Matrix<COMPLEX>& Matrix<COMPLEX>::operator*=(COMPLEX num) {
+    ILP_TYPE iONE = 1;
+
+    ILP_TYPE size = this->n() * this->m();
+    zscal(&size, &num, this->data(), &iONE);
+
+    return *this;
+}
+
+template<>
+Matrix<double>& Matrix<double>::operator/=(double num) {
+    ILP_TYPE iONE = 1;
+    double new_num = double(1)/num;
+
+    ILP_TYPE size = this->n() * this->m();
+    dscal(&size, &new_num, this->data(), &iONE);
+
+    return *this;
+}
+
+template<>
+Matrix<COMPLEX>& Matrix<COMPLEX>::operator/=(COMPLEX num) {
+    ILP_TYPE iONE = 1;
+    COMPLEX new_num = COMPLEX(1, 0) / num;
+
+    ILP_TYPE size = this->n() * this->m();
+    zscal(&size, &new_num, this->data(), &iONE);
+
+    return *this;
 }
 
 template<>
@@ -645,12 +728,129 @@ std::vector<COMPLEX> Matrix<COMPLEX>::operator* <COMPLEX>(const std::vector<COMP
 }
 */
 
+/* ---------------- FUNCTIONS ------------------------------ */
+
+namespace {
+    CBLAS_TRANSPOSE char_to_trans(char ch_trans) {
+        switch(ch_trans) {
+            case 'N': return CblasNoTrans;
+            case 'T': return CblasTrans;
+            case 'C': return CblasConjTrans;
+            default: assert(false); // Некорректная операция транспозиции при перемножении
+        }
+    }
+}
+
+template<>
+void optimized_multiply(const Matrix<double>& A, const Matrix<double>& B, Matrix<double>& C,
+                        double alpha, double betta, char trans_A, char trans_B) {
+    assert(A.m() == B.n());
+    assert(A.n() == C.n() and B.m() == C.m());
+
+    auto type = CblasRowMajor;
+    if (!(A.is_c_style())) type = CblasColMajor;
+    cblas_dgemm(type, char_to_trans(trans_A), char_to_trans(trans_B),
+                A.n(), B.m(), A.m(), alpha, A.data(),
+                A.LD(), B.data(), B.LD(), betta,
+                C.data(), C.LD());
+}
+
+template<>
+void optimized_multiply(const Matrix<COMPLEX>& A, const Matrix<COMPLEX>& B, Matrix<COMPLEX>& C,
+                        COMPLEX alpha, COMPLEX betta, char trans_A, char trans_B) {
+    assert(A.m() == B.n());
+    assert(A.n() == C.n() and B.m() == C.m());
+
+    auto type = CblasRowMajor;
+    if (!(A.is_c_style())) type = CblasColMajor;
+    cblas_zgemm(type, char_to_trans(trans_A), char_to_trans(trans_B),
+                A.n(), B.m(), A.m(), &alpha, A.data(),
+                A.LD(), B.data(), B.LD(), &betta,
+                C.data(), C.LD());
+}
+
+std::vector<Matrix<COMPLEX>> OPT_Runge_Kutt_4(const std::vector<double>& x,
+                                        const Matrix<COMPLEX>& y0,
+                                        std::function<void(double, const Matrix<COMPLEX>&, Matrix<COMPLEX>&)> f) {
+    size_t len = x.size();
+    size_t dim = y0.n();
+    std::vector<Matrix<COMPLEX>> y(len, Matrix<COMPLEX>(y0.matrix_style(), dim, dim));
+    y[0] = y0;
+
+    Matrix<COMPLEX> k1(y0.matrix_style(), dim, dim);
+    Matrix<COMPLEX> k2(y0.matrix_style(), dim, dim);
+    Matrix<COMPLEX> k3(y0.matrix_style(), dim, dim);
+
+    for (size_t i = 0; i < len - 1; i++) {
+        //if (i % (len / 100) == 0) std::cout << i << " " << len << std::endl;
+        //std::cout << i << " " << y[i] << " ";
+        double h = x[i + 1] - x[i];
+
+        f(x[i], y[i], k1);
+        k1 *= (h / 2.0);
+        k1 += y[i];
+        f(x[i] + h / 2.0, k1, k2);
+        k2 *= (h / 2.0);
+        k2 += y[i];
+        f(x[i] + h / 2.0, k2, k3);
+        k3 *= h;
+        k3 += y[i];
+        f(x[i] + h, k3, y[i + 1]);
+        k1 -= y[i];
+        k2 -= y[i];
+        k3 -= y[i];
+        
+        y[i + 1] *= (h / 6.0);
+        y[i + 1] += y[i];
+
+        k1 /= 3.0;
+        y[i + 1] += k1;
+        k2 *= (double(2) / double(3));
+        y[i + 1] += k2;
+        k3 /= 3.0;
+        y[i + 1] += k3;
+        //y[i + 1] = y[i]  + (k1 + (k2 + k3) * 2 + k4) * (h / 6.0);
+        //std::cout << h << " " << y[i + 1] << " " << 2 * x[i + 1] << std::endl;
+    }
+
+    return y;
+}
+
+std::vector<Matrix<COMPLEX>> OPT_Runge_Kutt_2(const std::vector<double>& x,
+                                        const Matrix<COMPLEX>& y0,
+                                        std::function<void(double, const Matrix<COMPLEX>&, Matrix<COMPLEX>&)> f) {
+    size_t len = x.size();
+    size_t dim = y0.n();
+    std::vector<Matrix<COMPLEX>> y(len, Matrix<COMPLEX>(y0.matrix_style(), dim, dim));
+    y[0] = y0;
+
+    Matrix<COMPLEX> k1(y0.matrix_style(), dim, dim);
+
+    for (size_t i = 0; i < len - 1; i++) {
+        double h = x[i + 1] - x[i];
+
+        f(x[i], y[i], k1);
+        k1 *= h;
+        k1 += y[i];
+        f(x[i] + h, k1, y[i + 1]);
+        k1 -= y[i];
+        k1 /= COMPLEX(2.0, 0);
+        y[i + 1] *= COMPLEX(h / 2.0, 0);
+        y[i + 1] += k1;
+        y[i + 1] += y[i];
+        //y[i + 1] = y[i]  + (k1 + k2) * (h / 2.0);
+        //std::cout << h << " " << y[i + 1] << " " << 2 * x[i + 1] << std::endl;
+    }
+
+    return y;
+}
+
+
+/* --------------------- DON'T TOUCH ------------------------*/
+
 namespace {
     lapack_complex_double make_complex(const double a, const double b) {
-        lapack_complex_double c;
-
-        c.real = a;
-        c.imag = b;
+        lapack_complex_double c(a, b);
 
         return c;
     }

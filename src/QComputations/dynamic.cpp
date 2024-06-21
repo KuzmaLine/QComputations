@@ -83,10 +83,11 @@ Probs schrodinger(const State<Basis_State>& init_state, Hamiltonian& H, const st
     eigen_values = H.eigenvalues();
     eigen_vectors = H.eigenvectors();
 
+    auto init_state_vec = init_state.fit_to_basis(H.get_basis());
     std::vector<COMPLEX> lambda;
     for (size_t i = 0; i < eigen_values.size(); i++) {
         //std::cout << norm(eigen_vectors.col(i)) << std::endl;
-        lambda.emplace_back(eigen_vectors.col(i) | init_state.get_vector()); // <PHI_i|KSI(0)> 
+        lambda.emplace_back(eigen_vectors.col(i) | init_state_vec.get_vector()); // <PHI_i|KSI(0)> 
     }
 
     Probs probs(C_STYLE, eigen_values.size(), time_vec.size());
@@ -120,18 +121,21 @@ Probs schrodinger(const State<Basis_State>& init_state, Hamiltonian& H, const st
 
 BLOCKED_Probs schrodinger(const State<Basis_State>& init_state, BLOCKED_Hamiltonian& H,
                                                 const std::vector<double>& time_vec) {
-    auto eigen_values = H.eigenvalues();
-    auto eigen_vectors = H.eigenvectors();
+    std::vector<double> eigen_values = H.eigenvalues();
+    BLOCKED_Matrix<COMPLEX> eigen_vectors = H.eigenvectors();
 
     ILP_TYPE vector_ctxt;
     mpi::init_vector_grid(vector_ctxt);
-    auto vector_of_eigen_vectors = blocked_matrix_to_blocked_vectors(vector_ctxt, eigen_vectors);
-    BLOCKED_Vector<COMPLEX> blocked_init_state(vector_ctxt, init_state.get_vector());
+    std::vector<BLOCKED_Vector<COMPLEX>> vector_of_eigen_vectors = blocked_matrix_to_blocked_vectors(vector_ctxt, eigen_vectors);
+    
+    auto init_state_vec = init_state.fit_to_basis(H.get_basis());
+    BLOCKED_Vector<COMPLEX> blocked_init_state(vector_ctxt, init_state_vec.get_vector());
 
     std::vector<COMPLEX> lambda;
     for (size_t i = 0; i < eigen_values.size(); i++) {
         //std::cout << norm(eigen_vectors.col(i)) << std::endl;
-        lambda.emplace_back(scalar_product(blocked_init_state, blocked_matrix_get_col(blocked_init_state.ctxt(), eigen_vectors, i))); // <PHI_i|KSI(0)> 
+        //lambda.emplace_back(scalar_product(blocked_init_state, blocked_matrix_get_col(blocked_init_state.ctxt(), eigen_vectors, i))); // <PHI_i|KSI(0)> 
+        lambda.emplace_back(scalar_product(vector_of_eigen_vectors[i], blocked_init_state)); // <PHI_i|KSI(0)> 
     }
 
     auto ctxt = H.ctxt();
@@ -281,8 +285,12 @@ Probs quantum_master_equation(const State<Basis_State>& init_state,
                             bool is_full_rho) {
     
     size_t dim = H.size();
-    std::vector<std::function<Rho(const Rho& rho)>> lindblads;
+    std::vector<std::function<void(const Rho& rho)>> lindblads;
 
+    Matrix<COMPLEX> T1(C_STYLE, dim, dim);
+    Matrix<COMPLEX> T2(C_STYLE, dim, dim);
+
+    /*
     for (const auto& p: H.get_decoherence()) {
         auto gamma = p.first;
         auto A = p.second;
@@ -301,17 +309,83 @@ Probs quantum_master_equation(const State<Basis_State>& init_state,
     std::function<Rho(double t, const Rho&)> equation {[&H_matrix, &lindblads](double t, const Rho& rho) {
         auto tmp = (H_matrix * rho - rho * H_matrix) * COMPLEX(0, -1 / QConfig::instance().h());
         for (const auto& lindblad: lindblads) {
-            tmp += lindblad(rho);
+            tmp += lindblad(rho) / QConfig::instance().h();
         }
 
         return tmp;
+    }};
+    */
+
+    auto H_matrix = H.get_matrix();
+
+    for (const auto& p: H.get_decoherence()) {
+        auto gamma = p.first;
+        //std::cout << "BEFORE: " << p.second.matrix_type() << std::endl;
+        //BLOCKED_Matrix<COMPLEX> A(p.second);
+        const Matrix<COMPLEX>& A = p.second;
+        //A.show();
+        lindblads.push_back(std::function<void(const Rho& rho)> {
+            [A, &T1, &T2, gamma](const Rho& rho) {
+                //std::cout << "HERE4\n";
+                //std::cout << A.matrix_type() << std::endl;
+                optimized_multiply(A, A, T1, COMPLEX(1, 0), COMPLEX(0, 0), 'C', 'N'); // AconjA -> T1
+                //std::cout << "HERE5\n";
+                //std::cout << T1.matrix_type() << " " << rho.matrix_type() << std::endl;
+                optimized_multiply(T1, rho, T2, COMPLEX(1, 0), COMPLEX(0, 0)); // AconjA*rho -> T2
+                //std::cout << "HERE6\n";
+                optimized_multiply(rho, T1, T2, COMPLEX(1, 0), COMPLEX(1, 0)); // rho * AconjA + AconjA * rho
+                //std::cout << "HERE7\n";
+                optimized_multiply(A, rho, T1, COMPLEX(1, 0), COMPLEX(0, 0)); // A*rho -> T1
+                //std::cout << "HERE8\n";
+                optimized_multiply(T1, A, T2, COMPLEX(gamma, 0), COMPLEX(-0.5 * gamma, 0), 'N', 'C'); // res -> T2
+                //std::cout << "HERE9\n";
+                //auto Aconj = A.hermit();
+                //auto AconjA = Aconj * A;
+                //T2 = (A * rho * Aconj - (AconjA * rho + rho * AconjA) * COMPLEX(0.5, 0)) * gamma;
+            }
+        }
+        );
+    }
+
+    
+    std::function<void(double t, const Rho&, Matrix<COMPLEX>&)> equation 
+    {[&H_matrix, &T1, &T2, &lindblads](double t, const Rho& rho, Matrix<COMPLEX>& res) {
+        //std::cout << "HERE1\n";
+        optimized_multiply(rho, H_matrix, res, COMPLEX(1, 0), COMPLEX(0, 0)); // rho * H_matrix -> res
+        //std::cout << "HERE2\n";
+        optimized_multiply(H_matrix, rho, res, COMPLEX(0, -1 / QConfig::instance().h()), COMPLEX(0, 1 / QConfig::instance().h())); // result -> res
+        //std::cout << "HERE3\n";
+
+        for (const auto& lindblad: lindblads) {
+            lindblad(rho);
+            //std::cout << "HERE10\n";
+            //optimized_add(T2, res, COMPLEX(1 / QConfig::instance().h(), 0), COMPLEX(1, 0));
+            T2 /= QConfig::instance().h();
+            res += T2;
+            //std::cout << "HERE11\n";
+        }
+
+        //res = (H_matrix * rho - rho * H_matrix) * COMPLEX(0, -1/QConfig::instance().h());
+        //for (const auto& lindblad: lindblads) {
+        //    lindblad(rho);
+        //    res += (T2 / QConfig::instance().h());
+        //}
     }};
 
     auto rho_0 = create_init_rho(init_state.fit_to_basis(H.get_basis()).get_vector());
     //rho_0.show();
     //auto begin_c = std::chrono::steady_clock::now();
     //std::cout << "HERE\n";
-    auto rho_vec = Runge_Kutt_4<double, Rho>(time_vec, rho_0, equation);
+    std::vector<Rho> rho_vec;
+    if (QConfig::instance().qme_algorithm() == RUNGE_KUTT_4) {
+        //rho_vec = Runge_Kutt_4<double, Rho>(time_vec, rho_0, equation);
+        rho_vec = OPT_Runge_Kutt_4(time_vec, rho_0, equation);
+    } else if (QConfig::instance().qme_algorithm() == RUNGE_KUTT_2) {
+        //rho_vec = Runge_Kutt_2<double, Rho>(time_vec, rho_0, equation);
+        rho_vec = OPT_Runge_Kutt_2(time_vec, rho_0, equation);
+    } else {
+        assert(false); // Неизвестный алгоритм решения ОКУ
+    }
     //auto end_c = std::chrono::steady_clock::now();
     //std::cout << " c " << std::chrono::duration_cast<std::chrono::milliseconds>(end_c - begin_c).count() << std::endl;
     //std::cout << "HERE 2\n";
@@ -638,14 +712,15 @@ BLOCKED_Probs quantum_master_equation(const State<Basis_State>& init_state,
                             const std::vector<double>& time_vec,
                             bool is_full_rho) {
     size_t dim = H.size();
-    std::vector<std::function<BLOCKED_Rho(const BLOCKED_Rho& rho)>> lindblads;
+    std::vector<std::function<void(const BLOCKED_Rho& rho)>> lindblads;
 
+    /*
     for (const auto& p: H.get_decoherence()) {
         auto gamma = p.first;
         auto A = p.second;
         //A.show();
         lindblads.push_back(std::function<BLOCKED_Rho(const BLOCKED_Rho& rho)> {
-            [A, gamma](const BLOCKED_Rho& rho) {
+            [&A, gamma](const BLOCKED_Rho& rho) {
                 auto Aconj = A.hermit();
                 auto AconjA = Aconj * A;
                 return (A * rho * Aconj - (AconjA * rho + rho * AconjA) * COMPLEX(0.5)) * gamma;
@@ -663,12 +738,80 @@ BLOCKED_Probs quantum_master_equation(const State<Basis_State>& init_state,
 
         return tmp;
     }};
+    */
 
-    auto rho_0 = create_BLOCKED_init_rho(H.ctxt(), init_state.fit_to_basis(H.get_basis()).get_vector());
+    BLOCKED_Matrix<COMPLEX> T1(H.ctxt(), GE, dim, dim);
+    BLOCKED_Matrix<COMPLEX> T2(H.ctxt(), GE, dim, dim);
+    auto H_matrix = H.get_blocked_matrix();
+
+    for (const auto& p: H.get_decoherence()) {
+        auto gamma = p.first;
+        //std::cout << "BEFORE: " << p.second.matrix_type() << std::endl;
+        //BLOCKED_Matrix<COMPLEX> A(p.second);
+        const BLOCKED_Matrix<COMPLEX>& A = p.second;
+        //A.show();
+        lindblads.push_back(std::function<void(const BLOCKED_Rho& rho)> {
+            [&H_matrix, A, &T1, &T2, gamma](const BLOCKED_Rho& rho) {
+                //std::cout << "HERE4\n";
+                //std::cout << A.matrix_type() << std::endl;
+                optimized_multiply(A, A, T1, COMPLEX(1, 0), COMPLEX(0, 0), 'C', 'N'); // AconjA -> T1
+                //std::cout << "HERE5\n";
+                //std::cout << T1.matrix_type() << " " << rho.matrix_type() << std::endl;
+                optimized_multiply(T1, rho, T2, COMPLEX(1, 0), COMPLEX(0, 0)); // AconjA*rho -> T2
+                //std::cout << "HERE6\n";
+                optimized_multiply(rho, T1, T2, COMPLEX(1, 0), COMPLEX(1, 0)); // rho * AconjA + AconjA * rho
+                //std::cout << "HERE7\n";
+                optimized_multiply(A, rho, T1, COMPLEX(1, 0), COMPLEX(0, 0)); // A*rho -> T1
+                //std::cout << "HERE8\n";
+                optimized_multiply(T1, A, T2, COMPLEX(gamma, 0), COMPLEX(-0.5 * gamma, 0), 'N', 'C'); // res -> T2
+                //std::cout << "HERE9\n";
+                //auto Aconj = A.hermit();
+                //auto AconjA = Aconj * A;
+                //T2 = (A * rho * Aconj - (AconjA * rho + rho * AconjA) * COMPLEX(0.5, 0)) * gamma;
+            }
+        }
+        );
+    }
+
+    
+    std::function<void(double t, const BLOCKED_Rho&, BLOCKED_Matrix<COMPLEX>&)> equation 
+    {[&H_matrix, &T1, &T2, &lindblads](double t, const BLOCKED_Rho& rho, BLOCKED_Matrix<COMPLEX>& res) {
+        //std::cout << "HERE1\n";
+        optimized_multiply(rho, H_matrix, res, COMPLEX(1, 0), COMPLEX(0, 0)); // rho * H_matrix -> res
+        //std::cout << "HERE2\n";
+        optimized_multiply(H_matrix, rho, res, COMPLEX(0, -1 / QConfig::instance().h()), COMPLEX(0, 1 / QConfig::instance().h())); // result -> res
+        //std::cout << "HERE3\n";
+
+        for (const auto& lindblad: lindblads) {
+            lindblad(rho);
+            //std::cout << "HERE10\n";
+            optimized_add(T2, res, COMPLEX(1 / QConfig::instance().h(), 0), COMPLEX(1, 0));
+            //std::cout << "HERE11\n";
+        }
+
+        //res = (H_matrix * rho - rho * H_matrix) * COMPLEX(0, -1/QConfig::instance().h());
+        //for (const auto& lindblad: lindblads) {
+        //    lindblad(rho);
+        //    res += (T2 / QConfig::instance().h());
+        //}
+    }};
+
+    BLOCKED_Matrix<COMPLEX> rho_0(create_BLOCKED_init_rho(H.ctxt(), init_state.fit_to_basis(H.get_basis()).get_vector()));
+    //std::cout << "RHO_0: " << rho_0.matrix_type() << std::endl;
     //rho_0.show();
     //auto begin_c = std::chrono::steady_clock::now();
     //std::cout << "HERE\n";
-    auto rho_vec = Runge_Kutt_4<double, BLOCKED_Rho>(time_vec, rho_0, equation);
+    std::vector<BLOCKED_Rho> rho_vec;
+    if (QConfig::instance().qme_algorithm() == RUNGE_KUTT_4) {
+        //rho_vec = Runge_Kutt_4<double, BLOCKED_Rho>(time_vec, rho_0, equation);
+        rho_vec = MPI_Runge_Kutt_4(time_vec, rho_0, equation);
+    } else if (QConfig::instance().qme_algorithm() == RUNGE_KUTT_2) {
+        //rho_vec = Runge_Kutt_2<double, BLOCKED_Rho>(time_vec, rho_0, equation);
+        rho_vec = MPI_Runge_Kutt_2(time_vec, rho_0, equation);
+    } else {
+        assert(false); // Неизвестный алгоритм решения ОКУ
+    }
+
     //auto end_c = std::chrono::steady_clock::now();
     //std::cout << " c " << std::chrono::duration_cast<std::chrono::milliseconds>(end_c - begin_c).count() << std::endl;
     //std::cout << "HERE 2\n";

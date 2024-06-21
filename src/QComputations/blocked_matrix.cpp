@@ -118,6 +118,8 @@ BLOCKED_Matrix<double> BLOCKED_Matrix<double>::operator*(const BLOCKED_Matrix<do
     return C;
 }
 
+
+
 template<>
 BLOCKED_Matrix<COMPLEX> BLOCKED_Matrix<COMPLEX>::operator*(const BLOCKED_Matrix<COMPLEX>& B) const {
     BLOCKED_Matrix<COMPLEX> C(*this, B);
@@ -992,6 +994,7 @@ std::pair<std::vector<double>, BLOCKED_Matrix<COMPLEX>> Hermit_Lanczos(const BLO
     ILP_TYPE lwork = work[0].real();
     ILP_TYPE lrwork = rwork[0];
     ILP_TYPE liwork = iwork[0];
+
     work.resize(lwork);
     rwork.resize(lrwork);
     iwork.resize(liwork);
@@ -1000,6 +1003,116 @@ std::pair<std::vector<double>, BLOCKED_Matrix<COMPLEX>> Hermit_Lanczos(const BLO
         Z.desc().data(), work.data(), &lwork, rwork.data(), &lrwork, iwork.data(), &liwork, &info);
 
     return std::make_pair(w, Z);
+}
+
+template<>
+void optimized_add(const BLOCKED_Matrix<double>& A, BLOCKED_Matrix<double>& C,
+                         double alpha, double betta, char trans_A) {
+    assert(A.matrix_type() == GE and C.matrix_type() == GE);
+    assert(A.n() == C.n() and A.m() == C.m());
+
+    mpi::parallel_dgeadd(A.get_local_matrix(), C.get_local_matrix(), A.desc(), C.desc(), alpha, betta, trans_A);
+}
+
+template<>
+void optimized_add(const BLOCKED_Matrix<COMPLEX>& A, BLOCKED_Matrix<COMPLEX>& C,
+                        COMPLEX alpha, COMPLEX betta, char trans_A) {
+    assert(A.matrix_type() == GE and C.matrix_type() == GE);
+    assert(A.n() == C.n() and A.m() == C.m());
+
+    mpi::parallel_zgeadd(A.get_local_matrix(), C.get_local_matrix(), A.desc(), C.desc(), alpha, betta, trans_A);
+}
+
+template<>
+void optimized_multiply(const BLOCKED_Matrix<double>& A, const BLOCKED_Matrix<double>& B, BLOCKED_Matrix<double>& C,
+                        double alpha, double betta, char trans_A, char trans_B) {
+    assert(C.m() == B.m() and C.n() == A.n());
+
+    if (A.matrix_type() == GE and B.matrix_type() == GE) {
+        mpi::parallel_dgemm(A.get_local_matrix(), B.get_local_matrix(), C.get_local_matrix(), A.desc(), B.desc(), C.desc(), alpha, betta, trans_A, trans_B);
+    } else {
+        std::cerr << "Matrix types error DOUBLE!" << std::endl;
+    }
+}
+
+template<>
+void optimized_multiply(const BLOCKED_Matrix<COMPLEX>& A, const BLOCKED_Matrix<COMPLEX>& B, BLOCKED_Matrix<COMPLEX>& C,
+                        COMPLEX alpha, COMPLEX betta, char trans_A, char trans_B) {
+    assert(C.m() == B.m() and C.n() == A.n());
+    if (A.matrix_type() == GE and B.matrix_type() == GE) {
+        mpi::parallel_zgemm(A.get_local_matrix(), B.get_local_matrix(), C.get_local_matrix(), A.desc(), B.desc(), C.desc(), alpha, betta, trans_A, trans_B);
+    } else if (A.matrix_type() == HE and B.matrix_type() == GE) {
+        mpi::parallel_zhemm('L', A.get_local_matrix(), B.get_local_matrix(), C.get_local_matrix(), A.desc(), B.desc(), C.desc(), alpha, betta);
+    } else if (A.matrix_type() == GE and B.matrix_type() == HE) {
+        mpi::parallel_zhemm('R', B.get_local_matrix(), A.get_local_matrix(), C.get_local_matrix(), B.desc(), A.desc(), C.desc(), alpha, betta);
+    } else {
+        std::cerr << "Matrix types error COMPLEX! " << A.matrix_type() << " " << B.matrix_type() << std::endl;
+    }
+}
+
+std::vector<BLOCKED_Matrix<COMPLEX>> MPI_Runge_Kutt_4(const std::vector<double>& x,
+                                        const BLOCKED_Matrix<COMPLEX>& y0,
+                                        std::function<void(double, const BLOCKED_Matrix<COMPLEX>&, BLOCKED_Matrix<COMPLEX>&)> f) {
+    size_t len = x.size();
+    size_t dim = y0.n();
+    std::vector<BLOCKED_Matrix<COMPLEX>> y(len, BLOCKED_Matrix<COMPLEX>(y0.ctxt(), GE, dim, dim));
+    y[0] = y0;
+
+    BLOCKED_Matrix<COMPLEX> k1(y0.ctxt(), GE, dim, dim);
+    BLOCKED_Matrix<COMPLEX> k2(y0.ctxt(), GE, dim, dim);
+    BLOCKED_Matrix<COMPLEX> k3(y0.ctxt(), GE, dim, dim);
+
+    for (size_t i = 0; i < len - 1; i++) {
+        //if (i % (len / 100) == 0) std::cout << i << " " << len << std::endl;
+        //std::cout << i << " " << y[i] << " ";
+        double h = x[i + 1] - x[i];
+
+        f(x[i], y[i], k1);
+        optimized_add(y[i], k1, COMPLEX(1, 0), COMPLEX(h / 2.0, 0));
+        f(x[i] + h / 2.0, k1, k2);
+        optimized_add(y[i], k2, COMPLEX(1, 0), COMPLEX(h / 2.0, 0));
+        f(x[i] + h / 2.0, k2, k3);
+        optimized_add(y[i], k3, COMPLEX(1, 0), COMPLEX(h, 0));
+        f(x[i] + h, k3, y[i + 1]);
+        optimized_add(y[i], k1, COMPLEX(double(-2)/h, 0), COMPLEX(double(2) / h, 0));
+        optimized_add(y[i], k2, COMPLEX(double(-2)/h, 0), COMPLEX(double(2) / h, 0));
+        optimized_add(y[i], k3, COMPLEX(double(-1)/h, 0), COMPLEX(double(1) / h, 0));
+
+        optimized_add(k3, y[i + 1], COMPLEX((h / 3.0), 0), COMPLEX((h / 6.0), 0));
+        optimized_add(k2, y[i + 1], COMPLEX((h / 3.0), 0), COMPLEX(1, 0));
+        optimized_add(k1, y[i + 1], COMPLEX((h / 6.0), 0), COMPLEX(1, 0));
+        optimized_add(y[i], y[i + 1], COMPLEX(1, 0), COMPLEX(1, 0));
+        //y[i + 1] = y[i]  + (k1 + (k2 + k3) * 2 + k4) * (h / 6.0);
+        //std::cout << h << " " << y[i + 1] << " " << 2 * x[i + 1] << std::endl;
+    }
+
+    return y;
+}
+
+std::vector<BLOCKED_Matrix<COMPLEX>> MPI_Runge_Kutt_2(const std::vector<double>& x,
+                                        const BLOCKED_Matrix<COMPLEX>& y0,
+                                        std::function<void(double, const BLOCKED_Matrix<COMPLEX>&, BLOCKED_Matrix<COMPLEX>&)> f) {
+    size_t len = x.size();
+    size_t dim = y0.n();
+    std::vector<BLOCKED_Matrix<COMPLEX>> y(len, BLOCKED_Matrix<COMPLEX>(y0.ctxt(), GE, dim, dim));
+    y[0] = y0;
+
+    BLOCKED_Matrix<COMPLEX> k1(y0.ctxt(), GE, dim, dim);
+
+    for (size_t i = 0; i < len - 1; i++) {
+        double h = x[i + 1] - x[i];
+
+        f(x[i], y[i], k1);
+        optimized_add(y[i], k1, COMPLEX(1, 0), COMPLEX(h, 0));
+        f(x[i] + h, k1, y[i + 1]);
+        optimized_add(y[i], k1, COMPLEX(double(-1)/h, 0), COMPLEX(double(1) / h, 0));
+        optimized_add(k1, y[i + 1], COMPLEX(h / 2.0, 0), COMPLEX(h / 2.0, 0));
+        optimized_add(y[i], y[i + 1], COMPLEX(1, 0), COMPLEX(1, 0));
+        //y[i + 1] = y[i]  + (k1 + k2) * (h / 2.0);
+        //std::cout << h << " " << y[i + 1] << " " << 2 * x[i + 1] << std::endl;
+    }
+
+    return y;
 }
 
 } // namespace QComputations

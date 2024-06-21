@@ -358,6 +358,8 @@ void mpi::init_grid(ILP_TYPE& ctxt, ILP_TYPE proc_rows, ILP_TYPE proc_cols) {
             }
         }
         proc_cols = world_size / proc_rows;
+    } else {
+        assert(proc_rows * proc_cols == world_size);
     }
     //std::cout << rank << " Here1\n";
     blacs_pinfo(&myid, &numproc);
@@ -910,7 +912,7 @@ std::vector<COMPLEX> mpi::get_diagonal_elements<COMPLEX>(Matrix<COMPLEX>& localA
 
 void mpi::parallel_dgemm(const Matrix<double>& A, const Matrix<double>& B, Matrix<double>& C, const std::vector<ILP_TYPE>& desca,
                          const std::vector<ILP_TYPE>& descb, const std::vector<ILP_TYPE>& descc,
-                         char op_A, char op_B) {
+                         double alpha, double betta, char op_A, char op_B) {
     //ILP_TYPE iZERO = 0;
     //int rank, world_size;
     //MPI_Comm_rank(MPI_COMM_WORLD, &rank);
@@ -976,8 +978,6 @@ void mpi::parallel_dgemm(const Matrix<double>& A, const Matrix<double>& B, Matri
     */
     char N = 'N';
     ILP_TYPE iONE = 1;
-    double alpha = 1.0;
-    double betta = 0;
 
     //if (!is_distributed) {
         //auto begin = std::chrono::steady_clock::now();
@@ -1014,7 +1014,7 @@ void mpi::parallel_dgemm(const Matrix<double>& A, const Matrix<double>& B, Matri
 void mpi::parallel_zgemm(const Matrix<COMPLEX>& A, const Matrix<COMPLEX>& B, Matrix<COMPLEX>& C,
                         const std::vector<ILP_TYPE>& desca,
                          const std::vector<ILP_TYPE>& descb, const std::vector<ILP_TYPE>& descc,
-                         char op_A, char op_B) {
+                         COMPLEX alpha, COMPLEX betta, char op_A, char op_B) {
     ILP_TYPE iZERO = 0;
     //int rank, world_size;
     //MPI_Comm_rank(MPI_COMM_WORLD, &rank);
@@ -1082,8 +1082,6 @@ void mpi::parallel_zgemm(const Matrix<COMPLEX>& A, const Matrix<COMPLEX>& B, Mat
 
 
     ILP_TYPE iONE = 1;
-    COMPLEX alpha(1.0, 0);
-    COMPLEX betta(0, 0);
 
     //if (!is_distributed) {
     //    auto begin = std::chrono::steady_clock::now();
@@ -1120,7 +1118,7 @@ void mpi::parallel_zgemm(const Matrix<COMPLEX>& A, const Matrix<COMPLEX>& B, Mat
 void mpi::parallel_zhemm(char side, const Matrix<COMPLEX>& A, const Matrix<COMPLEX>& B, Matrix<COMPLEX>& C,
                     const std::vector<ILP_TYPE>& desca,
                     const std::vector<ILP_TYPE>& descb, const std::vector<ILP_TYPE>& descc,
-                    char op_A, char op_B) {
+                    COMPLEX alpha, COMPLEX betta) {
     ILP_TYPE NA, MA, NB, MB, NB_A, MB_A, NB_B, MB_B;
 
     NA = desca[2];
@@ -1129,8 +1127,6 @@ void mpi::parallel_zhemm(char side, const Matrix<COMPLEX>& A, const Matrix<COMPL
     MB = descb[3];
 
     ILP_TYPE iONE = 1;
-    COMPLEX alpha(1.0, 0);
-    COMPLEX betta(0, 0);
     char uplo = 'U';
 
     pzhemm_(&side, &uplo, &NA, &MB, &alpha, A.data(), &iONE, &iONE, desca.data(),

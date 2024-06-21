@@ -145,6 +145,21 @@
             std::vector<size_t> groups_;
     };
 
+    template<typename StateType>
+    size_t get_index_state_in_basis(const StateType& state, const BasisType<StateType>& basis) {
+        size_t res = 0;
+        for (auto p: basis) {
+            if (state == *p) {
+                return res;
+            }
+
+            res++;
+        }
+
+        assert(false); // Элемента нет в базисе
+        return 0;
+    }
+
     class TCH_State: public Basis_State {
         using E_LEVEL = int;
         //using CavityId = size_t;
@@ -355,7 +370,9 @@
             void set_state_components(const BasisType<StateType>& st) { state_components_ = st; }
             void set_vector(const std::vector<COMPLEX>& v) { state_vec_ = v; }
             BasisType<StateType> get_state_components() const { return state_components_; }
+            BasisType<StateType> state_components() const { return state_components_; }
             std::vector<COMPLEX> get_vector() const { return state_vec_;}
+            std::vector<COMPLEX> vector() const { return state_vec_;}
 
             std::string to_string() const {
                 std::string res;
@@ -379,7 +396,6 @@
             State<Basis_State> fit_to_basis(const BasisType<StateType>& basis) const {
                 State<Basis_State> res;
 
-                std::cout << "HERE_FIT\n";
                 //res.state_vec_ = std::vector<COMPLEX>(basis.size(), 0);
                 res.set_vector(std::vector<COMPLEX>(basis.size(), 0));
                 //res.state_components_ = basis;

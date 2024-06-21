@@ -78,7 +78,7 @@ void BLOCKED_Vector<COMPLEX>::operator+=(const BLOCKED_Vector<COMPLEX>& x) {
 
 // ------------------------------ FUNCTIONS -------------------------------------
 
-COMPLEX scalar_product(const BLOCKED_Vector<COMPLEX>& b, const BLOCKED_Vector<COMPLEX>& a) {
+COMPLEX scalar_product(const BLOCKED_Vector<COMPLEX>& a, const BLOCKED_Vector<COMPLEX>& b) {
     return mpi::parallel_zdotc(a.get_local_matrix().get_mass(), b.get_local_matrix().get_mass(), a.desc(), a.inc(), b.desc(), b.inc());
 }
 

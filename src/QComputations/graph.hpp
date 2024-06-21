@@ -14,23 +14,13 @@ namespace QComputations {
 template<typename StateType>
 bool is_in_basis(const BasisType<StateType>& basis, std::shared_ptr<StateType> state) {
     for (auto st: basis) {
-        if (st->n() == 99 and st->get_atom(1) == 0 and state->n() == 99 and state->get_atom(1) == 0) {
-            std::cout << "HERE_TRY\n";   
-        }
         if ((*st) == (*state)) {
             return true;
-        }
-
-        if (st->n() == 99 and st->get_atom(1) == 0 and state->n() == 99 and state->get_atom(1) == 0) {
-            std::cout << "HERE_FALSE\n";   
         }
     }
 
     return false;
 }
-
-template<>
-bool is_in_basis<TCH_State>(const BasisType<TCH_State>& basis, std::shared_ptr<TCH_State> state);
 
 template<typename StateType>
 class State_Graph {

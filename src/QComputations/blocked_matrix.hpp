@@ -31,9 +31,9 @@ class BLOCKED_Matrix {
     public:
         explicit BLOCKED_Matrix() = default;
         explicit BLOCKED_Matrix(const BLOCKED_Matrix<T>& A, const Matrix<T>& local_matrix);
-        explicit BLOCKED_Matrix(ILP_TYPE ctxt, MATRIX_TYPE type, size_t n, size_t m, std::function<T(size_t, size_t)> func, size_t NB = 0, size_t MB = 0);
-        explicit BLOCKED_Matrix(ILP_TYPE ctxt, MATRIX_TYPE type, size_t n, size_t m, T value, size_t NB = 0, size_t MB = 0);
+        explicit BLOCKED_Matrix(ILP_TYPE ctxt, MATRIX_TYPE type, size_t n, size_t m, std::function<T(size_t, size_t)> func, size_t NB = 0, size_t MB = 0);    
         explicit BLOCKED_Matrix(ILP_TYPE ctxt, MATRIX_TYPE type, size_t n, size_t m, size_t NB = 0, size_t MB = 0);
+        explicit BLOCKED_Matrix(ILP_TYPE ctxt, MATRIX_TYPE type, size_t n, size_t m, T value, size_t NB = 0, size_t MB = 0);
         explicit BLOCKED_Matrix(ILP_TYPE ctxt, MATRIX_TYPE type, const Matrix<T>& A, size_t NB = 0, size_t MB = 0);
         //explicit BLOCKED_Matrix(ILP_TYPE ctxt, MATRIX_TYPE type, const Matrix<T>& A, ILP_TYPE root_id, ILP_TYPE NB);
 
@@ -98,6 +98,9 @@ class BLOCKED_Matrix {
 
         ILP_TYPE get_row_proc(size_t i) const;
         ILP_TYPE get_col_proc(size_t i) const;
+
+        bool is_my_elem_row(size_t i) const;
+        bool is_my_elem_col(size_t j) const;
 
         BLOCKED_Matrix<T> hermit() const;
 
@@ -304,6 +307,23 @@ ILP_TYPE BLOCKED_Matrix<T>::get_local_col(size_t j) const {
     return mpi::indxg2l(j, MB_, mycol, iZERO, proc_cols);
 }
 
+template<typename T>
+bool BLOCKED_Matrix<T>::is_my_elem_row(size_t i) const {
+    ILP_TYPE proc_rows, proc_cols, myrow, mycol;
+    mpi::blacs_gridinfo(ctxt_, proc_rows, proc_cols, myrow, mycol);
+
+    return this->get_row_proc(i) == myrow;
+}
+
+template<typename T>
+bool BLOCKED_Matrix<T>::is_my_elem_col(size_t j) const {
+    ILP_TYPE proc_rows, proc_cols, myrow, mycol;
+    mpi::blacs_gridinfo(ctxt_, proc_rows, proc_cols, myrow, mycol);
+
+    return this->get_col_proc(j) == myrow;
+}
+
+
 
 template<typename T>
 BLOCKED_Matrix<T>::BLOCKED_Matrix(const BLOCKED_Matrix<T>& A, const Matrix<T>& local_matrix): matrix_type_(A.matrix_type_),
@@ -482,6 +502,37 @@ void BLOCKED_Matrix<T>::show(size_t width, ILP_TYPE root_id) const {
 // ------------------------------------------ FUNCTIONS ------------------------------------
 
 std::pair<std::vector<double>, BLOCKED_Matrix<COMPLEX>> Hermit_Lanczos(const BLOCKED_Matrix<COMPLEX>& A);
+
+template<typename T>
+void optimized_add(const BLOCKED_Matrix<T>& A, BLOCKED_Matrix<T>& C, T alpha, T betta, char trans_A = 'N');
+
+template<>
+void optimized_add(const BLOCKED_Matrix<double>& A, BLOCKED_Matrix<double>& C,
+                         double alpha, double betta, char trans_A);
+
+template<>
+void optimized_add(const BLOCKED_Matrix<COMPLEX>& A, BLOCKED_Matrix<COMPLEX>& C,
+                        COMPLEX alpha, COMPLEX betta, char trans_A);
+template<typename T>
+void optimized_multiply(const BLOCKED_Matrix<T>& A, const BLOCKED_Matrix<T>& B, BLOCKED_Matrix<T>& C,
+                        T alpha, T betta, char trans_A = 'N', char trans_B = 'N');
+
+template<>
+void optimized_multiply(const BLOCKED_Matrix<double>& A, const BLOCKED_Matrix<double>& B, BLOCKED_Matrix<double>& C,
+                         double alpha, double betta, char trans_A, char trans_B);
+
+template<>
+void optimized_multiply(const BLOCKED_Matrix<COMPLEX>& A, const BLOCKED_Matrix<COMPLEX>& B, BLOCKED_Matrix<COMPLEX>& C,
+                        COMPLEX alpha, COMPLEX betta, char trans_A, char trans_B);
+
+// SPECIAL FOR QME
+std::vector<BLOCKED_Matrix<COMPLEX>> MPI_Runge_Kutt_2(const std::vector<double>& x,
+                                    const BLOCKED_Matrix<COMPLEX>& y0,
+                                    std::function<void(double, const BLOCKED_Matrix<COMPLEX>&, BLOCKED_Matrix<COMPLEX>&)> f);
+
+std::vector<BLOCKED_Matrix<COMPLEX>> MPI_Runge_Kutt_4(const std::vector<double>& x,
+                                const BLOCKED_Matrix<COMPLEX>& y0,
+                                std::function<void(double, const BLOCKED_Matrix<COMPLEX>&, BLOCKED_Matrix<COMPLEX>&)> f);
 
 } // namespace QComputations
 

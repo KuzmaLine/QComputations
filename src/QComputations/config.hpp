@@ -6,6 +6,8 @@ namespace QComputations {
 
 // Рудимент - УБРАТЬ (Осторожно с private переменной QConfig)
 enum MULTIPLY_ALGS {COMMON_MODE = 0};
+
+enum FUNCTION_QME {RUNGE_KUTT_4 = 121, RUNGE_KUTT_2 = 122};
 namespace {
     const std::string angle_bracket_right = "\u29FD";
     enum FIG_PARAMS {FIG_WIDTH = 19, FIG_HEIGHT = 10, DPI = 80};
@@ -29,6 +31,7 @@ namespace {
     const std::string state_delimeter_default = ";";
     const std::string excitation_state_format_default = "|$N>$W{$M" + angle_bracket_right;
     const std::string python_script_path_default = "seaborn_plot.py";
+    constexpr FUNCTION_QME qme_algorithm_default = RUNGE_KUTT_2;
 }
 
 class QConfig {
@@ -60,6 +63,7 @@ class QConfig {
         void set_state_format(const std::string& state_format) { state_format_ = state_format; }
         void set_state_delimeter(const std::string& state_delimeter) { state_delimeter_ = state_delimeter; }
         void set_excitation_state_format(const std::string& excitation_state_format) { excitation_state_format_ = excitation_state_format; }
+        void set_get_qme_algorithm(const FUNCTION_QME alg) { qme_algorithm_ = alg;}
 
         double h() const { return h_; }
         int max_photons() const { return max_photons_; }
@@ -82,6 +86,7 @@ class QConfig {
         std::string state_delimeter() const { return state_delimeter_; }
         std::string excitation_state_format() const { return excitation_state_format_; }
         std::string python_script_path() const { return python_script_path_; }
+        FUNCTION_QME qme_algorithm() const { return qme_algorithm_;}
 
         void show() const {
             std::cout << "CONFIG PARAMS: " << std::endl;
@@ -125,6 +130,7 @@ class QConfig {
         std::string state_delimeter_ = state_delimeter_default;
         std::string excitation_state_format_ = excitation_state_format_default;
         std::string python_script_path_ = python_script_path_default;
+        FUNCTION_QME qme_algorithm_ = qme_algorithm_default;
 };
 
 } // namespace QComputations

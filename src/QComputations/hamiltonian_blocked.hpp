@@ -124,6 +124,25 @@ BLOCKED_H_by_Operator<StateType>::BLOCKED_H_by_Operator(ILP_TYPE ctxt, const Sta
     NB = std::min(NB, MB);
     MB = NB;
 
+    H_ = BLOCKED_Matrix<COMPLEX>(ctxt, HE, size, size, COMPLEX(0, 0), NB, MB);
+
+    for (size_t j = 0; j < H_.local_m(); j++) {
+        size_t global_state_index = H_.get_global_col(j);
+        auto state_from = get_state_from_basis<StateType>(basis, global_state_index);
+        auto res_state = H_op.run(State<StateType>(*state_from));
+
+        size_t index = 0;
+        for (auto state: res_state.state_components()) {
+            auto cur_global_row = get_index_state_in_basis(*state, basis);
+            if (H_.is_my_elem_row(cur_global_row)) {
+                H_(H_.get_local_row(cur_global_row), j) = res_state[index];
+            }
+
+            index++;
+        }
+    }
+
+    /*
     std::function<COMPLEX(size_t i, size_t j)> func = {
         [&basis, &H_op](size_t i, size_t j) {
             auto state_from = get_state_from_basis<StateType>(basis, j);
@@ -137,11 +156,15 @@ BLOCKED_H_by_Operator<StateType>::BLOCKED_H_by_Operator(ILP_TYPE ctxt, const Sta
             }
         }
     };
-
-    H_ = BLOCKED_Matrix<COMPLEX>(ctxt, HE, size, size, func, NB, MB);
+    */
+    //H_ = BLOCKED_Matrix<COMPLEX>(ctxt, HE, size, size, func, NB, MB);
     for (const auto& p: decoherence) {
-        auto A = BLOCKED_Matrix<COMPLEX>(operator_to_matrix<StateType>(H_.ctxt(), p.second, basis));
+        auto A = operator_to_matrix<StateType>(H_.ctxt(), p.second, basis);
+        //std::cout << "A HAMILTONIAN: " << A.matrix_type() << std::endl;
         decoherence_.push_back(std::make_pair(p.first, A));
+        //for (const auto& w: decoherence_) {
+        //    std::cout << "A HAM AFTER: " << w.second.matrix_type() << std::endl;
+        //}
     }
 }
 

@@ -121,6 +121,7 @@ H_by_Operator<StateType>::H_by_Operator(const State<StateType>& init_state, cons
     auto basis = State_Graph<StateType>(init_state, H_op, dec_tmp).get_basis();
     basis_ = convert_to<StateType>(basis);
 
+    /*
     size_t size = basis_.size();
 
     std::function<COMPLEX(size_t i, size_t j)> func = {
@@ -136,8 +137,24 @@ H_by_Operator<StateType>::H_by_Operator(const State<StateType>& init_state, cons
             }
         }
     };
+    */
 
-    H_ = Matrix<COMPLEX>(C_STYLE, size, size, func);
+    size_t dim = basis.size();
+    H_ = Matrix<COMPLEX>(C_STYLE, dim, dim, COMPLEX(0, 0));
+
+    for (auto state: basis) {
+        size_t col_state = 0;
+        auto res_state = H_op.run(State<StateType>(*state));
+
+        size_t index = 0;
+        for (auto state_res: res_state.state_components()) {
+            H_[get_index_state_in_basis(*state_res, basis)][col_state] = res_state[index++];
+        }
+
+        col_state++;
+    }
+
+    //H_ = Matrix<COMPLEX>(C_STYLE, size, size, func);
     for (const auto& p: decoherence) {
         auto A = Matrix<COMPLEX>(operator_to_matrix<StateType>(p.second, basis));
         decoherence_.push_back(std::make_pair(p.first, A));

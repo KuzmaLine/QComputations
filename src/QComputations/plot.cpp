@@ -27,7 +27,7 @@ void check_dir(std::string& dir, bool remove_is_exist = false) {
 void make_probs_files(const Hamiltonian& H,
                const Probs& probs,
                const std::vector<double>& time_vec,
-               const std::set<Basis_State>& basis,
+               const BasisType<Basis_State>& basis,
                std::string dir) {
     check_dir(dir, true);
 
@@ -60,7 +60,7 @@ void check_dir(std::string& dir, ILP_TYPE main_rank, bool remove_is_exist = fals
 void make_probs_files(const Hamiltonian& H,
                const Probs& probs,
                const std::vector<double>& time_vec,
-               const std::set<Basis_State>& basis,
+               const BasisType<Basis_State>& basis,
                std::string dir,
                ILP_TYPE main_rank) {
     check_dir(dir, main_rank, true);
@@ -87,7 +87,7 @@ void probs_to_file(const std::string& filename, const Probs& probs, std::string 
     probs_hermit.write_to_csv_file(dir + "/" + filename);
 }
 
-void basis_to_file(const std::string& filename, const std::set<Basis_State>& basis, std::string dir) {
+void basis_to_file(const std::string& filename, const BasisType<Basis_State>& basis, std::string dir) {
     check_dir(dir);
 
     auto filepath = dir + "/" + filename;
@@ -95,7 +95,7 @@ void basis_to_file(const std::string& filename, const std::set<Basis_State>& bas
     std::ofstream file(filepath);
 
     for (size_t i = 0; i < basis.size(); i++) {
-        std::string state_str = get_elem_from_set<Basis_State>(basis, i).to_string();
+        std::string state_str = get_state_from_basis<Basis_State>(basis, i)->to_string();
 
         if (i != basis.size() - 1) {
             state_str += ",";
@@ -169,7 +169,7 @@ void hamiltonian_to_file(const std::string& filename, const BLOCKED_Hamiltonian&
     H.write_to_csv_file(dir + "/" + filename);
 }
 
-void basis_to_file(const std::string& filename, const std::set<Basis_State>& basis, std::string dir, ILP_TYPE main_rank) {
+void basis_to_file(const std::string& filename, const BasisType<Basis_State>& basis, std::string dir, ILP_TYPE main_rank) {
     ILP_TYPE rank;
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 
@@ -181,7 +181,7 @@ void basis_to_file(const std::string& filename, const std::set<Basis_State>& bas
         std::ofstream file(filepath);
 
         for (size_t i = 0; i < basis.size(); i++) {
-            std::string state_str = get_elem_from_set<Basis_State>(basis, i).to_string();
+            std::string state_str = get_state_from_basis<Basis_State>(basis, i)->to_string();
 
             if (i != basis.size() - 1) {
                 state_str += ",";
@@ -231,7 +231,7 @@ void time_vec_to_file(const std::string& filename, const std::vector<double>& ti
 }
 
 /*
-void basis_to_file(const std::string& filename, const std::set<Basis_State>& basis, std::string dir) {
+void basis_to_file(const std::string& filename, const BasisType<Basis_State>& basis, std::string dir) {
     check_dir(dir);
 
     ILP_TYPE rank, world_size;
@@ -245,7 +245,7 @@ void basis_to_file(const std::string& filename, const std::set<Basis_State>& bas
                   MPI_INFO_NULL, &file);
 
     for (size_t i = 0; i < basis.size(); i++) {
-        std::string state_str = get_elem_from_set<Basis_State>(basis, i).to_string();
+        std::string state_str = get_state_from_basis<Basis_State>(basis, i)->to_string();
 
         if (i != basis.size() - 1) {
             state_str += ",";
@@ -327,7 +327,7 @@ void plot_from_files(const std::string& plotname,
 void make_probs_files(const BLOCKED_Hamiltonian& H,
                const BLOCKED_Probs& probs,
                const std::vector<double>& time_vec,
-               const std::set<Basis_State>& basis,
+               const BasisType<Basis_State>& basis,
                std::string dir,
                ILP_TYPE main_rank) {
     check_dir(dir, main_rank, true);
@@ -343,7 +343,7 @@ void make_plot(const std::string& plotname,
                const BLOCKED_Hamiltonian& H,
                const BLOCKED_Probs& probs,
                const std::vector<double>& time_vec,
-               const std::set<Basis_State>& basis,
+               const BasisType<Basis_State>& basis,
                std::string dir) {
     make_probs_files(H, probs, time_vec, basis, dir);
     plot_from_files(plotname, dir);
@@ -404,16 +404,16 @@ void matplotlib::surface(const std::vector<std::vector<double>>& x,
 
 void matplotlib::probs_to_plot(const Probs& probs, 
                                const std::vector<double>& time_vec,
-                               const std::set<Basis_State>& basis,
+                               const BasisType<Basis_State>& basis,
                                std::vector<std::map<std::string, std::string>> keywords) {
     //std::cout << "HERE\n";
     size_t index = 0;
-    for (const auto& state: basis) {
+    for (auto state: basis) {
         if (keywords.size() <= index) {
             std::map<std::string, std::string> tmp;
             keywords.emplace_back(tmp);
         }
-        keywords[index]["label"] = state.to_string();
+        keywords[index]["label"] = state->to_string();
         /*
         for (const auto& p: keywords[index]) {
             std::cout << p.first << " " << p.second << std::endl;
@@ -423,7 +423,7 @@ void matplotlib::probs_to_plot(const Probs& probs,
         index++;
         //plt::plot(time_vec, state_probs);
     }
-    plt::legend();
+    //plt::legend();
 }
 
 void matplotlib::probs_to_plot(const Probs& probs, 
@@ -447,7 +447,7 @@ void matplotlib::probs_to_plot(const Probs& probs,
         index++;
         //plt::plot(time_vec, state_probs);
     }
-    plt::legend();
+    //plt::legend();
 }
 
 #ifdef ENABLE_MPI
@@ -455,7 +455,7 @@ void matplotlib::probs_to_plot(const Probs& probs,
 /*
 void matplotlib::probs_in_cavity_to_plot(const BLOCKED_Probs& probs_start,
                                 const std::vector<double>& time_vec,
-                                const std::set<Basis_State>& basis_start,
+                                const BasisType<Basis_State>& basis_start,
                                 size_t cavity_id,
                                 std::vector<std::map<std::string, std::string>> keywords) {
     ILP_TYPE rank;
@@ -485,45 +485,43 @@ void matplotlib::probs_in_cavity_to_plot(const BLOCKED_Probs& probs_start,
         index++;
         //plt::plot(time_vec, state_probs);
     }
-    if (rank == 0) plt::legend();
+    //if (rank == 0) plt::legend();
 }
 */
 
 void matplotlib::probs_to_plot(const BLOCKED_Probs& probs, 
                                const std::vector<double>& time_vec,
-                               const std::set<Basis_State>& basis,
+                               const BasisType<Basis_State>& basis,
                                std::vector<std::map<std::string, std::string>> keywords) {
     //std::cout << "HERE\n";
     ILP_TYPE rank;
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 
-    if (rank == mpi::ROOT_ID) {
-        size_t index = 0;
-        for (const auto& state: basis) {
-            if (rank == mpi::ROOT_ID) {
-                if (keywords.size() <= index) {
-                    std::map<std::string, std::string> tmp;
-                    keywords.emplace_back(tmp);
-                }
-                keywords[index]["label"] = state.to_string();
-                /*
-                for (const auto& p: keywords[index]) {
-                    std::cout << p.first << " " << p.second << std::endl;
-                }
-                */
+    size_t index = 0;
+    for (auto state: basis) {
+        if (rank == mpi::ROOT_ID) {
+            if (keywords.size() <= index) {
+                std::map<std::string, std::string> tmp;
+                keywords.emplace_back(tmp);
             }
-
-            std::vector<double> probs_vec(time_vec.size());
-            for (size_t i = 0; i < time_vec.size(); i++) {
-                probs_vec[i] = probs.get(index, i);
+            keywords[index]["label"] = state->to_string();
+            /*
+            for (const auto& p: keywords[index]) {
+                std::cout << p.first << " " << p.second << std::endl;
             }
-
-            if (rank == mpi::ROOT_ID) plt::plot(time_vec, probs_vec, keywords[index]);
-            index++;
-            //plt::plot(time_vec, state_probs);
+            */
         }
-        if (rank == mpi::ROOT_ID) plt::legend();
+
+        std::vector<double> probs_vec(time_vec.size());
+        for (size_t i = 0; i < time_vec.size(); i++) {
+            probs_vec[i] = probs.get(index, i);
+        }
+
+        if (rank == mpi::ROOT_ID) plt::plot(time_vec, probs_vec, keywords[index]);
+        index++;
+        //plt::plot(time_vec, state_probs);
     }
+    //if (rank == mpi::ROOT_ID) plt::legend();
 }
 
 
@@ -535,33 +533,31 @@ void matplotlib::probs_to_plot(const BLOCKED_Probs& probs,
     ILP_TYPE rank;
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 
-    if (rank == mpi::ROOT_ID) {
-        size_t index = 0;
-        for (const auto& state_str: basis_str) {
-            if (rank == mpi::ROOT_ID) {
-                if (keywords.size() <= index) {
-                    std::map<std::string, std::string> tmp;
-                    keywords.emplace_back(tmp);
-                }
-                keywords[index]["label"] = state_str;
-                /*
-                for (const auto& p: keywords[index]) {
-                    std::cout << p.first << " " << p.second << std::endl;
-                }
-                */
+    size_t index = 0;
+    for (const auto& state_str: basis_str) {
+        if (rank == mpi::ROOT_ID) {
+            if (keywords.size() <= index) {
+                std::map<std::string, std::string> tmp;
+                keywords.emplace_back(tmp);
             }
-
-            std::vector<double> probs_vec(time_vec.size());
-            for (size_t i = 0; i < time_vec.size(); i++) {
-                probs_vec[i] = probs.get(index, i);
+            keywords[index]["label"] = state_str;
+            /*
+            for (const auto& p: keywords[index]) {
+                std::cout << p.first << " " << p.second << std::endl;
             }
-
-            if (rank == mpi::ROOT_ID) plt::plot(time_vec, probs_vec, keywords[index]);
-            index++;
-            //plt::plot(time_vec, state_probs);
+            */
         }
-        if (rank == mpi::ROOT_ID) plt::legend();
+
+        std::vector<double> probs_vec(time_vec.size());
+        for (size_t i = 0; i < time_vec.size(); i++) {
+            probs_vec[i] = probs.get(index, i);
+        }
+
+        if (rank == mpi::ROOT_ID) plt::plot(time_vec, probs_vec, keywords[index]);
+        index++;
+        //plt::plot(time_vec, state_probs);
     }
+    //if (rank == mpi::ROOT_ID) plt::legend();
 }
 
 #endif
@@ -569,13 +565,13 @@ void matplotlib::probs_to_plot(const BLOCKED_Probs& probs,
 
 void matplotlib::rho_probs_to_plot(const Probs& probs,
                        const std::vector<double>& time_vec,
-                       const std::set<Basis_State>& basis,
+                       const BasisType<Basis_State>& basis,
                        std::vector<std::map<std::string, std::string>> keywords) {
     size_t from = 0;
     size_t to = 0;
     size_t basis_size = basis.size();
-    for (const auto& state_from: basis) {
-        for (const auto& state_to: basis) {
+    for (auto state_from: basis) {
+        for (auto state_to: basis) {
             size_t index = from * basis_size + to;
             if (keywords.size() <= index) {
                 while(keywords.size() <= index) {
@@ -585,9 +581,9 @@ void matplotlib::rho_probs_to_plot(const Probs& probs,
             }
 
             if (from == to) {
-                keywords[index]["label"] = state_from.to_string();
+                keywords[index]["label"] = state_from->to_string();
             } else {
-                keywords[index]["label"] = state_from.to_string() + " -> " + state_to.to_string();
+                keywords[index]["label"] = state_from->to_string() + " -> " + state_to->to_string();
             }
             /*
             for (const auto& p: keywords[index]) {
@@ -601,16 +597,16 @@ void matplotlib::rho_probs_to_plot(const Probs& probs,
         from++;
         to = from;
     }
-    plt::legend();
+    //plt::legend();
 }
 
 void matplotlib::rho_diag_to_plot(const Probs& probs,
                                   const std::vector<double>& time_vec,
-                                  const std::set<Basis_State>& basis,
+                                  const BasisType<Basis_State>& basis,
                                   std::vector<std::map<std::string, std::string>> keywords) {
     size_t state_index = 0;
     size_t basis_size = basis.size();
-    for (const auto& state: basis) {
+    for (auto state: basis) {
         size_t index = state_index * basis_size + state_index;
         if (keywords.size() <= index) {
             while(keywords.size() <= index) {
@@ -619,7 +615,7 @@ void matplotlib::rho_diag_to_plot(const Probs& probs,
             }
         }
         
-        keywords[index]["label"] = state.to_string();
+        keywords[index]["label"] = state->to_string();
         /*
         for (const auto& p: keywords[index]) {
             std::cout << p.first << " " << p.second << std::endl;
@@ -630,13 +626,13 @@ void matplotlib::rho_diag_to_plot(const Probs& probs,
         state_index++;
     }
 
-    plt::legend();
+    //plt::legend();
 }
 
 /*
 void matplotlib::rho_subdiag_to_plot(const Probs& probs,
                                      const std::vector<double>& time_vec,
-                                     const std::set<Basis_State>& basis,
+                                     const BasisType<Basis_State>& basis,
                                      std::vector<std::map<std::string, std::string>> keywords) {
     size_t from = 0;
     size_t to = 0;
@@ -675,12 +671,16 @@ void matplotlib::rho_subdiag_to_plot(const Probs& probs,
         from++;
         to = 0;
     }
-    plt::legend();
+    //plt::legend();
 }
 */
 
 void matplotlib::show(bool is_block) {
     plt::show(is_block);
+}
+
+void matplotlib::legend() {
+    plt::legend();
 }
 
 void matplotlib::make_figure(size_t x, size_t y, size_t dpi) {

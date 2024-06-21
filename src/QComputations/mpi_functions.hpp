@@ -176,6 +176,7 @@ namespace mpi {
                         double alpha = 1.0, double betta = 1.0,
                         char op_A = 'N');
 
+    // N - not trans. T - trans. C - hermit
     void parallel_zgeadd(const Matrix<COMPLEX>& A, Matrix<COMPLEX>& C,
                         const std::vector<ILP_TYPE>& desca,
                         const std::vector<ILP_TYPE>& descc,
@@ -185,17 +186,18 @@ namespace mpi {
     void parallel_dgemm(const Matrix<double>& A, const Matrix<double>& B, Matrix<double>& C,
                         const std::vector<ILP_TYPE>& desca,
                         const std::vector<ILP_TYPE>& descb, const std::vector<ILP_TYPE>& descc,
-                        char op_A = 'N', char op_B = 'N');
+                        double alpha = 1, double betta = 0, char op_A = 'N', char op_B = 'N');
 
+    // N - not trans. T - trans. C - hermit
     void parallel_zgemm(const Matrix<COMPLEX>& A, const Matrix<COMPLEX>& B, Matrix<COMPLEX>& C,
                         const std::vector<ILP_TYPE>& desca,
                         const std::vector<ILP_TYPE>& descb, const std::vector<ILP_TYPE>& descc,
-                        char op_A = 'N', char op_B = 'N');
+                        COMPLEX alpha = COMPLEX(1, 0), COMPLEX betta = COMPLEX(0, 0), char op_A = 'N', char op_B = 'N');
         
     void parallel_zhemm(char side, const Matrix<COMPLEX>& A, const Matrix<COMPLEX>& B, Matrix<COMPLEX>& C,
                         const std::vector<ILP_TYPE>& desca,
                         const std::vector<ILP_TYPE>& descb, const std::vector<ILP_TYPE>& descc,
-                        char op_A = 'N', char op_B = 'N');
+                        COMPLEX alpha = COMPLEX(1, 0), COMPLEX betta = COMPLEX(0, 0));
 
     void parallel_dgemv(const Matrix<double>& A, const std::vector<double>& x, std::vector<double>& y,
                         const std::vector<ILP_TYPE>& desca,
@@ -205,9 +207,13 @@ namespace mpi {
                         const std::vector<ILP_TYPE>& desca,
                         const std::vector<ILP_TYPE>& descx, const std::vector<ILP_TYPE>& descy,
                         char op_A = 'N');
+    
+    // x*y (without conjugate)
     COMPLEX parallel_zdotu(const std::vector<COMPLEX>& x, const std::vector<COMPLEX>& y,
                         const std::vector<ILP_TYPE>& descx, ILP_TYPE incx,
                         const std::vector<ILP_TYPE>& descy, ILP_TYPE incy);
+
+    // <x|y>
     COMPLEX parallel_zdotc(const std::vector<COMPLEX>& x, const std::vector<COMPLEX>& y,
                     const std::vector<ILP_TYPE>& descx, ILP_TYPE incx,
                     const std::vector<ILP_TYPE>& descy, ILP_TYPE incy);
@@ -224,6 +230,8 @@ namespace mpi {
     void parallel_zaxpy(const std::vector<COMPLEX>& x, std::vector<COMPLEX>& y,
                         const std::vector<ILP_TYPE>& descx, ILP_TYPE incx,
                         const std::vector<ILP_TYPE>& descy, ILP_TYPE incy, COMPLEX alpha = COMPLEX(1, 0));
+
+
 #endif
 }
 

@@ -230,7 +230,21 @@ State<StateType> Operator<StateType>::run(const State<StateType>& init_state) co
 template<typename StateType>
 Matrix<COMPLEX> operator_to_matrix(const Operator<StateType>& op, const BasisType<StateType>& basis) {
     size_t dim = basis.size();
+    Matrix<COMPLEX> A(C_STYLE, dim, dim, COMPLEX(0, 0));
 
+    for (auto state: basis) {
+        size_t col_state = 0;
+        auto res_state = op.run(State<StateType>(*state));
+
+        size_t index = 0;
+        for (auto state_res: res_state.state_components()) {
+            A[get_index_state_in_basis(*state_res, basis)][col_state] = res_state[index++];
+        }
+
+        col_state++;
+    }
+
+    /*
     std::function<COMPLEX(size_t i, size_t j)> func = {
         [&basis, &op](size_t i, size_t j) {
             auto state_from = get_state_from_basis(basis, j);
@@ -246,6 +260,7 @@ Matrix<COMPLEX> operator_to_matrix(const Operator<StateType>& op, const BasisTyp
     };
 
     Matrix<COMPLEX> A(C_STYLE, dim, dim, func);
+    */
 
     return A;
 }
@@ -256,6 +271,26 @@ Matrix<COMPLEX> operator_to_matrix(const Operator<StateType>& op, const BasisTyp
 template<typename StateType>
 BLOCKED_Matrix<COMPLEX> operator_to_matrix(ILP_TYPE ctxt, const Operator<StateType>& op, const BasisType<StateType>& basis) {
     size_t dim = basis.size();
+
+    BLOCKED_Matrix<COMPLEX> A(ctxt, GE, dim, dim, COMPLEX(0, 0), 0, 0);
+
+    for (size_t j = 0; j < A.local_m(); j++) {
+        size_t global_state_index = A.get_global_col(j);
+        auto state_from = get_state_from_basis<StateType>(basis, global_state_index);
+        auto res_state = op.run(State<StateType>(*state_from));
+
+        size_t index = 0;
+        for (auto state: res_state.state_components()) {
+            auto cur_global_row = get_index_state_in_basis(*state, basis);
+            if (A.is_my_elem_row(cur_global_row)) {
+                A(A.get_local_row(cur_global_row), j) = res_state[index];
+            }
+
+            index++;
+        }
+    }
+
+    /*
 
     std::function<COMPLEX(size_t i, size_t j)> func = {
         [&basis, &op](size_t i, size_t j) {
@@ -272,7 +307,7 @@ BLOCKED_Matrix<COMPLEX> operator_to_matrix(ILP_TYPE ctxt, const Operator<StateTy
     };
 
     BLOCKED_Matrix<COMPLEX> A(ctxt, GE, dim, dim, func);
-
+    */
     return A;
 }
 #endif
