@@ -1,8 +1,10 @@
 /*
 Демонстрация реализации собственного понятия состояния и 
-операторов. Одноядерная версия.
+операторов. Многоядерная версия.
 */
-#include "QComputations_SINGLE.hpp"
+
+#include "QComputations_CPU_CLUSTER.hpp"
+
 
 #include <iostream>
 
@@ -118,6 +120,8 @@ State<TC_State> a_destroy(const TC_State& st) {
 }
 
 int main(int argc, char** argv) {
+    MPI_Init(&argc, &argv);
+
     using OpType = Operator<TC_State>;
     double h = QConfig::instance().h();
     double w = QConfig::instance().w();
@@ -149,28 +153,40 @@ int main(int argc, char** argv) {
     A.show();
     */
 
-    H_by_Operator<TC_State> H(state, H_op, dec);
+    int ctxt;
+    mpi::init_grid(ctxt);
+
+    BLOCKED_H_by_Operator<TC_State> H(ctxt, state, H_op, dec);
 
     show_basis(H.get_basis());
     H.show();
 
-    std::cout << "H_size: " << H.size() << std::endl; 
+    if (is_main_proc()) std::cout << "H_size: " << H.size() << std::endl; 
 
     auto time_vec = linspace(0, 1000, 1000);
 
     auto probs = quantum_master_equation(state, H, time_vec);
 
-    matplotlib::make_figure(1200, 800, 80);
-    matplotlib::xlabel("Time");
-    matplotlib::ylabel("Probability");
-    matplotlib::grid();
-    matplotlib::title("TC: leak_photons=" + std::to_string(g_leak));
+    if (is_main_proc()) {
+        matplotlib::make_figure(1900, 1200, 80);
+        matplotlib::xlabel("Time");
+        matplotlib::ylabel("Probability");
+        matplotlib::grid();
+        matplotlib::title("TC: leak_photons=" + std::to_string(g_leak));
+    }
+
     matplotlib::probs_to_plot(probs, time_vec, H.get_basis());
 
-    // Для слишком больших базисов легенда бесполезна без интерактивных графиков.
-    // Они планируются позже
-    matplotlib::legend();
-    matplotlib::show();
+    if (is_main_proc()) {
+        // Для слишком больших базисов легенда бесполезна без интерактивных графиков.
+        // Они планируются позже
+        matplotlib::legend();
+
+        matplotlib::show();
+    }
+
+    mpi::blacs_gridexit(ctxt);
+    MPI_Finalize();
 
     return 0;
 }

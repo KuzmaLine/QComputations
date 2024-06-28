@@ -90,6 +90,10 @@ Probs schrodinger(const State<Basis_State>& init_state, Hamiltonian& H, const st
         lambda.emplace_back(eigen_vectors.col(i) | init_state_vec.get_vector()); // <PHI_i|KSI(0)> 
     }
 
+    //for (size_t i = 0; i < eigen_values.size(); i++) {
+    //    std::cout << init_state_vec.get_vector()[i] << " " << lambda[i] << std::endl;
+    //}
+
     Probs probs(C_STYLE, eigen_values.size(), time_vec.size());
     size_t time_index = 0;
 

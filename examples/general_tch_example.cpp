@@ -46,7 +46,7 @@ int main(int argc, char** argv) {
 
     auto time_vec = linspace(0, 5000, 5000);
 
-    auto probs = quantum_master_equation(State<Basis_State>(state), H, time_vec);
+    auto probs = schrodinger(State<Basis_State>(state), H, time_vec);
 
     if (is_python_api) {
         matplotlib::make_figure(1900, 1000, 80);

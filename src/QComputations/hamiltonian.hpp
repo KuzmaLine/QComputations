@@ -142,8 +142,9 @@ H_by_Operator<StateType>::H_by_Operator(const State<StateType>& init_state, cons
     size_t dim = basis.size();
     H_ = Matrix<COMPLEX>(C_STYLE, dim, dim, COMPLEX(0, 0));
 
+    size_t col_state = 0;
     for (auto state: basis) {
-        size_t col_state = 0;
+        //std::cout << state->to_string() << std::endl;
         auto res_state = H_op.run(State<StateType>(*state));
 
         size_t index = 0;

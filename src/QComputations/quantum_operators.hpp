@@ -232,8 +232,8 @@ Matrix<COMPLEX> operator_to_matrix(const Operator<StateType>& op, const BasisTyp
     size_t dim = basis.size();
     Matrix<COMPLEX> A(C_STYLE, dim, dim, COMPLEX(0, 0));
 
+    size_t col_state = 0;
     for (auto state: basis) {
-        size_t col_state = 0;
         auto res_state = op.run(State<StateType>(*state));
 
         size_t index = 0;

@@ -26,7 +26,7 @@ namespace QComputations {
     // Create rho of pure state (rho = |ksi><ksi|)
     Rho create_init_rho(const std::vector<COMPLEX>& init_state);
 
-    // Solve Schrodinger equation (dont't work with leaks or gains of photons in cavities)
+    // Solve Schrodinger equation
     // Return Matrix<double> where row(i) - state(basis[i]), cols(j) - probability in time[j]
     Probs schrodinger(const State<Basis_State>& init_state, Hamiltonian& H, const std::vector<double>& time_vec);
 
