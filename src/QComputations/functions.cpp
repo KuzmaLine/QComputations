@@ -320,7 +320,7 @@ COMPLEX scalar_product(const std::vector<COMPLEX>& a, const std::vector<COMPLEX>
     int size = a.size();
     int iONE = 1;
     COMPLEX res;
-    zdotc(&res, &size, b.data(), &iONE, a.data(), &iONE);
+    zdotc(&res, &size, a.data(), &iONE, b.data(), &iONE);
 
     return res;
     /*

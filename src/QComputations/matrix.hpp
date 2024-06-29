@@ -35,14 +35,6 @@ namespace {
 enum MATRIX_STYLE { C_STYLE = 120, FORTRAN_STYLE = 121 };
 
 
-// (NEED TO MOVE TO CONFIG)
-// ########################### DEFAULT MATRIX STYLE #######################################
-
-constexpr MATRIX_STYLE DEFAULT_MATRIX_STYLE = C_STYLE;
-
-// ######################################################################################
-
-
 // (!!!) NEED CRS_MATRIX for memory optimization. sparseBLAS before working
 // ---------------------------------- class Matrix ----------------------------
 template<typename T> class Matrix {
@@ -68,7 +60,7 @@ template<typename T> class Matrix {
             matrix_style_ = A.get_matrix_style();
         }
 
-        explicit Matrix(const std::vector<std::vector<T>>& A, MATRIX_STYLE matrix_style = DEFAULT_MATRIX_STYLE);
+        explicit Matrix(const std::vector<std::vector<T>>& A, MATRIX_STYLE matrix_style);
         //explicit Matrix(const T* A);
 
         Matrix<T>& operator=(const Matrix<T>& A);
@@ -160,7 +152,7 @@ template<typename T> class Matrix {
         size_t n_;
         size_t m_;
         std::vector<T> mass_;
-        MATRIX_STYLE matrix_style_ = DEFAULT_MATRIX_STYLE;
+        MATRIX_STYLE matrix_style_;
         //int MULTIPLY_MODE = config::MULTIPLY_MODE;
 };
 

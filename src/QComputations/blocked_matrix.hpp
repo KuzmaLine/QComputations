@@ -61,12 +61,14 @@ class BLOCKED_Matrix {
         void operator-=(T num);
         BLOCKED_Matrix<T> operator/(T num) const;
 
+        /*
         std::vector<T> operator*(const std::vector<T>& A) const;
         void operator*=(const std::vector<T>& A);
         std::vector<T> operator+(const std::vector<T>& A) const;
         void operator+=(const std::vector<T>& A);
         std::vector<T> operator-(const std::vector<T>& A) const;
         void operator-=(const std::vector<T>& A);
+        */
     
         size_t local_n() const { return local_matrix_.n(); }
         size_t local_m() const { return local_matrix_.m(); }

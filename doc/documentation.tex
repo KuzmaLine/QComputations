@@ -122,14 +122,16 @@
             \begin{minted}[mathescape]{c++}
 using OpType = Operator<Some_State>;
 OpType H = OpType(some_op_1_1) * OpType(some_op_1_2) * ... * 
-           OpType(some_op_1_n) + 
+           OpType(some_op_1_n) * a_1 + 
            OpType(some_op_2_1) * OpType(some_op_2_2) * ... *
-           OpType(some_op_2_n) +
+           OpType(some_op_2_n) * a_2 +
            ...
            OpType(some_op_m_1) * OpType(some_op_m_2) * ... *
-           OpType(some_op_m_n);
+           OpType(some_op_m_n) * a_m;
             \end{minted}
         \end{mdframed}
+
+        a\_i - числа.
 
         Данный оператор передаётся в конструктор гамильтониана. Можно также использовать напрямую для прогонки конкретного состояния
          через метод \textbf{apply}, ну или неявно просто умножить на \textbf{State<StateType>}.
@@ -142,12 +144,13 @@ OpType H = OpType(some_op_1_1) * OpType(some_op_1_2) * ... *
         в главе \textbf{Описание готовых состояний, гамильтонианов и операторов}.
         Все классы гамильтонианов являются наследниками класса \textbf{Hamiltonian} (для многоядерной версии \textbf{BLOCKED\_Hamiltonian}).
         Классы родители всегда работают только с состоянием \textbf{Basis\_State}, то есть, если вы вытащите базис из гамильтониана 
-        методом \textbf{get\_basis}, вы получите \textbf{std::set<Basis\_State>}. Так сделано по причине экономии памяти и в принципе по другому унифицировать эффективно
+        методом \textbf{get\_basis}, вы получите \textbf{BasisType<Basis\_State>} (Реализация данного шаблонного класса для базиса лежит в 
+        файле state.hpp. Вкраце, по своей сути, - это мудрёный \textbf{std::set<Basis\_State>}). Так сделано по причине экономии памяти и в принципе по другому унифицировать эффективно
         чисто программно невозможно. (На данном языке уж точно)
         
         Дальнейшее моделирование инвариантно относительно всех предыдущих понятий с точки зрения реализации и классов. Поэтому, моделирование  
-        происходит с помощью отдельных функций и методов, работающие лишь с \textbf{State<Basis\_State>}, который сначала генерируется из базиса 
-        гамильтониана с помощью функции \textbf{fit\_to\_basis}, а также с \textbf{Hamiltonian}. Кастинг к \textbf{StateType} к \textbf{Basis\_State}
+        происходит с помощью отдельных функций и методов, работающие лишь с \textbf{State<Basis\_State>}, а также с \textbf{Hamiltonian}.
+        Кастинг \textbf{StateType} к \textbf{Basis\_State}
         происходит автоматически. Примеры смотреть в examples.
 
         На данный момент реализованы методы (Подробнее в главе \textbf{Методы моделирования}):
@@ -232,8 +235,6 @@ namespace {
     constexpr bool is_freq_display_default = true;
     //?????????????????????????????????
     constexpr bool is_sequence_default = false;
-    //WORKING?????
-    const std::string python_script_path_default = "seaborn_plot.py";
 }
 
 class QConfig {
@@ -347,14 +348,13 @@ class QConfig {
         В местах, где можно вставить тип \textbf{double} или \textbf{std::complex<double>}, будет написано \textbf{NumType} или \textbf{T}.
 
         \subsection{Обычная матрица Matrix<T>}
-        matrix\_style - хранения матрицы по строкам (Си стиль) или по столбцам (Фортрановский стиль). Файлы matrix.*
+        matrix\_style - хранения матрицы по строкам (Си стиль - C\_STYLE) или по столбцам (Фортрановский стиль - FORTRAN\_STYLE).
+        Файлы matrix.*
 
             \begin{mdframed}[linecolor=black, topline=true, bottomline=true,
                 leftline=false, rightline=false]
             \begin{minted}[mathescape]{c++}
 enum MATRIX_STYLE { C_STYLE = 120, FORTRAN_STYLE = 121 };
-
-QConfig????????????????????????????
 
 template<typename T> class Matrix {
     public:
@@ -396,8 +396,7 @@ template<typename T> class Matrix {
 
         // Привести матрицу вида вектора векторов к нашему
         explicit Matrix(const std::vector<std::vector<T>>& A, 
-                        MATRIX_STYLE matrix_style = 
-                        QConfig::instance().default_matrix_style());
+                        MATRIX_STYLE matrix_style);
 
         Matrix<T>& operator=(const Matrix<T>& A);
 
@@ -503,8 +502,8 @@ template<typename T> class Matrix {
         size_t n_; // Число строк
         size_t m_; // Число столбцов
         std::vector<T> mass_; // Массив с данными
-        MATRIX_STYLE matrix_style_ = DEFAULT_MATRIX_STYLE; // Стиль матрицы - 
-                                                           // по умолчанию С стиль.
+        MATRIX_STYLE matrix_style_; // Стиль матрицы - 
+                                    // по умолчанию С стиль.
 };
             \end{minted}
             \end{mdframed}
@@ -539,7 +538,8 @@ class BLOCKED_Matrix {
     public:
         explicit BLOCKED_Matrix() = default;
 
-        // ??????????????
+        // Скопировать блочную матрицу А,
+        // но с новым локальным блоком local_matrix.
         explicit BLOCKED_Matrix(const BLOCKED_Matrix<T>& A, 
                                 const Matrix<T>& local_matrix);
 
@@ -606,15 +606,6 @@ class BLOCKED_Matrix {
         BLOCKED_Matrix<T> operator-(T num) const;
         void operator-=(T num);
         BLOCKED_Matrix<T> operator/(T num) const;
-
-
-        // ???????????????????????????
-        std::vector<T> operator*(const std::vector<T>& A) const;
-        void operator*=(const std::vector<T>& A);
-        std::vector<T> operator+(const std::vector<T>& A) const;
-        void operator+=(const std::vector<T>& A);
-        std::vector<T> operator-(const std::vector<T>& A) const;
-        void operator-=(const std::vector<T>& A);
     
         // Вернуть локальный размер общего блока матрицы (число строк)
         size_t local_n() const { return local_matrix_.n(); }
@@ -719,7 +710,8 @@ class BLOCKED_Vector: public BLOCKED_Matrix<T> {
         // Распределяет вектор между процессорами (копия вектора x есть у всех)
         explicit BLOCKED_Vector(ILP_TYPE ctxt, const std::vector<T>& x);
 
-        // ??????????????????
+        // Скопировать блочный вектор x,
+        // но с новой локальной частью local_vector
         explicit BLOCKED_Vector(const BLOCKED_Vector<T>& x, 
                                 const Matrix<T>& local_vector);
 
@@ -787,7 +779,7 @@ class BLOCKED_Vector: public BLOCKED_Matrix<T> {
         \subsection{Вспомогательные функции}
         Как было сказано в введении, версия CLUSTER является расширением одноядерной версии. Некоторые алгоритмы плохо параллелятся напрямую с помощью блочного распределения, 
         например гамильтонианы маленького размера. Их вообще лучше блочно не распределять. Вместо этого, можно попытаться распределять одноядерные версии напрямую. В директории 
-        examples лежит подобный пример - <вставить имя программы>.
+        examples лежит подобный пример - \textsf{tch_gif_example.cpp}.
 
         Здесь приведены вспомогательные функции, как для ручного распараллеливания программы, так и для других целей. Реализации лежат в файлах functions.*, если не сказано иное.
 
@@ -820,7 +812,12 @@ void make_rank_map(size_t size, int rank, int world_size,
 \begin{mdframed}[linecolor=black, topline=true, bottomline=true,
     leftline=false, rightline=false]
 \begin{minted}[mathescape]{c++}
-<<вставить пример>>
+size_t start_col, count;
+make_rank_map(n, rank, p, start_col, count);
+
+for (size_t i = start_col; i < start_col + count; i++) {
+    std::cout << rank << " " << i << std::endl;
+}
 \end{minted}
 \end{mdframed}
 
@@ -914,7 +911,7 @@ std::vector<BLOCKED_Vector<COMPLEX>> blocked_matrix_to_blocked_vectors(int ctxt,
         \begin{center}\textbf{linspace - создать вектор времени (полностью аналогичен linspace в Python)}\end{center}
 
         Создаёт, собственно, вектор времени. На практике он маленького размера, особенно в сравнении с остальными абстракциями, поэтому распределять его нет никакого смысла. Замечу,
-         что результат всегда std::vector<double>.
+         что результат всегда \textbf{std::vector<double>}.
 
 \begin{mdframed}[linecolor=black, topline=true, bottomline=true,
     leftline=false, rightline=false]
@@ -926,15 +923,6 @@ std::vector<BLOCKED_Vector<COMPLEX>> blocked_matrix_to_blocked_vectors(int ctxt,
 template<typename T>
 std::vector<double> linspace(T start_in, T end_in, int num_in)
     \end{minted}
-\end{mdframed}
-
-Пример использования:
-
-\begin{mdframed}[linecolor=black, topline=true, bottomline=true,
-    leftline=false, rightline=false]
-\begin{minted}[mathescape]{c++}
-<<вставить пример>>
-\end{minted}
 \end{mdframed}
 
 \begin{center}{\textbf{E\_Matrix - создать единичную матрицу размера n}}\end{center}
@@ -949,10 +937,10 @@ Matrix<T> E_Matrix(size_t n);
     \end{minted}
 \end{mdframed}
 
-\begin{center}{\textbf{get\_elem\_from\_set - получить элемент из set по индексу.}}\end{center}
+\begin{center}{\textbf{get\_elem\_from\_basis - получить элемент из BasisType по индексу.}}\end{center}
 
         Причина данного костыля весьма банальна. Нумерация столбцов и строк в гамильтониане напрямую завязана на базисе, он же в свою очередь как-то отсортирован, 
-        и данная сортировка ВЕЗДЕ должна быть одинакова. Собственно, базис хранится в std::set. Иногда получается так, что хочется взять элемент из базиса под определённым номером или выше 
+        и данная сортировка ВЕЗДЕ должна быть одинакова. Собственно, базис хранится в \textbf{std::set}. Иногда получается так, что хочется взять элемент из базиса под определённым номером или выше 
         определённого (или ниже), в общем, нужна индексация. Базисы бывают огромные, и для того, чтобы не перебирать все, отсекая не нужные, и была сделана эта функция.
 
 \begin{mdframed}[linecolor=black, topline=true, bottomline=true,
@@ -961,18 +949,18 @@ Matrix<T> E_Matrix(size_t n);
 // st - множество элементов
 // index - индекс элемента в множестве
 
-T get_elem_from_set(const std::set<T>& st, size_t index);
+T get_elem_from_basis(const BasisType<T>& st, size_t index);
     \end{minted}
 \end{mdframed}    
 
-\begin{center}{\textbf{set\_query???????????????? - отсекает из множества элементы, не удовлетворяющие булевой функции}}\end{center}
+\begin{center}{\textbf{set\_bool\_check - отсекает из множества элементы, не удовлетворяющие булевой функции}}\end{center}
 \begin{mdframed}[linecolor=black, topline=true, bottomline=true,
     leftline=false, rightline=false]
 \begin{minted}[mathescape]{c++}
 // v - множество
 // func - булевая функция
 
-std::set<T> set_query(const std::set<T>& v, const std::function<bool(T)>& func);
+std::set<T> set_bool_check(const std::set<T>& v, const std::function<bool(T)>& func);
 \end{minted}
 \end{mdframed}  
 
@@ -983,7 +971,7 @@ std::set<T> set_query(const std::set<T>& v, const std::function<bool(T)>& func);
 \begin{mdframed}[linecolor=black, topline=true, bottomline=true,
     leftline=false, rightline=false]
 \begin{minted}[mathescape]{c++}
-// <b|a>, (a, b)
+// <a|b>, (b, a)
 double scalar_product(const std::vector<double>& a, 
                       const std::vector<double>& b); 
 COMPLEX scalar_product(const std::vector<COMPLEX>& a, 

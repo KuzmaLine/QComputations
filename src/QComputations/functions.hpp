@@ -105,7 +105,7 @@ void show_basis(const BasisType<StateType>& basis) {
     std::cout << std::endl;
 }
 
-// <b|a>, (a, b)
+// <a|b>, (b, a)
 double scalar_product(const std::vector<double>& a, const std::vector<double>& b); 
 COMPLEX scalar_product(const std::vector<COMPLEX>& a, const std::vector<COMPLEX>& b);
 
