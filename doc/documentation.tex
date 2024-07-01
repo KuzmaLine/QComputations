@@ -1071,7 +1071,7 @@ std::vector<T> f_vector(std::function<T(T)> f, const std::vector<T>& x);
 
         \subsection{Понятие БАЗОВОГО состояния Basis\_State}
         Основа всей библиотеки. Первая версия отталкивалась от понятия оператора, но на практике оно оказалось крайне непрактичным. Данная версия берёт за основу понятие состояния. 
-        Как было видно на схеме, из Basis\_State мы делаем свой StateType, а дальше всё исходит напрямую из него.
+        Как было видно на схеме, из \textbf{Basis\_State} мы делаем свой \textbf{StateType}, а дальше всё исходит напрямую из него.
 
 \begin{mdframed}[linecolor=black, topline=true, bottomline=true,
     leftline=false, rightline=false]
@@ -1161,11 +1161,13 @@ class Basis_State {
         Basis_State get_group(size_t group_id) const;
 
         // Конвертировать состояние в строку
-        std::string to_string() const;
-        // (Исправить!!!!!!!!)
+        // Перегружаемый метод (виртуальный)
+        virtual std::string to_string() const;
+
         // Выдаст ошибку, если состояния различаются по группам или по максимальным значениям кудитов
         bool operator==(const Basis_State& other);
-        bool operator<(const Basis_State& other);
+        // Оператор сравнения можно перегрузить
+        virtual bool operator<(const Basis_State& other);
         
         // Поменять максимальное значение кудита
         void set_max_val(ValType val, size_t qudit_index, size_t group_id = 0);
@@ -1190,7 +1192,28 @@ class Basis_State {
 \end{mdframed}
         \subsection{Понятие состояния State<StateType>}
 
-        Basis\_State это базисное состояние, в нём нет никакой суперпозиции. StateType - аналогично. State<StateType> же представляет собой привычное понятие состояния $|\Psi\rangle$
+        \textbf{Basis\_State} это базисное состояние, в нём нет никакой суперпозиции.
+        \textbf{StateType} - аналогично. \textbf{State<StateType>} же представляет собой привычное понятие состояния $|\Psi\rangle$
+
+        Также важным моментом являются 2 виртуальных метода: to_string и оператор сравнения.
+        \begin{enumerate}
+        \item{Перегрузка to_string несёт исключительно косметический эффект, несмотря на то, что сортировка \textbf{Basis\_State} сделана с помощью собственно метода to_string.}
+        \item{Перегрузка же оператора сравнения переделывает сортировку состояний.}
+        \end{enumerate}
+
+        Методы являются виртуальными, поэтому при переходе от \textbf{BasisType<StateType>} к \textbf{BasisType<Basis\_State>} перегруженные методы сохраняются.
+        Пример перегрузки методов продемонстрирован, например, в примере \textsf{realization_tch_example.cpp}.
+
+        \subsection{Тип базиса. \textbf{BasisType<StateType>}}
+
+        Тип сделан специально для большей гибкости в создании собственных состояний. Данной версией не подразумевается, что пользователь будет работать с состояниями напрямую из этого базиса.
+
+\begin{mdframed}[linecolor=black, topline=true, bottomline=true,
+    leftline=false, rightline=false]
+\begin{minted}[mathescape]{c++}
+
+\end{minted}
+\end{mdframed}
 
 \begin{mdframed}[linecolor=black, topline=true, bottomline=true,
     leftline=false, rightline=false]
