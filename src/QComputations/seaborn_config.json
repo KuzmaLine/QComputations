@@ -1,0 +1,9 @@
+{
+    "format": "gif",
+    "filename": "tc_gif.gif",
+    "width": "19",
+    "height": "10",
+    "dirs": "amplitude*",
+    "frames": "500",
+    "interval": "100"
+}
