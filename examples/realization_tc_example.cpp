@@ -153,8 +153,8 @@ int main(int argc, char** argv) {
     std::cout << "h = " << h << " w = " << w << std::endl;
 
     TC_State state(2);
-    state.set_max_photons(250);
-    state.set_n(250);
+    state.set_max_photons(1);
+    state.set_n(1);
     state.set_leak(0.01);
 
     std::cout << "Вывод состояния: " << state.to_string() << std::endl;
@@ -162,9 +162,9 @@ int main(int argc, char** argv) {
     // -------------------------------------
     // Пример создания собственного класса гамильтониана
     // Дальше в этом примере не используется.
-    //H_TC H_tc(state);
+    H_TC H_tc(state);
 
-    //H_tc.show();
+    H_tc.show();
 
     // ------------------------------------
 
@@ -172,7 +172,7 @@ int main(int argc, char** argv) {
 
     auto res = H_op.run(State<TC_State>(state));
 
-    //std::cout << "Вывод состояния: " << res.to_string() << std::endl;
+    std::cout << "Вывод состояния: " << res.to_string() << std::endl;
 
     TC_State one_zero("|0;1;0>");
     TC_State zero_one("|0;0;1>");
@@ -181,9 +181,9 @@ int main(int argc, char** argv) {
     st -= zero_one;
     st.normalize();
 
-    //auto dark_res = H_op.run(State<TC_State>(st));
+    auto dark_res = H_op.run(State<TC_State>(st));
 
-    //std::cout << "Вывод состояния: " << dark_res.to_string() << std::endl;
+    std::cout << "Вывод состояния: " << dark_res.to_string() << std::endl;
 
     std::vector<std::pair<double, OpType>> dec;
     OpType A_out(a_destroy);
@@ -204,13 +204,7 @@ int main(int argc, char** argv) {
 
     auto time_vec = linspace(0, 1000, 1000);
 
-    auto start = std::chrono::steady_clock::now();
     auto probs = quantum_master_equation(state, H, time_vec);
-    auto end = std::chrono::steady_clock::now();
-
-    auto elapsed_ms = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
-
-    std::cout << elapsed_ms.count() << std::endl;
 
     matplotlib::make_figure(1200, 800, 80);
     matplotlib::xlabel("Time");
