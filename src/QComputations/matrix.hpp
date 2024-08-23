@@ -106,7 +106,7 @@ template<typename T> class Matrix {
         Matrix<T> transpose() const;
         Matrix<T> hermit() const;
         double determinant() const; // not ready
-        void show(size_t width = 10) const;
+        void show(size_t width = QConfig::instance().width()) const;
     
         // (!!!) work only with C style
         T* operator[](size_t index_row) { return mass_.data() + index_row * m_; }; 
