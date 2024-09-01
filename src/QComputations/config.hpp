@@ -26,6 +26,7 @@ namespace {
 
     const std::string python_script_path_default = "seaborn_plot.py";
     constexpr FUNCTION_QME qme_algorithm_default = RUNGE_KUTT_2;
+    constexpr size_t exp_accuracy_default = 10;
 }
 
 class QConfig {
@@ -52,6 +53,7 @@ class QConfig {
         void set_csv_max_number_size(int csv_max_number_size) { csv_max_number_size_ = csv_max_number_size; }
         void set_csv_num_accuracy(int csv_num_accuracy) { csv_num_accuracy_ = csv_num_accuracy; }
         void set_qme_algorithm(const FUNCTION_QME alg) { qme_algorithm_ = alg;}
+        void set_exp_accuracy(const size_t exp_accuracy) { exp_accuracy_ = exp_accuracy; }
 
         double h() const { return h_; }
         int max_photons() const { return max_photons_; }
@@ -69,6 +71,7 @@ class QConfig {
         int csv_num_accuracy() const { return csv_num_accuracy_; }
         std::string python_script_path() const { return python_script_path_; }
         FUNCTION_QME qme_algorithm() const { return qme_algorithm_;}
+        size_t exp_accuracy() const { return exp_accuracy_; }
 
         void show() const {
             std::cout << "CONFIG PARAMS: " << std::endl;
@@ -104,6 +107,8 @@ class QConfig {
         double h_ = h_default;
         double w_ = w_default;
         double g_ = g_default;
+        
+        size_t exp_accuracy_ = exp_accuracy_default;
 
         std::string python_script_path_ = python_script_path_default;
         FUNCTION_QME qme_algorithm_ = qme_algorithm_default;

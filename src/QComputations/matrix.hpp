@@ -515,6 +515,22 @@ void Matrix<T>::show(size_t width) const {
 
 /*-------------------------- FUNCTIONS -------------------- */
 
+template<typename T>
+Matrix<T> exp(const Matrix<T>& A, double t, COMPLEX arg = COMPLEX(1, 0), int EXP_ACCURACY = QConfig::instance().exp_accuracy()) {
+    auto RES = E_Matrix<COMPLEX>(A.n());
+    auto B = RES;
+    int coef = 1;
+    double x = 1;
+
+    for (size_t i = 1; i <= EXP_ACCURACY; i++) {
+        coef *= i;
+        B *= A;
+        x *= t;
+        RES += B * x / coef;
+    }
+
+    return RES;
+}
 
 template<typename T>
 void optimized_multiply(const Matrix<T>& A, const Matrix<T>& B, Matrix<T>& C,

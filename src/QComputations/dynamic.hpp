@@ -52,6 +52,8 @@ namespace QComputations {
     std::pair<Probs, BasisType<Basis_State>> probs_to_cavity_probs(const Probs& probs,
                                             const BasisType<Basis_State>& basis, size_t cavity_id);
 
+    Probs exp_evolution(const State<Basis_State>& init_state, Hamiltonian& H, const std::vector<double>& time_vec);
+
 #ifdef ENABLE_MPI
 #ifdef ENABLE_CLUSTER
     using BLOCKED_Probs = BLOCKED_Matrix<double>;

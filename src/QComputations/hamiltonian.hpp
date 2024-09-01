@@ -14,6 +14,7 @@ namespace QComputations {
 
 namespace {
     typedef std::complex<double> COMPLEX;
+    constexpr ZERO_EPS = 1e-32;
 }
 
 std::set<TCH_State> define_basis_of_hamiltonian(const TCH_State& grid);
@@ -48,6 +49,22 @@ class Hamiltonian {
             return eigenvectors_;
         }
 
+        void find_exp(double dt) {
+            if (std::abs(dt - dt_exp_) >= ZERO_EPS) {
+                H_EXP_ = exp(H_, dt, COMPLEX(0, -i/QConfig::instance().h()));
+            }
+        }
+
+        State<Basis_State> run_exp(const State<Basis_State>& state) {
+            auto res = state;
+            res.set_vector(H_EXP_ * state.get_vector());
+            return res;
+        }
+
+        std::vector<COMPLEX> run_exp(const std::vector<COMPLEX>& state) {
+            return H_EXP_ * state;
+        }
+
         void show(size_t width = QConfig::instance().width()) const { H_.show(width); }
         Matrix<COMPLEX> get_matrix() const { return H_; }
 
@@ -60,6 +77,8 @@ class Hamiltonian {
         std::vector<double> eigenvalues_;
         std::vector<std::pair<double, Matrix<COMPLEX>>> decoherence_;
         TCH_State grid_;
+        Matrix<COMPLEX> H_EXP_;
+        double dt_exp_ = 0;
 };
 
 template<typename StateType>

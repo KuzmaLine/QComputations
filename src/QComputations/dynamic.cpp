@@ -30,6 +30,25 @@ Rho create_init_rho(const std::vector<COMPLEX>& init_state) {
     return rho;
 }
 
+Probs exp_evolution(const State<Basis_State>& init_state, Hamiltonian& H, double dt, size_t STEPS_COUNT) {
+    H.find_exp(dt);
+    Probs res(C_STYLE, init_state.size(), STEPS_COUNT + 1);
+    auto state = init_state.get_vector();
+
+    for (size_t i = 0; i < init_state.size(); i++) {
+        res[i][0] = state[i] * std::conj(state[i]);
+    }
+
+    for (size_t i = 1; i <= STEPS_COUNT; i++) {
+        state = H.run_exp(state);
+
+        for (size_t j = 0; j < state.size(); j++) {
+            res[j][i + 1] = state[i] * std::conj(state[i])
+        }
+    }
+
+    return res;
+}
 
 
 Probs schrodinger(const State<Basis_State>& init_state, Hamiltonian& H, const std::vector<double>& time_vec) {
