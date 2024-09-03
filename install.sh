@@ -1,5 +1,7 @@
 #!/usr/bin/bash
 
+./clean_install.sh
+
 ./install_headers.sh $1
 
 ./update_plot_script.sh $1
