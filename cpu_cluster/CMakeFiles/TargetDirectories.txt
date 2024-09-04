@@ -1,4 +1,0 @@
-/home/kuzmaline/Quantum/QComputations/cpu_cluster/CMakeFiles/QComputations_CPU_CLUSTER.dir
-/home/kuzmaline/Quantum/QComputations/cpu_cluster/CMakeFiles/QComputations_CPU_CLUSTER_NO_PLOTS.dir
-/home/kuzmaline/Quantum/QComputations/cpu_cluster/CMakeFiles/edit_cache.dir
-/home/kuzmaline/Quantum/QComputations/cpu_cluster/CMakeFiles/rebuild_cache.dir
