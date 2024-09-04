@@ -1,9 +1,11 @@
 {
-    "format": "gif",
-    "filename": "tc_gif.gif",
+    "format": "png",
+    "filename": "res.png",
     "width": "19",
     "height": "10",
-    "dirs": "amplitude*",
+    "dirs": "*",
+    "xlabel": "Время",
+    "ylabel": "Вероятность",
     "frames": "500",
     "interval": "100"
 }
