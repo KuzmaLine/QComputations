@@ -252,7 +252,7 @@ class State {
 
         State(const StateType& state, const BasisType<StateType>& basis) {
             for (auto st: basis) {
-                state_components_.insert(std::shared_ptr<StateType>(new StateType(st)));
+                state_components_.insert(std::shared_ptr<StateType>(new StateType(*st)));
 
                 if (*st == state) {
                     state_vec_.emplace_back(1, 0);
