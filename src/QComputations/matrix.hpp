@@ -96,6 +96,7 @@ template<typename T> class Matrix {
 
         Matrix<T>& operator+=(const Matrix<T>& A);
         Matrix<T>& operator-=(const Matrix<T>& A);
+        Matrix<T>& operator*=(const Matrix<T>& A);
 
         bool operator==(const Matrix<T>& A) const;
 
@@ -513,19 +514,36 @@ void Matrix<T>::show(size_t width) const {
     std::cout << std::endl;
 }
 
+template<>
+Matrix<COMPLEX>& Matrix<COMPLEX>::operator*=(const Matrix<COMPLEX>& A);
+
+template<>
+Matrix<double>& Matrix<double>::operator*=(const Matrix<double>& A);
+
 /*-------------------------- FUNCTIONS -------------------- */
 
 template<typename T>
+Matrix<T> E_Matrix(size_t n) {
+    Matrix<T> E(C_STYLE, n, n, COMPLEX(0));
+
+    for (size_t i = 0; i < n; i++) {
+        E[i][i] = T(1);
+    }
+
+    return E;
+}
+
+template<typename T>
 Matrix<T> exp(const Matrix<T>& A, double t, COMPLEX arg = COMPLEX(1, 0), int EXP_ACCURACY = QConfig::instance().exp_accuracy()) {
-    auto RES = E_Matrix<COMPLEX>(A.n());
-    auto B = RES;
+    Matrix<T> RES = E_Matrix<COMPLEX>(A.n());
+    Matrix<T> B = RES;
     int coef = 1;
-    double x = 1;
+    COMPLEX x = 1;
 
     for (size_t i = 1; i <= EXP_ACCURACY; i++) {
         coef *= i;
         B *= A;
-        x *= t;
+        x *= t * arg;
         RES += B * x / coef;
     }
 

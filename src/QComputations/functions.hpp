@@ -141,17 +141,6 @@ T read_number(const std::string& str, size_t& start_index) {
 }
 
 template<typename T>
-Matrix<T> E_Matrix(size_t n) {
-    Matrix<T> E(C_STYLE, n, n, 0);
-
-    for (size_t i = 0; i < n; i++) {
-        E[i][i] = T(1);
-    }
-
-    return E;
-}
-
-template<typename T>
 Matrix<T> tensor_multiply(const Matrix<T>& A, const Matrix<T>& B) {
     auto n = A.size() * B.size();
     Matrix<T> C(C_STYLE, n, n, 0);

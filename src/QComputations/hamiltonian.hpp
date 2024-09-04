@@ -14,7 +14,7 @@ namespace QComputations {
 
 namespace {
     typedef std::complex<double> COMPLEX;
-    constexpr ZERO_EPS = 1e-32;
+    constexpr double ZERO_EPS = 1e-32;
 }
 
 std::set<TCH_State> define_basis_of_hamiltonian(const TCH_State& grid);
@@ -51,7 +51,7 @@ class Hamiltonian {
 
         void find_exp(double dt) {
             if (std::abs(dt - dt_exp_) >= ZERO_EPS) {
-                H_EXP_ = exp(H_, dt, COMPLEX(0, -i/QConfig::instance().h()));
+                H_EXP_ = exp(H_, dt, COMPLEX(0, -1/QConfig::instance().h()));
             }
         }
 

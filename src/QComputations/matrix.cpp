@@ -32,6 +32,22 @@ Matrix<double> Matrix<double>::operator* (const Matrix<double>& A) const {
 }
 
 template<>
+Matrix<double>& Matrix<double>::operator*=(const Matrix<double>& A) {
+    assert(m_ == A.n_);
+
+    double alpha = 1.0;
+    double betta = 0.0;
+
+    auto type = CblasRowMajor;
+    if (!(this->is_c_style())) type = CblasColMajor;
+    cblas_dgemm(type, CblasNoTrans, CblasNoTrans,
+                n_, A.m_, m_, alpha, mass_.data(),
+                this->LD(), A.mass_.data(), A.LD(), betta, mass_.data(), this->LD());
+
+    return *this;
+}
+
+template<>
 Matrix<int> Matrix<int>::operator* (const Matrix<int>& A) const {
     Matrix<double> tmp_A(A);
     Matrix<double> tmp_this(*this);
@@ -56,6 +72,22 @@ Matrix<COMPLEX> Matrix<COMPLEX>::operator* (const Matrix<COMPLEX>& A) const {
                 this->LD(), A.mass_.data(), A.LD(), &betta,
                 res.mass_.data(), res.LD());
     return res;
+}
+
+template<>
+Matrix<COMPLEX>& Matrix<COMPLEX>::operator*=(const Matrix<COMPLEX>& A) {
+    assert(m_ == A.n_);
+
+    COMPLEX alpha(1, 0);
+    COMPLEX betta(0, 0);
+
+    auto type = CblasRowMajor;
+    if (!(this->is_c_style())) type = CblasColMajor;
+    cblas_zgemm(type, CblasNoTrans, CblasNoTrans,
+                n_, A.m_, m_, &alpha, mass_.data(),
+                this->LD(), A.mass_.data(), A.LD(), &betta,
+                mass_.data(), this->LD());
+    return *this;
 }
 
 

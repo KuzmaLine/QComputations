@@ -89,4 +89,45 @@ namespace QComputations {
 #endif
 #endif
 
+    template<typename StateType>
+    State<StateType> schrodinger_step(const State<StateType>& init_state, Hamiltonian& H, double t, const BasisType<StateType>& basis) {
+        std::vector<double> eigen_values;
+        Matrix<COMPLEX> eigen_vectors;
+        eigen_values = H.eigenvalues();
+        eigen_vectors = H.eigenvectors();
+
+        auto init_state_vec = init_state.fit_to_basis(basis);
+        std::vector<COMPLEX> lambda;
+        for (size_t i = 0; i < eigen_values.size(); i++) {
+            lambda.emplace_back(eigen_vectors.col(i) | init_state_vec.get_vector()); // <PHI_i|KSI(0)> 
+        }
+
+        std::vector<COMPLEX> psi_t(eigen_values.size(), 0);
+        auto h = QConfig::instance().h();
+
+        for (size_t i = 0; i < eigen_values.size(); i++) {
+            for (size_t j = 0; j < psi_t.size(); j++) {
+                psi_t[j] += lambda[i] * std::exp(COMPLEX(0, -1 / h * eigen_values[i] * t)) * eigen_vectors[j][i];
+            }
+        }
+
+        //std::cout << norm(psi_t) << std::endl;
+
+        for (size_t i = 0; i < eigen_values.size(); i++) {
+            init_state_vec[i] = psi_t[i];
+        }
+
+        return init_state_vec;
+    }
+
+    template<typename StateType>
+    State<StateType> exp_evolution_step(const State<StateType>& init_state, Hamiltonian& H, double dt, const BasisType<StateType>& basis) {
+        H.find_exp(dt);
+
+        auto res = init_state.fit_to_basis(basis);
+        auto res_v = H.run_exp(res.get_vector());
+        res.set_vector(res_v);
+        return res;
+    }
+
 } // namespace QComputations
