@@ -243,9 +243,9 @@ class State {
     public:
         explicit State() = default;
         State(const State<StateType>& state) = default;
-        State(const StateType& state) {
+        State(const StateType& state, COMPLEX c = COMPLEX(1, 0)) {
             if (!state.is_empty()) {
-                state_vec_.emplace_back(1, 0);
+                state_vec_.emplace_back(c);
                 state_components_.insert(std::shared_ptr<StateType>(new StateType(state)));
             }
         }

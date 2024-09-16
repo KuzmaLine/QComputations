@@ -142,30 +142,20 @@ BLOCKED_H_by_Scalar_Product<StateType>::BLOCKED_H_by_Scalar_Product(ILP_TYPE ctx
     if (basis.empty()) {
         auto zero_state = init_state(0);
         zero_state->set_zero();
-        basis_.insert(std::shared_ptr<StateType>(new StateType(*zero_state)));
+        basis.insert(std::shared_ptr<StateType>(new StateType(*zero_state)));
 
         StateType cur_state = *zero_state;
 
-        // useless 0 qudit!!
-        assert(cur_state.get_max_val(0) > 0);
+        for (size_t i = 0; i < cur_state.qudits_count(); i++) {
+            if (cur_state.get_max_val(i) > cur_state.get_qudit(i)) {
+                cur_state.set_qudit(cur_state.get_qudit(i) + 1, i);
+                basis.insert(std::shared_ptr<StateType>(new StateType(cur_state)));
 
-        cur_state.set_qudit(1, 0);
-
-        bool is_added = true;
-        while(is_added) {
-            basis.insert(std::shared_ptr<StateType>(new StateType(cur_state)));
-            is_added = false;
-
-            for (size_t i = 0; i < cur_state.qudits_count() and !is_added; i++) {
-                if (cur_state.get_max_val(i) > cur_state.get_qudit(i)) {
-                    cur_state.set_qudit(cur_state.get_qudit(i) + 1, i);
-
-                    for (size_t j = i; j != 0; j--) {
-                        cur_state.set_qudit(0, j - 1);
-                    }
-
-                    is_added = true;
+                for (size_t j = i - 1; j >= 0; j--) {
+                    cur_state.set_qudit(0, j);
                 }
+
+                i = 0;
             }
         }
     }
