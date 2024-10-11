@@ -14,20 +14,21 @@ from joblib import Parallel, delayed
 from joblib import parallel_backend
 import imageio
 
+json_file = os.environ.get('SEABORN_CONFIG')
+
+with open(json_file) as json_data:
+    config = json.load(json_data)
+
 def read_files(dir):
     time_vec = pd.read_csv("./" + dir + "/time.csv", header=None).to_numpy().squeeze().tolist()
     basis = pd.read_csv("./" + dir + "/basis.csv", header=None).to_numpy().squeeze().tolist()
     probs = pd.read_csv("./" + dir + "/probs.csv", header=None)
 
     probs.index=time_vec
-    probs.columns = basis
+    if (config.get("enable_legend")):
+        probs.columns = basis
 
     return probs
-
-json_file = os.environ.get('SEABORN_CONFIG')
-
-with open(json_file) as json_data:
-    config = json.load(json_data)
 
 format = config.get("format")
 if (format == "gif"):
@@ -42,7 +43,6 @@ if (format == "gif"):
             dir_list.append(str(p))
 
     dir_list.sort()
-    probs = read_files(dir_list[0])
 
     def save_frame(filename, frame_data):
         fig = plt.figure(figsize=(int(config.get("width")), int(config.get("height"))))
@@ -51,6 +51,8 @@ if (format == "gif"):
         plt.xlabel(config.get("xlabel"))
         plt.ylabel(config.get("ylabel"))
         plt.legend(loc='upper right')
+        if (config.get("is_y_lim") == "True"):
+            plt.ylim([float(config.get("ylim_bottom")), float(config.get("ylim_top"))])
         plt.grid()
         plt.savefig(filename)
         plt.close(fig)
@@ -78,7 +80,6 @@ elif (format == "ready_gif"):
 
     images = Parallel(n_jobs=-1)(delayed(imageio.imread)(f"{dir_path}") for dir_path in dir_list)
 
-    print("HERE")
     imageio.mimsave(config.get("filename"), images)
 
     for dir_path in dir_list:
@@ -96,7 +97,9 @@ else:
     dir_list.sort()
 
     def process_directory(dir):
+        print(dir + " in process!")
         probs = read_files(dir)
+        print(dir + " files readed!")
 
         fig = plt.figure(figsize=(int(config.get("width")), int(config.get("height"))))
         sns.lineplot(data=probs)
@@ -104,9 +107,13 @@ else:
         #plt.xlabel("Time (6.626 * 10^(-34) seconds)")
         plt.xlabel(config.get("xlabel"))
         plt.ylabel(config.get("ylabel"))
+        if (config.get("is_y_lim") == "True"):
+            plt.ylim([float(config.get("ylim_bottom")), float(config.get("ylim_top"))])
         plt.grid()
         plt.savefig(dir + ".png", format=config.get("format"))
         plt.close(fig)
+
+        print(dir + " is finished!")
 
     # Распараллеливаем цикл по всем директориям
     Parallel(n_jobs=-1)(delayed(process_directory)(dir) for dir in dir_list)
