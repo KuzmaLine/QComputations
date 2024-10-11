@@ -6,6 +6,10 @@
     "dirs": "*",
     "xlabel": "Время",
     "ylabel": "Вероятность",
+    "is_y_lim": "False",
+    "ylim_top": "1.05",
+    "ylim_bottom": "-0.05",
     "frames": "500",
-    "interval": "100"
+    "interval": "100",
+    "enable_legend": "True"
 }
