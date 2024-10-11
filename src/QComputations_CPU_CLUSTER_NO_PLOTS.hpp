@@ -10,7 +10,6 @@
 #pragma once
 #include "QComputations/functions.hpp"
 #include "QComputations/matrix.hpp"
-#include "QComputations/csr_matrix.hpp"
 #include "QComputations/hamiltonian.hpp"
 #include "QComputations/state.hpp"
 #include "QComputations/config.hpp"
