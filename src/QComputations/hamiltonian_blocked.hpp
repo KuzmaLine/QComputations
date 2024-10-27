@@ -196,6 +196,11 @@ class BLOCKED_H_TCH : public BLOCKED_H_by_Operator<TCH_State> {
         explicit BLOCKED_H_TCH(ILP_TYPE ctxt, const State<TCH_State>& state);
 };
 
+class BLOCKED_H_by_BLOCKED_Matrix : public BLOCKED_Hamiltonian {
+    public:
+        explicit BLOCKED_H_by_BLOCKED_Matrix(const BLOCKED_Matrix<COMPLEX>& H);
+};
+
 } // namespace QComputations
 
 #endif

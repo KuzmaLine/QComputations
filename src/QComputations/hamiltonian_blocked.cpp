@@ -58,6 +58,13 @@ namespace {
 BLOCKED_H_TCH::BLOCKED_H_TCH(ILP_TYPE ctxt, const State<TCH_State>& state):
                         BLOCKED_H_by_Operator<TCH_State>(ctxt, state, H_TCH_OP(), decs(state)) {}
 
+
+
+BLOCKED_H_by_BLOCKED_Matrix::BLOCKED_H_by_BLOCKED_Matrix(const BLOCKED_Matrix<COMPLEX>& H) {
+    H_ = H;
+}
+
+
 } // namespace QComputations
 
 #endif
