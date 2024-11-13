@@ -5,14 +5,15 @@
 #include "blocked_matrix.hpp"
 #include <fstream>
 #include <mkl_scalapack.h>
+#include <mkl_pblas.h>
 
 namespace QComputations {
 
 extern "C" {
-    void pztranu(ILP_TYPE*, ILP_TYPE*, const COMPLEX*, const COMPLEX*, ILP_TYPE*, ILP_TYPE*,
-                 ILP_TYPE*, COMPLEX*, COMPLEX*, ILP_TYPE*, ILP_TYPE*, ILP_TYPE*);
-    void pdtran(ILP_TYPE*, ILP_TYPE*, const double*, const double*, ILP_TYPE*, ILP_TYPE*,
-                ILP_TYPE*, double*, double*, ILP_TYPE*, ILP_TYPE*, ILP_TYPE*);
+    //void pztranu(ILP_TYPE*, ILP_TYPE*, const COMPLEX*, const COMPLEX*, ILP_TYPE*, ILP_TYPE*,
+    //             ILP_TYPE*, COMPLEX*, COMPLEX*, ILP_TYPE*, ILP_TYPE*, ILP_TYPE*);
+    //void pdtran(ILP_TYPE*, ILP_TYPE*, const double*, const double*, ILP_TYPE*, ILP_TYPE*,
+    //            ILP_TYPE*, double*, double*, ILP_TYPE*, ILP_TYPE*, ILP_TYPE*);
 }
 
 namespace {
@@ -151,7 +152,7 @@ BLOCKED_Matrix<COMPLEX> BLOCKED_Matrix<COMPLEX>::hermit() const {
         ILP_TYPE iONE = 1;
         ILP_TYPE m = m_, n = n_;
 
-        pztranu(&m, &n, &alpha, this->data(),
+        pztranc(&m, &n, &alpha, this->data(),
                 &iONE, &iONE, (this->desc()).data(),
                 &betta, A.data(), &iONE, &iONE, A.desc().data());
 

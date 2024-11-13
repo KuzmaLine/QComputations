@@ -339,6 +339,7 @@ void mpi::init_grid(ILP_TYPE& ctxt, ILP_TYPE proc_rows, ILP_TYPE proc_cols) {
         assert(proc_rows * proc_cols == world_size);
     }
 
+
     blacs_pinfo(&myid, &numproc);
     ILP_TYPE iMINUS = -1;
     blacs_get(&iMINUS, &iZERO, &ctxt);
