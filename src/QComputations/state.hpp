@@ -109,6 +109,7 @@ class Basis_State {
         Basis_State get_group(size_t group_id) const;
         void set_group(size_t group_id, const std::string& group_state, size_t index_start = 0);
 
+        virtual std::string group_to_string(size_t group_id) const;
         virtual std::string to_string() const;
         virtual bool operator==(const Basis_State& other) const { assert(max_vals_ == other.max_vals_ and groups_ == other.groups_); return qudits_ == other.qudits_; }
         virtual bool operator<(const Basis_State& other) const { return this->to_string() > other.to_string(); }
@@ -275,6 +276,13 @@ class State {
 
             return res;
         }
+
+        // Работает не типично. Возвращает other, если this не пустое
+        State<StateType> operator*(const State<StateType>& other) const { 
+            return (this->is_empty() ? State<StateType>() : other);  
+        }
+
+        bool is_empty() const { return state_vec_.size() == 0; }
 
         void operator*=(const COMPLEX& c) {
             for (auto& st: this->state_vec_) {

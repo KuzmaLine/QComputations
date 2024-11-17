@@ -142,28 +142,26 @@ void Basis_State::set_group(size_t group_id, const std::string& group_state, siz
     }
 }
 
-std::string Basis_State::to_string() const {
+std::string Basis_State::group_to_string(size_t group_id) const {
     std::string state_delim = state_delimeter;
 
     std::string res;
 
-    size_t next_end = 0;
-    size_t group_id = 0;
-    size_t next_start = 0;
-    for (size_t i = 0; i < qudits_.size(); i++) {
-        if (i == next_start) {
-            next_end = groups_[group_id++];
-            next_start = next_end + 1;
-            res += "|";
-        }
+    for (size_t i = this->get_group_start(group_id); i <= this->get_group_end(group_id); i++) {
+        res += state_delimeter + std::to_string(qudits_[i]);
+    }
 
-        res += std::to_string(qudits_[i]);
+    res[0] = '|';
+    res += ">";
 
-        if (i == next_end) {
-            res += ">";
-        } else {
-            res += state_delim;
-        }
+    return res;
+}
+
+std::string Basis_State::to_string() const {
+    std::string res;
+
+    for (size_t i = 0; i < this->get_groups_count(); i++) {
+        res += this->group_to_string(i);
     }
 
     return res;
