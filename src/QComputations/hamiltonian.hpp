@@ -166,7 +166,7 @@ H_by_Scalar_Product<StateType>::H_by_Scalar_Product(const State<StateType>& init
 
 class H_TCH : public H_by_Operator<TCH_State> {
     public:
-        explicit H_TCH(const State<TCH_State>& state);
+        explicit H_TCH(const State<TCH_State>& state, const std::vector<std::pair<double, Operator<TCH_State>>>& dec);
 };
 
 } // namespace QComputations

@@ -6,6 +6,7 @@
 #include <iterator>
 #include <cassert>
 #include <iomanip>
+#define MKL_Complex16 std::complex<double>
 #include <mkl_lapack.h>
 #include <mkl_lapacke.h>
 #include <functional>

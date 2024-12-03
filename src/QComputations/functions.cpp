@@ -256,7 +256,7 @@ Matrix<COMPLEX> FROM_lapack_complex_double_TO_Matrix(lapack_complex_double* A, l
 
     for (size_t i = 0; i < n; i++) {
         for (size_t j = 0; j < m; j++) {
-            COMPLEX tmp(A[i * m + j].real, A[i * m + j].imag);
+            COMPLEX tmp(A[i * m + j].real(), A[i * m + j].imag());
             res[i][j] = tmp;
         }
     }

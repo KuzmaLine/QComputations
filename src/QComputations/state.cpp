@@ -275,9 +275,19 @@ namespace {
 
         return groups;
     }
+
+    std::vector<size_t> add_one(const std::vector<size_t>& grid_config) {
+        std::vector<size_t> res;
+
+        for (const auto& qubits_count: grid_config) {
+            res.emplace_back(qubits_count + 1);
+        }
+
+        return res;
+    }
 }
 
-TCH_State::TCH_State(const std::vector<size_t>& grid_config): Basis_State(vector_sum(grid_config) + grid_config.size(), 1, che_groups_from_grid_config(grid_config)),
+TCH_State::TCH_State(const std::vector<size_t>& grid_config): Basis_State(vector_sum(grid_config) + grid_config.size(), 1, add_one(grid_config)),
                                                               gamma_leak_cavities_(grid_config.size(), 0),
                                                               gamma_gain_cavities_(grid_config.size(), 0),
                                                               waveguides_(C_STYLE, grid_config.size(),

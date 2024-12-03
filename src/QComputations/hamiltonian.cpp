@@ -490,11 +490,11 @@ namespace {
         return my_H;
     }
     
-    std::vector<std::pair<double, Operator<TCH_State>>> decs(const State<TCH_State>& state) {
+    std::vector<std::pair<double, Operator<TCH_State>>> decs(const State<TCH_State>& state,
+                                                             std::vector<std::pair<double, Operator<TCH_State>>> dec) {
         using OpType = Operator<TCH_State>;
 
         auto st = *(state.get_state_components().begin());
-        std::vector<std::pair<double, OpType>> dec;
 
         for (size_t i = 0; i < st->cavities_count(); i++) {
             if (!is_zero(st->get_leak_gamma(i))) {
@@ -522,7 +522,7 @@ namespace {
     }
 }
 
-H_TCH::H_TCH(const State<TCH_State>& state):
-                       H_by_Operator<TCH_State>(state, H_TCH_OP(), decs(state)) {}
+H_TCH::H_TCH(const State<TCH_State>& state, const std::vector<std::pair<double, Operator<TCH_State>>>& dec):
+                       H_by_Operator<TCH_State>(state, H_TCH_OP(), decs(state, dec)) {}
 
 } // namespace QComputations
