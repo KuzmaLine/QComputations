@@ -83,10 +83,16 @@ class Basis_State {
         explicit Basis_State(const std::string& qudits, const std::vector<ValType>& max_vals);
 
         void set_state(const std::string& str_state);
-        void set_qudit(ValType val, size_t qudit_index, size_t group_id = 0) { assert(val <= max_vals_[qudit_index]);
-                                    qudits_[this->get_group_start(group_id) + qudit_index] = val;}
-        void set_atom(ValType val, size_t atom_index, size_t group_id) { this->set_qudit(val, atom_index  + 1, group_id); }
-        ValType get_qudit(size_t qudit_index, size_t group_id = 0) const { return qudits_[this->get_group_start(group_id) + qudit_index]; }
+        void set_qudit(ValType val, size_t qudit_index, size_t group_id = 0) {
+            assert(qudit_index < this->get_group_size(group_id));
+            assert(val <= max_vals_[qudit_index]);
+            qudits_[this->get_group_start(group_id) + qudit_index] = val;
+        }
+        void set_atom(ValType val, size_t atom_index, size_t group_id) { this->set_qudit(val, atom_index + 1, group_id); }
+        ValType get_qudit(size_t qudit_index, size_t group_id = 0) const {
+            assert(qudit_index < this->get_group_size(group_id));
+            return qudits_[this->get_group_start(group_id) + qudit_index];
+        }
         void append_qudit(ValType init_val = 0, ValType max_val = 1) { groups_.emplace_back(qudits_.size());
                                                                     qudits_.emplace_back(init_val);
                                                                     max_vals_.emplace_back(max_val);}
@@ -98,12 +104,18 @@ class Basis_State {
         size_t qudits_count() const { return qudits_.size();}
 
         std::vector<size_t> get_groups() const { return groups_; }
-        size_t get_group_start(size_t group_id) const { return ((group_id == 0) ? 0 : groups_[group_id - 1] + 1);}
-        size_t group_start(size_t group_id) const { return ((group_id == 0) ? 0 : groups_[group_id - 1] + 1);}
-        size_t get_group_end(size_t group_id) const { return groups_[group_id]; }
-        size_t group_end(size_t group_id) const { return groups_[group_id]; }
+        size_t get_group_start(size_t group_id) const {
+            assert(group_id < this->get_groups_count());
+            return ((group_id == 0) ? 0 : groups_[group_id - 1] + 1);
+        }
+        size_t group_start(size_t group_id) const { return this->get_group_start(group_id); }
+        size_t get_group_end(size_t group_id) const {
+            assert(group_id < this->get_groups_count());
+            return groups_[group_id];
+        }
+        size_t group_end(size_t group_id) const { return this->get_group_end(group_id); }
         size_t get_groups_count() const { return groups_.size(); }
-        size_t groups_count() const { return groups_.size(); }
+        size_t groups_count() const { return this->get_groups_count(); }
         size_t get_group_size(size_t group_id) const { return this->get_group_end(group_id) - this->get_group_start(group_id) + 1; }
         size_t group_size(size_t group_id) const { return this->get_group_end(group_id) - this->get_group_start(group_id) + 1; }
         Basis_State get_group(size_t group_id) const;
@@ -114,8 +126,14 @@ class Basis_State {
         virtual bool operator==(const Basis_State& other) const { assert(max_vals_ == other.max_vals_ and groups_ == other.groups_); return qudits_ == other.qudits_; }
         virtual bool operator<(const Basis_State& other) const { return this->to_string() > other.to_string(); }
         
-        void set_max_val(ValType val, size_t qudit_index, size_t group_id = 0) { max_vals_[this->get_group_start(group_id) + qudit_index] = val; }
-        ValType get_max_val(size_t qudit_index, size_t group_id = 0) const { return max_vals_[this->get_group_start(group_id) + qudit_index]; }
+        void set_max_val(ValType val, size_t qudit_index, size_t group_id = 0) {
+            assert(qudit_index < this->get_group_size(group_id));
+            max_vals_[this->get_group_start(group_id) + qudit_index] = val;
+        }
+        ValType get_max_val(size_t qudit_index, size_t group_id = 0) const {
+            assert(qudit_index < this->get_group_size(group_id));
+            return max_vals_[this->get_group_start(group_id) + qudit_index];
+        }
         std::vector<ValType> max_vals() const { return max_vals_; }
 
         size_t get_index(const BasisType<Basis_State>& basis) const;
