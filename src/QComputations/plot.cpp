@@ -26,8 +26,11 @@ void check_dir(std::string& dir, bool remove_is_exist = false) {
     }
 }
 
-void make_probs_files(const Hamiltonian& H, const Probs& probs, const std::vector<double>& time_vec,
-                      const BasisType<Basis_State>& basis, std::string dir) {
+void make_probs_files(const Hamiltonian& H,
+                      const Probs& probs,
+                      const std::vector<double>& time_vec,
+                      const BasisType<Basis_State>& basis,
+                      std::string dir) {
     check_dir(dir, true);
 
     hamiltonian_to_file("hamiltonian.csv", H, dir);
@@ -55,8 +58,12 @@ void check_dir(std::string& dir, ILP_TYPE main_rank, bool remove_is_exist = fals
     }
 }
 
-void make_probs_files(const Hamiltonian& H, const Probs& probs, const std::vector<double>& time_vec,
-                      const BasisType<Basis_State>& basis, std::string dir, ILP_TYPE main_rank) {
+void make_probs_files(const Hamiltonian& H,
+                      const Probs& probs,
+                      const std::vector<double>& time_vec,
+                      const BasisType<Basis_State>& basis,
+                      std::string dir,
+                      ILP_TYPE main_rank) {
     check_dir(dir, main_rank, true);
 
     hamiltonian_to_file("hamiltonian.csv", H, dir, main_rank);
@@ -158,13 +165,17 @@ void probs_to_file(const std::string& filename, const Probs& probs, std::string 
     }
 }
 
-void hamiltonian_to_file(const std::string& filename, const BLOCKED_Hamiltonian& H, std::string dir,
+void hamiltonian_to_file(const std::string& filename,
+                         const BLOCKED_Hamiltonian& H,
+                         std::string dir,
                          ILP_TYPE main_rank) {
     check_dir(dir, main_rank);
     H.write_to_csv_file(dir + "/" + filename);
 }
 
-void basis_to_file(const std::string& filename, const BasisType<Basis_State>& basis, std::string dir,
+void basis_to_file(const std::string& filename,
+                   const BasisType<Basis_State>& basis,
+                   std::string dir,
                    ILP_TYPE main_rank) {
     ILP_TYPE rank;
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
@@ -194,7 +205,9 @@ void basis_to_file(const std::string& filename, const BasisType<Basis_State>& ba
     }
 }
 
-void time_vec_to_file(const std::string& filename, const std::vector<double>& time_vec, std::string dir,
+void time_vec_to_file(const std::string& filename,
+                      const std::vector<double>& time_vec,
+                      std::string dir,
                       ILP_TYPE main_rank) {
     ILP_TYPE rank;
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
@@ -233,8 +246,12 @@ void probs_to_file(const std::string& filename, const BLOCKED_Probs& probs, std:
     probs_hermit.write_to_csv_file(dir + "/" + filename);
 }
 
-void make_probs_files(const BLOCKED_Hamiltonian& H, const BLOCKED_Probs& probs, const std::vector<double>& time_vec,
-                      const BasisType<Basis_State>& basis, std::string dir, ILP_TYPE main_rank) {
+void make_probs_files(const BLOCKED_Hamiltonian& H,
+                      const BLOCKED_Probs& probs,
+                      const std::vector<double>& time_vec,
+                      const BasisType<Basis_State>& basis,
+                      std::string dir,
+                      ILP_TYPE main_rank) {
     check_dir(dir, main_rank, true);
 
     hamiltonian_to_file("hamiltonian.csv", H, dir, main_rank);
@@ -252,7 +269,8 @@ namespace plt = matplotlibcpp;
 }
 
 template <>
-void matplotlib::plot<double, double>(const std::vector<double>& x, const std::vector<double>& y,
+void matplotlib::plot<double, double>(const std::vector<double>& x,
+                                      const std::vector<double>& y,
                                       std::map<std::string, std::string> keywords) {
     plt::plot(x, y, keywords);
 
@@ -269,8 +287,10 @@ void matplotlib::ylabel(const std::string& name) { plt::ylabel(name); }
 
 void matplotlib::zlabel(const std::string& name) { plt::set_zlabel(name); }
 
-void matplotlib::surface(const std::vector<std::vector<double>>& x, const std::vector<std::vector<double>>& y,
-                         const std::vector<std::vector<double>>& z, std::map<std::string, std::string> keywords) {
+void matplotlib::surface(const std::vector<std::vector<double>>& x,
+                         const std::vector<std::vector<double>>& y,
+                         const std::vector<std::vector<double>>& z,
+                         std::map<std::string, std::string> keywords) {
     plt::plot_surface(x, y, z, keywords);
 
     if (keywords.find("label") != keywords.end()) {
@@ -278,7 +298,8 @@ void matplotlib::surface(const std::vector<std::vector<double>>& x, const std::v
     }
 }
 
-void matplotlib::probs_to_plot(const Probs& probs, const std::vector<double>& time_vec,
+void matplotlib::probs_to_plot(const Probs& probs,
+                               const std::vector<double>& time_vec,
                                const BasisType<Basis_State>& basis,
                                std::vector<std::map<std::string, std::string>> keywords) {
     size_t index = 0;
@@ -293,7 +314,8 @@ void matplotlib::probs_to_plot(const Probs& probs, const std::vector<double>& ti
     }
 }
 
-void matplotlib::probs_to_plot(const Probs& probs, const std::vector<double>& time_vec,
+void matplotlib::probs_to_plot(const Probs& probs,
+                               const std::vector<double>& time_vec,
                                const std::vector<std::string>& basis_str,
                                std::vector<std::map<std::string, std::string>> keywords) {
     size_t index = 0;
@@ -311,7 +333,8 @@ void matplotlib::probs_to_plot(const Probs& probs, const std::vector<double>& ti
 #ifdef ENABLE_MPI
 #ifdef ENABLE_CLUSTER
 
-void matplotlib::probs_to_plot(const BLOCKED_Probs& probs, const std::vector<double>& time_vec,
+void matplotlib::probs_to_plot(const BLOCKED_Probs& probs,
+                               const std::vector<double>& time_vec,
                                const BasisType<Basis_State>& basis,
                                std::vector<std::map<std::string, std::string>> keywords) {
     ILP_TYPE rank;
@@ -337,7 +360,8 @@ void matplotlib::probs_to_plot(const BLOCKED_Probs& probs, const std::vector<dou
     }
 }
 
-void matplotlib::probs_to_plot(const BLOCKED_Probs& probs, const std::vector<double>& time_vec,
+void matplotlib::probs_to_plot(const BLOCKED_Probs& probs,
+                               const std::vector<double>& time_vec,
                                const std::vector<std::string>& basis_str,
                                std::vector<std::map<std::string, std::string>> keywords) {
     ILP_TYPE rank;
@@ -366,7 +390,8 @@ void matplotlib::probs_to_plot(const BLOCKED_Probs& probs, const std::vector<dou
 #endif
 #endif
 
-void matplotlib::rho_probs_to_plot(const Probs& probs, const std::vector<double>& time_vec,
+void matplotlib::rho_probs_to_plot(const Probs& probs,
+                                   const std::vector<double>& time_vec,
                                    const BasisType<Basis_State>& basis,
                                    std::vector<std::map<std::string, std::string>> keywords) {
     size_t from = 0;
@@ -396,7 +421,8 @@ void matplotlib::rho_probs_to_plot(const Probs& probs, const std::vector<double>
     }
 }
 
-void matplotlib::rho_diag_to_plot(const Probs& probs, const std::vector<double>& time_vec,
+void matplotlib::rho_diag_to_plot(const Probs& probs,
+                                  const std::vector<double>& time_vec,
                                   const BasisType<Basis_State>& basis,
                                   std::vector<std::map<std::string, std::string>> keywords) {
     size_t state_index = 0;

@@ -92,7 +92,11 @@ MPI_Datatype Create_Block_Type_double(ILP_TYPE N, ILP_TYPE M, ILP_TYPE NB, ILP_T
 }
 
 namespace {
-void my_dgesd2d(ILP_TYPE N, ILP_TYPE M, ILP_TYPE row_index, ILP_TYPE col_index, const Matrix<double>& A,
+void my_dgesd2d(ILP_TYPE N,
+                ILP_TYPE M,
+                ILP_TYPE row_index,
+                ILP_TYPE col_index,
+                const Matrix<double>& A,
                 ILP_TYPE send_id) {
     auto sub = A.submatrix(N, M, row_index, col_index);
     MPI_Send(sub.data(), M * N, MPI_DOUBLE, send_id, 0, MPI_COMM_WORLD);
@@ -116,7 +120,11 @@ void my_dgerv2d(ILP_TYPE N, ILP_TYPE M, ILP_TYPE offset, Matrix<double>& A, ILP_
     }
 }
 
-void my_zgesd2d(ILP_TYPE N, ILP_TYPE M, ILP_TYPE row_index, ILP_TYPE col_index, const Matrix<COMPLEX>& A,
+void my_zgesd2d(ILP_TYPE N,
+                ILP_TYPE M,
+                ILP_TYPE row_index,
+                ILP_TYPE col_index,
+                const Matrix<COMPLEX>& A,
                 ILP_TYPE send_id) {
     auto sub = A.submatrix(N, M, row_index, col_index);
     MPI_Send(sub.data(), M * N, MPI_DOUBLE_COMPLEX, send_id, 0, MPI_COMM_WORLD);
@@ -141,9 +149,20 @@ void my_zgerv2d(ILP_TYPE N, ILP_TYPE M, ILP_TYPE offset, Matrix<COMPLEX>& A, ILP
 }
 
 // NEED TO REPLACE
-void ScatterBLACSMatrix_double(const Matrix<double>& A, ILP_TYPE NA, ILP_TYPE MA, Matrix<double>& localA, ILP_TYPE NB_A,
-                               ILP_TYPE MB_A, ILP_TYPE nrows_A, ILP_TYPE ncols_A, ILP_TYPE myrow, ILP_TYPE mycol,
-                               ILP_TYPE proc_rows, ILP_TYPE proc_cols, ILP_TYPE rank, ILP_TYPE* p_ctxt) {
+void ScatterBLACSMatrix_double(const Matrix<double>& A,
+                               ILP_TYPE NA,
+                               ILP_TYPE MA,
+                               Matrix<double>& localA,
+                               ILP_TYPE NB_A,
+                               ILP_TYPE MB_A,
+                               ILP_TYPE nrows_A,
+                               ILP_TYPE ncols_A,
+                               ILP_TYPE myrow,
+                               ILP_TYPE mycol,
+                               ILP_TYPE proc_rows,
+                               ILP_TYPE proc_cols,
+                               ILP_TYPE rank,
+                               ILP_TYPE* p_ctxt) {
     auto A_tmp = A;
     ILP_TYPE iZERO = 0;
     ILP_TYPE sendr = 0, sendc = 0, recvr = 0, recvc = 0;
@@ -182,9 +201,19 @@ void ScatterBLACSMatrix_double(const Matrix<double>& A, ILP_TYPE NA, ILP_TYPE MA
 }
 
 // NEED TO REPLACE
-void ScatterBLACSMatrix_COMPLEX(const Matrix<COMPLEX>& A, ILP_TYPE NA, ILP_TYPE MA, Matrix<COMPLEX>& localA,
-                                ILP_TYPE NB_A, ILP_TYPE MB_A, ILP_TYPE nrows_A, ILP_TYPE ncols_A, ILP_TYPE myrow,
-                                ILP_TYPE mycol, ILP_TYPE proc_rows, ILP_TYPE proc_cols, ILP_TYPE rank,
+void ScatterBLACSMatrix_COMPLEX(const Matrix<COMPLEX>& A,
+                                ILP_TYPE NA,
+                                ILP_TYPE MA,
+                                Matrix<COMPLEX>& localA,
+                                ILP_TYPE NB_A,
+                                ILP_TYPE MB_A,
+                                ILP_TYPE nrows_A,
+                                ILP_TYPE ncols_A,
+                                ILP_TYPE myrow,
+                                ILP_TYPE mycol,
+                                ILP_TYPE proc_rows,
+                                ILP_TYPE proc_cols,
+                                ILP_TYPE rank,
                                 ILP_TYPE* p_ctxt) {
     ILP_TYPE sendr = 0, sendc = 0, recvr = 0, recvc = 0;
     for (ILP_TYPE r = 0; r < NA; r += NB_A, sendr = (sendr + 1) % proc_rows) {
@@ -235,15 +264,25 @@ ILP_TYPE mpi::indxg2l(ILP_TYPE n, ILP_TYPE NB, ILP_TYPE myindx, ILP_TYPE RSRC, I
     return indxg2l_(&n_new, &NB, &myindx, &RSRC, &dim_size) - 1;
 }
 
-std::vector<ILP_TYPE> mpi::descinit(ILP_TYPE n, ILP_TYPE m, ILP_TYPE NB, ILP_TYPE MB, ILP_TYPE rsrc, ILP_TYPE csrc,
-                                    ILP_TYPE ctxt, ILP_TYPE LLD, ILP_TYPE info) {
+std::vector<ILP_TYPE> mpi::descinit(ILP_TYPE n,
+                                    ILP_TYPE m,
+                                    ILP_TYPE NB,
+                                    ILP_TYPE MB,
+                                    ILP_TYPE rsrc,
+                                    ILP_TYPE csrc,
+                                    ILP_TYPE ctxt,
+                                    ILP_TYPE LLD,
+                                    ILP_TYPE info) {
     std::vector<ILP_TYPE> desc(9);
     descinit_(desc.data(), &n, &m, &NB, &MB, &rsrc, &csrc, &ctxt, &LLD, &info);
 
     return desc;
 }
 
-void mpi::blacs_gridinfo(const ILP_TYPE& ctxt, ILP_TYPE& proc_rows, ILP_TYPE& proc_cols, ILP_TYPE& myrow,
+void mpi::blacs_gridinfo(const ILP_TYPE& ctxt,
+                         ILP_TYPE& proc_rows,
+                         ILP_TYPE& proc_cols,
+                         ILP_TYPE& myrow,
                          ILP_TYPE& mycol) {
     ::blacs_gridinfo(&ctxt, &proc_rows, &proc_cols, &myrow, &mycol);
 }
@@ -332,9 +371,16 @@ void mpi::init_grid(ILP_TYPE& ctxt, ILP_TYPE proc_rows, ILP_TYPE proc_cols) {
 }
 
 template <>
-Matrix<double> mpi::scatter_blacs_matrix<double>(const Matrix<double>& A, ILP_TYPE& N, ILP_TYPE& M, ILP_TYPE& NB,
-                                                 ILP_TYPE& MB, ILP_TYPE& nrows, ILP_TYPE& ncols, ILP_TYPE& ctxt,
-                                                 ILP_TYPE root_id, MPI_Comm comm) {
+Matrix<double> mpi::scatter_blacs_matrix<double>(const Matrix<double>& A,
+                                                 ILP_TYPE& N,
+                                                 ILP_TYPE& M,
+                                                 ILP_TYPE& NB,
+                                                 ILP_TYPE& MB,
+                                                 ILP_TYPE& nrows,
+                                                 ILP_TYPE& ncols,
+                                                 ILP_TYPE& ctxt,
+                                                 ILP_TYPE root_id,
+                                                 MPI_Comm comm) {
     ILP_TYPE iZERO = 0;
     int rank, world_size;
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
@@ -408,9 +454,16 @@ Matrix<double> mpi::scatter_blacs_matrix<double>(const Matrix<double>& A, ILP_TY
 }
 
 template <>
-Matrix<COMPLEX> mpi::scatter_blacs_matrix<COMPLEX>(const Matrix<COMPLEX>& A, ILP_TYPE& N, ILP_TYPE& M, ILP_TYPE& NB,
-                                                   ILP_TYPE& MB, ILP_TYPE& nrows, ILP_TYPE& ncols, ILP_TYPE& ctxt,
-                                                   ILP_TYPE root_id, MPI_Comm comm) {
+Matrix<COMPLEX> mpi::scatter_blacs_matrix<COMPLEX>(const Matrix<COMPLEX>& A,
+                                                   ILP_TYPE& N,
+                                                   ILP_TYPE& M,
+                                                   ILP_TYPE& NB,
+                                                   ILP_TYPE& MB,
+                                                   ILP_TYPE& nrows,
+                                                   ILP_TYPE& ncols,
+                                                   ILP_TYPE& ctxt,
+                                                   ILP_TYPE root_id,
+                                                   MPI_Comm comm) {
     ILP_TYPE iZERO = 0;
     int rank, world_size;
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
@@ -484,8 +537,15 @@ Matrix<COMPLEX> mpi::scatter_blacs_matrix<COMPLEX>(const Matrix<COMPLEX>& A, ILP
 }
 
 template <>
-void mpi::gather_blacs_matrix<double>(const Matrix<double>& localC, Matrix<double>& C, ILP_TYPE N, ILP_TYPE M,
-                                      ILP_TYPE NB, ILP_TYPE MB, ILP_TYPE nrows, ILP_TYPE ncols, ILP_TYPE ctxt,
+void mpi::gather_blacs_matrix<double>(const Matrix<double>& localC,
+                                      Matrix<double>& C,
+                                      ILP_TYPE N,
+                                      ILP_TYPE M,
+                                      ILP_TYPE NB,
+                                      ILP_TYPE MB,
+                                      ILP_TYPE nrows,
+                                      ILP_TYPE ncols,
+                                      ILP_TYPE ctxt,
                                       ILP_TYPE root_id) {
     ILP_TYPE iZERO = 0;
     int rank, world_size;
@@ -548,8 +608,15 @@ void mpi::gather_blacs_matrix<double>(const Matrix<double>& localC, Matrix<doubl
 }
 
 template <>
-void mpi::gather_blacs_matrix<COMPLEX>(const Matrix<COMPLEX>& localC, Matrix<COMPLEX>& C, ILP_TYPE N, ILP_TYPE M,
-                                       ILP_TYPE NB, ILP_TYPE MB, ILP_TYPE nrows, ILP_TYPE ncols, ILP_TYPE ctxt,
+void mpi::gather_blacs_matrix<COMPLEX>(const Matrix<COMPLEX>& localC,
+                                       Matrix<COMPLEX>& C,
+                                       ILP_TYPE N,
+                                       ILP_TYPE M,
+                                       ILP_TYPE NB,
+                                       ILP_TYPE MB,
+                                       ILP_TYPE nrows,
+                                       ILP_TYPE ncols,
+                                       ILP_TYPE ctxt,
                                        ILP_TYPE root_id) {
     ILP_TYPE iZERO = 0;
     int rank, world_size;
@@ -611,8 +678,12 @@ void mpi::gather_blacs_matrix<COMPLEX>(const Matrix<COMPLEX>& localC, Matrix<COM
 }
 
 template <>
-std::vector<double> mpi::scatter_blacs_vector<double>(const std::vector<double>& v, ILP_TYPE& N, ILP_TYPE& NB,
-                                                      ILP_TYPE& nrows, ILP_TYPE& ctxt, ILP_TYPE root_id,
+std::vector<double> mpi::scatter_blacs_vector<double>(const std::vector<double>& v,
+                                                      ILP_TYPE& N,
+                                                      ILP_TYPE& NB,
+                                                      ILP_TYPE& nrows,
+                                                      ILP_TYPE& ctxt,
+                                                      ILP_TYPE root_id,
                                                       MPI_Comm comm) {
     ILP_TYPE iZERO = 0;
     int rank, world_size;
@@ -669,8 +740,12 @@ std::vector<double> mpi::scatter_blacs_vector<double>(const std::vector<double>&
 }
 
 template <>
-std::vector<COMPLEX> mpi::scatter_blacs_vector<COMPLEX>(const std::vector<COMPLEX>& v, ILP_TYPE& N, ILP_TYPE& NB,
-                                                        ILP_TYPE& nrows, ILP_TYPE& ctxt, ILP_TYPE root_id,
+std::vector<COMPLEX> mpi::scatter_blacs_vector<COMPLEX>(const std::vector<COMPLEX>& v,
+                                                        ILP_TYPE& N,
+                                                        ILP_TYPE& NB,
+                                                        ILP_TYPE& nrows,
+                                                        ILP_TYPE& ctxt,
+                                                        ILP_TYPE root_id,
                                                         MPI_Comm comm) {
     ILP_TYPE iZERO = 0;
     int rank, world_size;
@@ -717,7 +792,12 @@ std::vector<COMPLEX> mpi::scatter_blacs_vector<COMPLEX>(const std::vector<COMPLE
         }
 
         if (myrow == sendr && mycol == sendc) {
-            MPI_Recv(local_v.data() + recvr, nr, MPI_DOUBLE_COMPLEX, root_id, MPI_ANY_TAG, MPI_COMM_WORLD,
+            MPI_Recv(local_v.data() + recvr,
+                     nr,
+                     MPI_DOUBLE_COMPLEX,
+                     root_id,
+                     MPI_ANY_TAG,
+                     MPI_COMM_WORLD,
                      MPI_STATUS_IGNORE);
         }
 
@@ -728,8 +808,13 @@ std::vector<COMPLEX> mpi::scatter_blacs_vector<COMPLEX>(const std::vector<COMPLE
 }
 
 template <>
-void mpi::gather_blacs_vector<double>(const std::vector<double>& local_y, std::vector<double>& y, ILP_TYPE N,
-                                      ILP_TYPE NB, ILP_TYPE nrows, ILP_TYPE ctxt, ILP_TYPE root_id) {
+void mpi::gather_blacs_vector<double>(const std::vector<double>& local_y,
+                                      std::vector<double>& y,
+                                      ILP_TYPE N,
+                                      ILP_TYPE NB,
+                                      ILP_TYPE nrows,
+                                      ILP_TYPE ctxt,
+                                      ILP_TYPE root_id) {
     ILP_TYPE iZERO = 0;
     int rank, world_size;
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
@@ -771,8 +856,13 @@ void mpi::gather_blacs_vector<double>(const std::vector<double>& local_y, std::v
 }
 
 template <>
-void mpi::gather_blacs_vector<COMPLEX>(const std::vector<COMPLEX>& local_y, std::vector<COMPLEX>& y, ILP_TYPE N,
-                                       ILP_TYPE NB, ILP_TYPE nrows, ILP_TYPE ctxt, ILP_TYPE root_id) {
+void mpi::gather_blacs_vector<COMPLEX>(const std::vector<COMPLEX>& local_y,
+                                       std::vector<COMPLEX>& y,
+                                       ILP_TYPE N,
+                                       ILP_TYPE NB,
+                                       ILP_TYPE nrows,
+                                       ILP_TYPE ctxt,
+                                       ILP_TYPE root_id) {
     ILP_TYPE iZERO = 0;
     int rank, world_size;
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
@@ -839,9 +929,16 @@ std::vector<COMPLEX> mpi::get_diagonal_elements<COMPLEX>(Matrix<COMPLEX>& localA
     return res;
 }
 
-void mpi::parallel_dgemm(const Matrix<double>& A, const Matrix<double>& B, Matrix<double>& C,
-                         const std::vector<ILP_TYPE>& desca, const std::vector<ILP_TYPE>& descb,
-                         const std::vector<ILP_TYPE>& descc, double alpha, double betta, char op_A, char op_B) {
+void mpi::parallel_dgemm(const Matrix<double>& A,
+                         const Matrix<double>& B,
+                         Matrix<double>& C,
+                         const std::vector<ILP_TYPE>& desca,
+                         const std::vector<ILP_TYPE>& descb,
+                         const std::vector<ILP_TYPE>& descc,
+                         double alpha,
+                         double betta,
+                         char op_A,
+                         char op_B) {
     ILP_TYPE NA, MA, NB, MB, NB_A, MB_A, NB_B, MB_B;
 
     NA = desca[2];
@@ -852,13 +949,37 @@ void mpi::parallel_dgemm(const Matrix<double>& A, const Matrix<double>& B, Matri
     char N = 'N';
     ILP_TYPE iONE = 1;
 
-    pdgemm_(&op_A, &op_B, &NA, &MB, &MA, &alpha, A.data(), &iONE, &iONE, desca.data(), B.data(), &iONE, &iONE,
-            descb.data(), &betta, C.data(), &iONE, &iONE, descc.data());
+    pdgemm_(&op_A,
+            &op_B,
+            &NA,
+            &MB,
+            &MA,
+            &alpha,
+            A.data(),
+            &iONE,
+            &iONE,
+            desca.data(),
+            B.data(),
+            &iONE,
+            &iONE,
+            descb.data(),
+            &betta,
+            C.data(),
+            &iONE,
+            &iONE,
+            descc.data());
 }
 
-void mpi::parallel_zgemm(const Matrix<COMPLEX>& A, const Matrix<COMPLEX>& B, Matrix<COMPLEX>& C,
-                         const std::vector<ILP_TYPE>& desca, const std::vector<ILP_TYPE>& descb,
-                         const std::vector<ILP_TYPE>& descc, COMPLEX alpha, COMPLEX betta, char op_A, char op_B) {
+void mpi::parallel_zgemm(const Matrix<COMPLEX>& A,
+                         const Matrix<COMPLEX>& B,
+                         Matrix<COMPLEX>& C,
+                         const std::vector<ILP_TYPE>& desca,
+                         const std::vector<ILP_TYPE>& descb,
+                         const std::vector<ILP_TYPE>& descc,
+                         COMPLEX alpha,
+                         COMPLEX betta,
+                         char op_A,
+                         char op_B) {
     ILP_TYPE iZERO = 0;
     ILP_TYPE NA, MA, NB, MB, NB_A, MB_A, NB_B, MB_B;
 
@@ -869,13 +990,36 @@ void mpi::parallel_zgemm(const Matrix<COMPLEX>& A, const Matrix<COMPLEX>& B, Mat
 
     ILP_TYPE iONE = 1;
 
-    pzgemm_(&op_A, &op_B, &NA, &MB, &MA, &alpha, A.data(), &iONE, &iONE, desca.data(), B.data(), &iONE, &iONE,
-            descb.data(), &betta, C.data(), &iONE, &iONE, descc.data());
+    pzgemm_(&op_A,
+            &op_B,
+            &NA,
+            &MB,
+            &MA,
+            &alpha,
+            A.data(),
+            &iONE,
+            &iONE,
+            desca.data(),
+            B.data(),
+            &iONE,
+            &iONE,
+            descb.data(),
+            &betta,
+            C.data(),
+            &iONE,
+            &iONE,
+            descc.data());
 }
 
-void mpi::parallel_zhemm(char side, const Matrix<COMPLEX>& A, const Matrix<COMPLEX>& B, Matrix<COMPLEX>& C,
-                         const std::vector<ILP_TYPE>& desca, const std::vector<ILP_TYPE>& descb,
-                         const std::vector<ILP_TYPE>& descc, COMPLEX alpha, COMPLEX betta) {
+void mpi::parallel_zhemm(char side,
+                         const Matrix<COMPLEX>& A,
+                         const Matrix<COMPLEX>& B,
+                         Matrix<COMPLEX>& C,
+                         const std::vector<ILP_TYPE>& desca,
+                         const std::vector<ILP_TYPE>& descb,
+                         const std::vector<ILP_TYPE>& descc,
+                         COMPLEX alpha,
+                         COMPLEX betta) {
     ILP_TYPE NA, MA, NB, MB, NB_A, MB_A, NB_B, MB_B;
 
     NA = desca[2];
@@ -886,34 +1030,64 @@ void mpi::parallel_zhemm(char side, const Matrix<COMPLEX>& A, const Matrix<COMPL
     ILP_TYPE iONE = 1;
     char uplo = 'U';
 
-    pzhemm_(&side, &uplo, &NA, &MB, &alpha, A.data(), &iONE, &iONE, desca.data(), B.data(), &iONE, &iONE, descb.data(),
-            &betta, C.data(), &iONE, &iONE, descc.data());
+    pzhemm_(&side,
+            &uplo,
+            &NA,
+            &MB,
+            &alpha,
+            A.data(),
+            &iONE,
+            &iONE,
+            desca.data(),
+            B.data(),
+            &iONE,
+            &iONE,
+            descb.data(),
+            &betta,
+            C.data(),
+            &iONE,
+            &iONE,
+            descc.data());
 }
 
-void mpi::parallel_dgeadd(const Matrix<double>& A, Matrix<double>& C, const std::vector<ILP_TYPE>& desca,
-                          const std::vector<ILP_TYPE>& descc, double alpha, double betta, char op_A) {
+void mpi::parallel_dgeadd(const Matrix<double>& A,
+                          Matrix<double>& C,
+                          const std::vector<ILP_TYPE>& desca,
+                          const std::vector<ILP_TYPE>& descc,
+                          double alpha,
+                          double betta,
+                          char op_A) {
     ILP_TYPE iONE = 1;
     ILP_TYPE NA = desca[2];
     ILP_TYPE MA = desca[3];
 
-    pdgeadd(&op_A, &NA, &MA, &alpha, A.data(), &iONE, &iONE, desca.data(), &betta, C.data(), &iONE, &iONE,
-            descc.data());
+    pdgeadd(
+        &op_A, &NA, &MA, &alpha, A.data(), &iONE, &iONE, desca.data(), &betta, C.data(), &iONE, &iONE, descc.data());
 }
 
-void mpi::parallel_zgeadd(const Matrix<COMPLEX>& A, Matrix<COMPLEX>& C, const std::vector<ILP_TYPE>& desca,
-                          const std::vector<ILP_TYPE>& descc, COMPLEX alpha, COMPLEX betta, char op_A) {
+void mpi::parallel_zgeadd(const Matrix<COMPLEX>& A,
+                          Matrix<COMPLEX>& C,
+                          const std::vector<ILP_TYPE>& desca,
+                          const std::vector<ILP_TYPE>& descc,
+                          COMPLEX alpha,
+                          COMPLEX betta,
+                          char op_A) {
     ILP_TYPE iONE = 1;
     ILP_TYPE NA = desca[2];
     ILP_TYPE MA = desca[3];
 
-    pzgeadd(&op_A, &NA, &MA, &alpha, A.data(), &iONE, &iONE, desca.data(), &betta, C.data(), &iONE, &iONE,
-            descc.data());
+    pzgeadd(
+        &op_A, &NA, &MA, &alpha, A.data(), &iONE, &iONE, desca.data(), &betta, C.data(), &iONE, &iONE, descc.data());
 }
 
 // only for distributed version
-void mpi::parallel_dgemv(const Matrix<double>& A, const std::vector<double>& x, std::vector<double>& y,
-                         const std::vector<ILP_TYPE>& desca, const std::vector<ILP_TYPE>& descx,
-                         const std::vector<ILP_TYPE>& descy, char op_A) {
+void mpi::parallel_dgemv(const Matrix<double>& A,
+                         const std::vector<double>& x,
+                         std::vector<double>& y,
+                         const std::vector<ILP_TYPE>& desca,
+                         const std::vector<ILP_TYPE>& descx,
+                         const std::vector<ILP_TYPE>& descy,
+                         char op_A) {
     ILP_TYPE N_A, M_A;
     N_A = desca[2];
     M_A = desca[3];
@@ -922,14 +1096,35 @@ void mpi::parallel_dgemv(const Matrix<double>& A, const std::vector<double>& x, 
     double alpha = 1.0;
     double betta = 0;
 
-    pdgemv_(&op_A, &N_A, &M_A, &alpha, A.data(), &iONE, &iONE, desca.data(), x.data(), &iONE, &iONE, descx.data(),
-            &iONE, &betta, y.data(), &iONE, &iONE, descy.data(), &iONE);
+    pdgemv_(&op_A,
+            &N_A,
+            &M_A,
+            &alpha,
+            A.data(),
+            &iONE,
+            &iONE,
+            desca.data(),
+            x.data(),
+            &iONE,
+            &iONE,
+            descx.data(),
+            &iONE,
+            &betta,
+            y.data(),
+            &iONE,
+            &iONE,
+            descy.data(),
+            &iONE);
 }
 
 // only for distributed version
-void mpi::parallel_zgemv(const Matrix<COMPLEX>& A, const std::vector<COMPLEX>& x, std::vector<COMPLEX>& y,
-                         const std::vector<ILP_TYPE>& desca, const std::vector<ILP_TYPE>& descx,
-                         const std::vector<ILP_TYPE>& descy, char op_A) {
+void mpi::parallel_zgemv(const Matrix<COMPLEX>& A,
+                         const std::vector<COMPLEX>& x,
+                         std::vector<COMPLEX>& y,
+                         const std::vector<ILP_TYPE>& desca,
+                         const std::vector<ILP_TYPE>& descx,
+                         const std::vector<ILP_TYPE>& descy,
+                         char op_A) {
     ILP_TYPE N_A, M_A;
     N_A = desca[2];
     M_A = desca[3];
@@ -938,12 +1133,32 @@ void mpi::parallel_zgemv(const Matrix<COMPLEX>& A, const std::vector<COMPLEX>& x
     COMPLEX alpha(1.0, 0);
     COMPLEX betta(0, 0);
 
-    pzgemv_(&op_A, &N_A, &M_A, &alpha, A.data(), &iONE, &iONE, desca.data(), x.data(), &iONE, &iONE, descx.data(),
-            &iONE, &betta, y.data(), &iONE, &iONE, descy.data(), &iONE);
+    pzgemv_(&op_A,
+            &N_A,
+            &M_A,
+            &alpha,
+            A.data(),
+            &iONE,
+            &iONE,
+            desca.data(),
+            x.data(),
+            &iONE,
+            &iONE,
+            descx.data(),
+            &iONE,
+            &betta,
+            y.data(),
+            &iONE,
+            &iONE,
+            descy.data(),
+            &iONE);
 }
 
-COMPLEX mpi::parallel_zdotu(const std::vector<COMPLEX>& x, const std::vector<COMPLEX>& y,
-                            const std::vector<ILP_TYPE>& descx, ILP_TYPE incx, const std::vector<ILP_TYPE>& descy,
+COMPLEX mpi::parallel_zdotu(const std::vector<COMPLEX>& x,
+                            const std::vector<COMPLEX>& y,
+                            const std::vector<ILP_TYPE>& descx,
+                            ILP_TYPE incx,
+                            const std::vector<ILP_TYPE>& descy,
                             ILP_TYPE incy) {
     ILP_TYPE n = descx[2];
     int iONE = 1;
@@ -954,8 +1169,11 @@ COMPLEX mpi::parallel_zdotu(const std::vector<COMPLEX>& x, const std::vector<COM
     return dotu;
 }
 
-COMPLEX mpi::parallel_zdotc(const std::vector<COMPLEX>& x, const std::vector<COMPLEX>& y,
-                            const std::vector<ILP_TYPE>& descx, ILP_TYPE incx, const std::vector<ILP_TYPE>& descy,
+COMPLEX mpi::parallel_zdotc(const std::vector<COMPLEX>& x,
+                            const std::vector<COMPLEX>& y,
+                            const std::vector<ILP_TYPE>& descx,
+                            ILP_TYPE incx,
+                            const std::vector<ILP_TYPE>& descy,
                             ILP_TYPE incy) {
     ILP_TYPE n = descx[2];
     int iONE = 1;
@@ -966,8 +1184,11 @@ COMPLEX mpi::parallel_zdotc(const std::vector<COMPLEX>& x, const std::vector<COM
     return dotc;
 }
 
-double mpi::parallel_ddot(const std::vector<double>& x, const std::vector<double>& y,
-                          const std::vector<ILP_TYPE>& descx, ILP_TYPE incx, const std::vector<ILP_TYPE>& descy,
+double mpi::parallel_ddot(const std::vector<double>& x,
+                          const std::vector<double>& y,
+                          const std::vector<ILP_TYPE>& descx,
+                          ILP_TYPE incx,
+                          const std::vector<ILP_TYPE>& descy,
                           ILP_TYPE incy) {
     ILP_TYPE n = descx[2];
     int iONE = 1;
@@ -996,14 +1217,24 @@ double mpi::parallel_dscal(std::vector<double>& x, double a, const std::vector<I
     return a;
 }
 
-void mpi::parallel_daxpy(const std::vector<double>& x, std::vector<double>& y, const std::vector<ILP_TYPE>& descx,
-                         ILP_TYPE incx, const std::vector<ILP_TYPE>& descy, ILP_TYPE incy, double alpha) {
+void mpi::parallel_daxpy(const std::vector<double>& x,
+                         std::vector<double>& y,
+                         const std::vector<ILP_TYPE>& descx,
+                         ILP_TYPE incx,
+                         const std::vector<ILP_TYPE>& descy,
+                         ILP_TYPE incy,
+                         double alpha) {
     ILP_TYPE iONE = 1;
     ILP_TYPE n = descx[2];
     pdaxpy(&n, &alpha, x.data(), &iONE, &iONE, descx.data(), &incx, y.data(), &iONE, &iONE, descy.data(), &incy);
 }
-void mpi::parallel_zaxpy(const std::vector<COMPLEX>& x, std::vector<COMPLEX>& y, const std::vector<ILP_TYPE>& descx,
-                         ILP_TYPE incx, const std::vector<ILP_TYPE>& descy, ILP_TYPE incy, COMPLEX alpha) {
+void mpi::parallel_zaxpy(const std::vector<COMPLEX>& x,
+                         std::vector<COMPLEX>& y,
+                         const std::vector<ILP_TYPE>& descx,
+                         ILP_TYPE incx,
+                         const std::vector<ILP_TYPE>& descy,
+                         ILP_TYPE incy,
+                         COMPLEX alpha) {
     ILP_TYPE iONE = 1;
     ILP_TYPE n = descx[2];
     pzaxpy(&n, &alpha, x.data(), &iONE, &iONE, descx.data(), &incx, y.data(), &iONE, &iONE, descy.data(), &incy);

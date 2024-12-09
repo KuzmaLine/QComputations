@@ -29,7 +29,10 @@ Rho create_init_rho(const std::vector<COMPLEX>& init_state) {
     return rho;
 }
 
-Probs exp_evolution(const State<Basis_State>& init_state, Hamiltonian& H, double dt, size_t STEPS_COUNT,
+Probs exp_evolution(const State<Basis_State>& init_state,
+                    Hamiltonian& H,
+                    double dt,
+                    size_t STEPS_COUNT,
                     const std::function<void(std::vector<COMPLEX>&)>& func) {
     auto state = init_state.fit_to_basis(H.get_basis()).get_vector();
     H.find_exp(dt);
@@ -95,7 +98,8 @@ Probs schrodinger(const State<Basis_State>& init_state, Hamiltonian& H, const st
 #ifdef ENABLE_MPI
 #ifdef ENABLE_CLUSTER
 
-BLOCKED_Probs schrodinger(const State<Basis_State>& init_state, BLOCKED_Hamiltonian& H,
+BLOCKED_Probs schrodinger(const State<Basis_State>& init_state,
+                          BLOCKED_Hamiltonian& H,
                           const std::vector<double>& time_vec) {
     std::vector<double> eigen_values = H.eigenvalues();
     BLOCKED_Matrix<COMPLEX> eigen_vectors = H.eigenvectors();
@@ -114,8 +118,8 @@ BLOCKED_Probs schrodinger(const State<Basis_State>& init_state, BLOCKED_Hamilton
     }
 
     auto ctxt = H.ctxt();
-    BLOCKED_Probs probs(vector_ctxt, GE, eigen_values.size(), time_vec.size(), blocked_init_state.NB(),
-                        time_vec.size());
+    BLOCKED_Probs probs(
+        vector_ctxt, GE, eigen_values.size(), time_vec.size(), blocked_init_state.NB(), time_vec.size());
     size_t time_index = 0;
 
     for (const auto& t : time_vec) {
@@ -139,7 +143,9 @@ BLOCKED_Probs schrodinger(const State<Basis_State>& init_state, BLOCKED_Hamilton
 #endif
 #endif
 
-Probs quantum_master_equation(const State<Basis_State>& init_state, Hamiltonian& H, const std::vector<double>& time_vec,
+Probs quantum_master_equation(const State<Basis_State>& init_state,
+                              Hamiltonian& H,
+                              const std::vector<double>& time_vec,
                               bool is_full_rho) {
     size_t dim = H.size();
     std::vector<std::function<void(const Rho& rho)>> lindblads;
@@ -164,7 +170,10 @@ Probs quantum_master_equation(const State<Basis_State>& init_state, Hamiltonian&
     std::function<void(double t, const Rho&, Matrix<COMPLEX>&)> equation{
         [&H_matrix, &T1, &T2, &lindblads](double t, const Rho& rho, Matrix<COMPLEX>& res) {
             optimized_multiply(rho, H_matrix, res, COMPLEX(1, 0), COMPLEX(0, 0));  // rho * H_matrix -> res
-            optimized_multiply(H_matrix, rho, res, COMPLEX(0, -1 / QConfig::instance().h()),
+            optimized_multiply(H_matrix,
+                               rho,
+                               res,
+                               COMPLEX(0, -1 / QConfig::instance().h()),
                                COMPLEX(0, 1 / QConfig::instance().h()));  // result -> res
 
             for (const auto& lindblad : lindblads) {
@@ -195,7 +204,8 @@ Probs quantum_master_equation(const State<Basis_State>& init_state, Hamiltonian&
     return probs;
 }
 
-std::pair<Probs, BasisType<Basis_State>> probs_to_cavity_probs(const Probs& probs, const BasisType<Basis_State>& basis,
+std::pair<Probs, BasisType<Basis_State>> probs_to_cavity_probs(const Probs& probs,
+                                                               const BasisType<Basis_State>& basis,
                                                                size_t cavity_id) {
     BasisType<Basis_State> basis_res;
     for (auto cur_state : basis) {
@@ -271,7 +281,12 @@ std::pair<BLOCKED_Probs, BasisType<Basis_State>> probs_to_cavity_probs(const BLO
                 buf[buf.size() - 1][t] = probs(i_local, t);
             }
 
-            MPI_Isend(buf[buf.size() - 1].data(), probs.m(), MPI_DOUBLE, proc_row, res_index, MPI_COMM_WORLD,
+            MPI_Isend(buf[buf.size() - 1].data(),
+                      probs.m(),
+                      MPI_DOUBLE,
+                      proc_row,
+                      res_index,
+                      MPI_COMM_WORLD,
                       &requests_send[requests_send.size() - 1]);
         }
     }
@@ -283,7 +298,12 @@ std::pair<BLOCKED_Probs, BasisType<Basis_State>> probs_to_cavity_probs(const BLO
         size_t i_global = res.get_global_row(i);
 
         for (size_t k = 0; k < inplace_states[i_global]; k++) {
-            MPI_Recv(res_index_probs.data(), probs.m(), MPI_DOUBLE, MPI_ANY_SOURCE, i_global, MPI_COMM_WORLD,
+            MPI_Recv(res_index_probs.data(),
+                     probs.m(),
+                     MPI_DOUBLE,
+                     MPI_ANY_SOURCE,
+                     i_global,
+                     MPI_COMM_WORLD,
                      MPI_STATUS_IGNORE);
 
             for (size_t t = 0; t < probs.m(); t++) {
@@ -339,8 +359,10 @@ BLOCKED_Matrix<COMPLEX> create_BLOCKED_A_create(ILP_TYPE ctxt, const BasisType<B
     return A;
 }
 
-BLOCKED_Probs quantum_master_equation(const State<Basis_State>& init_state, BLOCKED_Hamiltonian& H,
-                                      const std::vector<double>& time_vec, bool is_full_rho) {
+BLOCKED_Probs quantum_master_equation(const State<Basis_State>& init_state,
+                                      BLOCKED_Hamiltonian& H,
+                                      const std::vector<double>& time_vec,
+                                      bool is_full_rho) {
     size_t dim = H.size();
     std::vector<std::function<void(const BLOCKED_Rho& rho)>> lindblads;
 
@@ -365,7 +387,10 @@ BLOCKED_Probs quantum_master_equation(const State<Basis_State>& init_state, BLOC
     std::function<void(double t, const BLOCKED_Rho&, BLOCKED_Matrix<COMPLEX>&)> equation{
         [&H_matrix, &T1, &T2, &lindblads](double t, const BLOCKED_Rho& rho, BLOCKED_Matrix<COMPLEX>& res) {
             optimized_multiply(rho, H_matrix, res, COMPLEX(1, 0), COMPLEX(0, 0));  // rho * H_matrix -> res
-            optimized_multiply(H_matrix, rho, res, COMPLEX(0, -1 / QConfig::instance().h()),
+            optimized_multiply(H_matrix,
+                               rho,
+                               res,
+                               COMPLEX(0, -1 / QConfig::instance().h()),
                                COMPLEX(0, 1 / QConfig::instance().h()));  // result -> res
 
             for (const auto& lindblad : lindblads) {
@@ -392,8 +417,8 @@ BLOCKED_Probs quantum_master_equation(const State<Basis_State>& init_state, BLOC
     mpi::init_grid(probs_ctxt, world_size, 1);
     ILP_TYPE proc_rows, proc_cols, myrow, mycol;
     mpi::blacs_gridinfo(probs_ctxt, proc_rows, proc_cols, myrow, mycol);
-    BLOCKED_Probs probs(probs_ctxt, GE, dim, time_vec.size(), (H.size() >= world_size ? H.size() / world_size : 1),
-                        time_vec.size());
+    BLOCKED_Probs probs(
+        probs_ctxt, GE, dim, time_vec.size(), (H.size() >= world_size ? H.size() / world_size : 1), time_vec.size());
 
     for (size_t t = 0; t < time_vec.size(); t++) {
         auto probs_vec = mpi::get_diagonal_elements<COMPLEX>(rho_vec[t].get_local_matrix(), rho_vec[t].desc());
@@ -405,8 +430,10 @@ BLOCKED_Probs quantum_master_equation(const State<Basis_State>& init_state, BLOC
     return probs;
 }
 
-BLOCKED_Probs quantum_master_equation(const std::vector<COMPLEX>& init_state, BLOCKED_Hamiltonian& H,
-                                      const std::vector<double>& time_vec, bool is_full_rho) {
+BLOCKED_Probs quantum_master_equation(const std::vector<COMPLEX>& init_state,
+                                      BLOCKED_Hamiltonian& H,
+                                      const std::vector<double>& time_vec,
+                                      bool is_full_rho) {
     size_t dim = H.size();
     auto grid = H.get_grid();
     std::vector<std::function<BLOCKED_Rho(const BLOCKED_Rho& rho)>> lindblads;
@@ -460,7 +487,11 @@ BLOCKED_Probs quantum_master_equation(const std::vector<COMPLEX>& init_state, BL
         mpi::init_grid(probs_ctxt, world_size, 1);
         ILP_TYPE proc_rows, proc_cols, myrow, mycol;
         mpi::blacs_gridinfo(probs_ctxt, proc_rows, proc_cols, myrow, mycol);
-        BLOCKED_Probs probs(probs_ctxt, GE, dim, time_vec.size(), (H.size() >= world_size ? H.size() / world_size : 1),
+        BLOCKED_Probs probs(probs_ctxt,
+                            GE,
+                            dim,
+                            time_vec.size(),
+                            (H.size() >= world_size ? H.size() / world_size : 1),
                             time_vec.size());
 
         for (size_t t = 0; t < time_vec.size(); t++) {
@@ -476,8 +507,8 @@ BLOCKED_Probs quantum_master_equation(const std::vector<COMPLEX>& init_state, BL
     ILP_TYPE world_size, rank;
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
     MPI_Comm_size(MPI_COMM_WORLD, &world_size);
-    return BLOCKED_Probs(H.ctxt(), GE, dim, time_vec.size(), (H.size() >= world_size ? H.size() / world_size : 1),
-                         time_vec.size());
+    return BLOCKED_Probs(
+        H.ctxt(), GE, dim, time_vec.size(), (H.size() >= world_size ? H.size() / world_size : 1), time_vec.size());
 }
 
 #endif  // ENABLE_CLUSTER

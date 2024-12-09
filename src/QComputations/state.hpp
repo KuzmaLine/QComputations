@@ -22,8 +22,8 @@ std::complex<double> gamma(double amplitude, double length, double w_ph) {
     return amplitude * std::exp(std::complex<double>(0, -1) * length * w_ph / QConfig::instance().h());
 }
 
-const std::vector<std::string> subscript_numbers = {"\u2080", "\u2081", "\u2082", "\u2083", "\u2084",
-                                                    "\u2085", "\u2086", "\u2087", "\u2088", "\u2089"};
+const std::vector<std::string> subscript_numbers =
+    {"\u2080", "\u2081", "\u2082", "\u2083", "\u2084", "\u2085", "\u2086", "\u2087", "\u2088", "\u2089"};
 
 std::vector<size_t> split_to_groups(size_t system_size, size_t parts_count) {
     assert(system_size % parts_count == 0);
@@ -74,11 +74,13 @@ class Basis_State {
     explicit Basis_State(const std::vector<ValType>& qudits, ValType max_vals = 1, size_t groups_count = 1);
     explicit Basis_State(const std::vector<ValType>& qudits, ValType max_vals, const std::vector<size_t>& groups);
     // инициализация значений с поддержкой разных кудитов
-    explicit Basis_State(const std::vector<ValType>& qudits, const std::vector<ValType>& max_vals,
+    explicit Basis_State(const std::vector<ValType>& qudits,
+                         const std::vector<ValType>& max_vals,
                          size_t groups_count = 1)
         : qudits_(qudits), max_vals_(max_vals), groups_(split_to_groups(qudits.size(), groups_count)) {}
     // инициализация значений с поддержкой разных кудитов + разных групп
-    explicit Basis_State(const std::vector<ValType>& qudits, const std::vector<ValType>& max_vals,
+    explicit Basis_State(const std::vector<ValType>& qudits,
+                         const std::vector<ValType>& max_vals,
                          const std::vector<size_t>& groups_sizes);
 
     explicit Basis_State(const std::string& qudits, ValType max_vals = 1);
@@ -204,7 +206,9 @@ class TCH_State : public Basis_State {
     // TMP realizations
     void set_waveguide(double amplitude, double length);
     // void set_waveguide(const Matrix<std::pair<double, double>>& A);
-    void set_waveguide(size_t from_cavity_id, size_t to_cavity_id, double amplitude,
+    void set_waveguide(size_t from_cavity_id,
+                       size_t to_cavity_id,
+                       double amplitude,
                        double length = QConfig::instance().waveguides_length());
     // set entire state in cavity with id = id
     void set_state(CavityId id, const TCH_State& state);

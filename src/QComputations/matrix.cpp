@@ -28,8 +28,20 @@ Matrix<double> Matrix<double>::operator*(const Matrix<double>& A) const {
 
     auto type = CblasRowMajor;
     if (!(this->is_c_style())) type = CblasColMajor;
-    cblas_dgemm(type, CblasNoTrans, CblasNoTrans, n_, A.m_, m_, alpha, mass_.data(), this->LD(), A.mass_.data(), A.LD(),
-                betta, res.mass_.data(), res.LD());
+    cblas_dgemm(type,
+                CblasNoTrans,
+                CblasNoTrans,
+                n_,
+                A.m_,
+                m_,
+                alpha,
+                mass_.data(),
+                this->LD(),
+                A.mass_.data(),
+                A.LD(),
+                betta,
+                res.mass_.data(),
+                res.LD());
     return res;
 }
 
@@ -42,8 +54,20 @@ Matrix<double>& Matrix<double>::operator*=(const Matrix<double>& A) {
 
     auto type = CblasRowMajor;
     if (!(this->is_c_style())) type = CblasColMajor;
-    cblas_dgemm(type, CblasNoTrans, CblasNoTrans, n_, A.m_, m_, alpha, mass_.data(), this->LD(), A.mass_.data(), A.LD(),
-                betta, mass_.data(), this->LD());
+    cblas_dgemm(type,
+                CblasNoTrans,
+                CblasNoTrans,
+                n_,
+                A.m_,
+                m_,
+                alpha,
+                mass_.data(),
+                this->LD(),
+                A.mass_.data(),
+                A.LD(),
+                betta,
+                mass_.data(),
+                this->LD());
 
     return *this;
 }
@@ -68,8 +92,20 @@ Matrix<COMPLEX> Matrix<COMPLEX>::operator*(const Matrix<COMPLEX>& A) const {
 
     auto type = CblasRowMajor;
     if (!(this->is_c_style())) type = CblasColMajor;
-    cblas_zgemm(type, CblasNoTrans, CblasNoTrans, n_, A.m_, m_, &alpha, mass_.data(), this->LD(), A.mass_.data(),
-                A.LD(), &betta, res.mass_.data(), res.LD());
+    cblas_zgemm(type,
+                CblasNoTrans,
+                CblasNoTrans,
+                n_,
+                A.m_,
+                m_,
+                &alpha,
+                mass_.data(),
+                this->LD(),
+                A.mass_.data(),
+                A.LD(),
+                &betta,
+                res.mass_.data(),
+                res.LD());
     return res;
 }
 
@@ -82,8 +118,20 @@ Matrix<COMPLEX>& Matrix<COMPLEX>::operator*=(const Matrix<COMPLEX>& A) {
 
     auto type = CblasRowMajor;
     if (!(this->is_c_style())) type = CblasColMajor;
-    cblas_zgemm(type, CblasNoTrans, CblasNoTrans, n_, A.m_, m_, &alpha, mass_.data(), this->LD(), A.mass_.data(),
-                A.LD(), &betta, mass_.data(), this->LD());
+    cblas_zgemm(type,
+                CblasNoTrans,
+                CblasNoTrans,
+                n_,
+                A.m_,
+                m_,
+                &alpha,
+                mass_.data(),
+                this->LD(),
+                A.mass_.data(),
+                A.LD(),
+                &betta,
+                mass_.data(),
+                this->LD());
     return *this;
 }
 
@@ -201,30 +249,65 @@ CBLAS_TRANSPOSE char_to_trans(char ch_trans) {
 }  // namespace
 
 template <>
-void optimized_multiply(const Matrix<double>& A, const Matrix<double>& B, Matrix<double>& C, double alpha, double betta,
-                        char trans_A, char trans_B) {
+void optimized_multiply(const Matrix<double>& A,
+                        const Matrix<double>& B,
+                        Matrix<double>& C,
+                        double alpha,
+                        double betta,
+                        char trans_A,
+                        char trans_B) {
     assert(A.m() == B.n());
     assert(A.n() == C.n() and B.m() == C.m());
 
     auto type = CblasRowMajor;
     if (!(A.is_c_style())) type = CblasColMajor;
-    cblas_dgemm(type, char_to_trans(trans_A), char_to_trans(trans_B), A.n(), B.m(), A.m(), alpha, A.data(), A.LD(),
-                B.data(), B.LD(), betta, C.data(), C.LD());
+    cblas_dgemm(type,
+                char_to_trans(trans_A),
+                char_to_trans(trans_B),
+                A.n(),
+                B.m(),
+                A.m(),
+                alpha,
+                A.data(),
+                A.LD(),
+                B.data(),
+                B.LD(),
+                betta,
+                C.data(),
+                C.LD());
 }
 
 template <>
-void optimized_multiply(const Matrix<COMPLEX>& A, const Matrix<COMPLEX>& B, Matrix<COMPLEX>& C, COMPLEX alpha,
-                        COMPLEX betta, char trans_A, char trans_B) {
+void optimized_multiply(const Matrix<COMPLEX>& A,
+                        const Matrix<COMPLEX>& B,
+                        Matrix<COMPLEX>& C,
+                        COMPLEX alpha,
+                        COMPLEX betta,
+                        char trans_A,
+                        char trans_B) {
     assert(A.m() == B.n());
     assert(A.n() == C.n() and B.m() == C.m());
 
     auto type = CblasRowMajor;
     if (!(A.is_c_style())) type = CblasColMajor;
-    cblas_zgemm(type, char_to_trans(trans_A), char_to_trans(trans_B), A.n(), B.m(), A.m(), &alpha, A.data(), A.LD(),
-                B.data(), B.LD(), &betta, C.data(), C.LD());
+    cblas_zgemm(type,
+                char_to_trans(trans_A),
+                char_to_trans(trans_B),
+                A.n(),
+                B.m(),
+                A.m(),
+                &alpha,
+                A.data(),
+                A.LD(),
+                B.data(),
+                B.LD(),
+                &betta,
+                C.data(),
+                C.LD());
 }
 
-std::vector<Matrix<COMPLEX>> OPT_Runge_Kutt_4(const std::vector<double>& x, const Matrix<COMPLEX>& y0,
+std::vector<Matrix<COMPLEX>> OPT_Runge_Kutt_4(const std::vector<double>& x,
+                                              const Matrix<COMPLEX>& y0,
                                               std::function<void(double, const Matrix<COMPLEX>&, Matrix<COMPLEX>&)> f) {
     size_t len = x.size();
     size_t dim = y0.n();
@@ -266,7 +349,8 @@ std::vector<Matrix<COMPLEX>> OPT_Runge_Kutt_4(const std::vector<double>& x, cons
     return y;
 }
 
-std::vector<Matrix<COMPLEX>> OPT_Runge_Kutt_2(const std::vector<double>& x, const Matrix<COMPLEX>& y0,
+std::vector<Matrix<COMPLEX>> OPT_Runge_Kutt_2(const std::vector<double>& x,
+                                              const Matrix<COMPLEX>& y0,
                                               std::function<void(double, const Matrix<COMPLEX>&, Matrix<COMPLEX>&)> f) {
     size_t len = x.size();
     size_t dim = y0.n();

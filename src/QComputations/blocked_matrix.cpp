@@ -54,8 +54,8 @@ BLOCKED_Matrix<double> BLOCKED_Matrix<double>::operator-(const BLOCKED_Matrix<do
 
     BLOCKED_Matrix<double> C(B);
 
-    mpi::parallel_dgeadd(this->get_local_matrix(), C.get_local_matrix(), this->desc(), C.desc(), double(1.0),
-                         double(-1.0));
+    mpi::parallel_dgeadd(
+        this->get_local_matrix(), C.get_local_matrix(), this->desc(), C.desc(), double(1.0), double(-1.0));
 
     return C;
 }
@@ -67,8 +67,8 @@ BLOCKED_Matrix<COMPLEX> BLOCKED_Matrix<COMPLEX>::operator-(const BLOCKED_Matrix<
 
     BLOCKED_Matrix<COMPLEX> C(B);
 
-    mpi::parallel_zgeadd(this->get_local_matrix(), C.get_local_matrix(), this->desc(), C.desc(), COMPLEX(1, 0),
-                         COMPLEX(-1, 0));
+    mpi::parallel_zgeadd(
+        this->get_local_matrix(), C.get_local_matrix(), this->desc(), C.desc(), COMPLEX(1, 0), COMPLEX(-1, 0));
 
     return C;
 }
@@ -102,8 +102,8 @@ BLOCKED_Matrix<double> BLOCKED_Matrix<double>::operator*(const BLOCKED_Matrix<do
     BLOCKED_Matrix<double> C(*this, B);
 
     if (this->matrix_type_ == GE and B.matrix_type_ == GE) {
-        mpi::parallel_dgemm(this->get_local_matrix(), B.get_local_matrix(), C.get_local_matrix(), this->desc(),
-                            B.desc(), C.desc());
+        mpi::parallel_dgemm(
+            this->get_local_matrix(), B.get_local_matrix(), C.get_local_matrix(), this->desc(), B.desc(), C.desc());
     } else {
         std::cerr << "Matrix types error!" << std::endl;
     }
@@ -115,14 +115,24 @@ BLOCKED_Matrix<COMPLEX> BLOCKED_Matrix<COMPLEX>::operator*(const BLOCKED_Matrix<
     BLOCKED_Matrix<COMPLEX> C(*this, B);
 
     if (this->matrix_type_ == GE and B.matrix_type_ == GE) {
-        mpi::parallel_zgemm(this->get_local_matrix(), B.get_local_matrix(), C.get_local_matrix(), this->desc(),
-                            B.desc(), C.desc());
+        mpi::parallel_zgemm(
+            this->get_local_matrix(), B.get_local_matrix(), C.get_local_matrix(), this->desc(), B.desc(), C.desc());
     } else if (this->matrix_type_ == HE and B.matrix_type_ == GE) {
-        mpi::parallel_zhemm('L', this->get_local_matrix(), B.get_local_matrix(), C.get_local_matrix(), this->desc(),
-                            B.desc(), C.desc());
+        mpi::parallel_zhemm('L',
+                            this->get_local_matrix(),
+                            B.get_local_matrix(),
+                            C.get_local_matrix(),
+                            this->desc(),
+                            B.desc(),
+                            C.desc());
     } else if (this->matrix_type_ == GE and B.matrix_type_ == HE) {
-        mpi::parallel_zhemm('R', B.get_local_matrix(), this->get_local_matrix(), C.get_local_matrix(), B.desc(),
-                            this->desc(), C.desc());
+        mpi::parallel_zhemm('R',
+                            B.get_local_matrix(),
+                            this->get_local_matrix(),
+                            C.get_local_matrix(),
+                            B.desc(),
+                            this->desc(),
+                            C.desc());
     } else {
         std::cerr << "Matrix types error!" << std::endl;
     }
@@ -139,7 +149,17 @@ BLOCKED_Matrix<double> BLOCKED_Matrix<double>::hermit() const {
         ILP_TYPE iONE = 1;
         ILP_TYPE m = m_, n = n_;
 
-        pdtran(&m, &n, &alpha, this->data(), &iONE, &iONE, (this->desc()).data(), &betta, A.data(), &iONE, &iONE,
+        pdtran(&m,
+               &n,
+               &alpha,
+               this->data(),
+               &iONE,
+               &iONE,
+               (this->desc()).data(),
+               &betta,
+               A.data(),
+               &iONE,
+               &iONE,
                A.desc().data());
 
         return A;
@@ -157,7 +177,17 @@ BLOCKED_Matrix<COMPLEX> BLOCKED_Matrix<COMPLEX>::hermit() const {
         ILP_TYPE iONE = 1;
         ILP_TYPE m = m_, n = n_;
 
-        pztranc(&m, &n, &alpha, this->data(), &iONE, &iONE, (this->desc()).data(), &betta, A.data(), &iONE, &iONE,
+        pztranc(&m,
+                &n,
+                &alpha,
+                this->data(),
+                &iONE,
+                &iONE,
+                (this->desc()).data(),
+                &betta,
+                A.data(),
+                &iONE,
+                &iONE,
                 A.desc().data());
 
         return A;
@@ -213,13 +243,13 @@ void BLOCKED_Matrix<double>::write_to_csv_file(const std::string& filename) cons
             offset = start_offset + (one_elem_size + delimiter_size) * cur_index;
             MPI_File_seek(file, offset, MPI_SEEK_SET);
             if ((cur_index + 1) % A_m != 0) {
-                auto num_str = to_string_double_with_precision(this->data()[j * this->local_n() + i], num_accuracy,
-                                                               max_number_size) +
+                auto num_str = to_string_double_with_precision(
+                                   this->data()[j * this->local_n() + i], num_accuracy, max_number_size) +
                                char_delimiter;
                 MPI_File_write(file, num_str.c_str(), num_str.length(), MPI_CHAR, &status);
             } else {
-                auto num_str = to_string_double_with_precision(this->data()[j * this->local_n() + i], num_accuracy,
-                                                               max_number_size);
+                auto num_str = to_string_double_with_precision(
+                    this->data()[j * this->local_n() + i], num_accuracy, max_number_size);
                 num_str += "\n";
                 MPI_File_write(file, num_str.c_str(), num_str.length(), MPI_CHAR, &status);
             }
@@ -275,13 +305,13 @@ void BLOCKED_Matrix<COMPLEX>::write_to_csv_file(const std::string& filename) con
             offset = start_offset + (one_elem_size + delimiter_size) * cur_index;
             MPI_File_seek(file, offset, MPI_SEEK_SET);
             if ((cur_index + 1) % A_m != 0) {
-                auto num_str = to_string_complex_with_precision(this->data()[j * this->local_n() + i], num_accuracy,
-                                                                max_number_size) +
+                auto num_str = to_string_complex_with_precision(
+                                   this->data()[j * this->local_n() + i], num_accuracy, max_number_size) +
                                char_delimiter;
                 MPI_File_write(file, num_str.c_str(), num_str.length(), MPI_CHAR, &status);
             } else {
-                auto num_str = to_string_complex_with_precision(this->data()[j * this->local_n() + i], num_accuracy,
-                                                                max_number_size);
+                auto num_str = to_string_complex_with_precision(
+                    this->data()[j * this->local_n() + i], num_accuracy, max_number_size);
                 num_str += "\n";
                 MPI_File_write(file, num_str.c_str(), num_str.length(), MPI_CHAR, &status);
             }
@@ -310,8 +340,25 @@ std::pair<std::vector<double>, BLOCKED_Matrix<COMPLEX>> Hermit_Lanczos(const BLO
     std::vector<COMPLEX> work(1);
     std::vector<double> rwork(1);
     std::vector<ILP_TYPE> iwork(1);
-    pzheevd(&jobz, &uplo, &n, A.data(), &iONE, &iONE, A.desc().data(), w.data(), Z.data(), &iONE, &iONE,
-            Z.desc().data(), work.data(), &iMINUS, rwork.data(), &iMINUS, iwork.data(), &iMINUS, &info);
+    pzheevd(&jobz,
+            &uplo,
+            &n,
+            A.data(),
+            &iONE,
+            &iONE,
+            A.desc().data(),
+            w.data(),
+            Z.data(),
+            &iONE,
+            &iONE,
+            Z.desc().data(),
+            work.data(),
+            &iMINUS,
+            rwork.data(),
+            &iMINUS,
+            iwork.data(),
+            &iMINUS,
+            &info);
     ILP_TYPE lwork = work[0].real();
     ILP_TYPE lrwork = rwork[0];
     ILP_TYPE liwork = iwork[0];
@@ -319,14 +366,34 @@ std::pair<std::vector<double>, BLOCKED_Matrix<COMPLEX>> Hermit_Lanczos(const BLO
     work.resize(lwork);
     rwork.resize(lrwork);
     iwork.resize(liwork);
-    pzheevd(&jobz, &uplo, &n, A.data(), &iONE, &iONE, A.desc().data(), w.data(), Z.data(), &iONE, &iONE,
-            Z.desc().data(), work.data(), &lwork, rwork.data(), &lrwork, iwork.data(), &liwork, &info);
+    pzheevd(&jobz,
+            &uplo,
+            &n,
+            A.data(),
+            &iONE,
+            &iONE,
+            A.desc().data(),
+            w.data(),
+            Z.data(),
+            &iONE,
+            &iONE,
+            Z.desc().data(),
+            work.data(),
+            &lwork,
+            rwork.data(),
+            &lrwork,
+            iwork.data(),
+            &liwork,
+            &info);
 
     return std::make_pair(w, Z);
 }
 
 template <>
-void optimized_add(const BLOCKED_Matrix<double>& A, BLOCKED_Matrix<double>& C, double alpha, double betta,
+void optimized_add(const BLOCKED_Matrix<double>& A,
+                   BLOCKED_Matrix<double>& C,
+                   double alpha,
+                   double betta,
                    char trans_A) {
     assert(A.matrix_type() == GE and C.matrix_type() == GE);
     assert(A.n() == C.n() and A.m() == C.m());
@@ -335,7 +402,10 @@ void optimized_add(const BLOCKED_Matrix<double>& A, BLOCKED_Matrix<double>& C, d
 }
 
 template <>
-void optimized_add(const BLOCKED_Matrix<COMPLEX>& A, BLOCKED_Matrix<COMPLEX>& C, COMPLEX alpha, COMPLEX betta,
+void optimized_add(const BLOCKED_Matrix<COMPLEX>& A,
+                   BLOCKED_Matrix<COMPLEX>& C,
+                   COMPLEX alpha,
+                   COMPLEX betta,
                    char trans_A) {
     assert(A.matrix_type() == GE and C.matrix_type() == GE);
     assert(A.n() == C.n() and A.m() == C.m());
@@ -344,38 +414,79 @@ void optimized_add(const BLOCKED_Matrix<COMPLEX>& A, BLOCKED_Matrix<COMPLEX>& C,
 }
 
 template <>
-void optimized_multiply(const BLOCKED_Matrix<double>& A, const BLOCKED_Matrix<double>& B, BLOCKED_Matrix<double>& C,
-                        double alpha, double betta, char trans_A, char trans_B) {
+void optimized_multiply(const BLOCKED_Matrix<double>& A,
+                        const BLOCKED_Matrix<double>& B,
+                        BLOCKED_Matrix<double>& C,
+                        double alpha,
+                        double betta,
+                        char trans_A,
+                        char trans_B) {
     assert(C.m() == B.m() and C.n() == A.n());
 
     if (A.matrix_type() == GE and B.matrix_type() == GE) {
-        mpi::parallel_dgemm(A.get_local_matrix(), B.get_local_matrix(), C.get_local_matrix(), A.desc(), B.desc(),
-                            C.desc(), alpha, betta, trans_A, trans_B);
+        mpi::parallel_dgemm(A.get_local_matrix(),
+                            B.get_local_matrix(),
+                            C.get_local_matrix(),
+                            A.desc(),
+                            B.desc(),
+                            C.desc(),
+                            alpha,
+                            betta,
+                            trans_A,
+                            trans_B);
     } else {
         std::cerr << "Matrix types error DOUBLE!" << std::endl;
     }
 }
 
 template <>
-void optimized_multiply(const BLOCKED_Matrix<COMPLEX>& A, const BLOCKED_Matrix<COMPLEX>& B, BLOCKED_Matrix<COMPLEX>& C,
-                        COMPLEX alpha, COMPLEX betta, char trans_A, char trans_B) {
+void optimized_multiply(const BLOCKED_Matrix<COMPLEX>& A,
+                        const BLOCKED_Matrix<COMPLEX>& B,
+                        BLOCKED_Matrix<COMPLEX>& C,
+                        COMPLEX alpha,
+                        COMPLEX betta,
+                        char trans_A,
+                        char trans_B) {
     assert(C.m() == B.m() and C.n() == A.n());
     if (A.matrix_type() == GE and B.matrix_type() == GE) {
-        mpi::parallel_zgemm(A.get_local_matrix(), B.get_local_matrix(), C.get_local_matrix(), A.desc(), B.desc(),
-                            C.desc(), alpha, betta, trans_A, trans_B);
+        mpi::parallel_zgemm(A.get_local_matrix(),
+                            B.get_local_matrix(),
+                            C.get_local_matrix(),
+                            A.desc(),
+                            B.desc(),
+                            C.desc(),
+                            alpha,
+                            betta,
+                            trans_A,
+                            trans_B);
     } else if (A.matrix_type() == HE and B.matrix_type() == GE) {
-        mpi::parallel_zhemm('L', A.get_local_matrix(), B.get_local_matrix(), C.get_local_matrix(), A.desc(), B.desc(),
-                            C.desc(), alpha, betta);
+        mpi::parallel_zhemm('L',
+                            A.get_local_matrix(),
+                            B.get_local_matrix(),
+                            C.get_local_matrix(),
+                            A.desc(),
+                            B.desc(),
+                            C.desc(),
+                            alpha,
+                            betta);
     } else if (A.matrix_type() == GE and B.matrix_type() == HE) {
-        mpi::parallel_zhemm('R', B.get_local_matrix(), A.get_local_matrix(), C.get_local_matrix(), B.desc(), A.desc(),
-                            C.desc(), alpha, betta);
+        mpi::parallel_zhemm('R',
+                            B.get_local_matrix(),
+                            A.get_local_matrix(),
+                            C.get_local_matrix(),
+                            B.desc(),
+                            A.desc(),
+                            C.desc(),
+                            alpha,
+                            betta);
     } else {
         std::cerr << "Matrix types error COMPLEX! " << A.matrix_type() << " " << B.matrix_type() << std::endl;
     }
 }
 
 std::vector<BLOCKED_Matrix<COMPLEX>> MPI_Runge_Kutt_4(
-    const std::vector<double>& x, const BLOCKED_Matrix<COMPLEX>& y0,
+    const std::vector<double>& x,
+    const BLOCKED_Matrix<COMPLEX>& y0,
     std::function<void(double, const BLOCKED_Matrix<COMPLEX>&, BLOCKED_Matrix<COMPLEX>&)> f) {
     size_t len = x.size();
     size_t dim = y0.n();
@@ -410,7 +521,8 @@ std::vector<BLOCKED_Matrix<COMPLEX>> MPI_Runge_Kutt_4(
 }
 
 std::vector<BLOCKED_Matrix<COMPLEX>> MPI_Runge_Kutt_2(
-    const std::vector<double>& x, const BLOCKED_Matrix<COMPLEX>& y0,
+    const std::vector<double>& x,
+    const BLOCKED_Matrix<COMPLEX>& y0,
     std::function<void(double, const BLOCKED_Matrix<COMPLEX>&, BLOCKED_Matrix<COMPLEX>&)> f) {
     size_t len = x.size();
     size_t dim = y0.n();

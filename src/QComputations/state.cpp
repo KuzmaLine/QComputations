@@ -223,7 +223,9 @@ void TCH_State::reshape(size_t x_size, size_t y_size, size_t z_size) {
     z_size_ = z_size;
 
     waveguides_ = Matrix<std::pair<double, double>>(
-        C_STYLE, groups_.size(), groups_.size(),
+        C_STYLE,
+        groups_.size(),
+        groups_.size(),
         std::make_pair(QConfig::instance().waveguides_amplitude(), QConfig::instance().waveguides_length()));
 
     neighbours_ = update_neighbours(x_size_, y_size_, z_size_);
@@ -293,7 +295,9 @@ TCH_State::TCH_State(const std::vector<size_t>& grid_config)
     : Basis_State(vector_sum(grid_config) + grid_config.size(), 1, add_one(grid_config)),
       gamma_leak_cavities_(grid_config.size(), 0),
       gamma_gain_cavities_(grid_config.size(), 0),
-      waveguides_(C_STYLE, grid_config.size(), grid_config.size(),
+      waveguides_(C_STYLE,
+                  grid_config.size(),
+                  grid_config.size(),
                   std::make_pair(QConfig::instance().waveguides_amplitude(), QConfig::instance().waveguides_length())) {
     x_size_ = grid_config.size();
     y_size_ = 1;
