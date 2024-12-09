@@ -1,16 +1,16 @@
 #pragma once
 #include "additional_operators.hpp"
 #include "config.hpp"
-#include "state.hpp"
 #include "matrix.hpp"
+#include "state.hpp"
 #include <chrono>
-#include <vector>
 #include <complex>
-#include <set>
 #include <functional>
+#include <mkl_cblas.h>
 #include <mkl_lapack.h>
 #include <mkl_lapacke.h>
-#include <mkl_cblas.h>
+#include <set>
+#include <vector>
 
 #ifdef ENABLE_MPI
 #include "mpi.h"
@@ -20,51 +20,47 @@ namespace QComputations {
 
 namespace {
 #ifdef MKL_ILP64
-    using ILP_TYPE = long long;
+using ILP_TYPE = long long;
 #else
-    using ILP_TYPE = int;
+using ILP_TYPE = int;
 #endif
 
-    using E_LEVEL = int;
-    using COMPLEX = std::complex<double>;
-    using vec_complex = std::vector<COMPLEX>;
-    using vec_levels = std::vector<E_LEVEL>;
-}
+using E_LEVEL = int;
+using COMPLEX = std::complex<double>;
+using vec_complex = std::vector<COMPLEX>;
+using vec_levels = std::vector<E_LEVEL>;
+} // namespace
 
-std::string to_string_complex_with_precision(const COMPLEX a_value,
-                                             const int n, int max_number_size);
+std::string to_string_complex_with_precision(const COMPLEX a_value, const int n, int max_number_size);
 
-std::string to_string_double_with_precision(const double a_value,
-                                             const int n, int max_number_size);
+std::string to_string_double_with_precision(const double a_value, const int n, int max_number_size);
 
-std::string vector_to_string(const std::vector<std::string>& inp);
+std::string vector_to_string(const std::vector<std::string> &inp);
 
-void print_state_biguint(const TCH_State& state);
+void print_state_biguint(const TCH_State &state);
 
-std::vector<double> FROM_double_TO_vector(double* A, lapack_int n);
-Matrix<COMPLEX> FROM_lapack_complex_double_TO_Matrix(lapack_complex_double* A, lapack_int n, lapack_int m);
+std::vector<double> FROM_double_TO_vector(double *A, lapack_int n);
+Matrix<COMPLEX> FROM_lapack_complex_double_TO_Matrix(lapack_complex_double *A, lapack_int n, lapack_int m);
 
-template<typename T>
-std::vector<double> linspace(T start_in, T end_in, int num_in)
-{
-  std::vector<double> linspaced;
-  double start = static_cast<double>(start_in);
-  double end = static_cast<double>(end_in);
-  double num = static_cast<double>(num_in);
-  if (num == 0) { return linspaced; }
-  if (num == 1)
-    {
-      linspaced.push_back(start);
-      return linspaced;
+template <typename T> std::vector<double> linspace(T start_in, T end_in, int num_in) {
+    std::vector<double> linspaced;
+    double start = static_cast<double>(start_in);
+    double end = static_cast<double>(end_in);
+    double num = static_cast<double>(num_in);
+    if (num == 0) {
+        return linspaced;
     }
-  double delta = (end - start) / (num - 1);
-  for(int i=0; i < num-1; ++i)
-    {
-      linspaced.push_back(start + delta * i);
+    if (num == 1) {
+        linspaced.push_back(start);
+        return linspaced;
     }
-  linspaced.push_back(end); // I want to ensure that start and end
-                            // are exactly the same as the input
-  return linspaced;
+    double delta = (end - start) / (num - 1);
+    for (int i = 0; i < num - 1; ++i) {
+        linspaced.push_back(start + delta * i);
+    }
+    linspaced.push_back(end); // I want to ensure that start and end
+                              // are exactly the same as the input
+    return linspaced;
 }
 
 // Convert state to 10 numerical system
@@ -76,25 +72,25 @@ bool is_digit(char c);
 size_t Ck_n(size_t k, size_t n);
 
 // Eigen Problem
-double off(const Matrix<double>& A);
+double off(const Matrix<double> &A);
 std::pair<double, double> givens(double a, double b, double eps = QConfig::instance().eps());
-void tridiagonal_QR(Matrix<double>& T);
-Matrix<double> MGS(const Matrix<COMPLEX>& A);
+void tridiagonal_QR(Matrix<double> &T);
+Matrix<double> MGS(const Matrix<COMPLEX> &A);
 
 // Using for Hamiltonians
-std::pair<std::vector<double>, Matrix<COMPLEX>> Hermit_Lanczos(const Matrix<COMPLEX>& A);
+std::pair<std::vector<double>, Matrix<COMPLEX>> Hermit_Lanczos(const Matrix<COMPLEX> &A);
 
-std::function<double(double)> Cubic_Spline_Interpolate(const std::vector<double>& x, const std::vector<double>& y);
+std::function<double(double)> Cubic_Spline_Interpolate(const std::vector<double> &x, const std::vector<double> &y);
 
 // Solve f(x) = target
-double fsolve(std::function<double(double)> f, double a, double b, double target = 0, double eps = QConfig::instance().eps());
+double fsolve(std::function<double(double)> f, double a, double b, double target = 0,
+              double eps = QConfig::instance().eps());
 
 // f must be unimodal on [a, b]
 double fmin(std::function<double(double)> f, double a, double b, double eps = QConfig::instance().eps());
 
-template<typename StateType>
-void show_basis(const BasisType<StateType>& basis) {
-    for (const auto& state: basis) {
+template <typename StateType> void show_basis(const BasisType<StateType> &basis) {
+    for (const auto &state : basis) {
         std::cout << std::setw(QConfig::instance().width()) << state->to_string() << " ";
     }
 
@@ -102,21 +98,21 @@ void show_basis(const BasisType<StateType>& basis) {
 }
 
 // <a|b>, (b, a)
-double scalar_product(const std::vector<double>& a, const std::vector<double>& b); 
-COMPLEX scalar_product(const std::vector<COMPLEX>& a, const std::vector<COMPLEX>& b);
+double scalar_product(const std::vector<double> &a, const std::vector<double> &b);
+COMPLEX scalar_product(const std::vector<COMPLEX> &a, const std::vector<COMPLEX> &b);
 
 // Euclidean
-double norm(const std::vector<COMPLEX>& v);
+double norm(const std::vector<COMPLEX> &v);
 
-void make_rank_map(size_t size, int rank, int world_size, size_t& start_col, size_t& count);
+void make_rank_map(size_t size, int rank, int world_size, size_t &start_col, size_t &count);
 
-// ------------------------------- template functions --------------------------------------
+// ------------------------------- template functions
+// --------------------------------------
 
-template<typename T>
-std::set<T> set_bool_check(const std::set<T>& v, const std::function<bool(T)>& func) {
+template <typename T> std::set<T> set_bool_check(const std::set<T> &v, const std::function<bool(T)> &func) {
     std::set<T> res;
 
-    for (const auto& x: v) {
+    for (const auto &x : v) {
         if (func(x)) {
             res.insert(x);
         }
@@ -125,12 +121,11 @@ std::set<T> set_bool_check(const std::set<T>& v, const std::function<bool(T)>& f
     return res;
 }
 
-template<typename T>
-T read_number(const std::string& str, size_t& start_index) {
+template <typename T> T read_number(const std::string &str, size_t &start_index) {
     T n = T(0);
     size_t index = start_index;
 
-    while(is_digit(str[index])) {
+    while (is_digit(str[index])) {
         n *= 10;
         n += str.at(index) - '0';
         index++;
@@ -140,8 +135,7 @@ T read_number(const std::string& str, size_t& start_index) {
     return n;
 }
 
-template<typename T>
-Matrix<T> tensor_multiply(const Matrix<T>& A, const Matrix<T>& B) {
+template <typename T> Matrix<T> tensor_multiply(const Matrix<T> &A, const Matrix<T> &B) {
     auto n = A.size() * B.size();
     Matrix<T> C(C_STYLE, n, n, 0);
 
@@ -161,8 +155,7 @@ Matrix<T> tensor_multiply(const Matrix<T>& A, const Matrix<T>& B) {
     return C;
 }
 
-template<typename T>
-std::ostream& operator<<(std::ostream& out, const Matrix<T>& matrix) {
+template <typename T> std::ostream &operator<<(std::ostream &out, const Matrix<T> &matrix) {
     for (size_t i = 0; i < matrix.n(); i++) {
         for (size_t j = 0; j < matrix.m(); j++) {
             out << std::setw(QConfig::instance().width()) << matrix[i][j] << " ";
@@ -175,23 +168,20 @@ std::ostream& operator<<(std::ostream& out, const Matrix<T>& matrix) {
 }
 
 // Get elem from set by index
-template<typename T>
-T get_elem_from_set(const std::set<T>& st, size_t index) {
+template <typename T> T get_elem_from_set(const std::set<T> &st, size_t index) {
     auto it = st.begin();
     std::advance(it, index);
     return *it;
 }
 
-template<typename T>
-std::shared_ptr<T> get_state_from_basis(const BasisType<T>& st, size_t index) {
+template <typename T> std::shared_ptr<T> get_state_from_basis(const BasisType<T> &st, size_t index) {
     auto it = st.begin();
     std::advance(it, index);
     return *it;
 }
 
-
-template<typename T, typename V>
-std::vector<V> Runge_Kutt_4(const std::vector<T>& x, const V& y0, std::function<V(T, V)> f) {
+template <typename T, typename V>
+std::vector<V> Runge_Kutt_4(const std::vector<T> &x, const V &y0, std::function<V(T, V)> f) {
     size_t len = x.size();
     std::vector<V> y(len);
     y[0] = y0;
@@ -203,15 +193,14 @@ std::vector<V> Runge_Kutt_4(const std::vector<T>& x, const V& y0, std::function<
         V k2 = f(x[i] + h / 2.0, y[i] + k1 * (h / 2.0));
         V k3 = f(x[i] + h / 2.0, y[i] + k2 * (h / 2.0));
         V k4 = f(x[i] + h, y[i] + k3 * h);
-        y[i + 1] = y[i]  + (k1 + (k2 + k3) * 2 + k4) * (h / 6.0);
+        y[i + 1] = y[i] + (k1 + (k2 + k3) * 2 + k4) * (h / 6.0);
     }
 
     return y;
 }
 
-
-template<typename T, typename V>
-std::vector<V> Runge_Kutt_2(const std::vector<T>& x, const V& y0, std::function<V(T, V)> f) {
+template <typename T, typename V>
+std::vector<V> Runge_Kutt_2(const std::vector<T> &x, const V &y0, std::function<V(T, V)> f) {
     size_t len = x.size();
     std::vector<V> y(len);
     y[0] = y0;
@@ -221,70 +210,64 @@ std::vector<V> Runge_Kutt_2(const std::vector<T>& x, const V& y0, std::function<
 
         V k1 = f(x[i], y[i]);
         V k2 = f(x[i] + h, y[i] + k1 * h);
-        y[i + 1] = y[i]  + (k1 + k2) * (h / 2.0);
+        y[i + 1] = y[i] + (k1 + k2) * (h / 2.0);
     }
 
     return y;
 }
 
-template<typename T>
-bool is_in_vector(const std::vector<T> v, const T& elem) {
+template <typename T> bool is_in_vector(const std::vector<T> v, const T &elem) {
     return std::find(v.begin(), v.end(), elem) != v.end();
 }
 
 // Tridiagonal linear system solving
-template<typename T>
-std::vector<T> Thomas_Algorithm(const Matrix<T>& B, const std::vector<T>& y) {
+template <typename T> std::vector<T> Thomas_Algorithm(const Matrix<T> &B, const std::vector<T> &y) {
     size_t k = B.size();
- 
+
     // Down move
     std::vector<T> x(k, 0);
-    std::vector<T> a(k, 0); 
-    a[0] = -B[0][1]/ B[0][0];
+    std::vector<T> a(k, 0);
+    a[0] = -B[0][1] / B[0][0];
 
-    std::vector<T> b(k, 0); 
+    std::vector<T> b(k, 0);
     b[0] = y[0] / B[0][0];
- 
+
     for (size_t i = 1; i < k - 1; i++) {
         a[i] = B[i][i + 1] / (-B[i][i] - B[i][i - 1] * a[i - 1]);
-        b[i] = (B[i][i - 1] * b[i - 1] - y[i])/(-B[i][i] - a[i - 1] * B[i][i - 1]);
+        b[i] = (B[i][i - 1] * b[i - 1] - y[i]) / (-B[i][i] - a[i - 1] * B[i][i - 1]);
     }
     a[k - 1] = 0;
-    x[k - 1] = (B[k - 1][k - 2] * b[k - 2] - y[k - 1])/( -B[k - 1][k - 1] - B[k - 1][k - 2] * a[k - 2]);
- 
+    x[k - 1] = (B[k - 1][k - 2] * b[k - 2] - y[k - 1]) / (-B[k - 1][k - 1] - B[k - 1][k - 2] * a[k - 2]);
+
     // Up move
- 
+
     for (long long i = k - 2; i > -1; i--) {
         x[i] = a[i] * x[i + 1] + b[i];
     }
- 
+
     return x;
 }
 
 // Testing function
-template<typename T>
-void show_vector(const std::vector<T>& v) {
-    for (const auto& num: v) {
+template <typename T> void show_vector(const std::vector<T> &v) {
+    for (const auto &num : v) {
         std::cout << std::setw(15) << num << " ";
     }
 
     std::cout << std::endl;
 }
 
-template<typename StateType>
-BasisType<Basis_State> convert_to(const BasisType<StateType>& states) {
+template <typename StateType> BasisType<Basis_State> convert_to(const BasisType<StateType> &states) {
     BasisType<Basis_State> res;
-    for (auto st: states) {
+    for (auto st : states) {
         res.insert(st);
     }
 
     return res;
 }
 
-
 // from {x1, x2, x3 ...} to {f(x1), f(x2), ...}
-template<typename T>
-std::vector<T> f_vector(std::function<T(T)> f, const std::vector<T>& x) {
+template <typename T> std::vector<T> f_vector(std::function<T(T)> f, const std::vector<T> &x) {
     size_t n = x.size();
     std::vector<T> res(n);
 
@@ -296,13 +279,13 @@ std::vector<T> f_vector(std::function<T(T)> f, const std::vector<T>& x) {
 }
 
 // Не трогать!!!!!
-void cblas_MM_double_complex(COMPLEX* A, COMPLEX* B, COMPLEX* C, int n, int k, int m, double alpha, double betta);
+void cblas_MM_double_complex(COMPLEX *A, COMPLEX *B, COMPLEX *C, int n, int k, int m, double alpha, double betta);
 
-void cblas_MM_double(double* A, double* B, double* C, int n, int k, int m, double alpha, double betta);
+void cblas_MM_double(double *A, double *B, double *C, int n, int k, int m, double alpha, double betta);
 
-void cblas_MM_int(int* A, int* B, int* C, int n, int k, int m, double alpha, double betta);
+void cblas_MM_int(int *A, int *B, int *C, int n, int k, int m, double alpha, double betta);
 
- #ifdef ENABLE_MPI
+#ifdef ENABLE_MPI
 
 #endif
 

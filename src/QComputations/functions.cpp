@@ -1,87 +1,78 @@
 #include "functions.hpp"
-//#include "test.hpp"
-#include <algorithm>
-#include <numeric>
-#include <iostream>
+// #include "test.hpp"
 #include "config.hpp"
+#include <algorithm>
 #include <cassert>
+#include <iostream>
+#include <numeric>
 #include <regex>
 
-extern "C"
-{
-    void zdotc(COMPLEX*, int*, const COMPLEX*, int*, const COMPLEX*, int*);
+extern "C" {
+void zdotc(COMPLEX *, int *, const COMPLEX *, int *, const COMPLEX *, int *);
 }
 
 namespace QComputations {
 
 namespace {
-    void BP_Mult(Matrix<double>& B, size_t p, size_t q, double c, double s) {
-        size_t n = B.size();
-        for (size_t i = 0; i < n; i++) {
-            auto B_p = B[i][p] * c - B[i][q] * s;
-            auto B_q = B[i][p] * s + B[i][q] * c;
+void BP_Mult(Matrix<double> &B, size_t p, size_t q, double c, double s) {
+    size_t n = B.size();
+    for (size_t i = 0; i < n; i++) {
+        auto B_p = B[i][p] * c - B[i][q] * s;
+        auto B_q = B[i][p] * s + B[i][q] * c;
 
-            B[i][p] = B_p;
-            B[i][q] = B_q;
-        }
-    }
-
-    void PtransB_Mult(Matrix<double>& B, size_t p, size_t q, double c, double s) {
-        size_t n = B.size();
-        for (size_t i = 0; i < n; i++) {
-            auto B_p = B[p][i] * c - B[q][i] * s;
-            auto B_q = B[p][i] * s + B[q][i] * c;
-
-            B[p][i] = B_p;
-            B[q][i] = B_q;
-        }
+        B[i][p] = B_p;
+        B[i][q] = B_q;
     }
 }
 
-std::string to_string_complex_with_precision(const COMPLEX a_value,
-                                             const int n, int max_number_size) {
-  std::ostringstream out;
-  out.precision(n);
-  out << ((a_value.real() >= 0) ? "+" : "-") << std::setfill('0')
-      << std::setw(max_number_size) << std::fixed << std::abs(a_value.real());
-  out << ((a_value.imag() >= 0) ? "+" : "-") << std::setfill('0')
-      << std::setw(max_number_size) << std::fixed << std::abs(a_value.imag());
-  out << "j";
-  return std::move(out).str();
+void PtransB_Mult(Matrix<double> &B, size_t p, size_t q, double c, double s) {
+    size_t n = B.size();
+    for (size_t i = 0; i < n; i++) {
+        auto B_p = B[p][i] * c - B[q][i] * s;
+        auto B_q = B[p][i] * s + B[q][i] * c;
+
+        B[p][i] = B_p;
+        B[q][i] = B_q;
+    }
+}
+} // namespace
+
+std::string to_string_complex_with_precision(const COMPLEX a_value, const int n, int max_number_size) {
+    std::ostringstream out;
+    out.precision(n);
+    out << ((a_value.real() >= 0) ? "+" : "-") << std::setfill('0') << std::setw(max_number_size) << std::fixed
+        << std::abs(a_value.real());
+    out << ((a_value.imag() >= 0) ? "+" : "-") << std::setfill('0') << std::setw(max_number_size) << std::fixed
+        << std::abs(a_value.imag());
+    out << "j";
+    return std::move(out).str();
 }
 
-std::string to_string_double_with_precision(const double a_value,
-                                             const int n, int max_number_size) {
-  std::ostringstream out;
-  out.precision(n);
-  out << ((a_value >= 0) ? "+" : "-") << std::setfill('0')
-      << std::setw(max_number_size) << std::fixed << std::abs(a_value);
-  return std::move(out).str();
+std::string to_string_double_with_precision(const double a_value, const int n, int max_number_size) {
+    std::ostringstream out;
+    out.precision(n);
+    out << ((a_value >= 0) ? "+" : "-") << std::setfill('0') << std::setw(max_number_size) << std::fixed
+        << std::abs(a_value);
+    return std::move(out).str();
 }
 
-std::string vector_to_string(const std::vector<std::string>& inp) {
-  std::ostringstream out;
-  for (auto i : inp) {
-    if (i.empty())
-      break;
-    out << i << '\n';
-  }
-  return std::move(out).str();
+std::string vector_to_string(const std::vector<std::string> &inp) {
+    std::ostringstream out;
+    for (auto i : inp) {
+        if (i.empty())
+            break;
+        out << i << '\n';
+    }
+    return std::move(out).str();
 }
 
-bool is_zero(double a, double eps) {
-    return std::abs(a) < eps;
-}
+bool is_zero(double a, double eps) { return std::abs(a) < eps; }
 
-bool is_zero(COMPLEX a, double eps) {
-    return std::abs(a) < eps;
-}
+bool is_zero(COMPLEX a, double eps) { return std::abs(a) < eps; }
 
-bool is_digit(char c) {
-    return '0' <= c and c <= '9';
-}
+bool is_digit(char c) { return '0' <= c and c <= '9'; }
 
-std::string make_state_regex_pattern(const std::string& format, bool is_freq_display, bool is_sequence) {
+std::string make_state_regex_pattern(const std::string &format, bool is_freq_display, bool is_sequence) {
     std::regex format_regex("($[N,W,M])");
 
     auto regex_begin = std::sregex_iterator(format.begin(), format.end(), format_regex);
@@ -95,7 +86,7 @@ std::string make_state_regex_pattern(const std::string& format, bool is_freq_dis
     return regex_begin->str();
 }
 
-void make_rank_map(size_t size, int rank, int world_size, size_t& start_col, size_t& count) {
+void make_rank_map(size_t size, int rank, int world_size, size_t &start_col, size_t &count) {
     size_t size_per_proc = size / world_size;
     count = size_per_proc;
 
@@ -109,7 +100,7 @@ void make_rank_map(size_t size, int rank, int world_size, size_t& start_col, siz
     start_col = rank * size_per_proc + std::min(rank, rest);
 }
 
-std::function<double(double)> Cubic_Spline_Interpolate(const std::vector<double>& x, const std::vector<double>& f) {
+std::function<double(double)> Cubic_Spline_Interpolate(const std::vector<double> &x, const std::vector<double> &f) {
     auto begin = std::chrono::steady_clock::now();
     size_t n = x.size() - 1;
 
@@ -135,7 +126,7 @@ std::function<double(double)> Cubic_Spline_Interpolate(const std::vector<double>
     y[0] = y[n] = 0;
 
     for (size_t i = 1; i < n; i++) {
-        y[i] =(f[i + 1] - f[i]) / h[i + 1] - (f[i] - f[i - 1]) / h[i];
+        y[i] = (f[i + 1] - f[i]) / h[i + 1] - (f[i] - f[i - 1]) / h[i];
     }
 
     auto c = Thomas_Algorithm(C, y);
@@ -151,30 +142,28 @@ std::function<double(double)> Cubic_Spline_Interpolate(const std::vector<double>
         b[i] = (a[i] - a[i - 1]) / h[i] + h[i] / 2.0 * c[i] - h[i] * h[i] / 6.0 * d[i];
     }
 
-    std::function<double(double)> res {
-        [f, x, a, b, c, d](double t) {
-            if (t + QConfig::instance().eps() < x[0] or t - QConfig::instance().eps() > x[x.size() - 1]) {
-                std::cerr << "Not between x[0] and x[n - 1]" << std::endl;
-                return -1.0;
-            }
-
-            if (is_zero(t - x[0])) { 
-                return f[0];
-            }
-            if (is_zero(t - x[x.size() - 1])) { 
-                return f[x.size() - 1];
-            }
-            for (size_t i = 1; i < x.size(); i++) {
-                if (x[i - 1] <= t and t <= x[i]) {
-                    auto diff = t - x[i];
-                    return a[i] + b[i] * diff + c[i] * diff * diff / 2.0 + d[i] * diff * diff * diff / 6.0;
-                }
-            }
-
+    std::function<double(double)> res{[f, x, a, b, c, d](double t) {
+        if (t + QConfig::instance().eps() < x[0] or t - QConfig::instance().eps() > x[x.size() - 1]) {
             std::cerr << "Not between x[0] and x[n - 1]" << std::endl;
             return -1.0;
         }
-    };
+
+        if (is_zero(t - x[0])) {
+            return f[0];
+        }
+        if (is_zero(t - x[x.size() - 1])) {
+            return f[x.size() - 1];
+        }
+        for (size_t i = 1; i < x.size(); i++) {
+            if (x[i - 1] <= t and t <= x[i]) {
+                auto diff = t - x[i];
+                return a[i] + b[i] * diff + c[i] * diff * diff / 2.0 + d[i] * diff * diff * diff / 6.0;
+            }
+        }
+
+        std::cerr << "Not between x[0] and x[n - 1]" << std::endl;
+        return -1.0;
+    }};
     auto end = std::chrono::steady_clock::now();
     return res;
 }
@@ -201,7 +190,7 @@ size_t Ck_n(size_t k, size_t n) {
 double fsolve(std::function<double(double)> f, double a, double b, double target, double eps) {
     double t = (a + b) / 2.0;
 
-    while(std::abs(f(t) - target) >= eps) {
+    while (std::abs(f(t) - target) >= eps) {
         if (f(t) - target > 0) {
             b = t;
         } else {
@@ -210,7 +199,10 @@ double fsolve(std::function<double(double)> f, double a, double b, double target
 
         t = (a + b) / 2.0;
 
-        if (std::abs(a - b) < eps) { std::cerr << "f without zero" << std::endl; return b; }
+        if (std::abs(a - b) < eps) {
+            std::cerr << "f without zero" << std::endl;
+            return b;
+        }
     }
 
     return t;
@@ -240,18 +232,18 @@ double fmin(std::function<double(double)> f, double a, double b, double eps) {
     return x_n;
 }
 
-std::vector<double> FROM_double_TO_vector(double* A, lapack_int n) {
+std::vector<double> FROM_double_TO_vector(double *A, lapack_int n) {
     std::vector<double> res(n);
 
     for (size_t i = 0; i < n; i++) {
         res[i] = A[i];
     }
 
-    delete [] A;
+    delete[] A;
     return res;
 }
 
-Matrix<COMPLEX> FROM_lapack_complex_double_TO_Matrix(lapack_complex_double* A, lapack_int n, lapack_int m) {
+Matrix<COMPLEX> FROM_lapack_complex_double_TO_Matrix(lapack_complex_double *A, lapack_int n, lapack_int m) {
     Matrix<COMPLEX> res(C_STYLE, n, m);
 
     for (size_t i = 0; i < n; i++) {
@@ -261,16 +253,15 @@ Matrix<COMPLEX> FROM_lapack_complex_double_TO_Matrix(lapack_complex_double* A, l
         }
     }
 
-    delete [] A;
+    delete[] A;
     return res;
 }
 
-
-double scalar_product(const std::vector<double>& a, const std::vector<double>& b) {
+double scalar_product(const std::vector<double> &a, const std::vector<double> &b) {
     return cblas_ddot(a.size(), a.data(), 1, b.data(), 1);
 }
 
-COMPLEX scalar_product(const std::vector<COMPLEX>& a, const std::vector<COMPLEX>& b) {
+COMPLEX scalar_product(const std::vector<COMPLEX> &a, const std::vector<COMPLEX> &b) {
     int size = a.size();
     int iONE = 1;
     COMPLEX res;
@@ -279,11 +270,10 @@ COMPLEX scalar_product(const std::vector<COMPLEX>& a, const std::vector<COMPLEX>
     return res;
 }
 
-
-double norm(const std::vector<COMPLEX>& v) {
+double norm(const std::vector<COMPLEX> &v) {
     double res = 0;
 
-    for (const auto& num: v) {
+    for (const auto &num : v) {
         auto tmp = std::abs(num);
         res += tmp * tmp;
     }
@@ -292,7 +282,7 @@ double norm(const std::vector<COMPLEX>& v) {
 }
 
 // For jacobi
-double off(const Matrix<double>& A) {
+double off(const Matrix<double> &A) {
     double res = 0;
 
     size_t n = A.n();
@@ -312,7 +302,7 @@ double off(const Matrix<double>& A) {
 
 size_t get_index_from_state(vec_levels state) {
     size_t index = 0;
-    for (const auto qubit: state) {
+    for (const auto qubit : state) {
         index <<= 1;
         index += qubit;
     }
@@ -320,9 +310,9 @@ size_t get_index_from_state(vec_levels state) {
     return index;
 }
 
-
 std::pair<double, double> givens(double a, double b, double eps) {
-    if (std::abs(b) < eps) return std::make_pair(1, 0);
+    if (std::abs(b) < eps)
+        return std::make_pair(1, 0);
 
     double c, s;
 
@@ -340,7 +330,7 @@ std::pair<double, double> givens(double a, double b, double eps) {
 }
 
 // working????
-void tridiagonal_QR(Matrix<double>& T) {
+void tridiagonal_QR(Matrix<double> &T) {
     size_t n = T.size();
     for (size_t k = 0; k < n - 1; k++) {
         auto p = givens(T[k][k], T[k + 1][k]);
@@ -362,7 +352,7 @@ void tridiagonal_QR(Matrix<double>& T) {
 }
 
 // Modified Gramm Schmidt
-Matrix<double> MGS (const Matrix<COMPLEX>& A, double eps = QConfig::instance().eps()) {
+Matrix<double> MGS(const Matrix<COMPLEX> &A, double eps = QConfig::instance().eps()) {
     auto m = A.size();
     Matrix<COMPLEX> v(C_STYLE, m, m, COMPLEX(0));
     v[0][0] = COMPLEX(1);
@@ -380,7 +370,7 @@ Matrix<double> MGS (const Matrix<COMPLEX>& A, double eps = QConfig::instance().e
             w = w - (v.row(i) * std::complex<double>(H[i][j]));
         }
 
-        if (norm(w) < eps)  {
+        if (norm(w) < eps) {
             return H;
         }
 
@@ -395,7 +385,7 @@ Matrix<double> MGS (const Matrix<COMPLEX>& A, double eps = QConfig::instance().e
 
 // ONLY FOR REAL MATRIX. FOR COMPLEX - Hermit_Lanczos
 // Not effective - replace
-std::pair<std::vector<double>, Matrix<double>> jacobi(const Matrix<double>& A, double eps = QConfig::instance().eps()) {
+std::pair<std::vector<double>, Matrix<double>> jacobi(const Matrix<double> &A, double eps = QConfig::instance().eps()) {
     int n = A.size();
     Matrix<double> eigenvectors(C_STYLE, n, n);
     std::vector<double> eigenvalues(n);
@@ -412,14 +402,16 @@ std::pair<std::vector<double>, Matrix<double>> jacobi(const Matrix<double>& A, d
     while (true) {
         iter++;
 
-        if (iter == max_iter) break;
+        if (iter == max_iter)
+            break;
         if (iter % 1000 == 0) {
-            if (off(B) < eps) break;
+            if (off(B) < eps)
+                break;
         }
         // находим максимальный недиагональный элемент
         double max_element = 0;
         int p = 0, q = 0;
-        for (int i = 0; i < n-1; i++) {
+        for (int i = 0; i < n - 1; i++) {
             for (int j = i + 1; j < n; j++) {
                 double element = std::abs(B[i][j]);
                 if (element > max_element) {
@@ -429,10 +421,11 @@ std::pair<std::vector<double>, Matrix<double>> jacobi(const Matrix<double>& A, d
                 }
             }
         }
-        if (max_element < eps) break;
+        if (max_element < eps)
+            break;
 
         // вычисляем угол поворота
-        //double theta = arg(B[p][q] / (B[q][q] - B[p][p])) / 2.0;
+        // double theta = arg(B[p][q] / (B[q][q] - B[p][p])) / 2.0;
         double theta = atan2(2.0 * B[p][q], B[q][q] - B[p][p]) / 2.0;
 
         double c = cos(theta);
@@ -450,54 +443,51 @@ std::pair<std::vector<double>, Matrix<double>> jacobi(const Matrix<double>& A, d
 }
 
 // ADD FORTRAN SUPPORT
-std::pair<std::vector<double>, Matrix<COMPLEX>> Hermit_Lanczos(const Matrix<COMPLEX>& A) {
+std::pair<std::vector<double>, Matrix<COMPLEX>> Hermit_Lanczos(const Matrix<COMPLEX> &A) {
     auto m = A.size();
 
-    lapack_complex_double* lapack_A = A.to_upper_lapack();
+    lapack_complex_double *lapack_A = A.to_upper_lapack();
     lapack_int n = A.size();
     lapack_int res;
     double *d, *e;
 
     auto B = A;
     auto lapack_B = B.to_lapack();
-    d = new double [m];
-    e = new double [n - 1];
+    d = new double[m];
+    e = new double[n - 1];
     // reduce to tridiagonal form -> lapack_A
     res = LAPACKE_zhetrd(LAPACK_ROW_MAJOR, 'U', n, lapack_A, n, d, e, lapack_B);
-    if (res != 0) std::cout << "LAPACKE_zhetrd error = " << res << std::endl;
+    if (res != 0)
+        std::cout << "LAPACKE_zhetrd error = " << res << std::endl;
 
-    //find Q matrix for reducing matrix lapack_A -> lapack_A
+    // find Q matrix for reducing matrix lapack_A -> lapack_A
     res = LAPACKE_zungtr(LAPACK_ROW_MAJOR, 'U', n, lapack_A, n, lapack_B);
-    if (res != 0) std::cout << "LAPACKE_zungtr error = " << res << std::endl;
+    if (res != 0)
+        std::cout << "LAPACKE_zungtr error = " << res << std::endl;
 
-    //find eigenvalues and eigenvectors with Q matrix of matrix lapack_A -> d, lapack_A
-    res = LAPACKE_zstedc(LAPACK_ROW_MAJOR, 'V', n, d, e, lapack_A, n); 
-    if (res != 0) std::cout << "LAPACKE_zstedc error = " << res << std::endl;
+    // find eigenvalues and eigenvectors with Q matrix of matrix lapack_A -> d,
+    // lapack_A
+    res = LAPACKE_zstedc(LAPACK_ROW_MAJOR, 'V', n, d, e, lapack_A, n);
+    if (res != 0)
+        std::cout << "LAPACKE_zstedc error = " << res << std::endl;
 
     auto eigenvectors = FROM_lapack_complex_double_TO_Matrix(lapack_A, n, n);
     auto eigenvalues = FROM_double_TO_vector(d, n);
 
-    delete [] e;
-    delete [] lapack_B;
+    delete[] e;
+    delete[] lapack_B;
     return std::make_pair(eigenvalues, eigenvectors);
 }
 
-void cblas_MM_double_complex(COMPLEX* A, COMPLEX* B, COMPLEX* C, int n, int k, int m, double alpha, double betta) {
-    cblas_zgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans,
-                n, m, k, &alpha, A,
-                k, B, m, &betta,
-                C, m);
+void cblas_MM_double_complex(COMPLEX *A, COMPLEX *B, COMPLEX *C, int n, int k, int m, double alpha, double betta) {
+    cblas_zgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, n, m, k, &alpha, A, k, B, m, &betta, C, m);
 }
 
-void cblas_MM_double(double* A, double* B, double* C, int n, int k, int m, double alpha, double betta) {
-    cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans,
-                n, m, k, alpha, A,
-                k, B, m, betta,
-                C, m);
+void cblas_MM_double(double *A, double *B, double *C, int n, int k, int m, double alpha, double betta) {
+    cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, n, m, k, alpha, A, k, B, m, betta, C, m);
 }
 
-void cblas_MM_int(int* A, int* B, int* C, int n, int k, int m, double alpha, double betta) {
-}
+void cblas_MM_int(int *A, int *B, int *C, int n, int k, int m, double alpha, double betta) {}
 
 #ifdef ENABLE_MPI
 

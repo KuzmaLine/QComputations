@@ -1,12 +1,12 @@
-#include <vector>
-#include <functional>
-#include <complex>
-#include <iostream>
-#include <iomanip>
 #include "hamiltonian.hpp"
 #include "config.hpp"
-#include "graph.hpp"
 #include "functions.hpp"
+#include "graph.hpp"
+#include <complex>
+#include <functional>
+#include <iomanip>
+#include <iostream>
+#include <vector>
 
 #ifdef ENABLE_MPI
 #include "mpi_functions.hpp"
@@ -15,192 +15,196 @@
 namespace QComputations {
 
 namespace {
-    typedef std::complex<double> COMPLEX;
+typedef std::complex<double> COMPLEX;
 
-    /*
-    Matrix<COMPLEX> a_destroy(size_t n) {
-        size_t size = n + 1;
+/*
+Matrix<COMPLEX> a_destroy(size_t n) {
+    size_t size = n + 1;
 
-        Matrix<COMPLEX> a(DEFAULT_MATRIX_STYLE, size, size, 0);
+    Matrix<COMPLEX> a(DEFAULT_MATRIX_STYLE, size, size, 0);
 
-        int j = 1;
-        for (int i = 0; i < size - 1; i++) {
-            a[i][j] = std::sqrt(j);
-            j++;
-        }
-
-        return a;
+    int j = 1;
+    for (int i = 0; i < size - 1; i++) {
+        a[i][j] = std::sqrt(j);
+        j++;
     }
 
-    Matrix<COMPLEX> a_create(size_t n) {
-        return a_destroy(n).transpose();
-    }
-
-    Matrix<COMPLEX> E_photons(int n) {
-        Matrix<COMPLEX> E(DEFAULT_MATRIX_STYLE, n, n, 0);
-        for (int i = 0; i < n; i++) {
-            E[i][i] = i * QConfig::instance().h() * QConfig::instance().w();
-        }
-
-        return E;
-    }
-
-
-    const Matrix<COMPLEX> eye({{1, 0},
-                               {0, 1}});
-
-    const Matrix<COMPLEX> sigma_energy({{0, 0},
-                                        {0, 1}});
-
-    const Matrix<COMPLEX> sigma_down({{0, 1},
-                                      {0, 0}});
-
-    const Matrix<COMPLEX> sigma_up({{0, 0},
-                                    {1, 0}});
-
-    Matrix<COMPLEX> sum_sigma_down(size_t n) {
-        size_t size = std::pow(2, n);
-        Matrix<COMPLEX> sum_sigma(DEFAULT_MATRIX_STYLE, size, size, 0);
-
-        for (int i = 0; i < n; i++) {
-            size_t left_size = std::pow(2, i);
-            size_t right_size = std::pow(2, n - i - 1);
-
-            Matrix<COMPLEX> eye_left(DEFAULT_MATRIX_STYLE, left_size, left_size, 0);
-            Matrix<COMPLEX> eye_right(DEFAULT_MATRIX_STYLE, right_size, right_size, 0);
-
-            for (int j = 0; j < left_size; j++) {
-                eye_left[j][j] = 1;
-            }
-            for (int j = 0; j < right_size; j++) {
-                eye_right[j][j] = 1;
-            }
-
-            Matrix<COMPLEX> sigma = sigma_down;
-
-            sigma = tensor_multiply(eye_left, sigma);
-            sigma = tensor_multiply(sigma, eye_right);
-
-            sum_sigma += sigma;
-        }
-
-        return sum_sigma;
-    }
-
-    void add_a_operators(Matrix<COMPLEX>& H, size_t from_id, size_t to_id, const State& grid) {
-        size_t size_left = 1, size_middle = 1, size_right = 1;
-        size_t cavity_id = 0;
-
-        COMPLEX gamma = grid.get_gamma(from_id, to_id);
-
-        for (cavity_id = 0; cavity_id < from_id; cavity_id++) {
-            size_left *= grid.cavity_max_size(cavity_id);
-        }
-
-        for (cavity_id = from_id + 1; cavity_id < to_id; cavity_id++) {
-            size_middle *= grid.cavity_max_size(cavity_id);
-        }
-
-        for (cavity_id = to_id + 1; cavity_id < grid.cavities_count(); cavity_id++) {
-            size_right *= grid.cavity_max_size(cavity_id);
-        }
-
-        H += tensor_multiply(tensor_multiply(E_Matrix<COMPLEX>(size_left), a_destroy(grid.max_N())),
-             tensor_multiply(
-             tensor_multiply(E_Matrix<COMPLEX>(size_middle), a_create(grid.max_N())), E_Matrix<COMPLEX>(size_right))) * gamma;
-
-        H += tensor_multiply(tensor_multiply(E_Matrix<COMPLEX>(size_left), a_create(grid.max_N())),
-             tensor_multiply(
-             tensor_multiply(E_Matrix<COMPLEX>(size_middle), a_destroy(grid.max_N())), E_Matrix<COMPLEX>(size_right))) * std::conj(gamma);
-    }
-    */
-
-    std::set<TCH_State> update_basis(const std::set<TCH_State>& basis, const std::set<TCH_State>& addition) {
-        std::set<TCH_State> res;
-
-        for (const auto& basis_state: basis) {
-            for (const auto& state: addition) {
-                auto tmp = basis_state.add_state(state[0]);
-                res.insert(tmp);
-            }
-        }
-
-        return res;
-    }
-
-    void next_permutation(std::vector<size_t>& v, size_t max_num) {
-        if (v[v.size() - 1] == max_num) {
-            v[v.size() - 1] = 0;
-            v[0] = max_num;
-        } else {
-            bool is_next = false;
-            for (size_t i = 0; i < v.size() - 1; i++) {
-                if (v[i] == max_num) {
-                    is_next = true;
-                    v[i] = 0;
-                    v[0] = max_num - 1;
-                    v[i + 1] = 1;
-                    break;
-                }
-            }
-
-            if (!is_next) {
-                if (v[0] == 0) {
-                    for (size_t i = 1; i < v.size(); i++) {
-                        if (v[i] != 0) {
-                            v[0] = v[i] - 1;
-                            v[i + 1]++;
-                            v[i] = 0;
-                            break;
-                        }
-                    }
-                } else {
-                    v[0]--;
-                    v[1]++;
-                }
-            }
-        }
-    }
-
-    /*
-    Cavity_State get_energy_state(size_t energy, size_t m) {
-        std::vector<int> state_vec(m, 0);
-        for (size_t i = 0; i < std::min(m, energy); i++) {
-            state_vec[i] = 1;
-        }
-
-        return Cavity_State(std::max(long(0), long(energy) - long(m)), state_vec);
-    }
-
-    bool next_index(std::vector<size_t>& index_vec, const std::vector<std::set<Cavity_State>>& cavity_bases) {
-        if (index_vec[0] + 1 == cavity_bases[0].size()) {
-            index_vec[0] = 0;
-
-            bool is_end = true;
-            for (size_t i = 1; i < index_vec.size(); i++) {
-                if (index_vec[i] + 1 < cavity_bases[i].size()) {
-                    index_vec[i]++;
-                    is_end = false;
-                    break;
-                }
-            }
-
-            return !is_end;
-        } else {
-            index_vec[0]++;
-            return true;
-        }
-    }
-    */
+    return a;
 }
 
-    // N >= 1
+Matrix<COMPLEX> a_create(size_t n) {
+    return a_destroy(n).transpose();
+}
+
+Matrix<COMPLEX> E_photons(int n) {
+    Matrix<COMPLEX> E(DEFAULT_MATRIX_STYLE, n, n, 0);
+    for (int i = 0; i < n; i++) {
+        E[i][i] = i * QConfig::instance().h() * QConfig::instance().w();
+    }
+
+    return E;
+}
+
+
+const Matrix<COMPLEX> eye({{1, 0},
+                           {0, 1}});
+
+const Matrix<COMPLEX> sigma_energy({{0, 0},
+                                    {0, 1}});
+
+const Matrix<COMPLEX> sigma_down({{0, 1},
+                                  {0, 0}});
+
+const Matrix<COMPLEX> sigma_up({{0, 0},
+                                {1, 0}});
+
+Matrix<COMPLEX> sum_sigma_down(size_t n) {
+    size_t size = std::pow(2, n);
+    Matrix<COMPLEX> sum_sigma(DEFAULT_MATRIX_STYLE, size, size, 0);
+
+    for (int i = 0; i < n; i++) {
+        size_t left_size = std::pow(2, i);
+        size_t right_size = std::pow(2, n - i - 1);
+
+        Matrix<COMPLEX> eye_left(DEFAULT_MATRIX_STYLE, left_size, left_size, 0);
+        Matrix<COMPLEX> eye_right(DEFAULT_MATRIX_STYLE, right_size, right_size,
+0);
+
+        for (int j = 0; j < left_size; j++) {
+            eye_left[j][j] = 1;
+        }
+        for (int j = 0; j < right_size; j++) {
+            eye_right[j][j] = 1;
+        }
+
+        Matrix<COMPLEX> sigma = sigma_down;
+
+        sigma = tensor_multiply(eye_left, sigma);
+        sigma = tensor_multiply(sigma, eye_right);
+
+        sum_sigma += sigma;
+    }
+
+    return sum_sigma;
+}
+
+void add_a_operators(Matrix<COMPLEX>& H, size_t from_id, size_t to_id, const
+State& grid) { size_t size_left = 1, size_middle = 1, size_right = 1; size_t
+cavity_id = 0;
+
+    COMPLEX gamma = grid.get_gamma(from_id, to_id);
+
+    for (cavity_id = 0; cavity_id < from_id; cavity_id++) {
+        size_left *= grid.cavity_max_size(cavity_id);
+    }
+
+    for (cavity_id = from_id + 1; cavity_id < to_id; cavity_id++) {
+        size_middle *= grid.cavity_max_size(cavity_id);
+    }
+
+    for (cavity_id = to_id + 1; cavity_id < grid.cavities_count(); cavity_id++)
+{ size_right *= grid.cavity_max_size(cavity_id);
+    }
+
+    H += tensor_multiply(tensor_multiply(E_Matrix<COMPLEX>(size_left),
+a_destroy(grid.max_N())), tensor_multiply(
+         tensor_multiply(E_Matrix<COMPLEX>(size_middle),
+a_create(grid.max_N())), E_Matrix<COMPLEX>(size_right))) * gamma;
+
+    H += tensor_multiply(tensor_multiply(E_Matrix<COMPLEX>(size_left),
+a_create(grid.max_N())), tensor_multiply(
+         tensor_multiply(E_Matrix<COMPLEX>(size_middle),
+a_destroy(grid.max_N())), E_Matrix<COMPLEX>(size_right))) * std::conj(gamma);
+}
+*/
+
+std::set<TCH_State> update_basis(const std::set<TCH_State> &basis, const std::set<TCH_State> &addition) {
+    std::set<TCH_State> res;
+
+    for (const auto &basis_state : basis) {
+        for (const auto &state : addition) {
+            auto tmp = basis_state.add_state(state[0]);
+            res.insert(tmp);
+        }
+    }
+
+    return res;
+}
+
+void next_permutation(std::vector<size_t> &v, size_t max_num) {
+    if (v[v.size() - 1] == max_num) {
+        v[v.size() - 1] = 0;
+        v[0] = max_num;
+    } else {
+        bool is_next = false;
+        for (size_t i = 0; i < v.size() - 1; i++) {
+            if (v[i] == max_num) {
+                is_next = true;
+                v[i] = 0;
+                v[0] = max_num - 1;
+                v[i + 1] = 1;
+                break;
+            }
+        }
+
+        if (!is_next) {
+            if (v[0] == 0) {
+                for (size_t i = 1; i < v.size(); i++) {
+                    if (v[i] != 0) {
+                        v[0] = v[i] - 1;
+                        v[i + 1]++;
+                        v[i] = 0;
+                        break;
+                    }
+                }
+            } else {
+                v[0]--;
+                v[1]++;
+            }
+        }
+    }
+}
+
+/*
+Cavity_State get_energy_state(size_t energy, size_t m) {
+    std::vector<int> state_vec(m, 0);
+    for (size_t i = 0; i < std::min(m, energy); i++) {
+        state_vec[i] = 1;
+    }
+
+    return Cavity_State(std::max(long(0), long(energy) - long(m)), state_vec);
+}
+
+bool next_index(std::vector<size_t>& index_vec, const
+std::vector<std::set<Cavity_State>>& cavity_bases) { if (index_vec[0] + 1 ==
+cavity_bases[0].size()) { index_vec[0] = 0;
+
+        bool is_end = true;
+        for (size_t i = 1; i < index_vec.size(); i++) {
+            if (index_vec[i] + 1 < cavity_bases[i].size()) {
+                index_vec[i]++;
+                is_end = false;
+                break;
+            }
+        }
+
+        return !is_end;
+    } else {
+        index_vec[0]++;
+        return true;
+    }
+}
+*/
+} // namespace
+
+// N >= 1
 /*
 std::set<TCH_State> define_basis_of_hamiltonian(const TCH_State& grid) {
     std::set<TCH_State> basis;
 
     long max_energy;
-    for (max_energy = grid.max_N(); max_energy >= long(grid.min_N()); max_energy--) {
+    for (max_energy = grid.max_N(); max_energy >= long(grid.min_N());
+max_energy--) {
         //std::cout << max_energy << " " << target_N << std::endl;
         TCH_State state = grid; // copy base structure of grid
 
@@ -214,16 +218,19 @@ std::set<TCH_State> define_basis_of_hamiltonian(const TCH_State& grid) {
 
         while(true) {
             for (size_t i = 0; i < grid.cavities_count(); i++) {
-                //std::cout << energy_map[i] << " " << get_energy_state(energy_map[i], grid[i].m()).to_string() << std::endl;
-                //cavity_bases[i] = State_Graph(get_energy_state(energy_map[i], grid[i].m()), false, false).get_basis();
+                //std::cout << energy_map[i] << " " <<
+get_energy_state(energy_map[i], grid[i].m()).to_string() << std::endl;
+                //cavity_bases[i] = State_Graph(get_energy_state(energy_map[i],
+grid[i].m()), false, false).get_basis();
                 //show_basis(cavity_bases[i]);
             }
 
             do {
                 for (size_t i = 0; i < grid.cavities_count(); i++) {
-                    state.set_state(i, get_elem_from_set(cavity_bases[i], cavity_basis_index[i]));
+                    state.set_state(i, get_elem_from_set(cavity_bases[i],
+cavity_basis_index[i]));
                 }
-        
+
                 basis.insert(state);
             } while(next_index(cavity_basis_index, cavity_bases));
 
@@ -265,12 +272,10 @@ std::pair<std::vector<double>, Matrix<COMPLEX>> Hamiltonian::eigen() {
 // -------------------------------   H_by_func   -------------------------------
 
 /*
-H_by_func::H_by_func(size_t n, std::function<COMPLEX(size_t, size_t)> func) : func_(func) {
-    auto size = n;
-    H_ = Matrix<COMPLEX>(DEFAULT_MATRIX_STYLE, size, size);
-    for (size_t i = 0; i < this->size(); i++) {
-        for (size_t j = 0; j < this->size(); j++) {
-            H_[i][j] = func(i, j);
+H_by_func::H_by_func(size_t n, std::function<COMPLEX(size_t, size_t)> func) :
+func_(func) { auto size = n; H_ = Matrix<COMPLEX>(DEFAULT_MATRIX_STYLE, size,
+size); for (size_t i = 0; i < this->size(); i++) { for (size_t j = 0; j <
+this->size(); j++) { H_[i][j] = func(i, j);
         }
     }
 //#endif // ENABLE_MPI
@@ -290,9 +295,9 @@ H_TC::H_TC(const State& init_state) {
 
     auto size_m_ = std::pow(2, init_state.m(0));
     assert(init_state.cavities_count() == 1);
-    State_Graph graph(init_state[0], (std::abs(init_state.get_leak_gamma(0)) >= config::eps) ? true : false, false);
-    basis_ = Cavity_State_to_State(graph.get_basis());
-    auto size_H_ = basis_.size();
+    State_Graph graph(init_state[0], (std::abs(init_state.get_leak_gamma(0)) >=
+config::eps) ? true : false, false); basis_ =
+Cavity_State_to_State(graph.get_basis()); auto size_H_ = basis_.size();
 
     auto n_ = init_state.n(0);
     auto n = n_;
@@ -395,7 +400,7 @@ H_JC::H_JC(const TCH_State& grid) {
     auto z_size = grid.z_size();
 
     auto basis = State_Graph<TCH_State>(grid).get_basis();
-    
+
     basis_ = convert_to(basis);
 
     size_t size = basis_.size();
@@ -403,8 +408,8 @@ H_JC::H_JC(const TCH_State& grid) {
     size_t i = 0, j = 0;
     for (const auto& state_from: basis_) {
         for (const auto& state_to: basis_) {
-            H_[i][j] += JC_ADD(TCH_State(state_from), TCH_State(state_to), grid);
-            j++;
+            H_[i][j] += JC_ADD(TCH_State(state_from), TCH_State(state_to),
+grid); j++;
         }
         j = 0;
         i++;
@@ -438,11 +443,9 @@ H_TC::H_TC(const TCH_State& grid) {
     size_t size = basis_.size();
     H_ = Matrix<COMPLEX>(DEFAULT_MATRIX_STYLE, size, size, 0);
 
-    //std::cout << H_.is_c_style() << " " << H_.n() << " " << H_.m() << std::endl;
-    size_t i = 0, j = 0;
-    for (const auto& state_from: basis_) {
-        for (const auto& state_to: basis_) {
-            H_[i][j] += TC_ADD(state_from, state_to, grid);
+    //std::cout << H_.is_c_style() << " " << H_.n() << " " << H_.m() <<
+std::endl; size_t i = 0, j = 0; for (const auto& state_from: basis_) { for
+(const auto& state_to: basis_) { H_[i][j] += TC_ADD(state_from, state_to, grid);
             j++;
         }
         j = 0;
@@ -466,12 +469,10 @@ H_TCH::H_TCH(const TCH_State& grid) {
     size_t size = basis_.size();
     H_ = Matrix<COMPLEX>(DEFAULT_MATRIX_STYLE, size, size, 0);
 
-    //std::cout << H_.is_c_style() << " " << H_.n() << " " << H_.m() << std::endl;
-    size_t i = 0, j = 0;
-    for (const auto& state_from: basis_) {
-        for (const auto& state_to: basis_) {
-            H_[i][j] += TCH_ADD(state_from, state_to, grid);
-            j++;
+    //std::cout << H_.is_c_style() << " " << H_.n() << " " << H_.m() <<
+std::endl; size_t i = 0, j = 0; for (const auto& state_from: basis_) { for
+(const auto& state_to: basis_) { H_[i][j] += TCH_ADD(state_from, state_to,
+grid); j++;
         }
         j = 0;
         i++;
@@ -481,48 +482,48 @@ H_TCH::H_TCH(const TCH_State& grid) {
 */
 
 namespace {
-    Operator<TCH_State> H_TCH_OP() {
-        using OpType = Operator<TCH_State>;
+Operator<TCH_State> H_TCH_OP() {
+    using OpType = Operator<TCH_State>;
 
-        OpType my_H;
-        my_H = my_H + OpType(photons_count) + OpType(atoms_exc_count) + OpType(exc_relax_atoms) + OpType(photons_transfer);
+    OpType my_H;
+    my_H = my_H + OpType(photons_count) + OpType(atoms_exc_count) + OpType(exc_relax_atoms) + OpType(photons_transfer);
 
-        return my_H;
-    }
-    
-    std::vector<std::pair<double, Operator<TCH_State>>> decs(const State<TCH_State>& state,
-                                                             std::vector<std::pair<double, Operator<TCH_State>>> dec) {
-        using OpType = Operator<TCH_State>;
-
-        auto st = *(state.get_state_components().begin());
-
-        for (size_t i = 0; i < st->cavities_count(); i++) {
-            if (!is_zero(st->get_leak_gamma(i))) {
-                std::function<State<TCH_State>(const TCH_State&)> a_destroy_i = {[i](const TCH_State& che_state) {
-                    return set_qudit(che_state, che_state.n(i) - 1, 0, i) * std::sqrt(che_state.n(i));
-                }};
-
-                OpType my_A_out(a_destroy_i);
-
-                dec.emplace_back(std::make_pair(st->get_leak_gamma(i), my_A_out));
-            }
-
-            if (!is_zero(st->get_gain_gamma(i))) {
-                std::function<State<TCH_State>(const TCH_State&)> a_create_i = {[i](const TCH_State& che_state) {
-                    return set_qudit(che_state, che_state.n(i) + 1, 0, i) * std::sqrt(che_state.n(i) + 1);
-                }};
-
-                OpType my_A_in(a_create_i);
-
-                dec.emplace_back(std::make_pair(st->get_gain_gamma(i), my_A_in));
-            }
-        }
-
-        return dec;
-    }
+    return my_H;
 }
 
-H_TCH::H_TCH(const State<TCH_State>& state, const std::vector<std::pair<double, Operator<TCH_State>>>& dec):
-                       H_by_Operator<TCH_State>(state, H_TCH_OP(), decs(state, dec)) {}
+std::vector<std::pair<double, Operator<TCH_State>>> decs(const State<TCH_State> &state,
+                                                         std::vector<std::pair<double, Operator<TCH_State>>> dec) {
+    using OpType = Operator<TCH_State>;
+
+    auto st = *(state.get_state_components().begin());
+
+    for (size_t i = 0; i < st->cavities_count(); i++) {
+        if (!is_zero(st->get_leak_gamma(i))) {
+            std::function<State<TCH_State>(const TCH_State &)> a_destroy_i = {[i](const TCH_State &che_state) {
+                return set_qudit(che_state, che_state.n(i) - 1, 0, i) * std::sqrt(che_state.n(i));
+            }};
+
+            OpType my_A_out(a_destroy_i);
+
+            dec.emplace_back(std::make_pair(st->get_leak_gamma(i), my_A_out));
+        }
+
+        if (!is_zero(st->get_gain_gamma(i))) {
+            std::function<State<TCH_State>(const TCH_State &)> a_create_i = {[i](const TCH_State &che_state) {
+                return set_qudit(che_state, che_state.n(i) + 1, 0, i) * std::sqrt(che_state.n(i) + 1);
+            }};
+
+            OpType my_A_in(a_create_i);
+
+            dec.emplace_back(std::make_pair(st->get_gain_gamma(i), my_A_in));
+        }
+    }
+
+    return dec;
+}
+} // namespace
+
+H_TCH::H_TCH(const State<TCH_State> &state, const std::vector<std::pair<double, Operator<TCH_State>>> &dec)
+    : H_by_Operator<TCH_State>(state, H_TCH_OP(), decs(state, dec)) {}
 
 } // namespace QComputations
