@@ -15,8 +15,7 @@ void vector_normalize(std::vector<COMPLEX> &v);
 
 namespace {
 using ValType = int;
-using CavityId = size_t;
-using COMPLEX = std::complex<double>;
+using CavityId = size_t; using COMPLEX = std::complex<double>;
 std::complex<double> gamma(double amplitude, double length, double w_ph) {
     return amplitude * std::exp(std::complex<double>(0, -1) * length * w_ph / QConfig::instance().h());
 }
