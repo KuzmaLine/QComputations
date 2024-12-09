@@ -39,3 +39,4 @@ cmake -DCMAKE_CXX_COMPILER=icpx -B .
 make -j4 -B
 sudo mv ./*.so $2/.
 
+sudo apt install -y clang-format-15

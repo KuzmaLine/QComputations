@@ -1,13 +1,12 @@
 #include "additional_operators.hpp"
 
-extern "C"
-{
-    void zdotc(COMPLEX*, int*, const COMPLEX*, int*, const COMPLEX*, int*);
+extern "C" {
+void zdotc(COMPLEX*, int*, const COMPLEX*, int*, const COMPLEX*, int*);
 }
 
 namespace QComputations {
 
-COMPLEX operator | (const std::vector<COMPLEX>& a, const std::vector<COMPLEX>& b) { 
+COMPLEX operator|(const std::vector<COMPLEX>& a, const std::vector<COMPLEX>& b) {
     int size = a.size();
     int iONE = 1;
     COMPLEX res;
@@ -16,7 +15,7 @@ COMPLEX operator | (const std::vector<COMPLEX>& a, const std::vector<COMPLEX>& b
     return res;
 }
 
-Matrix<COMPLEX> operator* (const Matrix<COMPLEX>& A, const Matrix<double>& B) {
+Matrix<COMPLEX> operator*(const Matrix<COMPLEX>& A, const Matrix<double>& B) {
     assert(A.m() == B.n());
     Matrix<COMPLEX> res(A.matrix_style(), A.n(), B.m(), COMPLEX(0));
 
@@ -31,4 +30,4 @@ Matrix<COMPLEX> operator* (const Matrix<COMPLEX>& A, const Matrix<double>& B) {
     return res;
 }
 
-} // namespace QComputations
+}  // namespace QComputations
