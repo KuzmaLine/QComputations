@@ -1,12 +1,14 @@
-#include <vector>
-#include <functional>
-#include <complex>
-#include <iostream>
-#include <iomanip>
 #include "hamiltonian.hpp"
+
+#include <complex>
+#include <functional>
+#include <iomanip>
+#include <iostream>
+#include <vector>
+
 #include "config.hpp"
-#include "graph.hpp"
 #include "functions.hpp"
+#include "graph.hpp"
 
 #ifdef ENABLE_MPI
 #include "mpi_functions.hpp"
@@ -14,10 +16,10 @@
 
 namespace QComputations {
 
-namespace {
-    typedef std::complex<double> COMPLEX;
+    namespace {
+        typedef std::complex<double> COMPLEX;
 
-    /*
+        /*
     Matrix<COMPLEX> a_destroy(size_t n) {
         size_t size = n + 1;
 
@@ -115,54 +117,54 @@ namespace {
     }
     */
 
-    std::set<TCH_State> update_basis(const std::set<TCH_State>& basis, const std::set<TCH_State>& addition) {
-        std::set<TCH_State> res;
+        std::set<TCH_State> update_basis(const std::set<TCH_State>& basis, const std::set<TCH_State>& addition) {
+            std::set<TCH_State> res;
 
-        for (const auto& basis_state: basis) {
-            for (const auto& state: addition) {
-                auto tmp = basis_state.add_state(state[0]);
-                res.insert(tmp);
-            }
-        }
-
-        return res;
-    }
-
-    void next_permutation(std::vector<size_t>& v, size_t max_num) {
-        if (v[v.size() - 1] == max_num) {
-            v[v.size() - 1] = 0;
-            v[0] = max_num;
-        } else {
-            bool is_next = false;
-            for (size_t i = 0; i < v.size() - 1; i++) {
-                if (v[i] == max_num) {
-                    is_next = true;
-                    v[i] = 0;
-                    v[0] = max_num - 1;
-                    v[i + 1] = 1;
-                    break;
+            for (const auto& basis_state : basis) {
+                for (const auto& state : addition) {
+                    auto tmp = basis_state.add_state(state[0]);
+                    res.insert(tmp);
                 }
             }
 
-            if (!is_next) {
-                if (v[0] == 0) {
-                    for (size_t i = 1; i < v.size(); i++) {
-                        if (v[i] != 0) {
-                            v[0] = v[i] - 1;
-                            v[i + 1]++;
-                            v[i] = 0;
-                            break;
-                        }
+            return res;
+        }
+
+        void next_permutation(std::vector<size_t>& v, size_t max_num) {
+            if (v[v.size() - 1] == max_num) {
+                v[v.size() - 1] = 0;
+                v[0] = max_num;
+            } else {
+                bool is_next = false;
+                for (size_t i = 0; i < v.size() - 1; i++) {
+                    if (v[i] == max_num) {
+                        is_next = true;
+                        v[i] = 0;
+                        v[0] = max_num - 1;
+                        v[i + 1] = 1;
+                        break;
                     }
-                } else {
-                    v[0]--;
-                    v[1]++;
+                }
+
+                if (!is_next) {
+                    if (v[0] == 0) {
+                        for (size_t i = 1; i < v.size(); i++) {
+                            if (v[i] != 0) {
+                                v[0] = v[i] - 1;
+                                v[i + 1]++;
+                                v[i] = 0;
+                                break;
+                            }
+                        }
+                    } else {
+                        v[0]--;
+                        v[1]++;
+                    }
                 }
             }
         }
-    }
 
-    /*
+        /*
     Cavity_State get_energy_state(size_t energy, size_t m) {
         std::vector<int> state_vec(m, 0);
         for (size_t i = 0; i < std::min(m, energy); i++) {
@@ -192,10 +194,10 @@ namespace {
         }
     }
     */
-}
+    }  // namespace
 
     // N >= 1
-/*
+    /*
 std::set<TCH_State> define_basis_of_hamiltonian(const TCH_State& grid) {
     std::set<TCH_State> basis;
 
@@ -242,7 +244,7 @@ std::set<TCH_State> define_basis_of_hamiltonian(const TCH_State& grid) {
 }
 */
 
-/*
+    /*
 void Hamiltonian::show(const size_t width) const {
     H_.show(width);
 }
@@ -262,9 +264,9 @@ std::pair<std::vector<double>, Matrix<COMPLEX>> Hamiltonian::eigen() {
 }
 */
 
-// -------------------------------   H_by_func   -------------------------------
+    // -------------------------------   H_by_func   -------------------------------
 
-/*
+    /*
 H_by_func::H_by_func(size_t n, std::function<COMPLEX(size_t, size_t)> func) : func_(func) {
     auto size = n;
     H_ = Matrix<COMPLEX>(DEFAULT_MATRIX_STYLE, size, size);
@@ -277,9 +279,9 @@ H_by_func::H_by_func(size_t n, std::function<COMPLEX(size_t, size_t)> func) : fu
 }
 */
 
-// ---------------------------- H_TC ----------------------------
+    // ---------------------------- H_TC ----------------------------
 
-/*
+    /*
 H_TC::H_TC(const State& init_state) {
     assert(init_state.cavities_count() == 1);
     H_TCH H(init_state);
@@ -372,9 +374,9 @@ H_TC::H_TC(const State& init_state) {
 }
 */
 
-// ---------------------------- H_JC ----------------------------
+    // ---------------------------- H_JC ----------------------------
 
-/*
+    /*
 H_JC::H_JC(const State& init_state) {
     assert(init_state.cavities_count() == 1 and init_state.m(0) == 1);
     H_TC tmp_H(init_state);
@@ -385,7 +387,7 @@ H_JC::H_JC(const State& init_state) {
 }
 */
 
-/*
+    /*
 H_JC::H_JC(const TCH_State& grid) {
     assert(grid.cavities_count() == 1 and grid.m(0) == 1);
     grid_ = grid;
@@ -480,49 +482,51 @@ H_TCH::H_TCH(const TCH_State& grid) {
 }
 */
 
-namespace {
-    Operator<TCH_State> H_TCH_OP() {
-        using OpType = Operator<TCH_State>;
+    namespace {
+        Operator<TCH_State> H_TCH_OP() {
+            using OpType = Operator<TCH_State>;
 
-        OpType my_H;
-        my_H = my_H + OpType(photons_count) + OpType(atoms_exc_count) + OpType(exc_relax_atoms) + OpType(photons_transfer);
+            OpType my_H;
+            my_H = my_H + OpType(photons_count) + OpType(atoms_exc_count) + OpType(exc_relax_atoms) +
+                   OpType(photons_transfer);
 
-        return my_H;
-    }
-    
-    std::vector<std::pair<double, Operator<TCH_State>>> decs(const State<TCH_State>& state,
-                                                             std::vector<std::pair<double, Operator<TCH_State>>> dec) {
-        using OpType = Operator<TCH_State>;
-
-        auto st = *(state.get_state_components().begin());
-
-        for (size_t i = 0; i < st->cavities_count(); i++) {
-            if (!is_zero(st->get_leak_gamma(i))) {
-                std::function<State<TCH_State>(const TCH_State&)> a_destroy_i = {[i](const TCH_State& che_state) {
-                    return set_qudit(che_state, che_state.n(i) - 1, 0, i) * std::sqrt(che_state.n(i));
-                }};
-
-                OpType my_A_out(a_destroy_i);
-
-                dec.emplace_back(std::make_pair(st->get_leak_gamma(i), my_A_out));
-            }
-
-            if (!is_zero(st->get_gain_gamma(i))) {
-                std::function<State<TCH_State>(const TCH_State&)> a_create_i = {[i](const TCH_State& che_state) {
-                    return set_qudit(che_state, che_state.n(i) + 1, 0, i) * std::sqrt(che_state.n(i) + 1);
-                }};
-
-                OpType my_A_in(a_create_i);
-
-                dec.emplace_back(std::make_pair(st->get_gain_gamma(i), my_A_in));
-            }
+            return my_H;
         }
 
-        return dec;
-    }
-}
+        std::vector<std::pair<double, Operator<TCH_State>>> decs(
+            const State<TCH_State>& state,
+            std::vector<std::pair<double, Operator<TCH_State>>> dec) {
+            using OpType = Operator<TCH_State>;
 
-H_TCH::H_TCH(const State<TCH_State>& state, const std::vector<std::pair<double, Operator<TCH_State>>>& dec):
-                       H_by_Operator<TCH_State>(state, H_TCH_OP(), decs(state, dec)) {}
+            auto st = *(state.get_state_components().begin());
 
-} // namespace QComputations
+            for (size_t i = 0; i < st->cavities_count(); i++) {
+                if (!is_zero(st->get_leak_gamma(i))) {
+                    std::function<State<TCH_State>(const TCH_State&)> a_destroy_i = {[i](const TCH_State& che_state) {
+                        return set_qudit(che_state, che_state.n(i) - 1, 0, i) * std::sqrt(che_state.n(i));
+                    }};
+
+                    OpType my_A_out(a_destroy_i);
+
+                    dec.emplace_back(std::make_pair(st->get_leak_gamma(i), my_A_out));
+                }
+
+                if (!is_zero(st->get_gain_gamma(i))) {
+                    std::function<State<TCH_State>(const TCH_State&)> a_create_i = {[i](const TCH_State& che_state) {
+                        return set_qudit(che_state, che_state.n(i) + 1, 0, i) * std::sqrt(che_state.n(i) + 1);
+                    }};
+
+                    OpType my_A_in(a_create_i);
+
+                    dec.emplace_back(std::make_pair(st->get_gain_gamma(i), my_A_in));
+                }
+            }
+
+            return dec;
+        }
+    }  // namespace
+
+    H_TCH::H_TCH(const State<TCH_State>& state, const std::vector<std::pair<double, Operator<TCH_State>>>& dec)
+        : H_by_Operator<TCH_State>(state, H_TCH_OP(), decs(state, dec)) {}
+
+}  // namespace QComputations
