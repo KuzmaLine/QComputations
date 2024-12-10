@@ -8,86 +8,86 @@
 #include "state.hpp"
 
 namespace {
-using COMPLEX = std::complex<double>;
-using E_LEVEL = int;
-using vec_levels = std::vector<E_LEVEL>;
+    using COMPLEX = std::complex<double>;
+    using E_LEVEL = int;
+    using vec_levels = std::vector<E_LEVEL>;
 }  // namespace
 
 namespace QComputations {
 
-// Additional operators for vector, Matrix, States and so on
+    // Additional operators for vector, Matrix, States and so on
 
-Matrix<COMPLEX> operator*(const Matrix<COMPLEX>& A, const Matrix<double>& B);
+    Matrix<COMPLEX> operator*(const Matrix<COMPLEX>& A, const Matrix<double>& B);
 
-/// ################################ std::vector ###################################
+    /// ################################ std::vector ###################################
 
-// vector * num
-template <typename T>
-std::vector<T> operator*(const std::vector<T>& v, T num) {
-    std::vector<T> answer(v.size());
+    // vector * num
+    template <typename T>
+    std::vector<T> operator*(const std::vector<T>& v, T num) {
+        std::vector<T> answer(v.size());
 
-    for (size_t i = 0; i < v.size(); i++) {
-        answer[i] = v[i] * num;
+        for (size_t i = 0; i < v.size(); i++) {
+            answer[i] = v[i] * num;
+        }
+
+        return answer;
     }
 
-    return answer;
-}
+    // std::cout << vector
+    template <typename T>
+    std::ostream& operator<<(std::ostream& out, const std::vector<T>& v) {
+        for (const auto& val : v) {
+            out << val << " ";
+        }
 
-// std::cout << vector
-template <typename T>
-std::ostream& operator<<(std::ostream& out, const std::vector<T>& v) {
-    for (const auto& val : v) {
-        out << val << " ";
+        return out;
     }
 
-    return out;
-}
-
-// num * vector
-template <typename T>
-std::vector<T> operator*(T num, const std::vector<T>& v) {
-    return v * num;
-}
-
-// a[i] * b[i] -> vector
-template <typename T>
-std::vector<T> operator*(const std::vector<T>& a, const std::vector<T>& b) {
-    std::vector<T> answer(a.size());
-
-    for (size_t i = 0; i < a.size(); i++) {
-        answer[i] = a[i] * b[i];
+    // num * vector
+    template <typename T>
+    std::vector<T> operator*(T num, const std::vector<T>& v) {
+        return v * num;
     }
 
-    return answer;
-}
+    // a[i] * b[i] -> vector
+    template <typename T>
+    std::vector<T> operator*(const std::vector<T>& a, const std::vector<T>& b) {
+        std::vector<T> answer(a.size());
 
-//   -------------------------------------- <a|b> ------------------------
-COMPLEX operator|(const std::vector<COMPLEX>& a, const std::vector<COMPLEX>& b);
+        for (size_t i = 0; i < a.size(); i++) {
+            answer[i] = a[i] * b[i];
+        }
 
-// vector / num
-template <typename T>
-std::vector<T> operator/(const std::vector<T>& v, T num) {
-    std::vector<T> answer(v.size());
-
-    for (size_t i = 0; i < v.size(); i++) {
-        answer[i] = v[i] / num;
+        return answer;
     }
 
-    return answer;
-}
+    //   -------------------------------------- <a|b> ------------------------
+    COMPLEX operator|(const std::vector<COMPLEX>& a, const std::vector<COMPLEX>& b);
 
-// vector - vector
-template <typename T>
-std::vector<T> operator-(const std::vector<T>& a, const std::vector<T>& b) {
-    size_t m = a.size();
-    std::vector<T> res(m);
+    // vector / num
+    template <typename T>
+    std::vector<T> operator/(const std::vector<T>& v, T num) {
+        std::vector<T> answer(v.size());
 
-    for (size_t i = 0; i < m; i++) {
-        res[i] = a[i] - b[i];
+        for (size_t i = 0; i < v.size(); i++) {
+            answer[i] = v[i] / num;
+        }
+
+        return answer;
     }
 
-    return res;
-}
+    // vector - vector
+    template <typename T>
+    std::vector<T> operator-(const std::vector<T>& a, const std::vector<T>& b) {
+        size_t m = a.size();
+        std::vector<T> res(m);
+
+        for (size_t i = 0; i < m; i++) {
+            res[i] = a[i] - b[i];
+        }
+
+        return res;
+    }
 
 }  // namespace QComputations
 
