@@ -380,7 +380,35 @@ class State {
         State<StateType> fit_to_basis(const BasisType<StateType>& basis) const {
             State<StateType> res;
 
+            //res.state_vec_ = std::vector<COMPLEX>(basis.size(), 0);
             res.set_vector(std::vector<COMPLEX>(basis.size(), 0));
+            //res.state_components_ = basis;
+            res.set_state_components(basis);
+
+            size_t index = 0;
+            for (auto state: basis) {
+                size_t my_index = 0;
+                for (auto my_state: this->state_components_) {
+                    if ((*state) == (*my_state)) {
+                        res[index] = this->state_vec_[my_index];
+                        break;
+                    }
+
+                    my_index++;
+                }
+
+                index++;
+            }
+
+            return res;
+        }
+
+        State<Basis_State> fit_to_basis_state(const BasisType<Basis_State>& basis) const {
+            State<Basis_State> res;
+
+            //res.state_vec_ = std::vector<COMPLEX>(basis.size(), 0);
+            res.set_vector(std::vector<COMPLEX>(basis.size(), 0));
+            //res.state_components_ = basis;
             res.set_state_components(basis);
 
             size_t index = 0;
