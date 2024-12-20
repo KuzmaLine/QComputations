@@ -7,6 +7,10 @@
 #define ENABLE_CLUSTER
 #endif
 
+#ifndef ENABLE_ONEAPI
+#define ENABLE_ONEAPI
+#endif
+
 #pragma once
 #include <mpi.h>
 

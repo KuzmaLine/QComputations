@@ -1,5 +1,10 @@
+#include <complex>
+#define MKL_Complex16 std::complex<double>
+
 #include "functions.hpp"
 //#include "test.hpp"
+#include <mkl_blas.h>
+
 #include <algorithm>
 #include <cassert>
 #include <iostream>
@@ -8,10 +13,11 @@
 
 #include "config.hpp"
 
+/*
 extern "C" {
 void zdotc(COMPLEX*, int*, const COMPLEX*, int*, const COMPLEX*, int*);
 }
-
+*/
 namespace QComputations {
 
     namespace {

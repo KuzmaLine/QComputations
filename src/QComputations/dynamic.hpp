@@ -44,8 +44,7 @@ namespace QComputations {
 
     // Solve quantum master equation with different leaks of photons from cavity and
     // return vector of time, when probability zero state equal target
-    std::vector<double> scan_gamma(const std::vector<COMPLEX>& init_state,
-                                   Hamiltonian& H,
+    std::vector<double> scan_gamma(const TCH_State& init_state,
                                    size_t cavity_id,
                                    const std::vector<double>& time_vec,
                                    const std::vector<double>& gamma_vec,
@@ -86,12 +85,11 @@ namespace QComputations {
                                           const std::vector<double>& time_vec,
                                           bool is_full_rho = false);
 
-    std::vector<double> scan_gamma(const std::vector<COMPLEX>& init_state,
-                                   BLOCKED_Hamiltonian& H,
-                                   size_t cavity_id,
-                                   const std::vector<double>& time_vec,
-                                   const std::vector<double>& gamma_vec,
-                                   double target);
+    std::vector<double> blocked_scan_gamma(const TCH_State& init_state,
+                                           size_t cavity_id,
+                                           const std::vector<double>& time_vec,
+                                           const std::vector<double>& gamma_vec,
+                                           double target);
 
 #endif
 #endif

@@ -39,6 +39,17 @@ namespace QComputations {
         probs_to_file("probs.csv", probs, dir);
     }
 
+    void make_plot_files(const Probs& probs,
+                         const std::vector<double>& time_vec,
+                         const std::vector<std::string>& str_vec,
+                         std::string dir) {
+        check_dir(dir, true);
+
+        legend_to_file("basis.csv", str_vec, dir);
+        time_vec_to_file("time.csv", time_vec, dir);
+        probs_to_file("probs.csv", probs, dir);
+    }
+
 #else
 #ifdef ENABLE_MPI
 
@@ -86,6 +97,30 @@ namespace QComputations {
         check_dir(dir);
         auto probs_hermit = probs.transpose();
         probs_hermit.write_to_csv_file(dir + "/" + filename);
+    }
+
+    void legend_to_file(const std::string& filename, const std::vector<std::string>& str_vec, std::string dir) {
+        check_dir(dir);
+
+        auto filepath = dir + "/" + filename;
+
+        std::ofstream file(filepath);
+
+        for (size_t i = 0; i < str_vec.size(); i++) {
+            std::string state_str = "\"" + str_vec[i] + "\"";
+
+            if (i != str_vec.size() - 1) {
+                state_str += ",";
+            }
+
+            file << state_str;
+
+            if (i == str_vec.size() - 1) {
+                file << "\n";
+            }
+        }
+
+        file.close();
     }
 
     void basis_to_file(const std::string& filename, const BasisType<Basis_State>& basis, std::string dir) {

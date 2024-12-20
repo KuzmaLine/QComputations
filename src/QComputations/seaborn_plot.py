@@ -24,6 +24,10 @@ def read_files(dir):
     basis = pd.read_csv("./" + dir + "/basis.csv", header=None).to_numpy().squeeze().tolist()
     probs = pd.read_csv("./" + dir + "/probs.csv", header=None)
 
+    if (not type(basis) is list):
+        basis = [basis]
+
+
     probs.index=time_vec
     if (config.get("enable_legend")):
         probs.columns = basis

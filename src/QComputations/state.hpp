@@ -160,6 +160,12 @@ namespace QComputations {
         }
         void set_zero() { qudits_ = std::vector<ValType>(qudits_.size(), 0); }
 
+        // Переписать
+        bool is_all_qudits_zero() const {
+            if (qudits_ == std::vector<ValType>(qudits_.size(), 0)) return true;
+            return false;
+        }
+
        protected:
         std::string info_;
         std::vector<ValType> qudits_;
@@ -439,9 +445,9 @@ namespace QComputations {
             res.set_state_components(basis);
 
             size_t index = 0;
-            for (auto state: basis) {
+            for (auto state : basis) {
                 size_t my_index = 0;
-                for (auto my_state: this->state_components_) {
+                for (auto my_state : this->state_components_) {
                     if ((*state) == (*my_state)) {
                         res[index] = this->state_vec_[my_index];
                         break;

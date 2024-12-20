@@ -1,5 +1,9 @@
 //#define _USE_MATH_DEFINES
 
+#ifndef ENABLE_ONEAPI
+#define ENABLE_ONEAPI
+#endif
+
 #pragma once
 #include "QComputations/additional_operators.hpp"
 #include "QComputations/config.hpp"

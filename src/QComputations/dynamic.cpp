@@ -95,6 +95,40 @@ namespace QComputations {
         return probs;
     }
 
+    std::vector<double> scan_gamma(const TCH_State& init_state,
+                                   size_t cavity_id,
+                                   const std::vector<double>& time_vec,
+                                   const std::vector<double>& gamma_vec,
+                                   double target) {
+        auto cur_state = init_state;
+        cur_state.set_leak_for_cavity(cavity_id, gamma_vec[0]);
+        H_TCH H(cur_state);
+
+        auto basis = H.get_basis();
+        bool zero_state_in_basis = false;
+        size_t index = 0;
+        for (const auto& state : basis) {
+            if (state->is_all_qudits_zero()) {
+                zero_state_in_basis = true;
+                break;
+            }
+            index++;
+        }
+
+        assert(zero_state_in_basis);
+        std::vector<double> tau_vec;
+        for (size_t i = 0; i < gamma_vec.size(); i++) {
+            cur_state.set_leak_for_cavity(cavity_id, gamma_vec[i]);
+            H_TCH H(cur_state);
+            auto probs = quantum_master_equation(cur_state, H, time_vec);
+            auto func = Cubic_Spline_Interpolate(time_vec, probs.row(index));
+            double tau = fsolve(func, time_vec[0], time_vec[time_vec.size() - 1], target);
+            tau_vec.emplace_back(tau);
+        }
+
+        return tau_vec;
+    }
+
 #ifdef ENABLE_MPI
 #ifdef ENABLE_CLUSTER
 

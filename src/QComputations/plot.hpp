@@ -13,6 +13,7 @@ namespace QComputations {
     void hamiltonian_to_file(const std::string& filename, const Hamiltonian& H, std::string dir = "");
 
     void basis_to_file(const std::string& filename, const BasisType<Basis_State>& basis, std::string dir = "");
+    void legend_to_file(const std::string& filename, const std::vector<std::string>& str_vec, std::string dir = "");
 
     void time_vec_to_file(const std::string& filename, const std::vector<double>& time_vec, std::string dir = "");
 
@@ -23,6 +24,11 @@ namespace QComputations {
                           const std::vector<double>& time_vec,
                           const BasisType<Basis_State>& basis,
                           std::string dir = "");
+
+    void make_plot_files(const Probs& probs,
+                         const std::vector<double>& time_vec,
+                         const std::vector<std::string>& str_vec,
+                         std::string dir = "");
 
 #endif
 

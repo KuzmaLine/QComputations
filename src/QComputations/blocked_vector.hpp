@@ -23,7 +23,7 @@ namespace QComputations {
        public:
         explicit BLOCKED_Vector() = default;
         explicit BLOCKED_Vector(ILP_TYPE ctxt, const std::vector<T>& x)
-            : BLOCKED_Matrix<T>(ctxt, GE, Matrix<T>(x, x.size(), 1, FORTRAN_STYLE)){};
+            : BLOCKED_Matrix<T>(ctxt, GE, Matrix<T>(x, x.size(), 1)){};
         explicit BLOCKED_Vector(const BLOCKED_Vector<T>& x, const Matrix<T>& local_vector);
         explicit BLOCKED_Vector(ILP_TYPE ctxt, size_t n, std::function<T(size_t, size_t)> func)
             : BLOCKED_Matrix<T>(ctxt, GE, n, 1, func) {}

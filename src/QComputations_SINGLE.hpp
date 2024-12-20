@@ -4,6 +4,10 @@
 #define ENABLE_MATPLOTLIB
 #endif
 
+#ifndef ENABLE_ONEAPI
+#define ENABLE_ONEAPI
+#endif
+
 #pragma once
 #include "QComputations/additional_operators.hpp"
 #include "QComputations/big_uint.hpp"

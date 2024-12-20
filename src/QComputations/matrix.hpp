@@ -45,8 +45,8 @@ namespace QComputations {
         explicit Matrix(MATRIX_STYLE matrix_style, size_t n, size_t m, const T& init_val)
             : matrix_style_(matrix_style), n_(n), m_(m), mass_(n_ * m_, init_val) {}
         explicit Matrix(const Matrix<T>& A) : n_(A.n_), m_(A.m_), mass_(A.mass_), matrix_style_(A.matrix_style_) {}
-        explicit Matrix(const std::vector<T>& mass, size_t n, size_t m, MATRIX_STYLE matrix_style)
-            : n_(n), m_(m), mass_(mass), matrix_style_(matrix_style) {}
+        explicit Matrix(const std::vector<T>& mass, size_t n, size_t m)
+            : n_(n), m_(m), mass_(mass), matrix_style_(FORTRAN_STYLE) {}
         explicit Matrix(MATRIX_STYLE matrix_style, size_t n, size_t m, std::function<COMPLEX(size_t, size_t)> func);
 
         // Conversation to another type

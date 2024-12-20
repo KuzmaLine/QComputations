@@ -1,8 +1,13 @@
+#define MKL_Complex16 std::complex<double>
+
 #include "additional_operators.hpp"
 
+#include <mkl_blas.h>
+/*
 extern "C" {
 void zdotc(COMPLEX*, int*, const COMPLEX*, int*, const COMPLEX*, int*);
 }
+*/
 
 namespace QComputations {
 
