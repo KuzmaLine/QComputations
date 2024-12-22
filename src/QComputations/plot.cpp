@@ -333,6 +333,20 @@ namespace QComputations {
         }
     }
 
+    void matplotlib::probs_to_surface(const Probs& probs,
+                                      const std::vector<double>& time_vec,
+                                      std::map<std::string, std::string> keywords) {
+        std::vector<std::vector<double>> time(probs.n(), time_vec);
+        auto probs_vecs = probs.to_vector_of_vectors();
+        std::vector<std::vector<double>> probs_nums;
+
+        for (int i = 0; i < probs.n(); i++) {
+            probs_nums.emplace_back(time_vec.size(), i);
+        }
+
+        matplotlib::surface(time, probs_nums, probs_vecs, keywords);
+    }
+
     void matplotlib::probs_to_plot(const Probs& probs,
                                    const std::vector<double>& time_vec,
                                    const BasisType<Basis_State>& basis,

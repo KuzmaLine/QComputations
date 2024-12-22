@@ -147,6 +147,18 @@ namespace QComputations {
 
         void write_to_csv_file(const std::string& filename) const;
 
+        std::vector<std::vector<T>> to_vector_of_vectors() const {
+            std::vector<std::vector<T>> res(n_, std::vector<double>(m_));
+
+            for (size_t i = 0; i < n_; i++) {
+                for (size_t j = 0; j < m_; j++) {
+                    res[i][j] = mass_[get_index(i, j)];
+                }
+            }
+
+            return res;
+        }
+
        private:
         size_t get_index(size_t i, size_t j) const {
             if (matrix_style_ == C_STYLE)

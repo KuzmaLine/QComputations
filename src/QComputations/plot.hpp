@@ -93,6 +93,9 @@ namespace QComputations {
                            const std::vector<double>& time_vec,
                            const std::vector<std::string>& basis_str,
                            std::vector<std::map<std::string, std::string>> keywords = {});
+        void probs_to_surface(const Probs& probs,
+                              const std::vector<double>& time_vec,
+                              std::map<std::string, std::string> keywords = {});
         template <typename T, typename V>
         void plot(const std::vector<T>& x, const std::vector<V>& y, std::map<std::string, std::string> keywords = {});
         void title(const std::string& name);

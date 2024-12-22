@@ -92,9 +92,7 @@ namespace QComputations {
             assert(val <= max_vals_[qudit_index]);
             qudits_[this->get_group_start(group_id) + qudit_index] = val;
         }
-        void set_atom(ValType val, size_t atom_index, size_t group_id) {
-            this->set_qudit(val, atom_index + 1, group_id);
-        }
+
         ValType get_qudit(size_t qudit_index, size_t group_id = 0) const {
             assert(qudit_index < this->get_group_size(group_id));
             return qudits_[this->get_group_start(group_id) + qudit_index];
@@ -221,11 +219,15 @@ namespace QComputations {
         // set entire state in cavity with id = id
         void set_state(CavityId id, const TCH_State& state);
 
+        void set_atom(ValType val, size_t atom_index = 0, CavityId cavity_id = 0) {
+            this->set_qudit(val, atom_index + 1, cavity_id);
+        }
+
         // add cavity to grid (Don't safe, be careful)
         TCH_State add_state(const TCH_State& state) const;
 
         size_t cavities_count() const { return groups_.size(); }
-        size_t cavity_atoms_count(CavityId id) const { return this->get_group_end(id) - this->get_group_start(id); }
+        size_t cavity_atoms_count(CavityId id) const { return this->get_group_size(id) - 1; }
         // size_t cavity_size(CavityId id) const { return cavity_atoms_count(id) +
         // 1;
         // }
