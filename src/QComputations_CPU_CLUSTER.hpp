@@ -20,7 +20,7 @@
 
 #include "QComputations/blocked_matrix.hpp"
 #include "QComputations/config.hpp"
-#include "QComputations/csr_matrix.hpp"
+//#include "QComputations/csr_matrix.hpp"
 #include "QComputations/dynamic.hpp"
 #include "QComputations/functions.hpp"
 #include "QComputations/graph.hpp"
