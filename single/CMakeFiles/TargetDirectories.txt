@@ -1,4 +1,0 @@
-/home/kuzmaline/Quantum/QComputations/single/CMakeFiles/QComputations_SINGLE.dir
-/home/kuzmaline/Quantum/QComputations/single/CMakeFiles/QComputations_SINGLE_NO_PLOTS.dir
-/home/kuzmaline/Quantum/QComputations/single/CMakeFiles/edit_cache.dir
-/home/kuzmaline/Quantum/QComputations/single/CMakeFiles/rebuild_cache.dir
