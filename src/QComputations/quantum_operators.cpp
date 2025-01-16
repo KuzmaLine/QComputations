@@ -12,24 +12,13 @@ namespace QComputations {
             auto neighbours = state.get_neighbours(i);
 
             for (auto cavity_id : neighbours) {
-                if (i < cavity_id) {
-                    if (state.n(i) != 0) {
-                        state.set_n(state.n(i) - 1, i);
+                if (state.n(i) != 0) {
+                    state.set_n(state.n(i) - 1, i);
 
-                        res += set_qudit(state, state.n(cavity_id) + 1, 0, cavity_id) * state.get_gamma(i, cavity_id) *
-                               std::sqrt(state.n(i) + 1) * std::sqrt(state.n(cavity_id) + 1);
+                    res += set_qudit(state, state.n(cavity_id) + 1, 0, cavity_id) * state.get_gamma(i, cavity_id) *
+                           std::sqrt(state.n(i) + 1) * std::sqrt(state.n(cavity_id) + 1);
 
-                        state.set_n(state.n(i) + 1, i);
-                    }
-
-                    if (state.n(cavity_id) != 0) {
-                        state.set_n(state.n(i) + 1, i);
-
-                        res += set_qudit(state, state.n(cavity_id) - 1, 0, cavity_id) * state.get_gamma(cavity_id, i) *
-                               std::sqrt(state.n(i)) * std::sqrt(state.n(cavity_id));
-
-                        state.set_n(state.n(i) - 1, i);
-                    }
+                    state.set_n(state.n(i) + 1, i);
                 }
             }
         }

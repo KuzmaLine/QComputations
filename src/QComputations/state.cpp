@@ -207,6 +207,7 @@ namespace QComputations {
 
     void TCH_State::set_waveguide(size_t from_cavity_id, size_t to_cavity_id, double amplitude, double length) {
         waveguides_[from_cavity_id][to_cavity_id] = std::make_pair(amplitude, length);
+        waveguides_[to_cavity_id][from_cavity_id] = std::make_pair(amplitude, length);
 
         if (amplitude >= QConfig::instance().eps()) {
             if (!is_in_vector(neighbours_[from_cavity_id], to_cavity_id)) {
