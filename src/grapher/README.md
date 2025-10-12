@@ -35,14 +35,14 @@ You know what this is
 - **C++17 compiler**
 
 ### Steps
-# Configure the project
-cmake -B build -S .
+- Configure the project
+`cmake -B build -S .`
 
-# Build
-cmake --build build
+- Build
+`cmake --build build`
 
-# Run
-./build/QtQuickGraphsApp
+- Run
+`./build/QtQuickGraphsApp`
 
 
 ### Macos-Specific hack for Qt build 
