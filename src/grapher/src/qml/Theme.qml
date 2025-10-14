@@ -5,7 +5,7 @@ QtObject {
 
     property bool dark: false
 
-    property color window: dark ? "#1c1c1e" : "#f2f2f5"
+    property color window: dark ? "#262626" : "#f2f2f5"
     property color button: dark ? "#232326" : "#e0e0e5"
     property color base: dark ? "#2a2a2d" : "#dcdce0"
     property color mid: dark ? "#1f1f21" : "#c8c8cc"
