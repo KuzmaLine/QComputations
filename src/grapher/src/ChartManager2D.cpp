@@ -81,7 +81,9 @@ void ChartManager2D::loadFolder2D(const QString &path) {
     m_maxY = maxY;
     m_minX = minX;
     m_minY = minY;
-    emit maxValuesChanged();
+    emit minmMaxValuesChanged();
+
+    qDebug() << "[ChartManager2D] minX:" << m_minX << "maxX:" << m_maxX << "minY:" << m_minY << "maxY:" << m_maxY;
 
     qDebug() << "[ChartManager2D] Finished loading 2D folder:" << path
              << "total points (after downsampling):" << totalPoints;

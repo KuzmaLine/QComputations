@@ -6,11 +6,12 @@ import QtQuick.Dialogs
 Rectangle {
     id: legendRoot
     height: parent.height
-    color: "#f0f0f0"
-    border.color: "#cccccc"
     radius: 5
 
     property bool show3D: false
+    property Theme theme
+
+    color: theme ? theme.window : "white"
 
     ScrollView {
         anchors.fill: parent
@@ -56,6 +57,7 @@ Rectangle {
                     TextInput {
                         Layout.fillWidth: true
                         text: modelData ? modelData.name : ""
+                        color: theme ? theme.windowText : "black"
                         verticalAlignment: Text.AlignVCenter
                         selectByMouse: true
                         onEditingFinished: {

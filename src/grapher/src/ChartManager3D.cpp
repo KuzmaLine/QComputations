@@ -1,4 +1,5 @@
 #include "ChartManager3D.h"
+
 #include <QDebug>
 #include <QFile>
 #include <QRegularExpression>
@@ -22,11 +23,10 @@ void ChartManager3D::clearSurface() {
     m_maxX = m_maxY = m_maxZ = 0;
     m_minX = m_minY = m_minZ = 0;
 
-    if (m_surfaceSeries && m_surfaceSeries->dataProxy())
-        m_surfaceSeries->dataProxy()->resetArray(m_surfaceArray);
+    if (m_surfaceSeries && m_surfaceSeries->dataProxy()) m_surfaceSeries->dataProxy()->resetArray(m_surfaceArray);
 
     emit surfaceSeriesChanged();
-    emit maxValuesChanged();
+    emit minMaxValuesChanged();
 }
 
 // ------------------- Folder loading -------------------
@@ -36,11 +36,9 @@ void ChartManager3D::loadFolder3D(const QString &folderPath) {
     QFile xFile(folderPath + "/x.csv");
     QFile yFile(folderPath + "/y.csv");
     QFile zFile(folderPath + "/z.csv");
-    if (!xFile.open(QIODevice::ReadOnly | QIODevice::Text) ||
-        !yFile.open(QIODevice::ReadOnly | QIODevice::Text) ||
+    if (!xFile.open(QIODevice::ReadOnly | QIODevice::Text) || !yFile.open(QIODevice::ReadOnly | QIODevice::Text) ||
         !zFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        qWarning() << "[ChartManager3D] Failed to open CSV files in folder:"
-                   << folderPath;
+        qWarning() << "[ChartManager3D] Failed to open CSV files in folder:" << folderPath;
         return;
     }
 
@@ -49,37 +47,29 @@ void ChartManager3D::loadFolder3D(const QString &folderPath) {
     QVector<QVector<double>> zMat;
 
     auto parseCsvLine = [](const QString &line, QVector<double> &vec) {
-        for (const QString &s :
-             line.split(QRegularExpression("[,\\s]+"), Qt::SkipEmptyParts)) {
+        for (const QString &s : line.split(QRegularExpression("[,\\s]+"), Qt::SkipEmptyParts)) {
             bool ok = false;
             double val = s.toDouble(&ok);
-            if (ok)
-                vec.append(val);
+            if (ok) vec.append(val);
         }
     };
 
     auto parseCsvMatrix = [](QTextStream &ts, QVector<QVector<double>> &mat) {
         while (!ts.atEnd()) {
             QString line = ts.readLine().trimmed();
-            if (line.isEmpty())
-                continue;
+            if (line.isEmpty()) continue;
             QVector<double> row;
-            for (const QString &s : line.split(QRegularExpression("[,\\s]+"),
-                                               Qt::SkipEmptyParts)) {
+            for (const QString &s : line.split(QRegularExpression("[,\\s]+"), Qt::SkipEmptyParts)) {
                 bool ok = false;
                 double val = s.toDouble(&ok);
-                if (ok)
-                    row.append(val);
+                if (ok) row.append(val);
             }
-            if (!row.isEmpty())
-                mat.append(row);
+            if (!row.isEmpty()) mat.append(row);
         }
     };
 
-    while (!xs.atEnd())
-        parseCsvLine(xs.readLine(), xVec);
-    while (!ys.atEnd())
-        parseCsvLine(ys.readLine(), yVec);
+    while (!xs.atEnd()) parseCsvLine(xs.readLine(), xVec);
+    while (!ys.atEnd()) parseCsvLine(ys.readLine(), yVec);
     parseCsvMatrix(zs, zMat);
 
     xFile.close();
@@ -98,7 +88,7 @@ void ChartManager3D::loadFolder3D(const QString &folderPath) {
     int step = 1;
     if (totalPoints > MAX_POINTS_3D) {
         double ratio = static_cast<double>(totalPoints) / MAX_POINTS_3D;
-        step = qCeil(qSqrt(ratio)); 
+        step = qCeil(qSqrt(ratio));
     }
     step = qMax(step, m_samplingStep);
 
@@ -133,10 +123,9 @@ void ChartManager3D::loadFolder3D(const QString &folderPath) {
     m_minY = minY;
     m_minZ = minZ;
 
-    if (m_surfaceSeries && m_surfaceSeries->dataProxy())
-        m_surfaceSeries->dataProxy()->resetArray(m_surfaceArray);
+    if (m_surfaceSeries && m_surfaceSeries->dataProxy()) m_surfaceSeries->dataProxy()->resetArray(m_surfaceArray);
 
-    emit maxValuesChanged();
+    emit minMaxValuesChanged();
     emit surfaceSeriesChanged();
 
     qDebug() << "[ChartManager3D] Finished loading 3D folder:" << folderPath
