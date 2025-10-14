@@ -8,6 +8,7 @@ Item {
     anchors.bottom: parent.bottom
     anchors.right: parent.right
     visible: root.show3D
+    property bool darkTheme: false
 
     Loader {
         id: surfaceLoader
@@ -23,51 +24,67 @@ Item {
             axisZ: Value3DAxis {
                 labels: "Z Axis"
             }
+
+            theme: GraphsTheme {
+                colorScheme: darkTheme ? GraphsTheme.Theme.QtGreen : GraphsTheme.Theme.QtGreenNeon
+            }
         }
 
         onLoaded: {
-            console.log("[graph3DRoot] Loader loaded Surface3D");
+            console.log("[Graph2DView] Loader loaded Surface3D");
             update3DSurfaceSeries();
         }
 
         function update3DSurfaceSeries() {
             if (!surfaceLoader.item) {
-                console.warn("[graph3DRoot] update3DSurfaceSeries: loader.item is null");
+                console.warn("[Graph2DView] update3DSurfaceSeries: loader.item is null");
                 return;
             }
             if (!chartManager.surfaceSeries) {
-                console.warn("[graph3DRoot] update3DSurfaceSeries: chartManager.surfaceSeries is null");
+                console.warn("[Graph2DView] update3DSurfaceSeries: chartManager.surfaceSeries is null");
                 return;
             }
 
             var seriesList = surfaceLoader.item.seriesList;
-            console.log("[graph3DRoot] Current seriesList length:", seriesList.length);
+            console.log("[Graph2DView] Current seriesList length:", seriesList.length);
 
             // Hide all existing series
             for (var i = 0; i < seriesList.length; i++) {
-                console.log("[graph3DRoot] Hiding series:", seriesList[i].name);
+                console.log("[Graph2DView] Hiding series:", seriesList[i].name);
                 seriesList[i].visible = false;
             }
 
             // Add our surfaceSeries if not present
             if (!seriesList.includes(chartManager.surfaceSeries)) {
-                console.log("[graph3DRoot] Adding surfaceSeries:", chartManager.surfaceSeries.name);
+                console.log("[Graph2DView] Adding surfaceSeries:", chartManager.surfaceSeries.name);
                 surfaceLoader.item.addSeries(chartManager.surfaceSeries);
             }
 
             chartManager.surfaceSeries.visible = true;
-            console.log("[graph3DRoot] SurfaceSeries visible set to true");
+            console.log("[Graph2DView] SurfaceSeries visible set to true");
         }
     }
 
+    function updateTheme(palette) {
+        if (!surfaceLoader.item)
+            return;
+        surfaceLoader.item.backgroundColor = palette.window;
+        surfaceLoader.item.axisX.labelsColor = palette.windowText;
+        surfaceLoader.item.axisY.labelsColor = palette.windowText;
+        surfaceLoader.item.axisZ.labelsColor = palette.windowText;
+
+        if (chartManager.surfaceSeries) {
+            chartManager.surfaceSeries.baseColor = palette.highlight;
+        }
+    }
     Connections {
         target: chartManager
 
         function onSurfaceSeriesChanged() {
-            console.log("[graph3DRoot] surfaceSeriesChanged signal received");
+            console.log("[Graph2DView] surfaceSeriesChanged signal received");
             Qt.callLater(() => surfaceLoader.update3DSurfaceSeries());
         }
     }
 
-    onVisibleChanged: console.log("[graph3DRoot] visible changed:", visible)
+    onVisibleChanged: console.log("[Graph2DView] visible changed:", visible)
 }

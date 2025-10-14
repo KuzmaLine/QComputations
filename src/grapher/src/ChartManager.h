@@ -1,26 +1,28 @@
 #pragma once
 
-#include "ChartManager2D.h"
-#include "ChartManager3D.h"
 #include <QColor>
 #include <QLineSeries>
 #include <QObject>
 #include <QQmlListProperty>
 
+#include "ChartManager2D.h"
+#include "ChartManager3D.h"
+
 class ChartManager : public QObject {
     Q_OBJECT
     Q_PROPERTY(bool show2D READ show2D WRITE setShow2D NOTIFY show2DChanged)
     Q_PROPERTY(bool show3D READ show3D WRITE setShow3D NOTIFY show3DChanged)
-    Q_PROPERTY(double maxX READ maxX NOTIFY maxValuesChanged)
-    Q_PROPERTY(double maxY READ maxY NOTIFY maxValuesChanged)
-    Q_PROPERTY(double maxZ READ maxZ NOTIFY maxValuesChanged)
+    Q_PROPERTY(double maxX READ maxX NOTIFY minMaxValuesChanged)
+    Q_PROPERTY(double maxY READ maxY NOTIFY minMaxValuesChanged)
+    Q_PROPERTY(double maxZ READ maxZ NOTIFY minMaxValuesChanged)
+    Q_PROPERTY(double minX READ minX NOTIFY minMaxValuesChanged)
+    Q_PROPERTY(double minY READ minY NOTIFY minMaxValuesChanged)
+    Q_PROPERTY(double minZ READ minZ NOTIFY minMaxValuesChanged)
 
-    Q_PROPERTY(QQmlListProperty<QLineSeries> lineSeriesList READ lineSeriesList
-                   NOTIFY lineSeriesListChanged)
-    Q_PROPERTY(
-        QObject *surfaceSeries READ surfaceSeries NOTIFY surfaceSeriesChanged)
+    Q_PROPERTY(QQmlListProperty<QLineSeries> lineSeriesList READ lineSeriesList NOTIFY lineSeriesListChanged)
+    Q_PROPERTY(QObject *surfaceSeries READ surfaceSeries NOTIFY surfaceSeriesChanged)
 
-  public:
+   public:
     explicit ChartManager(QObject *parent = nullptr);
     ~ChartManager() override;
 
@@ -41,8 +43,11 @@ class ChartManager : public QObject {
     Q_INVOKABLE double maxY() const;
     Q_INVOKABLE double maxZ() const;
 
-  signals:
-    void maxValuesChanged();
+    Q_INVOKABLE double minX() const;
+    Q_INVOKABLE double minY() const;
+    Q_INVOKABLE double minZ() const;
+   signals:
+    void minMaxValuesChanged();
 
     void show2DChanged();
     void lineSeriesAdded(QLineSeries *series);
@@ -52,10 +57,10 @@ class ChartManager : public QObject {
     void show3DChanged();
     void surfaceSeriesChanged();
 
-  private:
+   private:
     void setGraphType(bool is3D);
 
-  private:
+   private:
     ChartManager2D *m_2dManager{nullptr};
     ChartManager3D *m_3dManager{nullptr};
 

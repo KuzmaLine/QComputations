@@ -6,20 +6,20 @@ Item {
     anchors.fill: parent
     visible: !root.show3D
 
-    // 🔹 These are controlled externally (e.g. by a popup)
-    property real xScale: 1.0
-    property real yScale: 1.0
-    property bool gridVisible: true
-    property bool showSubTicks: false
+    property real xScale: settingsPopup.xScale
+    property real yScale: settingsPopup.yScale
+    property bool gridVisible: settingsPopup.showGrid
+    property bool showSubTicks: settingsPopup.showSubTicks
 
     property real paddingFactor: 0.05
+    property bool darkTheme: false
 
     GraphsView {
         id: graphView
         anchors.fill: parent
 
         theme: GraphsTheme {
-            colorScheme: GraphsTheme.Theme.QtGreenNeon
+            colorScheme: darkTheme ? GraphsTheme.Theme.QtGreen : GraphsTheme.Theme.QtGreenNeon
         }
 
         axisX: ValueAxis {
@@ -45,6 +45,8 @@ Item {
             axisX.max = chartManager.maxX * graph2DRoot.xScale * (1 + graph2DRoot.paddingFactor);
             axisY.min = chartManager.minY;
             axisY.max = chartManager.maxY * graph2DRoot.yScale * (1 + graph2DRoot.paddingFactor);
+            console.log("[Graph2DView] updateAxisRanges: X[" + axisX.min + ", " + axisX.max + "], Y[" + axisY.min + ", " + axisY.max + "]");
+            console.log("[Graph2DView] xScale:", graph2DRoot.xScale, "yScale:", graph2DRoot.yScale);
         }
 
         Component.onCompleted: {
@@ -52,7 +54,7 @@ Item {
 
             var list = chartManager.lineSeriesList;
             if (!list) {
-                console.log("[Graph2DView] WARNING: lineSeriesList is null or undefined");
+                console.warn("[Graph2DView] lineSeriesList is null or undefined");
                 return;
             }
 
@@ -72,12 +74,30 @@ Item {
             function onLineSeriesAdded(series) {
                 if (series)
                     graphView.addSeries(series);
-                graphView.updateAxisRanges();
             }
             function onLineSeriesRemoved(series) {
                 if (series)
                     graphView.removeSeries(series);
+            }
+            function onMinMaxValuesChanged() {
                 graphView.updateAxisRanges();
+            }
+        }
+        Connections {
+            target: settingsPopup
+            function onXScaleChanged() {
+                graphView.updateAxisRanges();
+            }
+            function onYScaleChanged() {
+                graphView.updateAxisRanges();
+            }
+            function onShowGridChanged() {
+                axisX.gridVisible = settingsPopup.showGrid;
+                axisY.gridVisible = settingsPopup.showGrid;
+            }
+            function onShowSubTicksChanged() {
+                axisX.subTickCount = settingsPopup.showSubTicks ? 4 : 0;
+                axisY.subTickCount = settingsPopup.showSubTicks ? 4 : 0;
             }
         }
     }
