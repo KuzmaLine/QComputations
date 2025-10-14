@@ -6,8 +6,48 @@
 
 #include "ChartManager.h"
 
+
+void messageHandler(QtMsgType type, const QMessageLogContext &context, const QString &msg)
+{
+    QByteArray localMsg = msg.toLocal8Bit();
+    QString time = QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss");
+    QTextStream out(stdout);
+
+    // ANSI color codes
+    const char *colorReset = "\033[0m";
+    const char *colorInfo  = "\033[36m"; // cyan
+    const char *colorWarn  = "\033[33m"; // yellow
+    const char *colorError = "\033[31m"; // red
+    const char *colorDebug = "\033[32m"; // green
+
+    switch (type) {
+    case QtDebugMsg:
+        out << colorDebug << "[DEBUG]" << colorReset << " "
+            << time << " " << localMsg.constData() << "\n";
+        break;
+    case QtInfoMsg:
+        out << colorInfo << "[INFO]" << colorReset << " "
+            << time << " " << localMsg.constData() << "\n";
+        break;
+    case QtWarningMsg:
+        out << colorWarn << "[WARN]" << colorReset << " "
+            << time << " " << localMsg.constData() << "\n";
+        break;
+    case QtCriticalMsg:
+        out << colorError << "[CRIT]" << colorReset << " "
+            << time << " " << localMsg.constData() << "\n";
+        break;
+    case QtFatalMsg:
+        out << colorError << "[FATAL]" << colorReset << " "
+            << time << " " << localMsg.constData() << "\n";
+        abort();
+    }
+    out.flush();
+}
+
 int main(int argc, char *argv[])
 {
+    qInstallMessageHandler(messageHandler);
     QGuiApplication app(argc, argv);
 
     app.setWindowIcon(QIcon(":/assets/icons/icon.png"));
