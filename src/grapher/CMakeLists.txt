@@ -6,7 +6,7 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
 
-find_package(Qt6 REQUIRED COMPONENTS Quick Quick3D Graphs Qml)
+find_package(Qt6 REQUIRED COMPONENTS Quick Quick3D Graphs Qml QuickControls2)
 
 add_executable(QtQuickGraphsApp
     src/main.cpp
@@ -20,5 +20,5 @@ add_executable(QtQuickGraphsApp
 )
 
 target_link_libraries(QtQuickGraphsApp
-    PRIVATE Qt6::Quick Qt6::Quick3D Qt6::Graphs Qt6::Qml
+    PRIVATE Qt6::Quick Qt6::Quick3D Qt6::Graphs Qt6::Qml Qt6::QuickControls2
 )
