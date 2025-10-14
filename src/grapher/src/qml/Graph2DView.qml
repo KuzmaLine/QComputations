@@ -72,12 +72,12 @@ Item {
             function onLineSeriesAdded(series) {
                 if (series)
                     graphView.addSeries(series);
-                updateAxisRanges();
+                graphView.updateAxisRanges();
             }
             function onLineSeriesRemoved(series) {
                 if (series)
                     graphView.removeSeries(series);
-                updateAxisRanges();
+                graphView.updateAxisRanges();
             }
         }
     }
