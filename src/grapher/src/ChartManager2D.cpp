@@ -1,4 +1,5 @@
 #include "ChartManager2D.h"
+
 #include <QDebug>
 #include <QDir>
 #include <QFile>
@@ -11,8 +12,7 @@ ChartManager2D::~ChartManager2D() { clearSeriesList(); }
 
 void ChartManager2D::loadFolder2D(const QString &path) {
     qDebug() << "[ChartManager2D] loadFolder2D(" << path << ")";
-    if (!m_lineSeriesList.empty())
-        clearSeriesList();
+    if (!m_lineSeriesList.empty()) clearSeriesList();
 
     QFile basisFile(path + "/basis.csv");
     QFile probsFile(path + "/probs.csv");
@@ -20,8 +20,7 @@ void ChartManager2D::loadFolder2D(const QString &path) {
     if (!basisFile.open(QIODevice::ReadOnly | QIODevice::Text) ||
         !probsFile.open(QIODevice::ReadOnly | QIODevice::Text) ||
         !timeFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        qWarning() << "[ChartManager2D] Could not open CSV files in folder:"
-                   << path;
+        qWarning() << "[ChartManager2D] Could not open CSV files in folder:" << path;
         return;
     }
 
@@ -33,21 +32,18 @@ void ChartManager2D::loadFolder2D(const QString &path) {
     for (const auto &str : timeIn.readLine().split(",")) {
         bool ok = false;
         double val = str.toDouble(&ok);
-        if (ok)
-            timeVec.append(val);
+        if (ok) timeVec.append(val);
     }
     timeFile.close();
 
     QVector<QVector<double>> probsVec(namesVec.size());
     while (!probsIn.atEnd()) {
         QStringList lineParts = probsIn.readLine().split(",");
-        if (lineParts.size() != namesVec.size())
-            continue;
+        if (lineParts.size() != namesVec.size()) continue;
         for (int i = 0; i < lineParts.size(); ++i) {
             bool ok = false;
             double val = lineParts[i].toDouble(&ok);
-            if (ok)
-                probsVec[i].append(val);
+            if (ok) probsVec[i].append(val);
         }
     }
     probsFile.close();
@@ -59,15 +55,15 @@ void ChartManager2D::loadFolder2D(const QString &path) {
     }
     step = qMax(step, m_samplingStep);
 
+    double maxX = 0, maxY = 0;
+    double minX = 0, minY = 0;
+
     QRandomGenerator rng(1);
     for (int i = 0; i < probsVec.size(); ++i) {
         auto *lineSeries = new QLineSeries(this);
         lineSeries->setName(namesVec[i]);
-        lineSeries->setColor(QColor(rng.bounded(0, 255), rng.bounded(0, 255),
-                                    rng.bounded(0, 255)));
+        lineSeries->setColor(QColor(rng.bounded(0, 255), rng.bounded(0, 255), rng.bounded(0, 255)));
 
-        double maxX = 0, maxY = 0;
-        double minX = 0, minY = 0;
         for (int j = 0; j < timeVec.size(); j += step) {
             lineSeries->append(timeVec[j], probsVec[i][j]);
             maxX = qMax(maxX, timeVec[j]);
@@ -76,16 +72,16 @@ void ChartManager2D::loadFolder2D(const QString &path) {
             minY = qMin(minY, probsVec[i][j]);
         }
 
-        m_maxX = maxX;
-        m_maxY = maxY;
-        m_minX = minX;
-        m_minY = minY;
-        emit maxValuesChanged();
-
         m_lineSeriesList.append(QPointer<QLineSeries>(lineSeries));
         emit lineSeriesAdded(lineSeries);
         emit lineSeriesListChanged();
     }
+
+    m_maxX = maxX;
+    m_maxY = maxY;
+    m_minX = minX;
+    m_minY = minY;
+    emit maxValuesChanged();
 
     qDebug() << "[ChartManager2D] Finished loading 2D folder:" << path
              << "total points (after downsampling):" << totalPoints;
@@ -95,34 +91,26 @@ void ChartManager2D::loadFolder2D(const QString &path) {
 qsizetype ChartManager2D::count() const { return m_lineSeriesList.size(); }
 
 QLineSeries *ChartManager2D::getSeries(qsizetype index) const {
-    if (index < 0 || index >= m_lineSeriesList.size())
-        return nullptr;
+    if (index < 0 || index >= m_lineSeriesList.size()) return nullptr;
     return m_lineSeriesList.at(index);
 }
 
-QColor ChartManager2D::getSeriesColor(QLineSeries *series) const {
-    return series ? series->color() : QColor();
-}
+QColor ChartManager2D::getSeriesColor(QLineSeries *series) const { return series ? series->color() : QColor(); }
 
-void ChartManager2D::updateSeriesColor(QLineSeries *series,
-                                       const QColor &color) {
-    if (!series)
-        return;
+void ChartManager2D::updateSeriesColor(QLineSeries *series, const QColor &color) {
+    if (!series) return;
     series->setColor(color);
     emit seriesColorChanged(series);
 }
 
 void ChartManager2D::updateSeriesVisibility(QLineSeries *series, bool visible) {
-    if (!series)
-        return;
+    if (!series) return;
     series->setVisible(visible);
     emit seriesVisibilityChanged(series);
 }
 
-void ChartManager2D::updateSeriesName(QLineSeries *series,
-                                      const QString &name) {
-    if (!series)
-        return;
+void ChartManager2D::updateSeriesName(QLineSeries *series, const QString &name) {
+    if (!series) return;
     series->setName(name);
     emit seriesNameChanged(series);
 }
@@ -130,8 +118,7 @@ void ChartManager2D::updateSeriesName(QLineSeries *series,
 QList<QLineSeries *> ChartManager2D::getSeriesRawList() const {
     QList<QLineSeries *> rawList;
     for (auto &ptr : m_lineSeriesList) {
-        if (ptr)
-            rawList.append(ptr);
+        if (ptr) rawList.append(ptr);
     }
     return rawList;
 }
@@ -139,8 +126,7 @@ QList<QLineSeries *> ChartManager2D::getSeriesRawList() const {
 // ------------------- Clear series -------------------
 void ChartManager2D::clearSeriesList() {
     for (auto &ptr : m_lineSeriesList) {
-        if (ptr)
-            emit lineSeriesRemoved(ptr);
+        if (ptr) emit lineSeriesRemoved(ptr);
     }
     // qDeleteAll(m_lineSeriesList);
     m_lineSeriesList.clear();
@@ -149,8 +135,7 @@ void ChartManager2D::clearSeriesList() {
 
 // ------------------- Sampling -------------------
 void ChartManager2D::setSamplingStep(int step) {
-    if (m_samplingStep == step)
-        return;
+    if (m_samplingStep == step) return;
     m_samplingStep = step;
     emit samplingStepChanged();
 }
