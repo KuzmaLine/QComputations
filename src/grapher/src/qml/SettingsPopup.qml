@@ -13,11 +13,12 @@ Popup {
     property bool showGrid: true
     property bool showSubTicks: true
     property bool show3D: false
+    property Theme theme
 
     Rectangle {
         id: popupRect
         anchors.fill: parent
-        color: "#f0f0f0"
+        color: theme.base
         Column {
             anchors.centerIn: parent
             spacing: 15
@@ -26,6 +27,7 @@ Popup {
                 text: show3D ? "3D Settings" : "2D Grid & Axis Settings"
                 font.bold: true
                 font.pointSize: 14
+                color: theme ? theme.windowText : "black"
             }
 
             // Axis sliders
@@ -33,6 +35,7 @@ Popup {
                 spacing: 8
                 Text {
                     text: "X Scale:"
+                    color: theme ? theme.windowText : "black"
                     width: 70
                 }
                 Slider {
@@ -46,6 +49,7 @@ Popup {
                 }
                 Text {
                     text: xScaleSlider.value.toFixed(2)
+                    color: theme ? theme.windowText : "black"
                     width: 40
                 }
             }
@@ -54,6 +58,7 @@ Popup {
                 spacing: 8
                 Text {
                     text: "Y Scale:"
+                    color: theme ? theme.windowText : "black"
                     width: 70
                 }
                 Slider {
@@ -67,6 +72,7 @@ Popup {
                 }
                 Text {
                     text: yScaleSlider.value.toFixed(2)
+                    color: theme ? theme.windowText : "black"
                     width: 40
                 }
             }

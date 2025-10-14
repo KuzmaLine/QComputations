@@ -11,7 +11,7 @@
 class ChartManager3D : public QObject {
     Q_OBJECT
 
-  public:
+   public:
     explicit ChartManager3D(QObject *parent = nullptr);
     ~ChartManager3D();
 
@@ -31,15 +31,15 @@ class ChartManager3D : public QObject {
     double minY() const { return m_minY; }
     double minZ() const { return m_minZ; }
 
-  signals:
+   signals:
     void surfaceSeriesChanged();
     void samplingStepChanged();
-    void maxValuesChanged();
+    void minMaxValuesChanged();
 
-  private:
+   private:
     void clearSurface();
 
-  private:
+   private:
     QPointer<QSurface3DSeries> m_surfaceSeries;
     QSurfaceDataArray m_surfaceArray;
     int m_samplingStep = 1;

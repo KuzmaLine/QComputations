@@ -7,44 +7,46 @@ ApplicationWindow {
     width: 1000
     height: 600
     visible: true
-    color: "#f0f0f0"
     property bool show3D: false
     property string lastFolderSelected: ""
     property string exportDir: ""
+
+    property var theme: Theme {
+        dark: false
+    }
+    palette.window: theme.window
+    palette.button: theme.button
+    palette.base: theme.base
+    palette.mid: theme.mid
+    palette.dark: theme.darkColor
+    palette.light: theme.light
+    palette.windowText: theme.windowText
+    palette.buttonText: theme.buttonText
+    palette.highlight: theme.highlight
+    palette.highlightedText: theme.highlightedText
 
     Row {
         id: selectorRow
         anchors.top: parent.top
         anchors.horizontalCenter: parent.horizontalCenter
         spacing: 20
-        z: 2
 
         Button {
-            background: Rectangle {
-                color: "#a0a0a0"
-                border.color: "#cccccc"
-                radius: 4
-            }
+            text: "Toggle dark mode"
+            onClicked: theme.dark = !theme.dark
+        }
+
+        Button {
             text: "Open Folder"
             onClicked: folderDialog.open()
         }
 
         Button {
-            background: Rectangle {
-                color: "#a0a0a0"
-                border.color: "#cccccc"
-                radius: 4
-            }
             text: "Settings"
             onClicked: settingsPopup.open()
         }
 
         Button {
-            background: Rectangle {
-                color: "#a0a0a0"
-                border.color: "#cccccc"
-                radius: 4
-            }
             text: "Export PNG"
             onClicked: exportGraphAndLegend()
         }
@@ -69,16 +71,14 @@ ApplicationWindow {
                 id: graph2DView
                 anchors.fill: parent
                 visible: !root.show3D
-                xScale: settingsPopup.xScale
-                yScale: settingsPopup.yScale
-                gridVisible: settingsPopup.showGrid
-                showSubTicks: settingsPopup.showSubTicks
+                darkTheme: theme.dark
             }
 
             Graph3DView {
                 id: graph3DView
                 anchors.fill: parent
                 visible: root.show3D
+                darkTheme: theme.dark
             }
         }
 
@@ -89,6 +89,7 @@ ApplicationWindow {
             anchors.right: parent.right
             width: 200
             show3D: root.show3D
+            theme: root.theme
         }
     }
 
@@ -110,6 +111,7 @@ ApplicationWindow {
     SettingsPopup {
         id: settingsPopup
         show3D: root.show3D
+        theme: root.theme
     }
 
     function exportGraphAndLegend() {

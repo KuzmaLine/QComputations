@@ -8,7 +8,7 @@
 class ChartManager2D : public QObject {
     Q_OBJECT
 
-  public:
+   public:
     explicit ChartManager2D(QObject *parent = nullptr);
     ~ChartManager2D();
 
@@ -31,19 +31,19 @@ class ChartManager2D : public QObject {
 
     QList<QLineSeries *> getSeriesRawList() const;
 
-  signals:
+   signals:
     void lineSeriesAdded(QLineSeries *series);
     void lineSeriesRemoved(QLineSeries *series);
     void lineSeriesListChanged();
     void samplingStepChanged();
-    void maxValuesChanged();
+    void minmMaxValuesChanged();
     void seriesColorChanged(QObject *series);
     void seriesVisibilityChanged(QObject *series);
     void seriesNameChanged(QObject *series);
 
-  private:
-    QList<QPointer<QLineSeries>> m_lineSeriesList; 
-    int m_samplingStep = 1; //TODO: remove
+   private:
+    QList<QPointer<QLineSeries>> m_lineSeriesList;
+    int m_samplingStep = 1;  //TODO: remove
     double m_maxX = 0, m_maxY = 0;
     double m_minX = 0, m_minY = 0;
 
