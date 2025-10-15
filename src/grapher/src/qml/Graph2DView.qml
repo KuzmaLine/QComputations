@@ -1,5 +1,6 @@
 import QtQuick
 import QtGraphs
+import QtQuick.Controls
 
 Item {
     id: graph2DRoot
@@ -14,12 +15,8 @@ Item {
     property real paddingFactor: 0.05
     property bool darkTheme: false
 
-    onXScaleChanged: {
-        graphView.updateAxisRanges();
-    }
-    onYScaleChanged: {
-        graphView.updateAxisRanges();
-    }
+    onXScaleChanged: graphView.updateAxisRanges()
+    onYScaleChanged: graphView.updateAxisRanges()
 
     GraphsView {
         id: graphView
@@ -52,9 +49,6 @@ Item {
             axisX.max = chartManager.maxX * graph2DRoot.xScale * (1 + graph2DRoot.paddingFactor);
             axisY.min = chartManager.minY;
             axisY.max = chartManager.maxY * graph2DRoot.yScale * (1 + graph2DRoot.paddingFactor);
-            // TODO: delete
-            console.log("[Graph2DView] updateAxisRanges: X[" + axisX.min + ", " + axisX.max + "], Y[" + axisY.min + ", " + axisY.max + "]");
-            console.log("[Graph2DView] xScale:", graph2DRoot.xScale, "yScale:", graph2DRoot.yScale);
         }
 
         Component.onCompleted: {
@@ -89,6 +83,37 @@ Item {
             }
             function onMinMaxValuesChanged() {
                 graphView.updateAxisRanges();
+            }
+        }
+    }
+
+    //MouseWheel - oriented zooming
+    //Wheel for vertical zoom
+    //Shift + Wheel for horizontal zoom
+    //Ctrl + Wheel for both axes zoom
+    //Horizontal wheel (or trackpad) for horizontal zoom
+    //TODO: invert wheel direction?
+    MouseArea {
+        anchors.fill: parent
+        acceptedButtons: Qt.NoButton
+        hoverEnabled: true
+        property real scrollIncrement: 0.05
+
+        onWheel: function (event) {
+            //for regular vertical wheel
+            if (event.modifiers === Qt.ControlModifier) {
+                console.log("Ctrl + Wheel: Zooming both axes");
+                xScale *= (event.angleDelta.y > 0) ? (1 + scrollIncrement) : (1 - scrollIncrement);
+                yScale *= (event.angleDelta.y > 0) ? (1 + scrollIncrement) : (1 - scrollIncrement);
+            } else if (event.modifiers === Qt.ShiftModifier) {
+                xScale *= (event.angleDelta.y > 0) ? (1 + scrollIncrement) : (1 - scrollIncrement);
+            } else {
+                yScale *= (event.angleDelta.y > 0) ? (1 + scrollIncrement) : (1 - scrollIncrement);
+            }
+
+            //for horizontal wheel (also rorks for touchpad horizontal scroll)
+            if (event.modifiers === Qt.NoModifier & event.angleDelta.x !== 0) {
+                xScale *= (event.angleDelta.x > 0) ? (1 + scrollIncrement) : (1 - scrollIncrement);
             }
         }
     }

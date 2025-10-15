@@ -12,6 +12,9 @@ Popup {
     property bool show3D: false
     property Theme theme
 
+    property real defaultFrom: 0.1
+    property real defaultTo: 2.0
+
     Rectangle {
         id: popupRect
         anchors.fill: parent
@@ -40,9 +43,22 @@ Popup {
                     from: 0.1
                     to: 2.0
                     value: graph.xScale
-                    stepSize: 0.05
-                    onValueChanged: graph.xScale = value
+                    stepSize: 0.001
                     width: 150
+
+                    function scale() {
+                        graph.xScale = value;
+
+                        if (value < defaultFrom)
+                            from = value;
+                        else if (value > defaultTo)
+                            to = value;
+                        else {
+                            from = defaultFrom;
+                            to = defaultTo;
+                        }
+                    }
+                    onMoved: scale()
                 }
                 Text {
                     text: graph.xScale.toFixed(2)
@@ -63,35 +79,48 @@ Popup {
                     from: 0.1
                     to: 2.0
                     value: graph.yScale
-                    stepSize: 0.05
-                    onValueChanged: graph.yScale = value
+                    stepSize: 0.001
                     width: 150
+
+                    function scale() {
+                        graph.yScale = value;
+                        if (value < defaultFrom)
+                            from = value;
+                        else if (value > defaultTo)
+                            to = value;
+                        else {
+                            from = defaultFrom;
+                            to = defaultTo;
+                        }
+                    }
+                    onMoved: scale()
                 }
                 Text {
-                    text: graph.xScale.toFixed(2)
+                    text: graph.yScale.toFixed(2)
                     color: theme ? theme.windowText : "black"
                     width: 40
                 }
             }
 
-            // Show grid toggle
+            Button {
+                text: "Restore Axes"
+                anchors.horizontalCenter: parent.horizontalCenter
+                onClicked: {
+                    graph.xScale = 1.0;
+                    graph.yScale = 1.0;
+                }
+            }
+
             CheckBox {
                 text: "Show Grid"
                 checked: graph.gridVisible
                 onToggled: graph.gridVisible = checked
             }
 
-            // Show sub-ticks toggle
             CheckBox {
                 text: "Show Sub-Ticks"
                 checked: graph.showSubTicks
                 onToggled: graph.showSubTicks = checked
-            }
-
-            Button {
-                text: "Close"
-                anchors.horizontalCenter: parent.horizontalCenter
-                onClicked: settingsPopup.close()
             }
         }
     }
