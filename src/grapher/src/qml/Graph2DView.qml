@@ -6,13 +6,20 @@ Item {
     anchors.fill: parent
     visible: !root.show3D
 
-    property real xScale: settingsPopup.xScale
-    property real yScale: settingsPopup.yScale
-    property bool gridVisible: settingsPopup.showGrid
-    property bool showSubTicks: settingsPopup.showSubTicks
+    property real xScale: 1
+    property real yScale: 1
+    property bool gridVisible: true
+    property bool showSubTicks: true
 
     property real paddingFactor: 0.05
     property bool darkTheme: false
+
+    onXScaleChanged: {
+        graphView.updateAxisRanges();
+    }
+    onYScaleChanged: {
+        graphView.updateAxisRanges();
+    }
 
     GraphsView {
         id: graphView
@@ -45,6 +52,7 @@ Item {
             axisX.max = chartManager.maxX * graph2DRoot.xScale * (1 + graph2DRoot.paddingFactor);
             axisY.min = chartManager.minY;
             axisY.max = chartManager.maxY * graph2DRoot.yScale * (1 + graph2DRoot.paddingFactor);
+            // TODO: delete
             console.log("[Graph2DView] updateAxisRanges: X[" + axisX.min + ", " + axisX.max + "], Y[" + axisY.min + ", " + axisY.max + "]");
             console.log("[Graph2DView] xScale:", graph2DRoot.xScale, "yScale:", graph2DRoot.yScale);
         }
@@ -81,23 +89,6 @@ Item {
             }
             function onMinMaxValuesChanged() {
                 graphView.updateAxisRanges();
-            }
-        }
-        Connections {
-            target: settingsPopup
-            function onXScaleChanged() {
-                graphView.updateAxisRanges();
-            }
-            function onYScaleChanged() {
-                graphView.updateAxisRanges();
-            }
-            function onShowGridChanged() {
-                axisX.gridVisible = settingsPopup.showGrid;
-                axisY.gridVisible = settingsPopup.showGrid;
-            }
-            function onShowSubTicksChanged() {
-                axisX.subTickCount = settingsPopup.showSubTicks ? 4 : 0;
-                axisY.subTickCount = settingsPopup.showSubTicks ? 4 : 0;
             }
         }
     }

@@ -8,10 +8,7 @@ Popup {
     height: 280
     closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
 
-    property real xScale: 1.0
-    property real yScale: 1.0
-    property bool showGrid: true
-    property bool showSubTicks: true
+    property Graph2DView graph
     property bool show3D: false
     property Theme theme
 
@@ -42,13 +39,13 @@ Popup {
                     id: xScaleSlider
                     from: 0.1
                     to: 2.0
-                    value: settingsPopup.xScale
+                    value: graph.xScale
                     stepSize: 0.05
-                    onValueChanged: settingsPopup.xScale = value
+                    onValueChanged: graph.xScale = value
                     width: 150
                 }
                 Text {
-                    text: xScaleSlider.value.toFixed(2)
+                    text: graph.xScale.toFixed(2)
                     color: theme ? theme.windowText : "black"
                     width: 40
                 }
@@ -65,13 +62,13 @@ Popup {
                     id: yScaleSlider
                     from: 0.1
                     to: 2.0
-                    value: settingsPopup.yScale
+                    value: graph.yScale
                     stepSize: 0.05
-                    onValueChanged: settingsPopup.yScale = value
+                    onValueChanged: graph.yScale = value
                     width: 150
                 }
                 Text {
-                    text: yScaleSlider.value.toFixed(2)
+                    text: graph.xScale.toFixed(2)
                     color: theme ? theme.windowText : "black"
                     width: 40
                 }
@@ -80,15 +77,15 @@ Popup {
             // Show grid toggle
             CheckBox {
                 text: "Show Grid"
-                checked: settingsPopup.showGrid
-                onToggled: settingsPopup.showGrid = checked
+                checked: graph.gridVisible
+                onToggled: graph.gridVisible = checked
             }
 
             // Show sub-ticks toggle
             CheckBox {
                 text: "Show Sub-Ticks"
-                checked: settingsPopup.showSubTicks
-                onToggled: settingsPopup.showSubTicks = checked
+                checked: graph.showSubTicks
+                onToggled: graph.showSubTicks = checked
             }
 
             Button {
