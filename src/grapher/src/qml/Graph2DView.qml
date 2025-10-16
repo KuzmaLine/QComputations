@@ -52,13 +52,22 @@ Item {
 
         onActiveChanged: {
             if (active) {
+                // Remember current pan when drag starts
                 startPanX = Graph2DState.panOffsetX;
                 startPanY = Graph2DState.panOffsetY;
             }
         }
 
         onTranslationChanged: {
-            Graph2DState.panBy(-translation.x, translation.y, graphView, chartManager.minX, chartManager.maxX, chartManager.minY, chartManager.maxY, startPanX, startPanY);
+            // Convert pixels to data units
+            const visibleX = (chartManager.maxX - chartManager.minX) * Graph2DState.xScale * (1 + Graph2DState.paddingFactor);
+            const visibleY = (chartManager.maxY - chartManager.minY) * Graph2DState.yScale * (1 + Graph2DState.paddingFactor);
+
+            // Move relative to where the drag started
+            Graph2DState.panOffsetX = startPanX + (-translation.x / graphView.width) * visibleX;
+            Graph2DState.panOffsetY = startPanY + (translation.y / graphView.height) * visibleY;
+
+            Graph2DState.applyToChart(graphView, chartManager.minX, chartManager.maxX, chartManager.minY, chartManager.maxY);
         }
     }
 

@@ -45,22 +45,24 @@ QtObject {
         initialized = true;
     }
 
-    // --- Pan by pixel delta from DragHandler ---
-    function panBy(deltaX_px, deltaY_px, chartView, minXVal, maxXVal, minYVal, maxYVal, startX = panOffsetX, startY = panOffsetY) {
+    // --- Pan by pixel delta with optional start offsets ---
+    function panBy(deltaX_px, deltaY_px, chartView, minXVal, maxXVal, minYVal, maxYVal) {
         if (!initialized || !chartView)
             return;
 
-        const visibleX = (maxXVal - minXVal) * xScale * (1 + paddingFactor);
-        const visibleY = (maxYVal - minYVal) * yScale * (1 + paddingFactor);
+        const xRangeVisible = (maxXVal - minXVal) * xScale * (1 + paddingFactor);
+        const yRangeVisible = (maxYVal - minYVal) * yScale * (1 + paddingFactor);
 
-        panOffsetX = startX + deltaX_px / chartView.width * visibleX * -1; // natural drag
-        panOffsetY = startY + deltaY_px / chartView.height * visibleY;
+        // convert pixels to data units
+        const dx = -deltaX_px / chartView.width * xRangeVisible;
+        const dy = deltaY_px / chartView.height * yRangeVisible;
 
-        // Clamp
-        panOffsetX = Math.min(Math.max(panOffsetX, 0), Math.max(0, (maxXVal - minXVal) * xScale - visibleX));
-        panOffsetY = Math.min(Math.max(panOffsetY, 0), Math.max(0, (maxYVal - minYVal) * yScale - visibleY));
+        // update pan offsets freely — no clamping
+        panOffsetX += dx;
+        panOffsetY += dy;
 
         applyToChart(chartView, minXVal, maxXVal, minYVal, maxYVal);
+        console.log("[Graph2DState] Pan to:", panOffsetX.toFixed(2), panOffsetY.toFixed(2));
     }
 
     // --- Apply scale and preserve center ---
