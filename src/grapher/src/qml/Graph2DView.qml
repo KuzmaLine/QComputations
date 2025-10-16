@@ -43,31 +43,69 @@ Item {
         }
     }
 
+    Timer {
+        id: inertiaTimer
+        interval: 16
+        repeat: true
+        running: false
+        onTriggered: {
+            Graph2DState.panOffsetX += dragHandler.velocityX;
+            Graph2DState.panOffsetY += dragHandler.velocityY;
+            Graph2DState.applyToChart(graphView, chartManager.minX, chartManager.maxX, chartManager.minY, chartManager.maxY);
+
+            const friction = 0.92;
+            dragHandler.velocityX *= friction;
+            dragHandler.velocityY *= friction;
+
+            if (Math.abs(dragHandler.velocityX) < 0.1 && Math.abs(dragHandler.velocityY) < 0.1) {
+                inertiaTimer.stop();
+            }
+        }
+    }
+
     // --- Mouse / touch panning ---
     DragHandler {
+        id: dragHandler
         target: graphView
         acceptedDevices: PointerDevice.Mouse | PointerDevice.TouchPad | PointerDevice.TouchScreen
+
         property real startPanX: 0
         property real startPanY: 0
+        property real prevTranslationX: 0
+        property real prevTranslationY: 0
+        property real velocityX: 0
+        property real velocityY: 0
+
+        // Timer for deceleration
 
         onActiveChanged: {
             if (active) {
-                // Remember current pan when drag starts
                 startPanX = Graph2DState.panOffsetX;
                 startPanY = Graph2DState.panOffsetY;
+                prevTranslationX = 0;
+                prevTranslationY = 0;
+                inertiaTimer.stop();
+            } else {
+                // Start inertia
+                inertiaTimer.start();
             }
         }
 
         onTranslationChanged: {
-            // Convert pixels to data units
             const visibleX = (chartManager.maxX - chartManager.minX) * Graph2DState.xScale * (1 + Graph2DState.paddingFactor);
             const visibleY = (chartManager.maxY - chartManager.minY) * Graph2DState.yScale * (1 + Graph2DState.paddingFactor);
 
-            // Move relative to where the drag started
+            // Move graph along with pointer
             Graph2DState.panOffsetX = startPanX + (-translation.x / graphView.width) * visibleX;
             Graph2DState.panOffsetY = startPanY + (translation.y / graphView.height) * visibleY;
-
             Graph2DState.applyToChart(graphView, chartManager.minX, chartManager.maxX, chartManager.minY, chartManager.maxY);
+
+            // Calculate instantaneous velocity
+            velocityX = ((translation.x - prevTranslationX) / graphView.width) * -visibleX;
+            velocityY = ((translation.y - prevTranslationY) / graphView.height) * visibleY;
+
+            prevTranslationX = translation.x;
+            prevTranslationY = translation.y;
         }
     }
 
