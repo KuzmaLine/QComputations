@@ -1,22 +1,12 @@
 import QtQuick
-import QtGraphs
 import QtQuick.Controls
+import QtGraphs
 
 Item {
     id: graph2DRoot
     anchors.fill: parent
     visible: !root.show3D
-
-    property real xScale: 1
-    property real yScale: 1
-    property bool gridVisible: true
-    property bool showSubTicks: true
-
-    property real paddingFactor: 0.05
     property bool darkTheme: false
-
-    onXScaleChanged: graphView.updateAxisRanges()
-    onYScaleChanged: graphView.updateAxisRanges()
 
     GraphsView {
         id: graphView
@@ -29,92 +19,93 @@ Item {
         axisX: ValueAxis {
             id: axisX
             titleText: "X Axis"
-            min: chartManager.minX
-            max: chartManager.maxX * graph2DRoot.xScale * (1 + graph2DRoot.paddingFactor)
-            gridVisible: graph2DRoot.gridVisible
-            subTickCount: graph2DRoot.showSubTicks ? 4 : 0
         }
-
         axisY: ValueAxis {
             id: axisY
             titleText: "Y Axis"
-            min: chartManager.minY
-            max: chartManager.maxY * graph2DRoot.yScale * (1 + graph2DRoot.paddingFactor)
-            gridVisible: graph2DRoot.gridVisible
-            subTickCount: graph2DRoot.showSubTicks ? 4 : 0
         }
 
         function updateAxisRanges() {
-            axisX.min = chartManager.minX;
-            axisX.max = chartManager.maxX * graph2DRoot.xScale * (1 + graph2DRoot.paddingFactor);
-            axisY.min = chartManager.minY;
-            axisY.max = chartManager.maxY * graph2DRoot.yScale * (1 + graph2DRoot.paddingFactor);
+            if (!Graph2DState.initialized)
+                Graph2DState.setFromChart(chartManager);
+            Graph2DState.applyToChart(graphView, chartManager.minX, chartManager.maxX, chartManager.minY, chartManager.maxY);
         }
 
         Component.onCompleted: {
-            console.log("[Graph2DView] onCompleted: initializing 2D graph");
-
-            var list = chartManager.lineSeriesList;
-            if (!list) {
-                console.warn("[Graph2DView] lineSeriesList is null or undefined");
+            if (!chartManager || !chartManager.lineSeriesList)
                 return;
-            }
-
-            console.log("[Graph2DView] list length:", list.length);
-            for (var i = 0; i < list.length; i++) {
-                var s = list[i];
-                if (s) {
+            chartManager.lineSeriesList.forEach(s => {
+                if (s)
                     graphView.addSeries(s);
-                    console.log("[Graph2DView] Added existing series:", s.name);
-                }
-            }
+            });
+            Graph2DState.setFromChart(chartManager);
             updateAxisRanges();
-        }
-
-        Connections {
-            target: chartManager
-            function onLineSeriesAdded(series) {
-                if (series)
-                    graphView.addSeries(series);
-            }
-            function onLineSeriesRemoved(series) {
-                if (series)
-                    graphView.removeSeries(series);
-            }
-            function onMinMaxValuesChanged() {
-                graphView.updateAxisRanges();
-            }
         }
     }
 
-    //MouseWheel - oriented zooming
-    //Wheel for vertical zoom
-    //Shift + Wheel for horizontal zoom
-    //Ctrl + Wheel for both axes zoom
-    //Horizontal wheel (or trackpad) for horizontal zoom
-    //TODO: invert wheel direction?
+    // --- Mouse / touch panning ---
+    DragHandler {
+        target: graphView
+        acceptedDevices: PointerDevice.Mouse | PointerDevice.TouchPad | PointerDevice.TouchScreen
+        property real startPanX: 0
+        property real startPanY: 0
+
+        onActiveChanged: {
+            if (active) {
+                startPanX = Graph2DState.panOffsetX;
+                startPanY = Graph2DState.panOffsetY;
+            }
+        }
+
+        onTranslationChanged: {
+            Graph2DState.panBy(-translation.x, translation.y, graphView, chartManager.minX, chartManager.maxX, chartManager.minY, chartManager.maxY, startPanX, startPanY);
+        }
+    }
+
+    // --- Mouse wheel zoom ---
     MouseArea {
         anchors.fill: parent
-        acceptedButtons: Qt.NoButton
         hoverEnabled: true
+        acceptedButtons: Qt.NoButton
         property real scrollIncrement: 0.05
 
         onWheel: function (event) {
-            //for regular vertical wheel
-            if (event.modifiers === Qt.ControlModifier) {
-                console.log("Ctrl + Wheel: Zooming both axes");
-                xScale *= (event.angleDelta.y > 0) ? (1 + scrollIncrement) : (1 - scrollIncrement);
-                yScale *= (event.angleDelta.y > 0) ? (1 + scrollIncrement) : (1 - scrollIncrement);
-            } else if (event.modifiers === Qt.ShiftModifier) {
-                xScale *= (event.angleDelta.y > 0) ? (1 + scrollIncrement) : (1 - scrollIncrement);
-            } else {
-                yScale *= (event.angleDelta.y > 0) ? (1 + scrollIncrement) : (1 - scrollIncrement);
-            }
+            let xFactor = 1, yFactor = 1;
+            if (event.modifiers === Qt.ControlModifier)
+                xFactor = yFactor = event.angleDelta.y > 0 ? (1 + scrollIncrement) : (1 - scrollIncrement);
+            else if (event.modifiers === Qt.ShiftModifier)
+                xFactor = event.angleDelta.y > 0 ? (1 + scrollIncrement) : (1 - scrollIncrement);
+            else
+                yFactor = event.angleDelta.y > 0 ? (1 + scrollIncrement) : (1 - scrollIncrement);
 
-            //for horizontal wheel (also rorks for touchpad horizontal scroll)
-            if (event.modifiers === Qt.NoModifier & event.angleDelta.x !== 0) {
-                xScale *= (event.angleDelta.x > 0) ? (1 + scrollIncrement) : (1 - scrollIncrement);
-            }
+            Graph2DState.applyScaleAndPan(xFactor, yFactor, graphView, chartManager.minX, chartManager.maxX, chartManager.minY, chartManager.maxY);
+        }
+    }
+
+    // --- Update on chartManager events ---
+    Connections {
+        target: chartManager
+        function onLineSeriesAdded(series) {
+            if (series)
+                graphView.addSeries(series);
+        }
+        function onLineSeriesRemoved(series) {
+            if (series)
+                graphView.removeSeries(series);
+        }
+        function onMinMaxValuesChanged() {
+            graphView.updateAxisRanges();
+        }
+    }
+
+    // --- Update axis ranges on state change ---
+    Connections {
+        target: Graph2DState
+        function onXScaleChanged() {
+            graphView.updateAxisRanges();
+        }
+        function onYScaleChanged() {
+            graphView.updateAxisRanges();
         }
     }
 }

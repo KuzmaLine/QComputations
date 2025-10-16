@@ -81,7 +81,7 @@ void ChartManager2D::loadFolder2D(const QString &path) {
     m_maxY = maxY;
     m_minX = minX;
     m_minY = minY;
-    emit minmMaxValuesChanged();
+    emit minMaxValuesChanged();
 
     qDebug() << "[ChartManager2D] minX:" << m_minX << "maxX:" << m_maxX << "minY:" << m_minY << "maxY:" << m_maxY;
 

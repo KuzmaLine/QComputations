@@ -36,7 +36,7 @@ class ChartManager2D : public QObject {
     void lineSeriesRemoved(QLineSeries *series);
     void lineSeriesListChanged();
     void samplingStepChanged();
-    void minmMaxValuesChanged();
+    void minMaxValuesChanged();
     void seriesColorChanged(QObject *series);
     void seriesVisibilityChanged(QObject *series);
     void seriesNameChanged(QObject *series);

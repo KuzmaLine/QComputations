@@ -8,7 +8,6 @@ Popup {
     height: 280
     closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
 
-    property Graph2DView graph
     property bool show3D: false
     property Theme theme
 
@@ -19,6 +18,7 @@ Popup {
         id: popupRect
         anchors.fill: parent
         color: theme.base
+
         Column {
             anchors.centerIn: parent
             spacing: 15
@@ -30,7 +30,7 @@ Popup {
                 color: theme ? theme.windowText : "black"
             }
 
-            // Axis sliders
+            // --- X Scale Slider ---
             Row {
                 spacing: 8
                 Text {
@@ -42,12 +42,12 @@ Popup {
                     id: xScaleSlider
                     from: 0.1
                     to: 2.0
-                    value: graph.xScale
+                    value: Graph2DState.xScale
                     stepSize: 0.001
                     width: 150
 
                     function scale() {
-                        graph.xScale = value;
+                        Graph2DState.xScale = value;
 
                         if (value < defaultFrom)
                             from = value;
@@ -58,15 +58,17 @@ Popup {
                             to = defaultTo;
                         }
                     }
+
                     onMoved: scale()
                 }
                 Text {
-                    text: graph.xScale.toFixed(2)
+                    text: Graph2DState.xScale.toFixed(2)
                     color: theme ? theme.windowText : "black"
                     width: 40
                 }
             }
 
+            // --- Y Scale Slider ---
             Row {
                 spacing: 8
                 Text {
@@ -78,12 +80,13 @@ Popup {
                     id: yScaleSlider
                     from: 0.1
                     to: 2.0
-                    value: graph.yScale
+                    value: Graph2DState.yScale
                     stepSize: 0.001
                     width: 150
 
                     function scale() {
-                        graph.yScale = value;
+                        Graph2DState.yScale = value;
+
                         if (value < defaultFrom)
                             from = value;
                         else if (value > defaultTo)
@@ -93,10 +96,11 @@ Popup {
                             to = defaultTo;
                         }
                     }
+
                     onMoved: scale()
                 }
                 Text {
-                    text: graph.yScale.toFixed(2)
+                    text: Graph2DState.yScale.toFixed(2)
                     color: theme ? theme.windowText : "black"
                     width: 40
                 }
@@ -106,21 +110,20 @@ Popup {
                 text: "Restore Axes"
                 anchors.horizontalCenter: parent.horizontalCenter
                 onClicked: {
-                    graph.xScale = 1.0;
-                    graph.yScale = 1.0;
+                    Graph2DState.reset();
                 }
             }
 
             CheckBox {
                 text: "Show Grid"
-                checked: graph.gridVisible
-                onToggled: graph.gridVisible = checked
+                checked: Graph2DState.gridVisible
+                onToggled: Graph2DState.gridVisible = checked
             }
 
             CheckBox {
                 text: "Show Sub-Ticks"
-                checked: graph.showSubTicks
-                onToggled: graph.showSubTicks = checked
+                checked: Graph2DState.showSubTicks
+                onToggled: Graph2DState.showSubTicks = checked
             }
         }
     }

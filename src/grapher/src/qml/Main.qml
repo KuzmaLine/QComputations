@@ -112,7 +112,6 @@ ApplicationWindow {
         id: settingsPopup
         show3D: root.show3D
         theme: root.theme
-        graph: graph2DView
     }
 
     function exportGraphAndLegend() {
