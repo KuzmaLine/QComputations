@@ -54,7 +54,7 @@ Popup {
                         Graph2DState.xScale = value;
                         if (Math.abs(value - 1.0) < 0.005)
                             Graph2DState.xScale = 1.0;
-                        Graph2DState.applyToChart();   // ✅ apply immediately
+                        Graph2DState.applyToChart();
                     }
                 }
                 Label {

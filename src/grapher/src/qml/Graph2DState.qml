@@ -23,19 +23,32 @@ QtObject {
     property bool lockY: false
 
     function initialize(chartViewRef) {
-        if (!chartViewRef)
+        if (!chartViewRef && !chartManager)
             return;
+
         chartView = chartViewRef;
-        if (chartView.axisX && chartView.axisY) {
+
+        if (chartManager) {
+            minX = chartManager.minX;
+            maxX = chartManager.maxX;
+            minY = chartManager.minY;
+            maxY = chartManager.maxY;
+        } else if (chartView && chartView.axisX && chartView.axisY) {
             minX = chartView.axisX.min;
             maxX = chartView.axisX.max;
             minY = chartView.axisY.min;
             maxY = chartView.axisY.max;
         }
-        xScale = yScale = 1;
-        panOffsetX = panOffsetY = 0;
+
+        xScale = 1;
+        yScale = 1;
+        panOffsetX = 0;
+        panOffsetY = 0;
+
         initialized = true;
-        applyToChart();
+
+        if (chartView)
+            applyToChart();
     }
 
     function panBy(dx_px, dy_px) {
@@ -57,19 +70,15 @@ QtObject {
         const xRange = maxX - minX;
         const yRange = maxY - minY;
 
-        // current visible left/bottom edges
         const leftEdge = minX + panOffsetX;
         const bottomEdge = minY + panOffsetY;
 
-        // apply scaling
         if (!lockX) {
             xScale = Math.min(Math.max(xScale * xFactor, 0.1), 10);
-            // adjust panOffsetX to preserve left edge
             panOffsetX = leftEdge - minX;
         }
         if (!lockY) {
             yScale = Math.min(Math.max(yScale * yFactor, 0.1), 10);
-            // adjust panOffsetY to preserve bottom edge
             panOffsetY = bottomEdge - minY;
         }
 
