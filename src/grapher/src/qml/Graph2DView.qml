@@ -26,63 +26,54 @@ Item {
         }
 
         function updateAxisRanges() {
-            if (!Graph2DState.initialized)
-                Graph2DState.setFromChart(chartManager);
-            Graph2DState.applyToChart(graphView, chartManager.minX, chartManager.maxX, chartManager.minY, chartManager.maxY);
+            Graph2DState.applyToChart();
         }
 
         Component.onCompleted: {
-            Graph2DState.chartView = graphView;
+            // Initialize Graph2DState with this chart
+            Graph2DState.initialize(graphView);
+
+            // TODO: remove ?
             if (!chartManager || !chartManager.lineSeriesList)
                 return;
+
             chartManager.lineSeriesList.forEach(s => {
                 if (s)
                     graphView.addSeries(s);
             });
-            Graph2DState.setFromChart(chartManager);
-            updateAxisRanges();
         }
     }
 
+    // --- Inertia for smooth panning ---
     Timer {
         id: inertiaTimer
         interval: 16
         repeat: true
         running: false
         onTriggered: {
-            Graph2DState.panOffsetX += dragHandler.velocityX;
-            Graph2DState.panOffsetY += dragHandler.velocityY;
-            Graph2DState.applyToChart(graphView, chartManager.minX, chartManager.maxX, chartManager.minY, chartManager.maxY);
-
-            const friction = 0.92;
-            dragHandler.velocityX *= friction;
-            dragHandler.velocityY *= friction;
-
-            if (Math.abs(dragHandler.velocityX) < 0.1 && Math.abs(dragHandler.velocityY) < 0.1) {
+            Graph2DState.panBy(dragHandler.velocityX, dragHandler.velocityY);
+            dragHandler.velocityX *= 0.92;
+            dragHandler.velocityY *= 0.92;
+            if (Math.abs(dragHandler.velocityX) < 0.1 && Math.abs(dragHandler.velocityY) < 0.1)
                 inertiaTimer.stop();
-            }
         }
     }
 
+    // --- Mouse/touch drag panning ---
     DragHandler {
         id: dragHandler
         target: graphView
         acceptedDevices: PointerDevice.Mouse | PointerDevice.TouchPad | PointerDevice.TouchScreen
 
-        property real startPanX: 0
-        property real startPanY: 0
-        property real prevTranslationX: 0
-        property real prevTranslationY: 0
+        property real prevX: 0
+        property real prevY: 0
         property real velocityX: 0
         property real velocityY: 0
 
-        // Timer for deceleration
         onActiveChanged: {
             if (active) {
-                startPanX = Graph2DState.panOffsetX;
-                startPanY = Graph2DState.panOffsetY;
-                prevTranslationX = 0;
-                prevTranslationY = 0;
+                prevX = translation.x;
+                prevY = translation.y;
                 inertiaTimer.stop();
             } else {
                 inertiaTimer.start();
@@ -90,62 +81,49 @@ Item {
         }
 
         onTranslationChanged: {
-            const visibleX = (chartManager.maxX - chartManager.minX) * Graph2DState.xScale * (1 + Graph2DState.paddingFactor);
-            const visibleY = (chartManager.maxY - chartManager.minY) * Graph2DState.yScale * (1 + Graph2DState.paddingFactor);
-
-            Graph2DState.panOffsetX = startPanX + (-translation.x / graphView.width) * visibleX;
-            Graph2DState.panOffsetY = startPanY + (translation.y / graphView.height) * visibleY;
-            Graph2DState.applyToChart(graphView, chartManager.minX, chartManager.maxX, chartManager.minY, chartManager.maxY);
-
-            velocityX = ((translation.x - prevTranslationX) / graphView.width) * -visibleX;
-            velocityY = ((translation.y - prevTranslationY) / graphView.height) * visibleY;
-
-            prevTranslationX = translation.x;
-            prevTranslationY = translation.y;
+            const dx = translation.x - prevX;
+            const dy = translation.y - prevY;
+            Graph2DState.panBy(dx, dy);
+            velocityX = dx;
+            velocityY = dy;
+            prevX = translation.x;
+            prevY = translation.y;
         }
     }
 
+    // --- Mouse wheel zooming ---
     MouseArea {
         anchors.fill: parent
         hoverEnabled: true
         acceptedButtons: Qt.NoButton
-        property real scrollIncrement: 0.05
+        property real scrollIncrement: 0.1
 
         onWheel: function (event) {
             let xFactor = 1, yFactor = 1;
             if (event.modifiers === Qt.ControlModifier)
-                xFactor = yFactor = event.angleDelta.y > 0 ? (1 + scrollIncrement) : (1 - scrollIncrement);
+                xFactor = yFactor = event.angleDelta.y > 0 ? (1 - scrollIncrement) : (1 + scrollIncrement);
             else if (event.modifiers === Qt.ShiftModifier)
-                xFactor = event.angleDelta.y > 0 ? (1 + scrollIncrement) : (1 - scrollIncrement);
+                yFactor = event.angleDelta.y > 0 ? (1 - scrollIncrement) : (1 + scrollIncrement);
             else
-                yFactor = event.angleDelta.y > 0 ? (1 + scrollIncrement) : (1 - scrollIncrement);
+                xFactor = event.angleDelta.y > 0 ? (1 - scrollIncrement) : (1 + scrollIncrement);
 
-            // TODO: create simpler applyScale(xFactor, yFactor) method?
-            Graph2DState.applyScaleAndPan(xFactor, yFactor, graphView, chartManager.minX, chartManager.maxX, chartManager.minY, chartManager.maxY);
+            Graph2DState.scaleBy(xFactor, yFactor);
         }
     }
 
-    Connections {
-        target: chartManager
-        function onLineSeriesAdded(series) {
-            if (series)
-                graphView.addSeries(series);
-        }
-        function onLineSeriesRemoved(series) {
-            if (series)
-                graphView.removeSeries(series);
-        }
-        function onMinMaxValuesChanged() {
-            graphView.updateAxisRanges();
-        }
-    }
-
+    // --- Keep axes synced with Graph2DState ---
     Connections {
         target: Graph2DState
         function onXScaleChanged() {
             graphView.updateAxisRanges();
         }
         function onYScaleChanged() {
+            graphView.updateAxisRanges();
+        }
+        function onPanOffsetXChanged() {
+            graphView.updateAxisRanges();
+        }
+        function onPanOffsetYChanged() {
             graphView.updateAxisRanges();
         }
     }

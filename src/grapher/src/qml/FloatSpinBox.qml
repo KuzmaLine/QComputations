@@ -31,28 +31,30 @@ SpinBox {
             return;
         updating = true;
         if (spinBox._axis === 'x') {
-            Graph2DState.setManualBorder('x', spinBox._isMin ? value / 1000 : Graph2DState.minX, spinBox._isMin ? Graph2DState.maxX : value / 1000);
+            //Graph2DState.setBorder('x', spinBox._isMin ? value / 1000 : Graph2DState.minX, spinBox._isMin ? Graph2DState.maxX : value / 1000);
+            console.log("X axis border change not implemented");
         } else {
-            Graph2DState.setManualBorder('y', spinBox._isMin ? value / 1000 : Graph2DState.minY, spinBox._isMin ? Graph2DState.maxY : value / 1000);
+            //Graph2DState.setBorder('y', spinBox._isMin ? value / 1000 : Graph2DState.minY, spinBox._isMin ? Graph2DState.maxY : value / 1000);
+            console.log("Y axis border change not implemented");
         }
         updating = false;
     }
 
     Connections {
         target: Graph2DState
-        onMinXChanged: {
+        function onMinXChanged() {
             if (spinBox._axis === 'x' && spinBox._isMin && !updating)
                 value = Math.round(Graph2DState.minX * 1000);
         }
-        onMaxXChanged: {
+        function onMaxXChanged() {
             if (spinBox._axis === 'x' && !spinBox._isMin && !updating)
                 value = Math.round(Graph2DState.maxX * 1000);
         }
-        onMinYChanged: {
+        function onMinYChanged() {
             if (spinBox._axis === 'y' && spinBox._isMin && !updating)
                 value = Math.round(Graph2DState.minY * 1000);
         }
-        onMaxYChanged: {
+        function onMaxYChanged() {
             if (spinBox._axis === 'y' && !spinBox._isMin && !updating)
                 value = Math.round(Graph2DState.maxY * 1000);
         }

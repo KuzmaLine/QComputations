@@ -54,6 +54,7 @@ Popup {
                         Graph2DState.xScale = value;
                         if (Math.abs(value - 1.0) < 0.005)
                             Graph2DState.xScale = 1.0;
+                        Graph2DState.applyToChart();   // ✅ apply immediately
                     }
                 }
                 Label {
@@ -82,6 +83,7 @@ Popup {
                         Graph2DState.yScale = value;
                         if (Math.abs(value - 1.0) < 0.005)
                             Graph2DState.yScale = 1.0;
+                        Graph2DState.applyToChart();
                     }
                 }
                 Label {
@@ -97,12 +99,18 @@ Popup {
                 CheckBox {
                     text: "Lock X"
                     checked: Graph2DState.lockX
-                    onToggled: Graph2DState.lockX = checked
+                    onToggled: {
+                        Graph2DState.lockX = checked;
+                        Graph2DState.applyToChart();
+                    }
                 }
                 CheckBox {
                     text: "Lock Y"
                     checked: Graph2DState.lockY
-                    onToggled: Graph2DState.lockY = checked
+                    onToggled: {
+                        Graph2DState.lockY = checked;
+                        Graph2DState.applyToChart();
+                    }
                 }
             }
 
@@ -119,7 +127,7 @@ Popup {
                 }
                 Button {
                     text: "Reset All"
-                    onClicked: Graph2DState.reset()
+                    onClicked: Graph2DState.resetAll()
                 }
             }
 
@@ -129,12 +137,18 @@ Popup {
                 CheckBox {
                     text: "Show Grid"
                     checked: Graph2DState.gridVisible
-                    onToggled: Graph2DState.gridVisible = checked
+                    onToggled: {
+                        Graph2DState.gridVisible = checked;
+                        Graph2DState.applyToChart();
+                    }
                 }
                 CheckBox {
                     text: "Show Sub-Ticks"
                     checked: Graph2DState.showSubTicks
-                    onToggled: Graph2DState.showSubTicks = checked
+                    onToggled: {
+                        Graph2DState.showSubTicks = checked;
+                        Graph2DState.applyToChart();
+                    }
                 }
             }
 
