@@ -7,7 +7,7 @@
         <file>qml/Graph3DView.qml</file>
         <file>qml/SettingsPopup.qml</file>
         <file>qml/Theme.qml</file>
-        <file>qml/FloatSpinBox.qml</file>
+        <file>qml/AxisRangeSelector.qml</file>
 
         <file>assets/icons/icon.png</file>
     </qresource>

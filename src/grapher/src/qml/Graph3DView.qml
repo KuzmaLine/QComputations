@@ -8,7 +8,6 @@ Item {
     anchors.bottom: parent.bottom
     anchors.right: parent.right
     visible: root.show3D
-    property bool darkTheme: false
 
     Loader {
         id: surfaceLoader
@@ -26,7 +25,7 @@ Item {
             }
 
             theme: GraphsTheme {
-                colorScheme: darkTheme ? GraphsTheme.Theme.QtGreen : GraphsTheme.Theme.QtGreenNeon
+                colorScheme: Theme.dark ? GraphsTheme.Theme.QtGreen : GraphsTheme.Theme.QtGreenNeon
             }
         }
 

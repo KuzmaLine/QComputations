@@ -11,14 +11,13 @@ Popup {
     closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
 
     property bool show3D: false
-    property Theme theme
 
     Rectangle {
         id: popupRect
         anchors.fill: parent
-        color: theme.base
+        color: Theme.base
         radius: 8
-        border.color: theme.highlight
+        border.color: Theme.highlight
         border.width: 1
 
         ColumnLayout {
@@ -31,7 +30,7 @@ Popup {
                 text: show3D ? "3D Settings" : "2D Grid & Axis Settings"
                 font.bold: true
                 font.pointSize: 16
-                color: theme.windowText
+                color: Theme.windowText
                 Layout.alignment: Qt.AlignHCenter
             }
 
@@ -41,7 +40,7 @@ Popup {
                 Label {
                     text: "X Scale:"
                     width: 60
-                    color: theme.windowText
+                    color: Theme.windowText
                 }
                 Slider {
                     id: xSlider
@@ -60,7 +59,7 @@ Popup {
                 Label {
                     text: Graph2DState.xScale.toFixed(2)
                     width: 40
-                    color: theme.windowText
+                    color: Theme.windowText
                 }
             }
 
@@ -70,7 +69,7 @@ Popup {
                 Label {
                     text: "Y Scale:"
                     width: 60
-                    color: theme.windowText
+                    color: Theme.windowText
                 }
                 Slider {
                     id: ySlider
@@ -89,7 +88,7 @@ Popup {
                 Label {
                     text: Graph2DState.yScale.toFixed(2)
                     width: 40
-                    color: theme.windowText
+                    color: Theme.windowText
                 }
             }
 
@@ -152,49 +151,12 @@ Popup {
                 }
             }
 
-            // --- Manual Borders using FloatSpinBox ---
-            GroupBox {
-                title: "Manual Borders"
-                Layout.fillWidth: true
-                GridLayout {
-                    columns: 2
+            AxisRangeSelector {
+                axis: "x"
+            }
 
-                    Label {
-                        text: "X Min:"
-                        color: theme.windowText
-                    }
-                    FloatSpinBox {
-                        axis: "x"
-                        isMin: true
-                    }
-
-                    Label {
-                        text: "X Max:"
-                        color: theme.windowText
-                    }
-                    FloatSpinBox {
-                        axis: "x"
-                        isMin: false
-                    }
-
-                    Label {
-                        text: "Y Min:"
-                        color: theme.windowText
-                    }
-                    FloatSpinBox {
-                        axis: "y"
-                        isMin: true
-                    }
-
-                    Label {
-                        text: "Y Max:"
-                        color: theme.windowText
-                    }
-                    FloatSpinBox {
-                        axis: "y"
-                        isMin: false
-                    }
-                }
+            AxisRangeSelector {
+                axis: "y"
             }
         }
     }

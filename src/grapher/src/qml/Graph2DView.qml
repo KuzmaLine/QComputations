@@ -6,14 +6,13 @@ Item {
     id: graph2DRoot
     anchors.fill: parent
     visible: !root.show3D
-    property bool darkTheme: false
 
     GraphsView {
         id: graphView
         anchors.fill: parent
 
         theme: GraphsTheme {
-            colorScheme: darkTheme ? GraphsTheme.Theme.QtGreen : GraphsTheme.Theme.QtGreenNeon
+            colorScheme: Theme.dark ? GraphsTheme.Theme.QtGreen : GraphsTheme.Theme.QtGreenNeon
         }
 
         axisX: ValueAxis {

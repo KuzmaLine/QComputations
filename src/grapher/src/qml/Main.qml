@@ -11,19 +11,16 @@ ApplicationWindow {
     property string lastFolderSelected: ""
     property string exportDir: ""
 
-    property var theme: Theme {
-        dark: false
-    }
-    palette.window: theme.window
-    palette.button: theme.button
-    palette.base: theme.base
-    palette.mid: theme.mid
-    palette.dark: theme.darkColor
-    palette.light: theme.light
-    palette.windowText: theme.windowText
-    palette.buttonText: theme.buttonText
-    palette.highlight: theme.highlight
-    palette.highlightedText: theme.highlightedText
+    palette.window: Theme.window
+    palette.button: Theme.button
+    palette.base: Theme.base
+    palette.mid: Theme.mid
+    palette.dark: Theme.darkColor
+    palette.light: Theme.light
+    palette.windowText: Theme.windowText
+    palette.buttonText: Theme.buttonText
+    palette.highlight: Theme.highlight
+    palette.highlightedText: Theme.highlightedText
 
     Row {
         id: selectorRow
@@ -33,7 +30,7 @@ ApplicationWindow {
 
         Button {
             text: "Toggle dark mode"
-            onClicked: theme.dark = !theme.dark
+            onClicked: Theme.dark = !Theme.dark
         }
 
         Button {
@@ -71,14 +68,12 @@ ApplicationWindow {
                 id: graph2DView
                 anchors.fill: parent
                 visible: !root.show3D
-                darkTheme: theme.dark
             }
 
             Graph3DView {
                 id: graph3DView
                 anchors.fill: parent
                 visible: root.show3D
-                darkTheme: theme.dark
             }
         }
 
@@ -89,7 +84,6 @@ ApplicationWindow {
             anchors.right: parent.right
             width: 200
             show3D: root.show3D
-            theme: root.theme
         }
     }
 
@@ -111,7 +105,6 @@ ApplicationWindow {
     SettingsPopup {
         id: settingsPopup
         show3D: root.show3D
-        theme: root.theme
     }
 
     function exportGraphAndLegend() {
