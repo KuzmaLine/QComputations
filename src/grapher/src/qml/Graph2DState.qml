@@ -19,6 +19,9 @@ QtObject {
     property bool showSubTicks: true
     property bool initialized: false
 
+    // TODO: unify lastChartView and chartManager
+    property var lastChartView: null
+
     // --- Utilities ---
     function isValidNumber(v) {
         return typeof v === "number" && !isNaN(v) && isFinite(v);
@@ -115,16 +118,40 @@ QtObject {
 
     // --- Reset everything ---
     function reset(chartManager) {
-        minX = 0;
-        maxX = 1;
-        minY = 0;
-        maxY = 1;
-        xScale = 1;
-        yScale = 1;
-        panOffsetX = 0;
-        panOffsetY = 0;
-        initialized = false;
         if (chartManager)
             setFromChart(chartManager);
+    }
+    // new properties
+    property bool lockX: false
+    property bool lockY: false
+
+    // reset helpers
+    function resetScaling() {
+        xScale = 1;
+        yScale = 1;
+        applyToChart(lastChartView, minX, maxX, minY, maxY);
+    }
+
+    function resetPosition() {
+        panOffsetX = 0;
+        panOffsetY = 0;
+        applyToChart(lastChartView, minX, maxX, minY, maxY);
+    }
+
+    // helper to set manual borders safely
+    function setManualBorder(axis, minVal, maxVal) {
+        if (!isValidNumber(minVal) || !isValidNumber(maxVal) || maxVal <= minVal)
+            return;
+
+        if (axis === 'x') {
+            minX = minVal;
+            maxX = maxVal;
+        } else if (axis === 'y') {
+            minY = minVal;
+            maxY = maxVal;
+        }
+
+        if (lastChartView)
+            applyToChart(lastChartView, minX, maxX, minY, maxY);
     }
 }

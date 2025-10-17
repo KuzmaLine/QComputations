@@ -32,6 +32,7 @@ Item {
         }
 
         Component.onCompleted: {
+            Graph2DState.chartView = graphView;
             if (!chartManager || !chartManager.lineSeriesList)
                 return;
             chartManager.lineSeriesList.forEach(s => {
@@ -63,7 +64,6 @@ Item {
         }
     }
 
-    // --- Mouse / touch panning ---
     DragHandler {
         id: dragHandler
         target: graphView
@@ -77,7 +77,6 @@ Item {
         property real velocityY: 0
 
         // Timer for deceleration
-
         onActiveChanged: {
             if (active) {
                 startPanX = Graph2DState.panOffsetX;
@@ -86,7 +85,6 @@ Item {
                 prevTranslationY = 0;
                 inertiaTimer.stop();
             } else {
-                // Start inertia
                 inertiaTimer.start();
             }
         }
@@ -95,12 +93,10 @@ Item {
             const visibleX = (chartManager.maxX - chartManager.minX) * Graph2DState.xScale * (1 + Graph2DState.paddingFactor);
             const visibleY = (chartManager.maxY - chartManager.minY) * Graph2DState.yScale * (1 + Graph2DState.paddingFactor);
 
-            // Move graph along with pointer
             Graph2DState.panOffsetX = startPanX + (-translation.x / graphView.width) * visibleX;
             Graph2DState.panOffsetY = startPanY + (translation.y / graphView.height) * visibleY;
             Graph2DState.applyToChart(graphView, chartManager.minX, chartManager.maxX, chartManager.minY, chartManager.maxY);
 
-            // Calculate instantaneous velocity
             velocityX = ((translation.x - prevTranslationX) / graphView.width) * -visibleX;
             velocityY = ((translation.y - prevTranslationY) / graphView.height) * visibleY;
 
@@ -109,7 +105,6 @@ Item {
         }
     }
 
-    // --- Mouse wheel zoom ---
     MouseArea {
         anchors.fill: parent
         hoverEnabled: true
@@ -125,11 +120,11 @@ Item {
             else
                 yFactor = event.angleDelta.y > 0 ? (1 + scrollIncrement) : (1 - scrollIncrement);
 
+            // TODO: create simpler applyScale(xFactor, yFactor) method?
             Graph2DState.applyScaleAndPan(xFactor, yFactor, graphView, chartManager.minX, chartManager.maxX, chartManager.minY, chartManager.maxY);
         }
     }
 
-    // --- Update on chartManager events ---
     Connections {
         target: chartManager
         function onLineSeriesAdded(series) {
@@ -145,7 +140,6 @@ Item {
         }
     }
 
-    // --- Update axis ranges on state change ---
     Connections {
         target: Graph2DState
         function onXScaleChanged() {
