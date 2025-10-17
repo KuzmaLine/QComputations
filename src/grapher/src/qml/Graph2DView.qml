@@ -95,15 +95,43 @@ Item {
             if (Graph2DState.uiHovering)
                 return; // prevent zoom when UI is hovered
 
+            // Normalize wheel delta
+            let deltaX = event.angleDelta.x / 120;
+            let deltaY = event.angleDelta.y / 120;
+
+            const ctrl = (event.modifiers & Qt.ControlModifier) !== 0;
+            const shift = (event.modifiers & Qt.ShiftModifier) !== 0;
+
+            // panning (trackpads or horizontal scroll wheels)
+            if (!ctrl && !shift && deltaX > deltaY) {
+                const xRange = Graph2DState.visibleRangeX();
+                const dx = deltaX * xRange * scrollIncrement;
+                Graph2DState.panBy(dx, 0);
+                event.accepted = true;
+                return;
+            }
+
             let xFactor = 1, yFactor = 1;
-            if (event.modifiers === Qt.ControlModifier)
-                xFactor = yFactor = event.angleDelta.y > 0 ? (1 - scrollIncrement) : (1 + scrollIncrement);
-            else if (event.modifiers === Qt.ShiftModifier)
-                yFactor = event.angleDelta.y > 0 ? (1 - scrollIncrement) : (1 + scrollIncrement);
-            else
-                xFactor = event.angleDelta.y > 0 ? (1 - scrollIncrement) : (1 + scrollIncrement);
+            if (ctrl && shift) {
+                // Ctrl+Shift = zoom both X & Y
+                xFactor = yFactor = Math.pow(1 + scrollIncrement, -deltaY);
+            } else if (ctrl) {
+                // Ctrl = zoom X only
+                xFactor = Math.pow(1 + scrollIncrement, -deltaY);
+            } else if (shift) {
+                // Shift = zoom Y only
+                yFactor = Math.pow(1 + scrollIncrement, -deltaY);
+            } else {
+                // No modifier = pan X
+                const xRange = Graph2DState.visibleRangeX();
+                const dx = -deltaY * xRange * scrollIncrement;
+                Graph2DState.panBy(dx, 0);
+                event.accepted = true;
+                return;
+            }
 
             Graph2DState.scaleBy(xFactor, yFactor);
+            event.accepted = true;
         }
     }
 

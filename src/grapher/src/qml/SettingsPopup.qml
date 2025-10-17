@@ -51,7 +51,7 @@ Popup {
                 Slider {
                     id: xZoomSlider
                     from: 0.1
-                    to: 1.2
+                    to: 1.05
                     stepSize: 0.001
                     value: 1.0
                     Layout.fillWidth: true
@@ -127,7 +127,7 @@ Popup {
                 Slider {
                     id: yZoomSlider
                     from: 0.1
-                    to: 1.2
+                    to: 1.05
                     stepSize: 0.001
                     value: 1.0
                     Layout.fillWidth: true

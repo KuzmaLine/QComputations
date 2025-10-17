@@ -185,7 +185,6 @@ Item {
         maxHandle.x = (currentMax - minV) / (maxV - minV) * trackWidth;
         updateRangeHighlight();
         updatingHandles = false;
-        console.log(`[AxisRangeSelector ${axis}] Handles updated →`, currentMin, currentMax);
     }
 
     function updateRangeHighlight() {

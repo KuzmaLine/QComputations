@@ -18,6 +18,7 @@ QtObject {
     property bool lockY: true
     property bool gridVisible: true
     property bool showSubTicks: true
+    property real paddingFactor: 0.01
 
     // --- derived / convenience ---
     readonly property real totalMinX: chartManager ? chartManager.minX : 0
@@ -84,7 +85,6 @@ QtObject {
         applyToChart();
     }
 
-    // TODO: clamp ?
     function scaleBy(xFactor, yFactor) {
         if (!initialized)
             return;
@@ -94,6 +94,10 @@ QtObject {
             let width = visibleRangeX();
             let newWidth = width / xFactor;
 
+            const minWidth = 0.01 * (totalMaxX - totalMinX);
+            const maxWidth = 1.05 * (totalMaxX - totalMinX);
+            newWidth = Math.max(minWidth, Math.min(newWidth, maxWidth));
+
             setVisibleRangeX(minX, minX + newWidth);
         }
 
@@ -101,6 +105,10 @@ QtObject {
             let minY = visibleMinY;
             let height = visibleRangeY();
             let newHeight = height / yFactor;
+
+            const minHeight = 0.01 * (totalMaxY - totalMinY);
+            const maxHeight = 1.05 * (totalMaxY - totalMinY);
+            newHeight = Math.max(minHeight, Math.min(newHeight, maxHeight));
 
             setVisibleRangeY(minY, minY + newHeight);
         }
@@ -161,10 +169,13 @@ QtObject {
             return;
         console.log("[Graph2DState] applyToChart:", "X", visibleMinX, "→", visibleMaxX, "Y", visibleMinY, "→", visibleMaxY);
 
+        // NOTE: only add padding to maxY values to avoid cutting off top
+        let bufY = (visibleMaxY - visibleMinY) * paddingFactor;
+
         chartView.axisX.min = visibleMinX;
         chartView.axisX.max = visibleMaxX;
         chartView.axisY.min = visibleMinY;
-        chartView.axisY.max = visibleMaxY;
+        chartView.axisY.max = visibleMaxY + bufY;
         chartView.axisX.gridVisible = gridVisible;
         chartView.axisY.gridVisible = gridVisible;
         chartView.axisX.subTickCount = showSubTicks ? 4 : 0;
