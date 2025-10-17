@@ -7,45 +7,46 @@ Item {
     property string axis: "x"
     property real currentMin: 0
     property real currentMax: 1
+    property bool updatingHandles: false
 
     signal rangeChanged(real min, real max)
 
     width: 300
     height: 50
-    property bool updatingHandles: false
+
+    function axisMin() {
+        return axis === "x" ? chartManager.minX : chartManager.minY;
+    }
+    function axisMax() {
+        return axis === "x" ? chartManager.maxX : chartManager.maxY;
+    }
 
     RowLayout {
         anchors.fill: parent
         spacing: 6
 
+        // --- Min field ---
         TextField {
             id: minField
             width: 60
             color: Theme.windowText
             validator: DoubleValidator {
-                bottom: 0
+                bottom: axisMin()
                 top: currentMax
             }
             text: currentMin.toFixed(2)
             onEditingFinished: {
+                focus = false;
                 let val = parseFloat(text);
-                if (axis === "x") {
-                    if (val > Graph2DState.maxX)
-                        val = Graph2DState.maxX;
-                    if (val < chartManager.minX)
-                        val = chartManager.minX;
-                } else {
-                    if (val > Graph2DState.maxY)
-                        val = Graph2DState.maxY;
-                    if (val < chartManager.minY)
-                        val = chartManager.minY;
-                }
+                val = Math.min(Math.max(val, axisMin()), currentMax);
                 currentMin = val;
                 updateHandles();
                 rangeChanged(currentMin, currentMax);
+                console.log(`[AxisRangeSelector ${axis}] Min edited →`, val);
             }
         }
 
+        // --- Slider track ---
         Item {
             id: sliderTrack
             Layout.fillWidth: true
@@ -65,6 +66,7 @@ Item {
                 radius: 3
             }
 
+            // --- Min handle ---
             Rectangle {
                 id: minHandle
                 width: 10
@@ -78,19 +80,27 @@ Item {
                     drag.target: parent
                     drag.axis: Drag.XAxis
                     drag.minimumX: 0
-                    drag.maximumX: maxHandle.x - parent.width
+                    drag.maximumX: sliderTrack.width - maxHandle.width - minHandle.width
                     cursorShape: Qt.SizeHorCursor
+
+                    onPressed: {
+                        Graph2DState.uiHovering = true;
+                        console.log(`[AxisRangeSelector ${axis}] Min handle press`);
+                    }
+                    onReleased: {
+                        Graph2DState.uiHovering = false;
+                        console.log(`[AxisRangeSelector ${axis}] Min handle release`);
+                    }
+
                     onPositionChanged: {
+                        if (axisRangeSelector.updatingHandles)
+                            return;
+                        let minV = axisMin();
+                        let maxV = axisMax();
                         let trackWidth = sliderTrack.width - minHandle.width;
-                        let minV, maxV;
-                        if (axis === "x") {
-                            minV = chartManager.minX;
-                            maxV = chartManager.maxX;
-                        } else {
-                            minV = chartManager.minY;
-                            maxV = chartManager.maxY;
-                        }
-                        currentMin = minV + (parent.x / trackWidth) * (maxV - minV);
+                        let fraction = minHandle.x / trackWidth;
+                        currentMin = minV + fraction * (maxV - minV);
+                        currentMin = Math.min(currentMin, currentMax);
                         minField.text = currentMin.toFixed(2);
                         updateRangeHighlight();
                         rangeChanged(currentMin, currentMax);
@@ -98,6 +108,7 @@ Item {
                 }
             }
 
+            // --- Max handle ---
             Rectangle {
                 id: maxHandle
                 width: 10
@@ -110,20 +121,28 @@ Item {
                     anchors.fill: parent
                     drag.target: parent
                     drag.axis: Drag.XAxis
-                    drag.minimumX: minHandle.x + parent.width
-                    drag.maximumX: sliderTrack.width - parent.width
+                    drag.minimumX: minHandle.x + minHandle.width
+                    drag.maximumX: sliderTrack.width - maxHandle.width
                     cursorShape: Qt.SizeHorCursor
+
+                    onPressed: {
+                        Graph2DState.uiHovering = true;
+                        console.log(`[AxisRangeSelector ${axis}] Max handle press`);
+                    }
+                    onReleased: {
+                        Graph2DState.uiHovering = false;
+                        console.log(`[AxisRangeSelector ${axis}] Max handle release`);
+                    }
+
                     onPositionChanged: {
-                        let trackWidth = sliderTrack.width - minHandle.width;
-                        let minV, maxV;
-                        if (axis === "x") {
-                            minV = chartManager.minX;
-                            maxV = chartManager.maxX;
-                        } else {
-                            minV = chartManager.minY;
-                            maxV = chartManager.maxY;
-                        }
-                        currentMax = minV + (parent.x / trackWidth) * (maxV - minV);
+                        if (axisRangeSelector.updatingHandles)
+                            return;
+                        let minV = axisMin();
+                        let maxV = axisMax();
+                        let trackWidth = sliderTrack.width - maxHandle.width;
+                        let fraction = maxHandle.x / trackWidth;
+                        currentMax = minV + fraction * (maxV - minV);
+                        currentMax = Math.max(currentMax, currentMin);
                         maxField.text = currentMax.toFixed(2);
                         updateRangeHighlight();
                         rangeChanged(currentMin, currentMax);
@@ -132,52 +151,41 @@ Item {
             }
         }
 
+        // --- Max field ---
         TextField {
             id: maxField
             width: 60
             color: Theme.windowText
             validator: DoubleValidator {
                 bottom: currentMin
-                top: 1e12
+                top: axisMax()
             }
             text: currentMax.toFixed(2)
             onEditingFinished: {
+                focus = false;
                 let val = parseFloat(text);
-                if (axis === "x") {
-                    if (val < Graph2DState.minX)
-                        val = Graph2DState.minX;
-                    if (val > chartManager.maxX)
-                        val = chartManager.maxX;
-                } else {
-                    if (val < Graph2DState.minY)
-                        val = Graph2DState.minY;
-                    if (val > chartManager.maxY)
-                        val = chartManager.maxY;
-                }
+                val = Math.min(Math.max(val, currentMin), axisMax());
                 currentMax = val;
                 updateHandles();
                 rangeChanged(currentMin, currentMax);
+                console.log(`[AxisRangeSelector ${axis}] Max edited →`, val);
             }
         }
     }
 
+    // --- helpers ---
     function updateHandles() {
-        if (updatingHandles)
+        if (!sliderTrack.width)
             return;
         updatingHandles = true;
+        let minV = axisMin();
+        let maxV = axisMax();
         let trackWidth = sliderTrack.width - minHandle.width;
-        let minV, maxV;
-        if (axis === "x") {
-            minV = chartManager.minX;
-            maxV = chartManager.maxX;
-        } else {
-            minV = chartManager.minY;
-            maxV = chartManager.maxY;
-        }
         minHandle.x = (currentMin - minV) / (maxV - minV) * trackWidth;
         maxHandle.x = (currentMax - minV) / (maxV - minV) * trackWidth;
         updateRangeHighlight();
         updatingHandles = false;
+        console.log(`[AxisRangeSelector ${axis}] Handles updated →`, currentMin, currentMax);
     }
 
     function updateRangeHighlight() {
@@ -185,34 +193,44 @@ Item {
         rangeHighlight.width = maxHandle.x - minHandle.x;
     }
 
-    Component.onCompleted: updateHandles()
+    Component.onCompleted: {
+        if (axis === "x") {
+            currentMin = Graph2DState.visibleMinX;
+            currentMax = Graph2DState.visibleMaxX;
+        } else {
+            currentMin = Graph2DState.visibleMinY;
+            currentMax = Graph2DState.visibleMaxY;
+        }
+        console.log(`[AxisRangeSelector ${axis}] initialized with`, currentMin, currentMax);
+        updateHandles();
+    }
 
     Connections {
         target: Graph2DState
-        function onMinXChanged() {
+        function onVisibleMinXChanged() {
             if (axis === "x") {
-                currentMin = Graph2DState.minX;
+                currentMin = Graph2DState.visibleMinX;
                 minField.text = currentMin.toFixed(2);
                 updateHandles();
             }
         }
-        function onMaxXChanged() {
+        function onVisibleMaxXChanged() {
             if (axis === "x") {
-                currentMax = Graph2DState.maxX;
+                currentMax = Graph2DState.visibleMaxX;
                 maxField.text = currentMax.toFixed(2);
                 updateHandles();
             }
         }
-        function onMinYChanged() {
+        function onVisibleMinYChanged() {
             if (axis === "y") {
-                currentMin = Graph2DState.minY;
+                currentMin = Graph2DState.visibleMinY;
                 minField.text = currentMin.toFixed(2);
                 updateHandles();
             }
         }
-        function onMaxYChanged() {
+        function onVisibleMaxYChanged() {
             if (axis === "y") {
-                currentMax = Graph2DState.maxY;
+                currentMax = Graph2DState.visibleMaxY;
                 maxField.text = currentMax.toFixed(2);
                 updateHandles();
             }
@@ -220,15 +238,20 @@ Item {
     }
 
     onCurrentMinChanged: {
+        if (updatingHandles)
+            return;
         if (axis === "x")
-            Graph2DState.setBorders(currentMin, Graph2DState.maxX, Graph2DState.minY, Graph2DState.maxY);
+            Graph2DState.setVisibleRangeX(currentMin, currentMax);
         else
-            Graph2DState.setBorders(Graph2DState.minX, Graph2DState.maxX, currentMin, Graph2DState.maxY);
+            Graph2DState.setVisibleRangeY(currentMin, currentMax);
     }
+
     onCurrentMaxChanged: {
+        if (updatingHandles)
+            return;
         if (axis === "x")
-            Graph2DState.setBorders(Graph2DState.minX, currentMax, Graph2DState.minY, Graph2DState.maxY);
+            Graph2DState.setVisibleRangeX(currentMin, currentMax);
         else
-            Graph2DState.setBorders(Graph2DState.minX, Graph2DState.maxX, Graph2DState.minY, currentMax);
+            Graph2DState.setVisibleRangeY(currentMin, currentMax);
     }
 }

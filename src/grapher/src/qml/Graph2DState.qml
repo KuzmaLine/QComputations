@@ -7,145 +7,195 @@ QtObject {
 
     property var chartView: null
     property bool initialized: false
+    property bool uiHovering: false
 
-    property real minX: 0
-    property real maxX: 1
-    property real minY: 0
-    property real maxY: 1
-    property real xScale: 1
-    property real yScale: 1
-    property real panOffsetX: 0
-    property real panOffsetY: 0
-    property real paddingFactor: 0.05
+    property real visibleMinX: 0
+    property real visibleMaxX: 1
+    property real visibleMinY: 0
+    property real visibleMaxY: 1
+
+    property bool lockX: false
+    property bool lockY: true
     property bool gridVisible: true
     property bool showSubTicks: true
-    property bool lockX: false
-    property bool lockY: false
 
+    // --- derived / convenience ---
+    readonly property real totalMinX: chartManager ? chartManager.minX : 0
+    readonly property real totalMaxX: chartManager ? chartManager.maxX : 1
+    readonly property real totalMinY: chartManager ? chartManager.minY : 0
+    readonly property real totalMaxY: chartManager ? chartManager.maxY : 1
+
+    // --- initialization ---
     function initialize(chartViewRef) {
-        if (!chartViewRef && !chartManager)
+        console.log("[Graph2DState] initialize() called");
+
+        if (!chartViewRef || !chartManager) {
+            console.warn("[Graph2DState] Initialization failed — chartView or chartManager missing");
             return;
+        }
 
         chartView = chartViewRef;
 
-        if (chartManager) {
-            minX = chartManager.minX;
-            maxX = chartManager.maxX;
-            minY = chartManager.minY;
-            maxY = chartManager.maxY;
-        } else if (chartView && chartView.axisX && chartView.axisY) {
-            minX = chartView.axisX.min;
-            maxX = chartView.axisX.max;
-            minY = chartView.axisY.min;
-            maxY = chartView.axisY.max;
-        }
-
-        xScale = 1;
-        yScale = 1;
-        panOffsetX = 0;
-        panOffsetY = 0;
+        visibleMinX = chartManager.minX;
+        visibleMaxX = chartManager.maxX;
+        visibleMinY = chartManager.minY;
+        visibleMaxY = chartManager.maxY;
 
         initialized = true;
 
-        if (chartView)
-            applyToChart();
+        console.log("[Graph2DState] Initialized OK:", "X", visibleMinX, "→", visibleMaxX, "Y", visibleMinY, "→", visibleMaxY);
+
+        applyToChart();
     }
 
+    // --- helpers ---
+    function visibleRangeX() {
+        return visibleMaxX - visibleMinX;
+    }
+    function visibleRangeY() {
+        return visibleMaxY - visibleMinY;
+    }
+
+    // --- set visible range safely ---
+    function setVisibleRangeX(newMin, newMax) {
+        if (!initialized)
+            return;
+        if (Math.abs(newMin - visibleMinX) < 1e-8 && Math.abs(newMax - visibleMaxX) < 1e-8)
+            return;
+        if (newMax <= newMin)
+            return;
+        console.log("[Graph2DState] setVisibleRangeX:", newMin, "→", newMax);
+
+        visibleMinX = newMin;
+        visibleMaxX = newMax;
+        applyToChart();
+    }
+
+    function setVisibleRangeY(newMin, newMax) {
+        if (!initialized)
+            return;
+        if (Math.abs(newMin - visibleMinY) < 1e-8 && Math.abs(newMax - visibleMaxY) < 1e-8)
+            return;
+        if (newMax <= newMin)
+            return;
+        console.log("[Graph2DState] setVisibleRangeY:", newMin, "→", newMax);
+
+        visibleMinY = newMin;
+        visibleMaxY = newMax;
+        applyToChart();
+    }
+
+    // --- pan ---
     function panBy(dx_px, dy_px) {
         if (!initialized || !chartView)
             return;
-        const xRange = (maxX - minX) * xScale * (1 + paddingFactor);
-        const yRange = (maxY - minY) * yScale * (1 + paddingFactor);
-        if (!lockX)
-            panOffsetX -= dx_px / chartView.width * xRange;
-        if (!lockY)
-            panOffsetY += dy_px / chartView.height * yRange;
-        applyToChart();
-    }
-
-    function scaleBy(xFactor, yFactor) {
-        if (!initialized || !chartView)
-            return;
-
-        const xRange = maxX - minX;
-        const yRange = maxY - minY;
-
-        const leftEdge = minX + panOffsetX;
-        const bottomEdge = minY + panOffsetY;
+        let xRange = visibleRangeX();
+        let yRange = visibleRangeY();
 
         if (!lockX) {
-            xScale = Math.min(Math.max(xScale * xFactor, 0.1), 10);
-            panOffsetX = leftEdge - minX;
+            let deltaX = -dx_px / chartView.width * xRange;
+            setVisibleRangeX(visibleMinX + deltaX, visibleMaxX + deltaX);
         }
         if (!lockY) {
-            yScale = Math.min(Math.max(yScale * yFactor, 0.1), 10);
-            panOffsetY = bottomEdge - minY;
+            let deltaY = dy_px / chartView.height * yRange;
+            setVisibleRangeY(visibleMinY + deltaY, visibleMaxY + deltaY);
         }
-
-        applyToChart();
     }
 
-    function setBorders(newMinX, newMaxX, newMinY, newMaxY) {
-        if (typeof newMinX !== "number" || typeof newMaxX !== "number" || typeof newMinY !== "number" || typeof newMaxY !== "number")
+    // --- scale ---
+    function scaleBy(xFactor, yFactor) {
+        if (!initialized)
             return;
+        let centerX = visibleMinX + visibleRangeX() / 2;
+        let centerY = visibleMinY + visibleRangeY() / 2;
 
-        if (newMaxX <= newMinX || newMaxY <= newMinY)
-            return;
-
-        minX = newMinX;
-        maxX = newMaxX;
-        minY = newMinY;
-        maxY = newMaxY;
-
-        xScale = 1;
-        yScale = 1;
-        panOffsetX = 0;
-        panOffsetY = 0;
-
-        applyToChart();
+        if (!lockX) {
+            let newRangeX = visibleRangeX() / xFactor;
+            setVisibleRangeX(centerX - newRangeX / 2, centerX + newRangeX / 2);
+        }
+        if (!lockY) {
+            let newRangeY = visibleRangeY() / yFactor;
+            setVisibleRangeY(centerY - newRangeY / 2, centerY + newRangeY / 2);
+        }
     }
 
+    // --- apply to chart ---
     function applyToChart() {
         if (!initialized || !chartView)
             return;
-        const xRange = (maxX - minX) * xScale * (1 + paddingFactor);
-        const yRange = (maxY - minY) * yScale * (1 + paddingFactor);
-        chartView.axisX.min = minX + panOffsetX;
-        chartView.axisX.max = minX + panOffsetX + xRange;
-        chartView.axisY.min = minY + panOffsetY;
-        chartView.axisY.max = minY + panOffsetY + yRange;
+        console.log("[Graph2DState] applyToChart:", "X", visibleMinX, "→", visibleMaxX, "Y", visibleMinY, "→", visibleMaxY);
+
+        chartView.axisX.min = visibleMinX;
+        chartView.axisX.max = visibleMaxX;
+        chartView.axisY.min = visibleMinY;
+        chartView.axisY.max = visibleMaxY;
         chartView.axisX.gridVisible = gridVisible;
         chartView.axisY.gridVisible = gridVisible;
         chartView.axisX.subTickCount = showSubTicks ? 4 : 0;
         chartView.axisY.subTickCount = showSubTicks ? 4 : 0;
     }
 
+    // --- reset ---
     function resetAll() {
-        if (!chartManager || !chartView)
+        if (!chartManager)
             return;
-
-        minX = chartManager.minX;
-        maxX = chartManager.maxX;
-        minY = chartManager.minY;
-        maxY = chartManager.maxY;
-
-        xScale = 1;
-        yScale = 1;
-        panOffsetX = 0;
-        panOffsetY = 0;
-
-        applyToChart();
+        console.log("[Graph2DState] resetAll()");
+        setVisibleRangeX(chartManager.minX, chartManager.maxX);
+        setVisibleRangeY(chartManager.minY, chartManager.maxY);
     }
 
     function resetScaling() {
-        xScale = 1;
-        yScale = 1;
-        applyToChart();
+        if (!initialized || !chartManager)
+            return;
+
+        console.log("[Graph2DState] resetScaling()");
+
+        // Keep lower-left corner fixed
+        const minX = visibleMinX;
+        const minY = visibleMinY;
+
+        // Compute 1:1 range width/height from the original chart
+        const originalWidth = chartManager.maxX - chartManager.minX;
+        const originalHeight = chartManager.maxY - chartManager.minY;
+
+        // Set visible max based on 1:1 scaling
+        let newMaxX = minX + originalWidth;
+        let newMaxY = minY + originalHeight;
+
+        setVisibleRangeX(minX, newMaxX);
+        setVisibleRangeY(minY, newMaxY);
+
+        console.log(`[Graph2DState] resetScaling() → X: ${minX}–${newMaxX}, Y: ${minY}–${newMaxY}`);
     }
+
     function resetPosition() {
-        panOffsetX = 0;
-        panOffsetY = 0;
-        applyToChart();
+        if (!initialized || !chartManager)
+            return;
+
+        console.log("[Graph2DState] resetPosition()");
+
+        // Current visible ranges
+        const xRange = visibleMaxX - visibleMinX;
+        const yRange = visibleMaxY - visibleMinY;
+
+        // New visible region starts from (0,0)
+        const newMinX = chartManager.minX;
+        const newMaxX = newMinX + xRange;
+
+        const newMinY = chartManager.minY;
+        const newMaxY = newMinY + yRange;
+
+        // Clamp to total bounds in case the shifted area exceeds available data
+        const clampedMaxX = Math.min(newMaxX, chartManager.maxX);
+        const clampedMaxY = Math.min(newMaxY, chartManager.maxY);
+
+        const clampedMinX = clampedMaxX - xRange;
+        const clampedMinY = clampedMaxY - yRange;
+
+        setVisibleRangeX(clampedMinX, clampedMaxX);
+        setVisibleRangeY(clampedMinY, clampedMaxY);
+
+        console.log(`[Graph2DState] resetPosition() done → X ${clampedMinX} → ${clampedMaxX}, Y ${clampedMinY} → ${clampedMaxY}`);
     }
 
     property var chartConnections: Connections {
