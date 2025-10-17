@@ -89,42 +89,59 @@ Item {
         hoverEnabled: true
         acceptedButtons: Qt.NoButton
         enabled: !Graph2DState.uiHovering
+
+        // Configurable multipliers
         property real scrollIncrement: 0.1
+        property real horizontalPanMultiplier: 3.0
+        property real verticalPanMultiplier: 2.0
+        property real pixelDeltaScale: 40.0
 
         onWheel: function (event) {
             if (Graph2DState.uiHovering)
-                return; // prevent zoom when UI is hovered
+                return;
 
-            // Normalize wheel delta
-            let deltaX = event.angleDelta.x / 120;
-            let deltaY = event.angleDelta.y / 120;
+            let deltaX, deltaY;
 
             const ctrl = (event.modifiers & Qt.ControlModifier) !== 0;
             const shift = (event.modifiers & Qt.ShiftModifier) !== 0;
 
-            // panning (trackpads or horizontal scroll wheels)
-            if (!ctrl && !shift && deltaX > deltaY) {
+            // Trackpad / smooth scroll
+            if (!event.pixelDelta.isNull) {
+                deltaX = -event.pixelDelta.x / pixelDeltaScale; // invert for natural scroll
+                deltaY = -event.pixelDelta.y / pixelDeltaScale;
+            } else {
+                // Regular mouse wheel
+                deltaX = event.angleDelta.x / 120;
+                deltaY = event.angleDelta.y / 120;
+            }
+
+            // --- Horizontal scroll
+            if (!ctrl && !shift && Math.abs(deltaX) > Math.abs(deltaY)) {
                 const xRange = Graph2DState.visibleRangeX();
-                const dx = deltaX * xRange * scrollIncrement;
+                const dx = -deltaX * xRange * scrollIncrement * horizontalPanMultiplier;
                 Graph2DState.panBy(dx, 0);
                 event.accepted = true;
                 return;
             }
 
+            // --- Determine zoom factors ---
             let xFactor = 1, yFactor = 1;
+
+            const zoomDeltaY = deltaY * verticalPanMultiplier;
+
             if (ctrl && shift) {
-                // Ctrl+Shift = zoom both X & Y
-                xFactor = yFactor = Math.pow(1 + scrollIncrement, -deltaY);
+                // Ctrl+Shift = zoom both axes
+                xFactor = yFactor = Math.pow(1 + scrollIncrement, zoomDeltaY);
             } else if (ctrl) {
                 // Ctrl = zoom X only
-                xFactor = Math.pow(1 + scrollIncrement, -deltaY);
+                xFactor = Math.pow(1 + scrollIncrement, zoomDeltaY);
             } else if (shift) {
                 // Shift = zoom Y only
-                yFactor = Math.pow(1 + scrollIncrement, -deltaY);
+                yFactor = Math.pow(1 + scrollIncrement, zoomDeltaY);
             } else {
-                // No modifier = pan X
+                // Default: vertical scroll = pan X
                 const xRange = Graph2DState.visibleRangeX();
-                const dx = -deltaY * xRange * scrollIncrement;
+                const dx = zoomDeltaY * xRange * scrollIncrement;
                 Graph2DState.panBy(dx, 0);
                 event.accepted = true;
                 return;

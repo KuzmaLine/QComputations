@@ -64,7 +64,6 @@ QtObject {
             return;
         if (newMax <= newMin)
             return;
-        console.log("[Graph2DState] setVisibleRangeX:", newMin, "→", newMax);
 
         visibleMinX = newMin;
         visibleMaxX = newMax;
@@ -78,7 +77,6 @@ QtObject {
             return;
         if (newMax <= newMin)
             return;
-        console.log("[Graph2DState] setVisibleRangeY:", newMin, "→", newMax);
 
         visibleMinY = newMin;
         visibleMaxY = newMax;
@@ -167,7 +165,6 @@ QtObject {
     function applyToChart() {
         if (!initialized || !chartView)
             return;
-        console.log("[Graph2DState] applyToChart:", "X", visibleMinX, "→", visibleMaxX, "Y", visibleMinY, "→", visibleMaxY);
 
         // NOTE: only add padding to maxY values to avoid cutting off top
         let bufY = (visibleMaxY - visibleMinY) * paddingFactor;
@@ -194,8 +191,6 @@ QtObject {
         if (!initialized || !chartManager)
             return;
 
-        console.log("[Graph2DState] resetScaling()");
-
         // Keep lower-left corner fixed
         const minX = visibleMinX;
         const minY = visibleMinY;
@@ -215,8 +210,6 @@ QtObject {
     function resetPosition() {
         if (!initialized || !chartManager)
             return;
-
-        console.log("[Graph2DState] resetPosition()");
 
         const xRange = visibleMaxX - visibleMinX;
         const yRange = visibleMaxY - visibleMinY;
