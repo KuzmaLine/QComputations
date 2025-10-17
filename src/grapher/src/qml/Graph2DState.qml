@@ -25,7 +25,6 @@ QtObject {
     readonly property real totalMinY: chartManager ? chartManager.minY : 0
     readonly property real totalMaxY: chartManager ? chartManager.maxY : 1
 
-    // --- initialization ---
     function initialize(chartViewRef) {
         console.log("[Graph2DState] initialize() called");
 
@@ -85,41 +84,78 @@ QtObject {
         applyToChart();
     }
 
-    // --- pan ---
-    function panBy(dx_px, dy_px) {
-        if (!initialized || !chartView)
-            return;
-        let xRange = visibleRangeX();
-        let yRange = visibleRangeY();
-
-        if (!lockX) {
-            let deltaX = -dx_px / chartView.width * xRange;
-            setVisibleRangeX(visibleMinX + deltaX, visibleMaxX + deltaX);
-        }
-        if (!lockY) {
-            let deltaY = dy_px / chartView.height * yRange;
-            setVisibleRangeY(visibleMinY + deltaY, visibleMaxY + deltaY);
-        }
-    }
-
-    // --- scale ---
+    // TODO: clamp ?
     function scaleBy(xFactor, yFactor) {
         if (!initialized)
             return;
-        let centerX = visibleMinX + visibleRangeX() / 2;
-        let centerY = visibleMinY + visibleRangeY() / 2;
 
         if (!lockX) {
-            let newRangeX = visibleRangeX() / xFactor;
-            setVisibleRangeX(centerX - newRangeX / 2, centerX + newRangeX / 2);
+            let minX = visibleMinX;
+            let width = visibleRangeX();
+            let newWidth = width / xFactor;
+
+            setVisibleRangeX(minX, minX + newWidth);
         }
+
         if (!lockY) {
-            let newRangeY = visibleRangeY() / yFactor;
-            setVisibleRangeY(centerY - newRangeY / 2, centerY + newRangeY / 2);
+            let minY = visibleMinY;
+            let height = visibleRangeY();
+            let newHeight = height / yFactor;
+
+            setVisibleRangeY(minY, minY + newHeight);
         }
     }
 
-    // --- apply to chart ---
+    function panBy(dx_px, dy_px) {
+        if (!initialized || !chartView)
+            return;
+
+        let xRange = visibleRangeX();
+        let yRange = visibleRangeY();
+
+        const minXLimit = totalMinX - 0.1 * (totalMaxX - totalMinX);
+        const maxXLimit = totalMaxX * 1.1;
+        const minYLimit = totalMinY - 0.1 * (totalMaxY - totalMinY);
+        const maxYLimit = totalMaxY * 1.1;
+
+        // --- X-axis ---
+        if (!lockX) {
+            let deltaX = -dx_px / chartView.width * xRange;
+            let newMinX = visibleMinX + deltaX;
+            let newMaxX = visibleMaxX + deltaX;
+
+            // Only clamp if we actually go beyond limits
+            if (newMinX < minXLimit) {
+                newMinX = minXLimit;
+                newMaxX = minXLimit + xRange;
+            }
+            if (newMaxX > maxXLimit) {
+                newMaxX = maxXLimit;
+                newMinX = maxXLimit - xRange;
+            }
+
+            setVisibleRangeX(newMinX, newMaxX);
+        }
+
+        // --- Y-axis ---
+        if (!lockY) {
+            let deltaY = dy_px / chartView.height * yRange;
+            let newMinY = visibleMinY + deltaY;
+            let newMaxY = visibleMaxY + deltaY;
+
+            if (newMinY < minYLimit) {
+                newMinY = minYLimit;
+                newMaxY = minYLimit + yRange;
+            }
+            if (newMaxY > maxYLimit) {
+                newMaxY = maxYLimit;
+                newMinY = maxYLimit - yRange;
+            }
+
+            setVisibleRangeY(newMinY, newMaxY);
+        }
+    }
+
     function applyToChart() {
         if (!initialized || !chartView)
             return;
@@ -135,7 +171,6 @@ QtObject {
         chartView.axisY.subTickCount = showSubTicks ? 4 : 0;
     }
 
-    // --- reset ---
     function resetAll() {
         if (!chartManager)
             return;
@@ -154,11 +189,9 @@ QtObject {
         const minX = visibleMinX;
         const minY = visibleMinY;
 
-        // Compute 1:1 range width/height from the original chart
         const originalWidth = chartManager.maxX - chartManager.minX;
         const originalHeight = chartManager.maxY - chartManager.minY;
 
-        // Set visible max based on 1:1 scaling
         let newMaxX = minX + originalWidth;
         let newMaxY = minY + originalHeight;
 
@@ -174,18 +207,15 @@ QtObject {
 
         console.log("[Graph2DState] resetPosition()");
 
-        // Current visible ranges
         const xRange = visibleMaxX - visibleMinX;
         const yRange = visibleMaxY - visibleMinY;
 
-        // New visible region starts from (0,0)
         const newMinX = chartManager.minX;
         const newMaxX = newMinX + xRange;
 
         const newMinY = chartManager.minY;
         const newMaxY = newMinY + yRange;
 
-        // Clamp to total bounds in case the shifted area exceeds available data
         const clampedMaxX = Math.min(newMaxX, chartManager.maxX);
         const clampedMaxY = Math.min(newMaxY, chartManager.maxY);
 

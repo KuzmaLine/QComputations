@@ -32,7 +32,6 @@ Popup {
             spacing: 10
             anchors.margins: 12
 
-            // --- Header ---
             Text {
                 text: show3D ? "3D Settings" : "2D Grid & Axis Settings"
                 font.bold: true
@@ -41,7 +40,6 @@ Popup {
                 Layout.alignment: Qt.AlignHCenter
             }
 
-            // --- X Zoom Slider ---
             RowLayout {
                 spacing: 6
                 Label {
@@ -53,7 +51,7 @@ Popup {
                 Slider {
                     id: xZoomSlider
                     from: 0.1
-                    to: 2.0
+                    to: 1.2
                     stepSize: 0.001
                     value: 1.0
                     Layout.fillWidth: true
@@ -61,15 +59,43 @@ Popup {
                     property bool updatingFromGraph: false
 
                     onMoved: {
+                        if (!Graph2DState.initialized)
+                            return;
+                        updatingFromGraph = true;
+
+                        let minX = Graph2DState.visibleMinX;
+                        let maxX = Graph2DState.visibleMaxX;
+                        let totalRange = Graph2DState.totalMaxX - Graph2DState.totalMinX;
+                        let currentWidth = maxX - minX;
+                        let newWidth = totalRange * value;
+
+                        // Try expanding to the right
+                        let newMax = minX + newWidth;
+                        if (newMax > Graph2DState.totalMaxX) {
+                            // Can't expand to right, shift to left
+                            let shift = newMax - Graph2DState.totalMaxX;
+                            minX = Math.max(Graph2DState.totalMinX, minX - shift);
+                            newMax = minX + newWidth;
+                        }
+
+                        // Ensure we don't go past min bound
+                        if (minX < Graph2DState.totalMinX) {
+                            minX = Graph2DState.totalMinX;
+                            newMax = minX + newWidth;
+                        }
+
+                        Graph2DState.setVisibleRangeX(minX, newMax);
+                        updatingFromGraph = false;
+                    }
+
+                    function updateFromGraph() {
                         if (!Graph2DState.initialized || updatingFromGraph)
                             return;
-                        console.log(`[SettingsPopup] X zoom slider moved → ${value.toFixed(3)}`);
-
-                        // Scale width by factor around visibleMinX
-                        const minX = Graph2DState.visibleMinX;
-                        const width = Graph2DState.visibleMaxX - minX;
-                        const newWidth = width / value;
-                        Graph2DState.setVisibleRangeX(minX, minX + newWidth);
+                        const width = Graph2DState.visibleMaxX - Graph2DState.visibleMinX;
+                        const totalRange = Graph2DState.totalMaxX - Graph2DState.totalMinX;
+                        const newValue = width / totalRange;
+                        if (Math.abs(value - newValue) > 0.001)
+                            value = newValue;
                     }
 
                     Connections {
@@ -81,21 +107,6 @@ Popup {
                             xZoomSlider.updateFromGraph();
                         }
                     }
-
-                    function updateFromGraph() {
-                        if (!Graph2DState.initialized)
-                            return;
-                        updatingFromGraph = true;
-                        const minX = Graph2DState.visibleMinX;
-                        const width = Graph2DState.visibleMaxX - minX;
-                        const totalRange = Graph2DState.totalMaxX - Graph2DState.totalMinX;
-                        const newValue = totalRange / width;
-                        if (Math.abs(xZoomSlider.value - newValue) > 0.001) {
-                            xZoomSlider.value = newValue;
-                            console.log(`[SettingsPopup] X zoom updated from visible range → ${newValue.toFixed(3)}`);
-                        }
-                        updatingFromGraph = false;
-                    }
                 }
 
                 Label {
@@ -105,7 +116,6 @@ Popup {
                 }
             }
 
-            // --- Y Zoom Slider ---
             RowLayout {
                 spacing: 6
                 Label {
@@ -117,7 +127,7 @@ Popup {
                 Slider {
                     id: yZoomSlider
                     from: 0.1
-                    to: 2.0
+                    to: 1.2
                     stepSize: 0.001
                     value: 1.0
                     Layout.fillWidth: true
@@ -125,14 +135,40 @@ Popup {
                     property bool updatingFromGraph: false
 
                     onMoved: {
+                        if (!Graph2DState.initialized)
+                            return;
+                        updatingFromGraph = true;
+
+                        let minY = Graph2DState.visibleMinY;
+                        let maxY = Graph2DState.visibleMaxY;
+                        let totalRange = Graph2DState.totalMaxY - Graph2DState.totalMinY;
+                        let currentHeight = maxY - minY;
+                        let newHeight = totalRange * value;
+
+                        let newMax = minY + newHeight;
+                        if (newMax > Graph2DState.totalMaxY) {
+                            let shift = newMax - Graph2DState.totalMaxY;
+                            minY = Math.max(Graph2DState.totalMinY, minY - shift);
+                            newMax = minY + newHeight;
+                        }
+
+                        if (minY < Graph2DState.totalMinY) {
+                            minY = Graph2DState.totalMinY;
+                            newMax = minY + newHeight;
+                        }
+
+                        Graph2DState.setVisibleRangeY(minY, newMax);
+                        updatingFromGraph = false;
+                    }
+
+                    function updateFromGraph() {
                         if (!Graph2DState.initialized || updatingFromGraph)
                             return;
-                        console.log(`[SettingsPopup] Y zoom slider moved → ${value.toFixed(3)}`);
-
-                        const minY = Graph2DState.visibleMinY;
-                        const height = Graph2DState.visibleMaxY - minY;
-                        const newHeight = height / value;
-                        Graph2DState.setVisibleRangeY(minY, minY + newHeight);
+                        const height = Graph2DState.visibleMaxY - Graph2DState.visibleMinY;
+                        const totalRange = Graph2DState.totalMaxY - Graph2DState.totalMinY;
+                        const newValue = height / totalRange;
+                        if (Math.abs(value - newValue) > 0.001)
+                            value = newValue;
                     }
 
                     Connections {
@@ -144,21 +180,6 @@ Popup {
                             yZoomSlider.updateFromGraph();
                         }
                     }
-
-                    function updateFromGraph() {
-                        if (!Graph2DState.initialized)
-                            return;
-                        updatingFromGraph = true;
-                        const minY = Graph2DState.visibleMinY;
-                        const height = Graph2DState.visibleMaxY - minY;
-                        const totalRange = Graph2DState.totalMaxY - Graph2DState.totalMinY;
-                        const newValue = totalRange / height;
-                        if (Math.abs(yZoomSlider.value - newValue) > 0.001) {
-                            yZoomSlider.value = newValue;
-                            console.log(`[SettingsPopup] Y zoom updated from visible range → ${newValue.toFixed(3)}`);
-                        }
-                        updatingFromGraph = false;
-                    }
                 }
 
                 Label {
@@ -168,7 +189,6 @@ Popup {
                 }
             }
 
-            // --- Lock axis ---
             RowLayout {
                 spacing: 12
                 CheckBox {
@@ -250,7 +270,6 @@ Popup {
         }
     }
 
-    // --- watch for state initialization ---
     Connections {
         target: Graph2DState
         function onInitializedChanged() {
