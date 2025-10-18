@@ -1,6 +1,6 @@
 pragma Singleton
-import QtQuick 6.9
-import QtGraphs 6.3
+import QtQuick
+import QtGraphs
 
 QtObject {
     id: graph2DState

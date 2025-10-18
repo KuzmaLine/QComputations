@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Dialogs
+import QtQuick.Layouts
 
 ApplicationWindow {
     id: root
@@ -22,68 +23,85 @@ ApplicationWindow {
     palette.highlight: Theme.highlight
     palette.highlightedText: Theme.highlightedText
 
-    Row {
-        id: selectorRow
-        anchors.top: parent.top
-        anchors.horizontalCenter: parent.horizontalCenter
-        spacing: 20
-
-        Button {
-            text: "Toggle dark mode"
-            onClicked: Theme.dark = !Theme.dark
-        }
-
-        Button {
-            text: "Open Folder"
-            onClicked: folderDialog.open()
-        }
-
-        Button {
-            text: "Settings"
-            onClicked: settingsPopup.open()
-        }
-
-        Button {
-            text: "Export PNG"
-            onClicked: exportGraphAndLegend()
-        }
-    }
-
-    Item {
-        id: exportContainer
+    GridLayout {
+        id: mainLayout
+        anchors.fill: parent
+        columns: 2
+        rowSpacing: 10
+        columnSpacing: 10
         anchors.margins: 10
-        anchors.top: selectorRow.bottom
-        anchors.bottom: parent.bottom
-        anchors.left: parent.left
-        anchors.right: parent.right
 
-        Item {
-            id: graphContainer
-            anchors.top: parent.top
-            anchors.bottom: parent.bottom
-            anchors.left: parent.left
-            anchors.right: legendPanel.left
+        // --- Top row buttons ---
+        RowLayout {
+            id: selectorRow
+            spacing: 20
+            //Layout.columnSpan: 2   // occupy both columns
+            Layout.fillWidth: true
+            Layout.alignment: Qt.AlignLeft
 
-            Graph2DView {
-                id: graph2DView
-                anchors.fill: parent
-                visible: !root.show3D
+            Button {
+                Layout.fillWidth: true
+                text: "Toggle dark mode"
+                onClicked: Theme.dark = !Theme.dark
             }
-
-            Graph3DView {
-                id: graph3DView
-                anchors.fill: parent
-                visible: root.show3D
+            Button {
+                Layout.fillWidth: true
+                text: "Open Folder"
+                onClicked: folderDialog.open()
+            }
+            Button {
+                Layout.fillWidth: true
+                text: "Settings"
+                onClicked: settingsPopup.open()
+            }
+            Button {
+                Layout.fillWidth: true
+                text: "Export PNG"
+                onClicked: exportGraphAndLegend()
             }
         }
 
-        Legend {
-            id: legendPanel
-            anchors.top: parent.top
-            anchors.bottom: parent.bottom
-            anchors.right: parent.right
-            width: 200
-            show3D: root.show3D
+        // --- Graph + Legend ---
+        Item {
+            id: exportContainer
+            Layout.row: 1
+            Layout.column: 0
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+
+            GridLayout {
+                anchors.fill: parent
+                columns: 2
+                columnSpacing: 10
+
+                // Graph container
+                Item {
+                    id: graphContainer
+                    Layout.column: 0
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+
+                    Graph2DView {
+                        id: graph2DView
+                        anchors.fill: parent
+                        visible: !root.show3D
+                    }
+                    Graph3DView {
+                        id: graph3DView
+                        anchors.fill: parent
+                        visible: root.show3D
+                    }
+                }
+
+                // Legend panel
+                Legend {
+                    id: legendPanel
+                    Layout.column: 1
+                    Layout.fillHeight: true
+                    width: 200
+                    show3D: root.show3D
+                }
+            }
         }
     }
 
@@ -105,6 +123,8 @@ ApplicationWindow {
     SettingsPopup {
         id: settingsPopup
         show3D: root.show3D
+        x: root.width - settingsPopup.width - 10
+        y: selectorRow.y + selectorRow.height + 20
     }
 
     function exportGraphAndLegend() {
@@ -115,7 +135,6 @@ ApplicationWindow {
 
         var date = new Date();
         var timestamp = date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate() + "_" + date.getHours() + "-" + date.getMinutes() + "-" + date.getSeconds();
-
         var filename = exportDir + lastFolderSelected + "_" + timestamp + ".png";
 
         console.log("[Export] Trying to export Graph+Legend as PNG:", filename);

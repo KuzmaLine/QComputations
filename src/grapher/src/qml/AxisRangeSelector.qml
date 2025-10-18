@@ -1,6 +1,6 @@
-import QtQuick 2.15
-import QtQuick.Controls 2.15
-import QtQuick.Layouts 1.15
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Layouts
 
 Item {
     id: axisRangeSelector
@@ -21,154 +21,164 @@ Item {
         return axis === "x" ? chartManager.maxX : chartManager.maxY;
     }
 
-    RowLayout {
+    ColumnLayout {
         anchors.fill: parent
-        spacing: 6
-
-        // --- Min field ---
-        TextField {
-            id: minField
-            width: 60
+        spacing: 4
+        Label {
+            text: axis === "x" ? "X Axis Range:" : "Y Axis Range:"
             color: Theme.windowText
-            validator: DoubleValidator {
-                bottom: axisMin()
-                top: currentMax
-            }
-            text: currentMin.toFixed(2)
-            onEditingFinished: {
-                focus = false;
-                let val = parseFloat(text);
-                val = Math.min(Math.max(val, axisMin()), currentMax);
-                currentMin = val;
-                updateHandles();
-                rangeChanged(currentMin, currentMax);
-                console.log(`[AxisRangeSelector ${axis}] Min edited →`, val);
-            }
+            font.bold: true
+            Layout.alignment: Qt.AlignHCenter
         }
-
-        // --- Slider track ---
-        Item {
-            id: sliderTrack
+        RowLayout {
             Layout.fillWidth: true
-            height: 6
+            spacing: 6
 
-            Rectangle {
-                anchors.fill: parent
-                color: Theme.mid
-                radius: 3
+            // --- Min field ---
+            TextField {
+                id: minField
+                Layout.preferredWidth: 70
+                Layout.maximumWidth: 70
+                Layout.minimumWidth: 70
+                color: Theme.windowText
+                validator: DoubleValidator {
+                    bottom: axisMin()
+                    top: currentMax
+                }
+                text: currentMin.toFixed(2)
+                onEditingFinished: {
+                    focus = false;
+                    let val = parseFloat(text);
+                    val = Math.min(Math.max(val, axisMin()), currentMax);
+                    currentMin = val;
+                    updateHandles();
+                    rangeChanged(currentMin, currentMax);
+                    console.log(`[AxisRangeSelector ${axis}] Min edited →`, val);
+                }
             }
 
-            Rectangle {
-                id: rangeHighlight
-                height: parent.height
-                y: 0
-                color: Theme.highlight
-                radius: 3
-            }
+            // --- Slider track ---
+            Item {
+                id: sliderTrack
+                Layout.fillWidth: true
+                height: 6
 
-            // --- Min handle ---
-            Rectangle {
-                id: minHandle
-                width: 10
-                height: 14
-                color: Theme.highlight
-                radius: 2
-                anchors.verticalCenter: parent.verticalCenter
-
-                MouseArea {
+                Rectangle {
                     anchors.fill: parent
-                    drag.target: parent
-                    drag.axis: Drag.XAxis
-                    drag.minimumX: 0
-                    drag.maximumX: sliderTrack.width - maxHandle.width - minHandle.width
-                    cursorShape: Qt.SizeHorCursor
+                    color: Theme.mid
+                    radius: 3
+                }
 
-                    onPressed: {
-                        Graph2DState.uiHovering = true;
-                        console.log(`[AxisRangeSelector ${axis}] Min handle press`);
-                    }
-                    onReleased: {
-                        Graph2DState.uiHovering = false;
-                        console.log(`[AxisRangeSelector ${axis}] Min handle release`);
-                    }
+                Rectangle {
+                    id: rangeHighlight
+                    height: parent.height
+                    y: 0
+                    color: Theme.highlight
+                    radius: 3
+                }
 
-                    onPositionChanged: {
-                        if (axisRangeSelector.updatingHandles)
-                            return;
-                        let minV = axisMin();
-                        let maxV = axisMax();
-                        let trackWidth = sliderTrack.width - minHandle.width;
-                        let fraction = minHandle.x / trackWidth;
-                        currentMin = minV + fraction * (maxV - minV);
-                        currentMin = Math.min(currentMin, currentMax);
-                        minField.text = currentMin.toFixed(2);
-                        updateRangeHighlight();
-                        rangeChanged(currentMin, currentMax);
+                // --- Min handle ---
+                Rectangle {
+                    id: minHandle
+                    width: 10
+                    height: 14
+                    color: Theme.highlight
+                    radius: 2
+                    anchors.verticalCenter: parent.verticalCenter
+
+                    MouseArea {
+                        anchors.fill: parent
+                        drag.target: parent
+                        drag.axis: Drag.XAxis
+                        drag.minimumX: 0
+                        drag.maximumX: sliderTrack.width - maxHandle.width - minHandle.width
+                        cursorShape: Qt.SizeHorCursor
+
+                        onPressed: {
+                            Graph2DState.uiHovering = true;
+                        }
+                        onReleased: {
+                            Graph2DState.uiHovering = false;
+                        }
+
+                        onPositionChanged: {
+                            if (axisRangeSelector.updatingHandles)
+                                return;
+                            let minV = axisMin();
+                            let maxV = axisMax();
+                            let trackWidth = sliderTrack.width - minHandle.width;
+                            let fraction = minHandle.x / trackWidth;
+                            currentMin = minV + fraction * (maxV - minV);
+                            currentMin = Math.min(currentMin, currentMax);
+                            minField.text = currentMin.toFixed(2);
+                            updateRangeHighlight();
+                            rangeChanged(currentMin, currentMax);
+                        }
+                    }
+                }
+
+                // --- Max handle ---
+                Rectangle {
+                    id: maxHandle
+                    width: 10
+                    height: 14
+                    color: Theme.highlight
+                    radius: 2
+                    anchors.verticalCenter: parent.verticalCenter
+
+                    MouseArea {
+                        anchors.fill: parent
+                        drag.target: parent
+                        drag.axis: Drag.XAxis
+                        drag.minimumX: minHandle.x + minHandle.width
+                        drag.maximumX: sliderTrack.width - maxHandle.width
+                        cursorShape: Qt.SizeHorCursor
+
+                        onPressed: {
+                            Graph2DState.uiHovering = true;
+                        }
+                        onReleased: {
+                            Graph2DState.uiHovering = false;
+                        }
+
+                        onPositionChanged: {
+                            if (axisRangeSelector.updatingHandles)
+                                return;
+                            let minV = axisMin();
+                            let maxV = axisMax();
+                            let trackWidth = sliderTrack.width - maxHandle.width;
+                            let fraction = maxHandle.x / trackWidth;
+                            currentMax = minV + fraction * (maxV - minV);
+                            currentMax = Math.max(currentMax, currentMin);
+                            maxField.text = currentMax.toFixed(2);
+                            updateRangeHighlight();
+                            rangeChanged(currentMin, currentMax);
+                        }
                     }
                 }
             }
 
-            // --- Max handle ---
-            Rectangle {
-                id: maxHandle
-                width: 10
-                height: 14
-                color: Theme.highlight
-                radius: 2
-                anchors.verticalCenter: parent.verticalCenter
-
-                MouseArea {
-                    anchors.fill: parent
-                    drag.target: parent
-                    drag.axis: Drag.XAxis
-                    drag.minimumX: minHandle.x + minHandle.width
-                    drag.maximumX: sliderTrack.width - maxHandle.width
-                    cursorShape: Qt.SizeHorCursor
-
-                    onPressed: {
-                        Graph2DState.uiHovering = true;
-                        console.log(`[AxisRangeSelector ${axis}] Max handle press`);
-                    }
-                    onReleased: {
-                        Graph2DState.uiHovering = false;
-                        console.log(`[AxisRangeSelector ${axis}] Max handle release`);
-                    }
-
-                    onPositionChanged: {
-                        if (axisRangeSelector.updatingHandles)
-                            return;
-                        let minV = axisMin();
-                        let maxV = axisMax();
-                        let trackWidth = sliderTrack.width - maxHandle.width;
-                        let fraction = maxHandle.x / trackWidth;
-                        currentMax = minV + fraction * (maxV - minV);
-                        currentMax = Math.max(currentMax, currentMin);
-                        maxField.text = currentMax.toFixed(2);
-                        updateRangeHighlight();
-                        rangeChanged(currentMin, currentMax);
-                    }
+            // --- Max field ---
+            TextField {
+                id: maxField
+                Layout.preferredWidth: 70
+                Layout.maximumWidth: 70
+                Layout.minimumWidth: 70
+                color: Theme.windowText
+                validator: DoubleValidator {
+                    bottom: currentMin
+                    top: axisMax()
                 }
-            }
-        }
-
-        // --- Max field ---
-        TextField {
-            id: maxField
-            width: 60
-            color: Theme.windowText
-            validator: DoubleValidator {
-                bottom: currentMin
-                top: axisMax()
-            }
-            text: currentMax.toFixed(2)
-            onEditingFinished: {
-                focus = false;
-                let val = parseFloat(text);
-                val = Math.min(Math.max(val, currentMin), axisMax());
-                currentMax = val;
-                updateHandles();
-                rangeChanged(currentMin, currentMax);
-                console.log(`[AxisRangeSelector ${axis}] Max edited →`, val);
+                text: currentMax.toFixed(2)
+                onEditingFinished: {
+                    focus = false;
+                    let val = parseFloat(text);
+                    val = Math.min(Math.max(val, currentMin), axisMax());
+                    currentMax = val;
+                    updateHandles();
+                    rangeChanged(currentMin, currentMax);
+                    console.log(`[AxisRangeSelector ${axis}] Max edited →`, val);
+                }
             }
         }
     }
