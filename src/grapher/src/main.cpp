@@ -53,6 +53,10 @@ int main(int argc, char *argv[]) {
     engine.rootContext()->setContextProperty("chartManager", &chartManager);
     engine.rootContext()->setContextProperty("CurDirPath", QDir::currentPath());
 
+    // Register singleton types
+    qmlRegisterSingletonType(QUrl("qrc:/qml/Graph2DState.qml"), "Graph2D", 1, 0, "Graph2DState");
+    qmlRegisterSingletonType(QUrl("qrc:/qml/Theme.qml"), "Theme", 1, 0, "Theme");
+
     // Add import path for qml folder
 #ifdef Q_OS_WIN
     QString extraImportPath =
