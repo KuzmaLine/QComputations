@@ -46,18 +46,29 @@ You know what this is
 `./build/QtQuickGraphsApp`
 
 
-### Macos-Specific hack for Qt build 
+### Build and Run script (tested only on MacOS)
 ```
-cd build
-cmake -DQt6Dir=~/opt/homebrew/Cellar/qt/6.9.2/lib/cmake/Qt6 \
-  -DCMAKE_PREFIX_PATH=~/Qt/6.9.2/macos/ \
-  -DVulkan_INCLUDE_DIR=/opt/homebrew/opt/molten-vk/include \
-  -DVulkan_LIBRARY=/opt/homebrew/opt/molten-vk/lib/libMoltenVK.dylib \
-  -DVulkan_LIBRARY_RELEASE=/opt/homebrew/opt/molten-vk/lib/libMoltenVK.dylib \
-  -DVulkan_LIBRARY_DEBUG=/opt/homebrew/opt/molten-vk/lib/libMoltenVK.dylib \
-  -DCMAKE_PREFIX_PATH=/opt/homebrew/opt/qt \
-  ../
-make
+#!/usr/bin/env bash
+
+BUILD_DIR=build
+QT_PREFIX=/opt/homebrew/opt/qt
+VULKAN_SDK=/opt/homebrew/opt/molten-vk
+
+mkdir -p $BUILD_DIR
+cd $BUILD_DIR
+
+cmake -DCMAKE_PREFIX_PATH=$QT_PREFIX \
+      -DVulkan_INCLUDE_DIR=$VULKAN_SDK/include \
+      -DVulkan_LIBRARY=$VULKAN_SDK/lib/libMoltenVK.dylib \
+      ../
+
+cmake --build . --config Debug
+
 cd ..
-./build/QtQuickGraphsApp
+
+if [ -d "$BUILD_DIR/QtQuickGraphsApp.app" ]; then
+    open "$BUILD_DIR/QtQuickGraphsApp.app"
+else
+    "$BUILD_DIR/QtQuickGraphsApp"
+fi
 ```
