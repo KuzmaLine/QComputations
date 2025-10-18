@@ -3,6 +3,7 @@ import QtQuick.Controls
 import QtQuick.Layouts
 
 // TODO: move 3D-specific settings to a separate popup
+// TODO: make resizable ?
 Popup {
     id: settingsPopup
     modal: true

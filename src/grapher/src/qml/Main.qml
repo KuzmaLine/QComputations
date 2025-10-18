@@ -72,9 +72,9 @@ ApplicationWindow {
             GridLayout {
                 anchors.fill: parent
                 columns: 2
-                columnSpacing: 10
+                columnSpacing: 0
 
-                // Graph container
+                // Graph container (left)
                 Item {
                     id: graphContainer
                     Layout.column: 0
@@ -82,24 +82,53 @@ ApplicationWindow {
                     Layout.fillHeight: true
 
                     Graph2DView {
-                        id: graph2DView
                         anchors.fill: parent
                         visible: !root.show3D
                     }
                     Graph3DView {
-                        id: graph3DView
                         anchors.fill: parent
                         visible: root.show3D
                     }
                 }
 
-                // Legend panel
-                Legend {
-                    id: legendPanel
+                // Legend wrapper (right)
+                Item {
+                    id: legendWrapper
                     Layout.column: 1
                     Layout.fillHeight: true
-                    width: 200
-                    show3D: root.show3D
+                    Layout.preferredWidth: 200
+
+                    Legend {
+                        id: legendPanel
+                        anchors.fill: parent
+                        show3D: root.show3D
+                    }
+
+                    // Resize handle
+                    Rectangle {
+                        width: 2
+                        anchors.left: parent.left
+                        anchors.top: parent.top
+                        anchors.bottom: parent.bottom
+                        color: Theme.mid
+
+                        MouseArea {
+                            anchors.fill: parent
+                            cursorShape: Qt.SizeHorCursor
+                            property real startX
+                            property real startWidth
+
+                            onPressed: function (mouse) {
+                                startX = mouse.x;
+                                startWidth = legendWrapper.Layout.preferredWidth;
+                            }
+
+                            onPositionChanged: function (mouse) {
+                                let newWidth = startWidth - (mouse.x - startX);
+                                legendWrapper.Layout.preferredWidth = Math.max(100, newWidth); // min width
+                            }
+                        }
+                    }
                 }
             }
         }
