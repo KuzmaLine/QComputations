@@ -1,8 +1,7 @@
+pragma Singleton
 import QtQuick
 
 QtObject {
-    id: theme
-
     property bool dark: false
 
     property color window: dark ? "#262626" : "#f2f2f5"

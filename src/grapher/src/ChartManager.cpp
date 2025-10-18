@@ -15,7 +15,7 @@ ChartManager::ChartManager(QObject *parent) : QObject(parent) {
         emit lineSeriesRemoved(series);
     });
     connect(m_2dManager, &ChartManager2D::lineSeriesListChanged, this, &ChartManager::lineSeriesListChanged);
-    connect(m_2dManager, &ChartManager2D::minmMaxValuesChanged, this, &ChartManager::minMaxValuesChanged);
+    connect(m_2dManager, &ChartManager2D::minMaxValuesChanged, this, &ChartManager::minMaxValuesChanged);
 
     // Forward 3D signals
     connect(m_3dManager, &ChartManager3D::surfaceSeriesChanged, this, &ChartManager::surfaceSeriesChanged);

@@ -8,7 +8,6 @@ Item {
     anchors.bottom: parent.bottom
     anchors.right: parent.right
     visible: root.show3D
-    property bool darkTheme: false
 
     Loader {
         id: surfaceLoader
@@ -26,42 +25,42 @@ Item {
             }
 
             theme: GraphsTheme {
-                colorScheme: darkTheme ? GraphsTheme.Theme.QtGreen : GraphsTheme.Theme.QtGreenNeon
+                colorScheme: Theme.dark ? GraphsTheme.Theme.QtGreen : GraphsTheme.Theme.QtGreenNeon
             }
         }
 
         onLoaded: {
-            console.log("[Graph2DView] Loader loaded Surface3D");
+            console.log("[Graph3DView] Loader loaded Surface3D");
             update3DSurfaceSeries();
         }
 
         function update3DSurfaceSeries() {
             if (!surfaceLoader.item) {
-                console.warn("[Graph2DView] update3DSurfaceSeries: loader.item is null");
+                console.warn("[Graph3DView] update3DSurfaceSeries: loader.item is null");
                 return;
             }
             if (!chartManager.surfaceSeries) {
-                console.warn("[Graph2DView] update3DSurfaceSeries: chartManager.surfaceSeries is null");
+                console.warn("[Graph3DView] update3DSurfaceSeries: chartManager.surfaceSeries is null");
                 return;
             }
 
             var seriesList = surfaceLoader.item.seriesList;
-            console.log("[Graph2DView] Current seriesList length:", seriesList.length);
+            console.log("[Graph3DView] Current seriesList length:", seriesList.length);
 
             // Hide all existing series
             for (var i = 0; i < seriesList.length; i++) {
-                console.log("[Graph2DView] Hiding series:", seriesList[i].name);
+                console.log("[Graph3DView] Hiding series:", seriesList[i].name);
                 seriesList[i].visible = false;
             }
 
             // Add our surfaceSeries if not present
             if (!seriesList.includes(chartManager.surfaceSeries)) {
-                console.log("[Graph2DView] Adding surfaceSeries:", chartManager.surfaceSeries.name);
+                console.log("[Graph3DView] Adding surfaceSeries:", chartManager.surfaceSeries.name);
                 surfaceLoader.item.addSeries(chartManager.surfaceSeries);
             }
 
             chartManager.surfaceSeries.visible = true;
-            console.log("[Graph2DView] SurfaceSeries visible set to true");
+            console.log("[Graph3DView] SurfaceSeries visible set to true");
         }
     }
 
@@ -81,10 +80,10 @@ Item {
         target: chartManager
 
         function onSurfaceSeriesChanged() {
-            console.log("[Graph2DView] surfaceSeriesChanged signal received");
+            console.log("[Graph3DView] surfaceSeriesChanged signal received");
             Qt.callLater(() => surfaceLoader.update3DSurfaceSeries());
         }
     }
 
-    onVisibleChanged: console.log("[Graph2DView] visible changed:", visible)
+    onVisibleChanged: console.log("[Graph3DView] visible changed:", visible)
 }

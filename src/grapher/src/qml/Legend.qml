@@ -9,9 +9,8 @@ Rectangle {
     radius: 5
 
     property bool show3D: false
-    property Theme theme
 
-    color: theme ? theme.window : "white"
+    color: Theme ? Theme.window : "white"
 
     ScrollView {
         anchors.fill: parent
@@ -57,7 +56,7 @@ Rectangle {
                     TextInput {
                         Layout.fillWidth: true
                         text: modelData ? modelData.name : ""
-                        color: theme ? theme.windowText : "black"
+                        color: Theme ? Theme.windowText : "black"
                         verticalAlignment: Text.AlignVCenter
                         selectByMouse: true
                         onEditingFinished: {
@@ -101,6 +100,7 @@ Rectangle {
             else
                 seriesRef.color = selectedColor;
 
+            // HACK:
             // force visual refresh if needed
             if (seriesRef.visible !== undefined) {
                 var wasVisible = seriesRef.visible;
