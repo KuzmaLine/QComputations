@@ -18,13 +18,15 @@ QtObject {
     property bool lockY: true
     property bool gridVisible: true
     property bool showSubTicks: true
-    property real paddingFactor: 0.01
 
     // --- derived / convenience ---
     readonly property real totalMinX: chartManager ? chartManager.minX : 0
     readonly property real totalMaxX: chartManager ? chartManager.maxX : 1
     readonly property real totalMinY: chartManager ? chartManager.minY : 0
     readonly property real totalMaxY: chartManager ? chartManager.maxY : 1
+    readonly property real paddingFactor: 0.01
+    readonly property real minZoomFactor: 0.01   // cannot zoom smaller than 1% of total range
+    readonly property real maxZoomFactor: 1.05   // can zoom out slightly beyond total range
 
     function initialize(chartViewRef) {
         console.log("[Graph2DState] initialize() called");
@@ -87,28 +89,60 @@ QtObject {
         if (!initialized)
             return;
 
+        // --- X-axis scaling ---
         if (!lockX) {
             let minX = visibleMinX;
             let width = visibleRangeX();
             let newWidth = width / xFactor;
 
-            const minWidth = 0.01 * (totalMaxX - totalMinX);
-            const maxWidth = 1.05 * (totalMaxX - totalMinX);
+            const totalRangeX = totalMaxX - totalMinX;
+            const minWidth = totalRangeX * minZoomFactor;
+            const maxWidth = totalRangeX * maxZoomFactor;
+
             newWidth = Math.max(minWidth, Math.min(newWidth, maxWidth));
 
-            setVisibleRangeX(minX, minX + newWidth);
+            // Expand to the right first
+            let newMax = minX + newWidth;
+            if (newMax > totalMaxX * maxZoomFactor) {
+                let shift = newMax - totalMaxX;
+                minX = Math.max(totalMinX, minX - shift);
+                newMax = minX + newWidth;
+            }
+
+            if (minX < totalMinX) {
+                minX = totalMinX;
+                newMax = minX + newWidth;
+            }
+
+            setVisibleRangeX(minX, newMax);
         }
 
+        // --- Y-axis scaling ---
         if (!lockY) {
             let minY = visibleMinY;
             let height = visibleRangeY();
             let newHeight = height / yFactor;
 
-            const minHeight = 0.01 * (totalMaxY - totalMinY);
-            const maxHeight = 1.05 * (totalMaxY - totalMinY);
+            const totalRangeY = totalMaxY - totalMinY;
+            const minHeight = totalRangeY * minZoomFactor;
+            const maxHeight = totalRangeY * maxZoomFactor;
+
             newHeight = Math.max(minHeight, Math.min(newHeight, maxHeight));
 
-            setVisibleRangeY(minY, minY + newHeight);
+            // Expand upwards
+            let newMax = minY + newHeight;
+            if (newMax > totalMaxY * maxZoomFactor) {
+                let shift = newMax - totalMaxY;
+                minY = Math.max(totalMinY, minY - shift);
+                newMax = minY + newHeight;
+            }
+
+            if (minY < totalMinY) {
+                minY = totalMinY;
+                newMax = minY + newHeight;
+            }
+
+            setVisibleRangeY(minY, newMax);
         }
     }
 
