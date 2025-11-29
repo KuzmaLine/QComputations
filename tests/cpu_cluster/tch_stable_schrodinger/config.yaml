@@ -1,0 +1,5 @@
+test:
+  cpu: "cluster"
+  type: "heavy"
+  precision: 0.000001
+  expected_result: "0.570354 0.285574 0.138981 0.005092"

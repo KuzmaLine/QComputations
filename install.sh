@@ -30,12 +30,12 @@ fi
 sudo chmod +x $1/QComputations/seaborn_plot.py
 
 cd cpu_cluster
-cmake -DCMAKE_CXX_COMPILER=mpiicpx -B .
+cmake -DCMAKE_CXX_COMPILER=/opt/intel/oneapi/mpi/latest/bin/mpiicpx -B .
 make -j4 -B
 sudo mv ./*.so $2/.
 
 cd ../single
-cmake -DCMAKE_CXX_COMPILER=icpx -B .
+cmake -DCMAKE_CXX_COMPILER=/opt/intel/oneapi/compiler/latest/linux/bin/icpx -B .
 make -j4 -B
 sudo mv ./*.so $2/.
 

@@ -1,0 +1,5 @@
+test:
+  cpu: "songle"
+  type: "small"
+  precision: 0.000001
+  expected_result: "0.026082 0.465292 0.474227 0.034399 0.000000"

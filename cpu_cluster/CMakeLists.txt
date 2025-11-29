@@ -14,7 +14,7 @@ set(SCALAPACK_LIBRARIES "$ENV{ONEAPI_ROOT}/mkl/latest/lib/intel64/libmkl_scalapa
 set(BLACS_LIBRARIES "$ENV{ONEAPI_ROOT}/mkl/latest/lib/intel64/libmkl_blacs_intelmpi_lp64.so")
 
 # Set Intel Python variables
-set(INTEL_PYTHON_INCLUDE_DIRS "$ENV{ONEAPI_ROOT}/intelpython/latest/include/python3.9" "$ENV{ONEAPI_ROOT}/intelpython/python3.9/lib/python3.9/site-packages/numpy/core/include")
+set(INTEL_PYTHON_INCLUDE_DIRS "$ENV{ONEAPI_ROOT}/intelpython/latest/include/python3" "$ENV{ONEAPI_ROOT}/intelpython/python3.9/lib/python3.9/site-packages/numpy/core/include")
 set(INTEL_PYTHON_LIBRARIES "$ENV{ONEAPI_ROOT}/intelpython/latest/lib")
 
 # Set Intel MPI variables
@@ -47,7 +47,7 @@ function(create_build_target TARGET_NAME PYTHON_FLAG)
     #target_link_libraries(${TARGET_NAME} ${BLACS_LIBRARIES})
 
     if (PYTHON_FLAG)
-        target_link_libraries(${TARGET_NAME} ${INTEL_PYTHON_LIBRARIES}/libpython3.9.so)
+        target_link_libraries(${TARGET_NAME} ${INTEL_PYTHON_LIBRARIES}/libpython3.so)
         target_compile_options(${TARGET_NAME} PRIVATE -DENABLE_MATPLOTLIB)
         target_include_directories(${TARGET_NAME} PRIVATE ${INTEL_PYTHON_INCLUDE_DIRS})
         #target_link_libraries(${TARGET_NAME} ${INTEL_PYTHON_LIBRARIES})
