@@ -24,7 +24,7 @@ Item {
 
         axisX: ValueAxis {
             id: axisX
-            titleText: "X Axis"
+            titleText: settingsPopup.xAxisName
             min: chartManager.minX
             max: chartManager.maxX * graph2DRoot.xScale * (1 + graph2DRoot.paddingFactor)
             gridVisible: graph2DRoot.gridVisible
@@ -33,7 +33,7 @@ Item {
 
         axisY: ValueAxis {
             id: axisY
-            titleText: "Y Axis"
+            titleText: settingsPopup.yAxisName
             min: chartManager.minY
             max: chartManager.maxY * graph2DRoot.yScale * (1 + graph2DRoot.paddingFactor)
             gridVisible: graph2DRoot.gridVisible

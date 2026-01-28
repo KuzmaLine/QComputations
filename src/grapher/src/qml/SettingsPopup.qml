@@ -8,6 +8,8 @@ Popup {
     height: 280
     closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
 
+    property string xAxisName: "X Axis"
+    property string yAxisName: "Y Axis"
     property real xScale: 1.0
     property real yScale: 1.0
     property bool showGrid: true
@@ -28,6 +30,39 @@ Popup {
                 font.bold: true
                 font.pointSize: 14
                 color: theme ? theme.windowText : "black"
+            }
+
+            // Axis names
+
+            Row {
+                spacing: 8
+                Text {
+                    text: "X Axis Name:"
+                    color: theme ? theme.windowText : "black"
+                    width: 100
+                }
+                TextField {
+                    id: xAxisNameField
+                    text: settingsPopup.xAxisName
+                    color: theme ? theme.windowText : "black"
+                    onTextChanged: settingsPopup.xAxisName = text
+                    width: 150
+                }
+            }
+            Row {
+                spacing: 8
+                Text {
+                    text: "Y Axis Name:"
+                    color: theme ? theme.windowText : "black"
+                    width: 100
+                }
+                TextField {
+                    id: yAxisNameField
+                    text: settingsPopup.yAxisName
+                    color: theme ? theme.windowText : "black"
+                    onTextChanged: settingsPopup.yAxisName = text
+                    width: 150
+                }
             }
 
             // Axis sliders
