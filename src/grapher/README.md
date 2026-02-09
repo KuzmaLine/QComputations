@@ -31,6 +31,7 @@ You know what this is
   - `Qt Quick Controls`
   - `Qt Quick 3D`
   - `Qt Graphs`
+- **Vulkan**
 - **CMake 3.16+**
 - **C++17 compiler**
 
@@ -45,11 +46,29 @@ You know what this is
 `./build/QtQuickGraphsApp`
 
 
-### Macos-Specific hack for Qt build 
+### Build and Run script (tested only on MacOS)
 ```
-cd build
-cmake -DQt6Dir=~/opt/homebrew/Cellar/qt/<YOUR VERSION>/lib/cmake/Qt6 -DCMAKE_PREFIX_PATH=~/Qt/<YOUR VERSION>/macos/ ../
-make
+#!/usr/bin/env bash
+
+BUILD_DIR=build
+QT_PREFIX=/opt/homebrew/opt/qt
+VULKAN_SDK=/opt/homebrew/opt/molten-vk
+
+mkdir -p $BUILD_DIR
+cd $BUILD_DIR
+
+cmake -DCMAKE_PREFIX_PATH=$QT_PREFIX \
+      -DVulkan_INCLUDE_DIR=$VULKAN_SDK/include \
+      -DVulkan_LIBRARY=$VULKAN_SDK/lib/libMoltenVK.dylib \
+      ../
+
+cmake --build . --config Debug
+
 cd ..
-./build/QtQuickGraphsApp
+
+if [ -d "$BUILD_DIR/QtQuickGraphsApp.app" ]; then
+    open "$BUILD_DIR/QtQuickGraphsApp.app"
+else
+    "$BUILD_DIR/QtQuickGraphsApp"
+fi
 ```
