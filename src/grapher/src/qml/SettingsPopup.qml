@@ -10,6 +10,8 @@ Popup {
     width: 300
     height: 420
     closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
+    property string xAxisName: "X Axis"
+    property string yAxisName: "Y Axis"
     onOpened: {
         Graph2DState.uiHovering = true;
         console.log("[SettingsPopup] opened — initialized:", Graph2DState.initialized);
@@ -78,6 +80,37 @@ Popup {
                     settingsPopup.y = Math.max(0, Math.min(root.height - settingsPopup.height, settingsPopup.y));
                 }
             }
+        }
+
+        // --- Axis Names ---
+        Label {
+            text: "X Axis Name:"
+            color: theme ? theme.windowText : "black"
+            Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
+        }
+
+        TextField {
+            id: xAxisNameField
+            text: settingsPopup.xAxisName
+            color: theme ? theme.windowText : "black"
+            Layout.fillWidth: true
+            Layout.columnSpan: 2
+            onTextChanged: settingsPopup.xAxisName = text
+        }
+
+        Label {
+            text: "Y Axis Name:"
+            color: theme ? theme.windowText : "black"
+            Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
+        }
+
+        TextField {
+            id: yAxisNameField
+            text: settingsPopup.yAxisName
+            color: theme ? theme.windowText : "black"
+            Layout.fillWidth: true
+            Layout.columnSpan: 2
+            onTextChanged: settingsPopup.yAxisName = text
         }
 
         // --- X Zoom ---
