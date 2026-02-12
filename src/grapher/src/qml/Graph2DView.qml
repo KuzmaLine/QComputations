@@ -17,11 +17,11 @@ Item {
 
         axisX: ValueAxis {
             id: axisX
-            titleText: "X Axis"
+            titleText: settingsPopup.xAxisName
         }
         axisY: ValueAxis {
             id: axisY
-            titleText: "Y Axis"
+            titleText: settingsPopup.yAxisName
         }
 
         function updateAxisRanges() {
