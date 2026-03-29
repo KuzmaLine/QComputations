@@ -1,0 +1,24 @@
+\begin{Verbatim}[commandchars=\\\{\},codes={\catcode`\$=3\catcode`\^=7\catcode`\_=8\relax}]
+\PYG{c+c1}{// Функция, описывающая результат гамильтониана}
+\PYG{n}{COMPLEX}\PYG{+w}{ }\PYG{n+nf}{h\PYGZus{}func}\PYG{p}{(}\PYG{k}{const}\PYG{+w}{ }\PYG{n}{Basis\PYGZus{}State}\PYG{o}{\PYGZam{}}\PYG{+w}{ }\PYG{n}{i}\PYG{p}{,}\PYG{+w}{ }\PYG{k}{const}\PYG{+w}{ }\PYG{n}{Basis\PYGZus{}State}\PYG{o}{\PYGZam{}}\PYG{+w}{ }\PYG{n}{j}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{    }\PYG{n}{COMPLEX}\PYG{+w}{ }\PYG{n}{res}\PYG{p}{(}\PYG{l+m+mi}{0}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{p}{);}
+\PYG{+w}{    }\PYG{k}{for}\PYG{+w}{ }\PYG{p}{(}\PYG{k+kt}{size\PYGZus{}t}\PYG{+w}{ }\PYG{n}{k}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{p}{;}\PYG{+w}{ }\PYG{n}{k}\PYG{+w}{ }\PYG{o}{\PYGZlt{}}\PYG{+w}{ }\PYG{n}{i}\PYG{p}{.}\PYG{n}{qudits\PYGZus{}count}\PYG{p}{();}\PYG{+w}{ }\PYG{n}{k}\PYG{o}{++}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{        }\PYG{n}{res}\PYG{+w}{ }\PYG{o}{+=}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{i}\PYG{p}{.}\PYG{n}{get\PYGZus{}qudit}\PYG{p}{(}\PYG{n}{k}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{\PYGZca{}}\PYG{+w}{ }\PYG{n}{j}\PYG{p}{.}\PYG{n}{get\PYGZus{}qudit}\PYG{p}{(}\PYG{n}{k}\PYG{p}{));}
+\PYG{+w}{    }\PYG{p}{\PYGZcb{}}
+
+\PYG{+w}{    }\PYG{k}{return}\PYG{+w}{ }\PYG{n}{res}\PYG{p}{;}
+\PYG{p}{\PYGZcb{}}
+
+\PYG{k+kt}{int}\PYG{+w}{ }\PYG{n+nf}{main}\PYG{p}{(}\PYG{k+kt}{int}\PYG{+w}{ }\PYG{n}{argc}\PYG{p}{,}\PYG{+w}{ }\PYG{k+kt}{char}\PYG{o}{**}\PYG{+w}{ }\PYG{n}{argv}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{    }\PYG{c+c1}{// Начальное состояние нам необходимо,}
+\PYG{+w}{    }\PYG{c+c1}{// как пример структуры состояния.}
+\PYG{+w}{    }\PYG{n}{Basis\PYGZus{}State}\PYG{+w}{ }\PYG{n}{st}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}|0;0;1\PYGZgt{}\PYGZdq{}}\PYG{p}{);}
+\PYG{+w}{    }\PYG{n}{H\PYGZus{}by\PYGZus{}Scalar\PYGZus{}Product}\PYG{o}{\PYGZlt{}}\PYG{n}{Basis\PYGZus{}State}\PYG{o}{\PYGZgt{}}\PYG{+w}{ }\PYG{n}{H}\PYG{p}{(}\PYG{n}{st}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{h\PYGZus{}func}\PYG{p}{);}
+
+\PYG{+w}{    }\PYG{c+c1}{// Вывод базиса и матрицы гамильтониана}
+\PYG{+w}{    }\PYG{n}{show\PYGZus{}basis}\PYG{p}{(}\PYG{n}{H}\PYG{p}{.}\PYG{n}{get\PYGZus{}basis}\PYG{p}{());}
+\PYG{+w}{    }\PYG{n}{H}\PYG{p}{.}\PYG{n}{show}\PYG{p}{();}
+
+\PYG{+w}{    }\PYG{k}{return}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{p}{;}
+\PYG{p}{\PYGZcb{}}
+\end{Verbatim}

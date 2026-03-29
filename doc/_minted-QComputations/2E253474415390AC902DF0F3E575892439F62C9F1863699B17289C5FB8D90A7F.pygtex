@@ -1,0 +1,6 @@
+\begin{Verbatim}[commandchars=\\\{\},codes={\catcode`\$=3\catcode`\^=7\catcode`\_=8\relax}]
+\PYG{c+c1}{// n \PYGZhy{} размер матрицы}
+
+\PYG{k}{template}\PYG{o}{\PYGZlt{}}\PYG{k}{typename}\PYG{+w}{ }\PYG{n+nc}{T}\PYG{o}{\PYGZgt{}}
+\PYG{n}{Matrix}\PYG{o}{\PYGZlt{}}\PYG{n}{T}\PYG{o}{\PYGZgt{}}\PYG{+w}{ }\PYG{n}{E\PYGZus{}Matrix}\PYG{p}{(}\PYG{k+kt}{size\PYGZus{}t}\PYG{+w}{ }\PYG{n}{n}\PYG{p}{);}
+\end{Verbatim}

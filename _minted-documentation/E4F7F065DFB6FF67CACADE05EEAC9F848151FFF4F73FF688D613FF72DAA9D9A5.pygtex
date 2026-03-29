@@ -1,0 +1,66 @@
+\begin{Verbatim}[commandchars=\\\{\},codes={\catcode`\$=3\catcode`\^=7\catcode`\_=8\relax}]
+\PYG{k}{class}\PYG{+w}{ }\PYG{n+nc}{Hamiltonian}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{    }\PYG{k}{public}\PYG{o}{:}
+\PYG{+w}{        }\PYG{c+c1}{// Лучше не использовать, способ через установку}
+\PYG{+w}{        }\PYG{c+c1}{// всех параметров вручную не отработан}
+\PYG{+w}{        }\PYG{k}{explicit}\PYG{+w}{ }\PYG{n}{Hamiltonian}\PYG{p}{()}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{k}{default}\PYG{p}{;}
+
+\PYG{+w}{        }\PYG{c+c1}{// Получить размер матрицы}
+\PYG{+w}{        }\PYG{k+kt}{size\PYGZus{}t}\PYG{+w}{ }\PYG{n+nf}{n}\PYG{p}{()}\PYG{+w}{ }\PYG{k}{const}\PYG{+w}{ }\PYG{p}{\PYGZob{}}\PYG{+w}{ }\PYG{k}{return}\PYG{+w}{ }\PYG{n}{H\PYGZus{}}\PYG{p}{.}\PYG{n}{n}\PYG{p}{();}\PYG{+w}{ }\PYG{p}{\PYGZcb{}}
+
+\PYG{+w}{        }\PYG{c+c1}{// Второе название метода}
+\PYG{+w}{        }\PYG{k+kt}{size\PYGZus{}t}\PYG{+w}{ }\PYG{n+nf}{size}\PYG{p}{()}\PYG{+w}{ }\PYG{k}{const}\PYG{+w}{ }\PYG{p}{\PYGZob{}}\PYG{+w}{ }\PYG{k}{return}\PYG{+w}{ }\PYG{n}{H\PYGZus{}}\PYG{p}{.}\PYG{n}{n}\PYG{p}{();}\PYG{+w}{ }\PYG{p}{\PYGZcb{}}
+
+\PYG{+w}{        }\PYG{c+c1}{// Получить базис}
+\PYG{+w}{        }\PYG{n}{std}\PYG{o}{::}\PYG{n}{set}\PYG{o}{\PYGZlt{}}\PYG{n}{Basis\PYGZus{}State}\PYG{o}{\PYGZgt{}}\PYG{+w}{ }\PYG{n}{get\PYGZus{}basis}\PYG{p}{()}\PYG{+w}{ }\PYG{k}{const}\PYG{+w}{ }\PYG{p}{\PYGZob{}}\PYG{+w}{ }\PYG{k}{return}\PYG{+w}{ }\PYG{n}{basis\PYGZus{}}\PYG{p}{;}\PYG{+w}{ }\PYG{p}{\PYGZcb{}}
+
+\PYG{+w}{        }\PYG{c+c1}{// Получить матрицу гамильтониана}
+\PYG{+w}{        }\PYG{n}{Matrix}\PYG{o}{\PYGZlt{}}\PYG{n}{COMPLEX}\PYG{o}{\PYGZgt{}}\PYG{+w}{ }\PYG{n}{get\PYGZus{}matrix}\PYG{p}{()}\PYG{+w}{ }\PYG{k}{const}\PYG{+w}{ }\PYG{p}{\PYGZob{}}\PYG{+w}{ }\PYG{k}{return}\PYG{+w}{ }\PYG{n}{H\PYGZus{}}\PYG{p}{;}\PYG{+w}{ }\PYG{p}{\PYGZcb{}}
+
+\PYG{+w}{        }\PYG{c+c1}{// Получить операторы декогеренции вместе с их интенсивностями}
+\PYG{+w}{        }\PYG{n}{std}\PYG{o}{::}\PYG{n}{vector}\PYG{o}{\PYGZlt{}}\PYG{n}{std}\PYG{o}{::}\PYG{n}{pair}\PYG{o}{\PYGZlt{}}\PYG{k+kt}{double}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{Matrix}\PYG{o}{\PYGZlt{}}\PYG{n}{COMPLEX}\PYG{o}{\PYGZgt{}\PYGZgt{}\PYGZgt{}}\PYG{+w}{ }\PYG{n}{get\PYGZus{}decoherence}\PYG{p}{()}\PYG{+w}{ }\PYG{k}{const}
+\PYG{+w}{                                                 }\PYG{p}{\PYGZob{}}\PYG{+w}{ }\PYG{k}{return}\PYG{+w}{ }\PYG{n}{decoherence\PYGZus{}}\PYG{p}{;\PYGZcb{}}
+
+\PYG{+w}{        }\PYG{c+c1}{// Записать гамильтониан в файл}
+\PYG{+w}{        }\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n}{write\PYGZus{}to\PYGZus{}csv\PYGZus{}file}\PYG{p}{(}\PYG{k}{const}\PYG{+w}{ }\PYG{n}{std}\PYG{o}{::}\PYG{n}{string}\PYG{o}{\PYGZam{}}\PYG{+w}{ }\PYG{n}{filename}\PYG{p}{)}\PYG{+w}{ }\PYG{k}{const}
+\PYG{+w}{                 }\PYG{p}{\PYGZob{}}\PYG{+w}{ }\PYG{n}{H\PYGZus{}}\PYG{p}{.}\PYG{n}{write\PYGZus{}to\PYGZus{}csv\PYGZus{}file}\PYG{p}{(}\PYG{n}{filename}\PYG{p}{);}\PYG{+w}{ }\PYG{p}{\PYGZcb{}}
+
+\PYG{+w}{        }\PYG{c+c1}{// Найти спектральное разложение}
+\PYG{+w}{        }\PYG{k+kt}{void}\PYG{+w}{ }\PYG{k}{virtual}\PYG{+w}{ }\PYG{n}{eigen}\PYG{p}{()}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{            }\PYG{k}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{o}{!}\PYG{n}{is\PYGZus{}calculated\PYGZus{}eigen\PYGZus{}}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{                }\PYG{k}{auto}\PYG{+w}{ }\PYG{n}{p}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{Hermit\PYGZus{}Lanczos}\PYG{p}{(}\PYG{n}{H\PYGZus{}}\PYG{p}{);}
+\PYG{+w}{                }\PYG{n}{eigenvalues\PYGZus{}}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{p}\PYG{p}{.}\PYG{n}{first}\PYG{p}{;}
+\PYG{+w}{                }\PYG{n}{eigenvectors\PYGZus{}}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{p}\PYG{p}{.}\PYG{n}{second}\PYG{p}{;}
+\PYG{+w}{                }\PYG{n}{is\PYGZus{}calculated\PYGZus{}eigen\PYGZus{}}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n+nb}{true}\PYG{p}{;}
+\PYG{+w}{            }\PYG{p}{\PYGZcb{}}
+\PYG{+w}{        }\PYG{p}{\PYGZcb{}}
+
+\PYG{+w}{        }\PYG{c+c1}{// Найти собственные значения}
+\PYG{+w}{        }\PYG{n}{std}\PYG{o}{::}\PYG{n}{vector}\PYG{o}{\PYGZlt{}}\PYG{k+kt}{double}\PYG{o}{\PYGZgt{}}\PYG{+w}{ }\PYG{k}{virtual}\PYG{+w}{ }\PYG{n}{eigenvalues}\PYG{p}{()}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{            }\PYG{k}{this}\PYG{o}{\PYGZhy{}\PYGZgt{}}\PYG{n}{eigen}\PYG{p}{();}
+\PYG{+w}{            }\PYG{k}{return}\PYG{+w}{ }\PYG{n}{eigenvalues\PYGZus{}}\PYG{p}{;}
+\PYG{+w}{        }\PYG{p}{\PYGZcb{}}
+
+\PYG{+w}{        }\PYG{c+c1}{// Найти собственные вектора}
+\PYG{+w}{        }\PYG{n}{Matrix}\PYG{o}{\PYGZlt{}}\PYG{n}{COMPLEX}\PYG{o}{\PYGZgt{}}\PYG{+w}{ }\PYG{k}{virtual}\PYG{+w}{ }\PYG{n}{eigenvectors}\PYG{p}{()}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{            }\PYG{k}{this}\PYG{o}{\PYGZhy{}\PYGZgt{}}\PYG{n}{eigen}\PYG{p}{();}
+\PYG{+w}{            }\PYG{k}{return}\PYG{+w}{ }\PYG{n}{eigenvectors\PYGZus{}}\PYG{p}{;}
+\PYG{+w}{        }\PYG{p}{\PYGZcb{}}
+
+\PYG{+w}{        }\PYG{c+c1}{// Вывести гамильтониан}
+\PYG{+w}{        }\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n}{show}\PYG{p}{(}\PYG{k+kt}{size\PYGZus{}t}\PYG{+w}{ }\PYG{n}{width}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{QConfig}\PYG{o}{::}\PYG{n}{instance}\PYG{p}{().}\PYG{n}{width}\PYG{p}{())}\PYG{+w}{ }\PYG{k}{const}\PYG{+w}{ }\PYG{p}{\PYGZob{}}\PYG{+w}{ }\PYG{n}{H\PYGZus{}}\PYG{p}{.}\PYG{n}{show}\PYG{p}{(}\PYG{n}{width}\PYG{p}{);}\PYG{+w}{ }\PYG{p}{\PYGZcb{}}
+\PYG{+w}{    }\PYG{k}{protected}\PYG{o}{:}
+\PYG{+w}{        }\PYG{k+kt}{bool}\PYG{+w}{ }\PYG{n}{is\PYGZus{}calculated\PYGZus{}eigen\PYGZus{}}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n+nb}{false}\PYG{p}{;}\PYG{+w}{ }\PYG{c+c1}{// Служебная переменная,}
+\PYG{+w}{                                           }\PYG{c+c1}{// чтобы не пересчитывать}
+\PYG{+w}{                                           }\PYG{c+c1}{// несколько раз}
+\PYG{+w}{                                           }\PYG{c+c1}{// спектральное разложение}
+\PYG{+w}{        }\PYG{n}{std}\PYG{o}{::}\PYG{n}{set}\PYG{o}{\PYGZlt{}}\PYG{n}{Basis\PYGZus{}State}\PYG{o}{\PYGZgt{}}\PYG{+w}{ }\PYG{n}{basis\PYGZus{}}\PYG{p}{;}\PYG{+w}{      }\PYG{c+c1}{// Базис}
+\PYG{+w}{        }\PYG{n}{Matrix}\PYG{o}{\PYGZlt{}}\PYG{n}{COMPLEX}\PYG{o}{\PYGZgt{}}\PYG{+w}{ }\PYG{n}{H\PYGZus{}}\PYG{p}{;}\PYG{+w}{                }\PYG{c+c1}{// Сам гамильтониан}
+\PYG{+w}{        }\PYG{n}{Matrix}\PYG{o}{\PYGZlt{}}\PYG{n}{COMPLEX}\PYG{o}{\PYGZgt{}}\PYG{+w}{ }\PYG{n}{eigenvectors\PYGZus{}}\PYG{p}{;}\PYG{+w}{     }\PYG{c+c1}{// Его собственные вектора}
+\PYG{+w}{        }\PYG{n}{std}\PYG{o}{::}\PYG{n}{vector}\PYG{o}{\PYGZlt{}}\PYG{k+kt}{double}\PYG{o}{\PYGZgt{}}\PYG{+w}{ }\PYG{n}{eigenvalues\PYGZus{}}\PYG{p}{;}\PYG{+w}{  }\PYG{c+c1}{// Его собственные значения}
+
+\PYG{+w}{        }\PYG{c+c1}{// Операторы декогеренции и их интенсивности}
+\PYG{+w}{        }\PYG{n}{std}\PYG{o}{::}\PYG{n}{vector}\PYG{o}{\PYGZlt{}}\PYG{n}{std}\PYG{o}{::}\PYG{n}{pair}\PYG{o}{\PYGZlt{}}\PYG{k+kt}{double}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{Matrix}\PYG{o}{\PYGZlt{}}\PYG{n}{COMPLEX}\PYG{o}{\PYGZgt{}\PYGZgt{}\PYGZgt{}}\PYG{+w}{ }\PYG{n}{decoherence\PYGZus{}}\PYG{p}{;}
+\PYG{p}{\PYGZcb{};}
+
+\end{Verbatim}

@@ -9,11 +9,9 @@ Popup {
     modal: true
     width: 300
     height: 420
-    closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
-    property string xAxisName: "X Axis"
-    property string yAxisName: "Y Axis"
+    closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside // condition to close window
     onOpened: {
-        Graph2DState.uiHovering = true;
+        Graph2DState.uiHovering = true; // protect from mouse
         console.log("[SettingsPopup] opened — initialized:", Graph2DState.initialized);
     }
     onClosed: {
@@ -29,7 +27,7 @@ Popup {
 
     property bool show3D: false
 
-    function movePopup(dx, dy) {
+    function movePopup(dx, dy) { // you can move window
         settingsPopup.x = Math.max(0, Math.min(root.width - settingsPopup.width, settingsPopup.x + dx));
         settingsPopup.y = Math.max(0, Math.min(root.height - settingsPopup.height, settingsPopup.y + dy));
     }
@@ -39,18 +37,18 @@ Popup {
         anchors.margins: 8
         rowSpacing: 10
         columnSpacing: 8
-        columns: 3
+        columns: 3 // don't remember
 
         // --- Title row ---
         Rectangle {
             id: titleBar
             color: Theme.mid
-            radius: 6
-            Layout.columnSpan: 3
+            radius: 6 // for corners
+            Layout.columnSpan: 3 // don't remember
             Layout.fillWidth: true
             height: 30
 
-            property real dragStartX: 0
+            property real dragStartX: 0 // where start window
             property real dragStartY: 0
 
             Text {
@@ -61,7 +59,7 @@ Popup {
                 color: Theme.windowText
             }
 
-            MouseArea {
+            MouseArea { // move on title
                 anchors.fill: parent
                 cursorShape: Qt.SizeAllCursor
 
@@ -80,37 +78,6 @@ Popup {
                     settingsPopup.y = Math.max(0, Math.min(root.height - settingsPopup.height, settingsPopup.y));
                 }
             }
-        }
-
-        // --- Axis Names ---
-        Label {
-            text: "X Axis Name:"
-            color: theme ? theme.windowText : "black"
-            Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-        }
-
-        TextField {
-            id: xAxisNameField
-            text: settingsPopup.xAxisName
-            color: theme ? theme.windowText : "black"
-            Layout.fillWidth: true
-            Layout.columnSpan: 2
-            onTextChanged: settingsPopup.xAxisName = text
-        }
-
-        Label {
-            text: "Y Axis Name:"
-            color: theme ? theme.windowText : "black"
-            Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-        }
-
-        TextField {
-            id: yAxisNameField
-            text: settingsPopup.yAxisName
-            color: theme ? theme.windowText : "black"
-            Layout.fillWidth: true
-            Layout.columnSpan: 2
-            onTextChanged: settingsPopup.yAxisName = text
         }
 
         // --- X Zoom ---

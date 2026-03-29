@@ -1,0 +1,13 @@
+\begin{Verbatim}[commandchars=\\\{\},codes={\catcode`\$=3\catcode`\^=7\catcode`\_=8\relax}]
+\PYG{+w}{    }\PYG{k}{struct}\PYG{+w}{ }\PYG{n+nc}{State\PYGZus{}Comparator}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{        }\PYG{k}{template}\PYG{o}{\PYGZlt{}}\PYG{k}{typename}\PYG{+w}{ }\PYG{n+nc}{StateType}\PYG{o}{\PYGZgt{}}
+\PYG{+w}{        }\PYG{k+kt}{bool}\PYG{+w}{ }\PYG{k}{operator}\PYG{p}{()(}\PYG{k}{const}\PYG{+w}{ }\PYG{n}{std}\PYG{o}{::}\PYG{n}{shared\PYGZus{}ptr}\PYG{o}{\PYGZlt{}}\PYG{n}{StateType}\PYG{o}{\PYGZgt{}}\PYG{+w}{ }\PYG{n}{a}\PYG{p}{,}
+\PYG{+w}{                        }\PYG{k}{const}\PYG{+w}{ }\PYG{n}{std}\PYG{o}{::}\PYG{n}{shared\PYGZus{}ptr}\PYG{o}{\PYGZlt{}}\PYG{n}{StateType}\PYG{o}{\PYGZgt{}}\PYG{+w}{ }\PYG{n}{b}\PYG{p}{)}\PYG{+w}{ }\PYG{k}{const}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{            }\PYG{k}{return}\PYG{+w}{ }\PYG{o}{*}\PYG{n}{a}\PYG{+w}{ }\PYG{o}{\PYGZlt{}}\PYG{+w}{ }\PYG{o}{*}\PYG{n}{b}\PYG{p}{;}
+\PYG{+w}{        }\PYG{p}{\PYGZcb{}}
+\PYG{+w}{    }\PYG{p}{\PYGZcb{};}
+
+\PYG{+w}{    }\PYG{k}{template}\PYG{o}{\PYGZlt{}}\PYG{k}{typename}\PYG{+w}{ }\PYG{n+nc}{StateType}\PYG{o}{\PYGZgt{}}
+\PYG{+w}{        }\PYG{k}{using}\PYG{+w}{ }\PYG{n}{BasisType}\PYG{+w}{ }\PYG{o}{=}
+\PYG{+w}{            }\PYG{n}{std}\PYG{o}{::}\PYG{n}{set}\PYG{o}{\PYGZlt{}}\PYG{n}{std}\PYG{o}{::}\PYG{n}{shared\PYGZus{}ptr}\PYG{o}{\PYGZlt{}}\PYG{n}{StateType}\PYG{o}{\PYGZgt{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{State\PYGZus{}Comparator}\PYG{o}{\PYGZgt{}}\PYG{p}{;}
+\end{Verbatim}

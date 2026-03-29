@@ -1,0 +1,24 @@
+\begin{Verbatim}[commandchars=\\\{\},codes={\catcode`\$=3\catcode`\^=7\catcode`\_=8\relax}]
+\PYG{k}{using}\PYG{+w}{ }\PYG{k}{namespace}\PYG{+w}{ }\PYG{n+nn}{QComputations}\PYG{p}{;}
+
+\PYG{n}{Basis\PYGZus{}State}\PYG{+w}{ }\PYG{n+nf}{state}\PYG{p}{(}\PYG{l+m+mi}{5}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{,}\PYG{+w}{ }\PYG{p}{\PYGZob{}}\PYG{l+m+mi}{3}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{2}\PYG{p}{\PYGZcb{});}
+
+\PYG{n}{state}\PYG{p}{.}\PYG{n}{set\PYGZus{}qudit}\PYG{p}{(}\PYG{l+m+mi}{1}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{p}{);}
+\PYG{n}{state}\PYG{p}{.}\PYG{n}{set\PYGZus{}max\PYGZus{}val}\PYG{p}{(}\PYG{l+m+mi}{2}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{2}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{p}{);}
+\PYG{n}{state}\PYG{p}{.}\PYG{n}{set\PYGZus{}qudit}\PYG{p}{(}\PYG{l+m+mi}{2}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{2}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{p}{);}
+\PYG{n}{state}\PYG{p}{.}\PYG{n}{set\PYGZus{}qudit}\PYG{p}{(}\PYG{l+m+mi}{1}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{);}
+
+\PYG{n}{std}\PYG{o}{::}\PYG{n}{cout}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZlt{}}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}SET\PYGZus{}MANUALLY: \PYGZdq{}}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZlt{}}\PYG{+w}{ }\PYG{n}{state}\PYG{p}{.}\PYG{n}{to\PYGZus{}string}\PYG{p}{()}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZlt{}}\PYG{+w}{ }\PYG{n}{std}\PYG{o}{::}\PYG{n}{endl}\PYG{p}{;}
+\PYG{c+c1}{// |0;1;2\PYGZgt{}|1;0\PYGZgt{}}
+
+\PYG{n}{Basis\PYGZus{}State}\PYG{+w}{ }\PYG{n+nf}{new\PYGZus{}state}\PYG{p}{(}\PYG{l+m+mi}{8}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{4}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{4}\PYG{p}{);}
+\PYG{n}{new\PYGZus{}state}\PYG{p}{.}\PYG{n}{set\PYGZus{}state}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}|4;2\PYGZgt{}|1;1\PYGZgt{}|3;2\PYGZgt{}|1;2\PYGZgt{}\PYGZdq{}}\PYG{p}{);}
+
+\PYG{n}{std}\PYG{o}{::}\PYG{n}{cout}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZlt{}}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}SET\PYGZus{}STATE: \PYGZdq{}}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZlt{}}\PYG{+w}{ }\PYG{n}{new\PYGZus{}state}\PYG{p}{.}\PYG{n}{to\PYGZus{}string}\PYG{p}{()}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZlt{}}\PYG{+w}{ }\PYG{n}{std}\PYG{o}{::}\PYG{n}{endl}\PYG{p}{;}
+\PYG{c+c1}{// |4;2\PYGZgt{}|1;1\PYGZgt{}|3;2\PYGZgt{}|1;2\PYGZgt{}}
+
+\PYG{n}{new\PYGZus{}state}\PYG{p}{.}\PYG{n}{set\PYGZus{}group}\PYG{p}{(}\PYG{l+m+mi}{2}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}|0;0\PYGZgt{}\PYGZdq{}}\PYG{p}{);}
+
+\PYG{n}{std}\PYG{o}{::}\PYG{n}{cout}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZlt{}}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}SET\PYGZus{}GROUP: \PYGZdq{}}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZlt{}}\PYG{+w}{ }\PYG{n}{new\PYGZus{}state}\PYG{p}{.}\PYG{n}{to\PYGZus{}string}\PYG{p}{()}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZlt{}}\PYG{+w}{ }\PYG{n}{std}\PYG{o}{::}\PYG{n}{endl}\PYG{p}{;}
+\PYG{c+c1}{// |4;2\PYGZgt{}|1;1\PYGZgt{}|0;0\PYGZgt{}|1;2\PYGZgt{}}
+\end{Verbatim}

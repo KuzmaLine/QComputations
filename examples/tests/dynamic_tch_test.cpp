@@ -1,0 +1,46 @@
+#include "QComputations_SINGLE.hpp"
+#include <iostream>
+#include <regex>
+#include <complex>
+#include <chrono>
+
+constexpr bool is_python_api = false;
+constexpr int max_photons = 1;
+
+using COMPLEX = std::complex<double>;
+
+int main(int argc, char** argv) {
+    using namespace QComputations;
+
+    QConfig::instance().set_width(20); // Ширина ячейки элемента матрицы для stdout
+    double h = QConfig::instance().h(); // Получить постоянную планка
+    double w = QConfig::instance().w(); // Получить частоту
+    QConfig::instance().set_g(0.005); // сила взаимодействия с полем атома
+    QConfig::instance().set_max_photons(max_photons);
+
+    std::vector<size_t> grid_config = {1, 1};
+
+    TCH_State state(grid_config);
+    state.set_n(QConfig::instance().max_photons(), 0);
+    state.set_waveguide(0, 1, 0.01);
+    // state.set_leak_for_cavity(1, 0.2);
+    
+    H_TCH H(state);
+
+    show_basis(H.get_basis());
+
+    // H.show();
+    // std::cout << H.size() << std::endl;
+
+    auto time_vec = linspace(0, 4000, 4000);
+
+    auto probs = schrodinger(state, H, time_vec);
+
+    make_probs_files(H, probs, time_vec, H.get_basis(), "results/general_tch");
+
+    // auto probs = quantum_master_equation(State<Basis_State>(state), H, time_vec);
+
+    // make_probs_files(H, probs, time_vec, H.get_basis(), "results/general_tch_QME");
+
+    return 0;
+}

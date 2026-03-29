@@ -1,0 +1,4 @@
+/home/kuzmaline/Quantum/QComputations/QComputationsDEV/src/grapher/build/CMakeFiles/QtQuickGraphsApp.dir
+/home/kuzmaline/Quantum/QComputations/QComputationsDEV/src/grapher/build/CMakeFiles/edit_cache.dir
+/home/kuzmaline/Quantum/QComputations/QComputationsDEV/src/grapher/build/CMakeFiles/rebuild_cache.dir
+/home/kuzmaline/Quantum/QComputations/QComputationsDEV/src/grapher/build/CMakeFiles/QtQuickGraphsApp_autogen.dir

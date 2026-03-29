@@ -1,0 +1,172 @@
+\begin{Verbatim}[commandchars=\\\{\},codes={\catcode`\$=3\catcode`\^=7\catcode`\_=8\relax}]
+\PYG{k}{template}\PYG{+w}{ }\PYG{o}{\PYGZlt{}}\PYG{k}{typename}\PYG{+w}{ }\PYG{n+nc}{T}\PYG{o}{\PYGZgt{}}
+\PYG{k}{class}\PYG{+w}{ }\PYG{n+nc}{BLOCKED\PYGZus{}Matrix}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{    }\PYG{k}{public}\PYG{o}{:}
+\PYG{+w}{        }\PYG{k}{explicit}\PYG{+w}{ }\PYG{n}{BLOCKED\PYGZus{}Matrix}\PYG{p}{()}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{k}{default}\PYG{p}{;}
+
+\PYG{+w}{        }\PYG{c+c1}{// ??????????????}
+\PYG{+w}{        }\PYG{k}{explicit}\PYG{+w}{ }\PYG{n}{BLOCKED\PYGZus{}Matrix}\PYG{p}{(}\PYG{k}{const}\PYG{+w}{ }\PYG{n}{BLOCKED\PYGZus{}Matrix}\PYG{o}{\PYGZlt{}}\PYG{n}{T}\PYG{o}{\PYGZgt{}\PYGZam{}}\PYG{+w}{ }\PYG{n}{A}\PYG{p}{,}
+\PYG{+w}{                                }\PYG{k}{const}\PYG{+w}{ }\PYG{n}{Matrix}\PYG{o}{\PYGZlt{}}\PYG{n}{T}\PYG{o}{\PYGZgt{}\PYGZam{}}\PYG{+w}{ }\PYG{n}{local\PYGZus{}matrix}\PYG{p}{);}
+
+\PYG{+w}{        }\PYG{c+c1}{// Сгенерировать матрицу с помощью функции. NB и MB}
+\PYG{+w}{        }\PYG{c+c1}{// \PYGZhy{} размеры блоков (подблоков общего блока,}
+\PYG{+w}{        }\PYG{c+c1}{// так как блок в ядре генерируется циклически,}
+\PYG{+w}{        }\PYG{c+c1}{// подробнее в документации к Intel OneAPI),}
+\PYG{+w}{        }\PYG{c+c1}{// значения 0 означает выбор размера}
+\PYG{+w}{        }\PYG{c+c1}{// блока по умолчанию. (Рекомендуется)}
+\PYG{+w}{        }\PYG{k}{explicit}\PYG{+w}{ }\PYG{n}{BLOCKED\PYGZus{}Matrix}\PYG{p}{(}\PYG{n}{ILP\PYGZus{}TYPE}\PYG{+w}{ }\PYG{n}{ctxt}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{MATRIX\PYGZus{}TYPE}\PYG{+w}{ }\PYG{n}{type}\PYG{p}{,}
+\PYG{+w}{                                }\PYG{k+kt}{size\PYGZus{}t}\PYG{+w}{ }\PYG{n}{n}\PYG{p}{,}\PYG{+w}{ }\PYG{k+kt}{size\PYGZus{}t}\PYG{+w}{ }\PYG{n}{m}\PYG{p}{,}
+\PYG{+w}{                                }\PYG{n}{std}\PYG{o}{::}\PYG{n}{function}\PYG{o}{\PYGZlt{}}\PYG{n}{T}\PYG{p}{(}\PYG{k+kt}{size\PYGZus{}t}\PYG{p}{,}\PYG{+w}{ }\PYG{k+kt}{size\PYGZus{}t}\PYG{p}{)}\PYG{o}{\PYGZgt{}}\PYG{+w}{ }\PYG{n}{func}\PYG{p}{,}
+\PYG{+w}{                                }\PYG{k+kt}{size\PYGZus{}t}\PYG{+w}{ }\PYG{n}{NB}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{p}{,}\PYG{+w}{ }\PYG{k+kt}{size\PYGZus{}t}\PYG{+w}{ }\PYG{n}{MB}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{p}{);}
+
+\PYG{+w}{        }\PYG{c+c1}{// Сгенерировать матрицу с начальным значанием value}
+\PYG{+w}{        }\PYG{k}{explicit}\PYG{+w}{ }\PYG{n}{BLOCKED\PYGZus{}Matrix}\PYG{p}{(}\PYG{n}{ILP\PYGZus{}TYPE}\PYG{+w}{ }\PYG{n}{ctxt}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{MATRIX\PYGZus{}TYPE}\PYG{+w}{ }\PYG{n}{type}\PYG{p}{,}
+\PYG{+w}{                                }\PYG{k+kt}{size\PYGZus{}t}\PYG{+w}{ }\PYG{n}{n}\PYG{p}{,}\PYG{+w}{ }\PYG{k+kt}{size\PYGZus{}t}\PYG{+w}{ }\PYG{n}{m}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{T}\PYG{+w}{ }\PYG{n}{value}\PYG{p}{,}
+\PYG{+w}{                                }\PYG{k+kt}{size\PYGZus{}t}\PYG{+w}{ }\PYG{n}{NB}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{p}{,}\PYG{+w}{ }\PYG{k+kt}{size\PYGZus{}t}\PYG{+w}{ }\PYG{n}{MB}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{p}{);}
+
+\PYG{+w}{        }\PYG{c+c1}{// Сгенерировать неинициализированную матрицу}
+\PYG{+w}{        }\PYG{k}{explicit}\PYG{+w}{ }\PYG{n}{BLOCKED\PYGZus{}Matrix}\PYG{p}{(}\PYG{n}{ILP\PYGZus{}TYPE}\PYG{+w}{ }\PYG{n}{ctxt}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{MATRIX\PYGZus{}TYPE}\PYG{+w}{ }\PYG{n}{type}\PYG{p}{,}
+\PYG{+w}{                                }\PYG{k+kt}{size\PYGZus{}t}\PYG{+w}{ }\PYG{n}{n}\PYG{p}{,}\PYG{+w}{ }\PYG{k+kt}{size\PYGZus{}t}\PYG{+w}{ }\PYG{n}{m}\PYG{p}{,}
+\PYG{+w}{                                }\PYG{k+kt}{size\PYGZus{}t}\PYG{+w}{ }\PYG{n}{NB}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{p}{,}\PYG{+w}{ }\PYG{k+kt}{size\PYGZus{}t}\PYG{+w}{ }\PYG{n}{MB}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{p}{);}
+
+\PYG{+w}{        }\PYG{c+c1}{// Распределить матрицу А по блокам}
+\PYG{+w}{        }\PYG{k}{explicit}\PYG{+w}{ }\PYG{n}{BLOCKED\PYGZus{}Matrix}\PYG{p}{(}\PYG{n}{ILP\PYGZus{}TYPE}\PYG{+w}{ }\PYG{n}{ctxt}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{MATRIX\PYGZus{}TYPE}\PYG{+w}{ }\PYG{n}{type}\PYG{p}{,}
+\PYG{+w}{                                }\PYG{k}{const}\PYG{+w}{ }\PYG{n}{Matrix}\PYG{o}{\PYGZlt{}}\PYG{n}{T}\PYG{o}{\PYGZgt{}\PYGZam{}}\PYG{+w}{ }\PYG{n}{A}\PYG{p}{,}
+\PYG{+w}{                                }\PYG{k+kt}{size\PYGZus{}t}\PYG{+w}{ }\PYG{n}{NB}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{p}{,}\PYG{+w}{  }\PYG{k+kt}{size\PYGZus{}t}\PYG{+w}{ }\PYG{n}{MB}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{p}{);}
+
+\PYG{+w}{        }\PYG{c+c1}{// Make dims for multiply matrix ??????}
+\PYG{+w}{        }\PYG{k}{explicit}\PYG{+w}{ }\PYG{n}{BLOCKED\PYGZus{}Matrix}\PYG{p}{(}\PYG{k}{const}\PYG{+w}{ }\PYG{n}{BLOCKED\PYGZus{}Matrix}\PYG{o}{\PYGZlt{}}\PYG{n}{T}\PYG{o}{\PYGZgt{}\PYGZam{}}\PYG{+w}{ }\PYG{n}{A}\PYG{p}{,}
+\PYG{+w}{                                }\PYG{k}{const}\PYG{+w}{ }\PYG{n}{BLOCKED\PYGZus{}Matrix}\PYG{o}{\PYGZlt{}}\PYG{n}{T}\PYG{o}{\PYGZgt{}\PYGZam{}}\PYG{+w}{ }\PYG{n}{B}\PYG{p}{);}
+
+\PYG{+w}{        }\PYG{c+c1}{// Получить элемент по глобальным индексам i и j.}
+\PYG{+w}{        }\PYG{c+c1}{// (Требует участия как минимум 2 процессов.}
+\PYG{+w}{        }\PYG{c+c1}{// Того, который спрашивает, и того, у кого}
+\PYG{+w}{        }\PYG{c+c1}{// находится блок с данным элементом, участие}
+\PYG{+w}{        }\PYG{c+c1}{// остальных позволяется, но необязательно)}
+\PYG{+w}{        }\PYG{n}{T}\PYG{+w}{ }\PYG{n+nf}{get}\PYG{p}{(}\PYG{k+kt}{size\PYGZus{}t}\PYG{+w}{ }\PYG{n}{i}\PYG{p}{,}\PYG{+w}{ }\PYG{k+kt}{size\PYGZus{}t}\PYG{+w}{ }\PYG{n}{j}\PYG{p}{)}\PYG{+w}{ }\PYG{k}{const}\PYG{p}{;}
+
+\PYG{+w}{        }\PYG{c+c1}{// Установить элемент по глобальным индексам i и j}
+\PYG{+w}{        }\PYG{c+c1}{// значению num. (Требует участия}
+\PYG{+w}{        }\PYG{c+c1}{// как минимум 2 процессов. Того, который приказывает}
+\PYG{+w}{        }\PYG{c+c1}{// установить элемент, и того, у кого находится}
+\PYG{+w}{        }\PYG{c+c1}{// блок с данным элементом)}
+\PYG{+w}{        }\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n+nf}{set}\PYG{p}{(}\PYG{k+kt}{size\PYGZus{}t}\PYG{+w}{ }\PYG{n}{i}\PYG{p}{,}\PYG{+w}{ }\PYG{k+kt}{size\PYGZus{}t}\PYG{+w}{ }\PYG{n}{j}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{T}\PYG{+w}{ }\PYG{n}{num}\PYG{p}{);}
+
+\PYG{+w}{        }\PYG{c+c1}{// Важный элемент библиотеки Intel OneAPI, но для}
+\PYG{+w}{        }\PYG{c+c1}{// пользователя библиотеки QComputations бесполезный.}
+\PYG{+w}{        }\PYG{n}{std}\PYG{o}{::}\PYG{n}{vector}\PYG{o}{\PYGZlt{}}\PYG{n}{ILP\PYGZus{}TYPE}\PYG{o}{\PYGZgt{}}\PYG{+w}{ }\PYG{n}{desc}\PYG{p}{()}\PYG{+w}{ }\PYG{k}{const}\PYG{p}{;}
+
+\PYG{+w}{        }\PYG{c+c1}{// Операторные функции. Главная цель \PYGZhy{} чтобы работать}
+\PYG{+w}{        }\PYG{c+c1}{// с данным классом было также легко, как с обычной матрицей.}
+\PYG{+w}{        }\PYG{n}{BLOCKED\PYGZus{}Matrix}\PYG{o}{\PYGZlt{}}\PYG{n}{T}\PYG{o}{\PYGZgt{}}\PYG{+w}{ }\PYG{k}{operator}\PYG{o}{*}\PYG{p}{(}\PYG{k}{const}\PYG{+w}{ }\PYG{n}{BLOCKED\PYGZus{}Matrix}\PYG{o}{\PYGZlt{}}\PYG{n}{T}\PYG{o}{\PYGZgt{}\PYGZam{}}\PYG{+w}{ }\PYG{n}{B}\PYG{p}{)}\PYG{+w}{ }\PYG{k}{const}\PYG{p}{;}
+\PYG{+w}{        }\PYG{k+kt}{void}\PYG{+w}{ }\PYG{k}{operator}\PYG{o}{*=}\PYG{p}{(}\PYG{k}{const}\PYG{+w}{ }\PYG{n}{BLOCKED\PYGZus{}Matrix}\PYG{o}{\PYGZlt{}}\PYG{n}{T}\PYG{o}{\PYGZgt{}\PYGZam{}}\PYG{+w}{ }\PYG{n}{B}\PYG{p}{);}
+\PYG{+w}{        }\PYG{n}{BLOCKED\PYGZus{}Matrix}\PYG{o}{\PYGZlt{}}\PYG{n}{T}\PYG{o}{\PYGZgt{}}\PYG{+w}{ }\PYG{k}{operator}\PYG{o}{*}\PYG{p}{(}\PYG{n}{T}\PYG{+w}{ }\PYG{n}{num}\PYG{p}{)}\PYG{+w}{ }\PYG{k}{const}\PYG{p}{;}
+\PYG{+w}{        }\PYG{k+kt}{void}\PYG{+w}{ }\PYG{k}{operator}\PYG{o}{*=}\PYG{p}{(}\PYG{n}{T}\PYG{+w}{ }\PYG{n}{num}\PYG{p}{);}
+\PYG{+w}{        }\PYG{n}{BLOCKED\PYGZus{}Matrix}\PYG{o}{\PYGZlt{}}\PYG{n}{T}\PYG{o}{\PYGZgt{}}\PYG{+w}{ }\PYG{k}{operator}\PYG{o}{+}\PYG{p}{(}\PYG{k}{const}\PYG{+w}{ }\PYG{n}{BLOCKED\PYGZus{}Matrix}\PYG{o}{\PYGZlt{}}\PYG{n}{T}\PYG{o}{\PYGZgt{}\PYGZam{}}\PYG{+w}{ }\PYG{n}{B}\PYG{p}{)}\PYG{+w}{ }\PYG{k}{const}\PYG{p}{;}
+\PYG{+w}{        }\PYG{k+kt}{void}\PYG{+w}{ }\PYG{k}{operator}\PYG{o}{+=}\PYG{p}{(}\PYG{k}{const}\PYG{+w}{ }\PYG{n}{BLOCKED\PYGZus{}Matrix}\PYG{o}{\PYGZlt{}}\PYG{n}{T}\PYG{o}{\PYGZgt{}\PYGZam{}}\PYG{+w}{ }\PYG{n}{B}\PYG{p}{);}
+\PYG{+w}{        }\PYG{n}{BLOCKED\PYGZus{}Matrix}\PYG{o}{\PYGZlt{}}\PYG{n}{T}\PYG{o}{\PYGZgt{}}\PYG{+w}{ }\PYG{k}{operator}\PYG{o}{+}\PYG{p}{(}\PYG{n}{T}\PYG{+w}{ }\PYG{n}{num}\PYG{p}{)}\PYG{+w}{ }\PYG{k}{const}\PYG{p}{;}
+\PYG{+w}{        }\PYG{k+kt}{void}\PYG{+w}{ }\PYG{k}{operator}\PYG{o}{+=}\PYG{p}{(}\PYG{n}{T}\PYG{+w}{ }\PYG{n}{num}\PYG{p}{);}
+\PYG{+w}{        }\PYG{n}{BLOCKED\PYGZus{}Matrix}\PYG{o}{\PYGZlt{}}\PYG{n}{T}\PYG{o}{\PYGZgt{}}\PYG{+w}{ }\PYG{k}{operator}\PYG{o}{\PYGZhy{}}\PYG{p}{(}\PYG{k}{const}\PYG{+w}{ }\PYG{n}{BLOCKED\PYGZus{}Matrix}\PYG{o}{\PYGZlt{}}\PYG{n}{T}\PYG{o}{\PYGZgt{}\PYGZam{}}\PYG{+w}{ }\PYG{n}{B}\PYG{p}{)}\PYG{+w}{ }\PYG{k}{const}\PYG{p}{;}
+\PYG{+w}{        }\PYG{k+kt}{void}\PYG{+w}{ }\PYG{k}{operator}\PYG{o}{\PYGZhy{}=}\PYG{p}{(}\PYG{k}{const}\PYG{+w}{ }\PYG{n}{BLOCKED\PYGZus{}Matrix}\PYG{o}{\PYGZlt{}}\PYG{n}{T}\PYG{o}{\PYGZgt{}\PYGZam{}}\PYG{+w}{ }\PYG{n}{B}\PYG{p}{);}
+\PYG{+w}{        }\PYG{n}{BLOCKED\PYGZus{}Matrix}\PYG{o}{\PYGZlt{}}\PYG{n}{T}\PYG{o}{\PYGZgt{}}\PYG{+w}{ }\PYG{k}{operator}\PYG{o}{\PYGZhy{}}\PYG{p}{(}\PYG{n}{T}\PYG{+w}{ }\PYG{n}{num}\PYG{p}{)}\PYG{+w}{ }\PYG{k}{const}\PYG{p}{;}
+\PYG{+w}{        }\PYG{k+kt}{void}\PYG{+w}{ }\PYG{k}{operator}\PYG{o}{\PYGZhy{}=}\PYG{p}{(}\PYG{n}{T}\PYG{+w}{ }\PYG{n}{num}\PYG{p}{);}
+\PYG{+w}{        }\PYG{n}{BLOCKED\PYGZus{}Matrix}\PYG{o}{\PYGZlt{}}\PYG{n}{T}\PYG{o}{\PYGZgt{}}\PYG{+w}{ }\PYG{k}{operator}\PYG{o}{/}\PYG{p}{(}\PYG{n}{T}\PYG{+w}{ }\PYG{n}{num}\PYG{p}{)}\PYG{+w}{ }\PYG{k}{const}\PYG{p}{;}
+
+
+\PYG{+w}{        }\PYG{c+c1}{// ???????????????????????????}
+\PYG{+w}{        }\PYG{n}{std}\PYG{o}{::}\PYG{n}{vector}\PYG{o}{\PYGZlt{}}\PYG{n}{T}\PYG{o}{\PYGZgt{}}\PYG{+w}{ }\PYG{k}{operator}\PYG{o}{*}\PYG{p}{(}\PYG{k}{const}\PYG{+w}{ }\PYG{n}{std}\PYG{o}{::}\PYG{n}{vector}\PYG{o}{\PYGZlt{}}\PYG{n}{T}\PYG{o}{\PYGZgt{}\PYGZam{}}\PYG{+w}{ }\PYG{n}{A}\PYG{p}{)}\PYG{+w}{ }\PYG{k}{const}\PYG{p}{;}
+\PYG{+w}{        }\PYG{k+kt}{void}\PYG{+w}{ }\PYG{k}{operator}\PYG{o}{*=}\PYG{p}{(}\PYG{k}{const}\PYG{+w}{ }\PYG{n}{std}\PYG{o}{::}\PYG{n}{vector}\PYG{o}{\PYGZlt{}}\PYG{n}{T}\PYG{o}{\PYGZgt{}\PYGZam{}}\PYG{+w}{ }\PYG{n}{A}\PYG{p}{);}
+\PYG{+w}{        }\PYG{n}{std}\PYG{o}{::}\PYG{n}{vector}\PYG{o}{\PYGZlt{}}\PYG{n}{T}\PYG{o}{\PYGZgt{}}\PYG{+w}{ }\PYG{k}{operator}\PYG{o}{+}\PYG{p}{(}\PYG{k}{const}\PYG{+w}{ }\PYG{n}{std}\PYG{o}{::}\PYG{n}{vector}\PYG{o}{\PYGZlt{}}\PYG{n}{T}\PYG{o}{\PYGZgt{}\PYGZam{}}\PYG{+w}{ }\PYG{n}{A}\PYG{p}{)}\PYG{+w}{ }\PYG{k}{const}\PYG{p}{;}
+\PYG{+w}{        }\PYG{k+kt}{void}\PYG{+w}{ }\PYG{k}{operator}\PYG{o}{+=}\PYG{p}{(}\PYG{k}{const}\PYG{+w}{ }\PYG{n}{std}\PYG{o}{::}\PYG{n}{vector}\PYG{o}{\PYGZlt{}}\PYG{n}{T}\PYG{o}{\PYGZgt{}\PYGZam{}}\PYG{+w}{ }\PYG{n}{A}\PYG{p}{);}
+\PYG{+w}{        }\PYG{n}{std}\PYG{o}{::}\PYG{n}{vector}\PYG{o}{\PYGZlt{}}\PYG{n}{T}\PYG{o}{\PYGZgt{}}\PYG{+w}{ }\PYG{k}{operator}\PYG{o}{\PYGZhy{}}\PYG{p}{(}\PYG{k}{const}\PYG{+w}{ }\PYG{n}{std}\PYG{o}{::}\PYG{n}{vector}\PYG{o}{\PYGZlt{}}\PYG{n}{T}\PYG{o}{\PYGZgt{}\PYGZam{}}\PYG{+w}{ }\PYG{n}{A}\PYG{p}{)}\PYG{+w}{ }\PYG{k}{const}\PYG{p}{;}
+\PYG{+w}{        }\PYG{k+kt}{void}\PYG{+w}{ }\PYG{k}{operator}\PYG{o}{\PYGZhy{}=}\PYG{p}{(}\PYG{k}{const}\PYG{+w}{ }\PYG{n}{std}\PYG{o}{::}\PYG{n}{vector}\PYG{o}{\PYGZlt{}}\PYG{n}{T}\PYG{o}{\PYGZgt{}\PYGZam{}}\PYG{+w}{ }\PYG{n}{A}\PYG{p}{);}
+
+\PYG{+w}{        }\PYG{c+c1}{// Вернуть локальный размер общего блока матрицы (число строк)}
+\PYG{+w}{        }\PYG{k+kt}{size\PYGZus{}t}\PYG{+w}{ }\PYG{n+nf}{local\PYGZus{}n}\PYG{p}{()}\PYG{+w}{ }\PYG{k}{const}\PYG{+w}{ }\PYG{p}{\PYGZob{}}\PYG{+w}{ }\PYG{k}{return}\PYG{+w}{ }\PYG{n}{local\PYGZus{}matrix\PYGZus{}}\PYG{p}{.}\PYG{n}{n}\PYG{p}{();}\PYG{+w}{ }\PYG{p}{\PYGZcb{}}
+
+\PYG{+w}{        }\PYG{c+c1}{// Вернуть локальный размер общего блока матрицы (число столбцов)}
+\PYG{+w}{        }\PYG{k+kt}{size\PYGZus{}t}\PYG{+w}{ }\PYG{n+nf}{local\PYGZus{}m}\PYG{p}{()}\PYG{+w}{ }\PYG{k}{const}\PYG{+w}{ }\PYG{p}{\PYGZob{}}\PYG{+w}{ }\PYG{k}{return}\PYG{+w}{ }\PYG{n}{local\PYGZus{}matrix\PYGZus{}}\PYG{p}{.}\PYG{n}{m}\PYG{p}{();}\PYG{+w}{ }\PYG{p}{\PYGZcb{}}
+
+\PYG{+w}{        }\PYG{c+c1}{// Вернуть глобальное число строк в матрице}
+\PYG{+w}{        }\PYG{k+kt}{size\PYGZus{}t}\PYG{+w}{ }\PYG{n+nf}{n}\PYG{p}{()}\PYG{+w}{ }\PYG{k}{const}\PYG{+w}{ }\PYG{p}{\PYGZob{}}\PYG{+w}{ }\PYG{k}{return}\PYG{+w}{ }\PYG{n}{n\PYGZus{}}\PYG{p}{;}\PYG{+w}{ }\PYG{p}{\PYGZcb{}}
+
+\PYG{+w}{        }\PYG{c+c1}{// Вернуть глобальное число столбцов в матрице}
+\PYG{+w}{        }\PYG{k+kt}{size\PYGZus{}t}\PYG{+w}{ }\PYG{n+nf}{m}\PYG{p}{()}\PYG{+w}{ }\PYG{k}{const}\PYG{+w}{ }\PYG{p}{\PYGZob{}}\PYG{+w}{ }\PYG{k}{return}\PYG{+w}{ }\PYG{n}{m\PYGZus{}}\PYG{p}{;}\PYG{+w}{ }\PYG{p}{\PYGZcb{}}
+
+\PYG{+w}{        }\PYG{c+c1}{// Вернуть число строк в подблоках}
+\PYG{+w}{        }\PYG{k+kt}{size\PYGZus{}t}\PYG{+w}{ }\PYG{n+nf}{NB}\PYG{p}{()}\PYG{+w}{ }\PYG{k}{const}\PYG{+w}{ }\PYG{p}{\PYGZob{}}\PYG{+w}{ }\PYG{k}{return}\PYG{+w}{ }\PYG{n}{NB\PYGZus{}}\PYG{p}{;}\PYG{+w}{ }\PYG{p}{\PYGZcb{}}
+
+\PYG{+w}{        }\PYG{c+c1}{// Вернуть число столбцов в подблоках}
+\PYG{+w}{        }\PYG{k+kt}{size\PYGZus{}t}\PYG{+w}{ }\PYG{n+nf}{MB}\PYG{p}{()}\PYG{+w}{ }\PYG{k}{const}\PYG{+w}{ }\PYG{p}{\PYGZob{}}\PYG{+w}{ }\PYG{k}{return}\PYG{+w}{ }\PYG{n}{MB\PYGZus{}}\PYG{p}{;}\PYG{+w}{ }\PYG{p}{\PYGZcb{}}
+
+\PYG{+w}{        }\PYG{c+c1}{// Вернуть BLACS сontext}
+\PYG{+w}{        }\PYG{n}{ILP\PYGZus{}TYPE}\PYG{+w}{ }\PYG{n+nf}{ctxt}\PYG{p}{()}\PYG{+w}{ }\PYG{k}{const}\PYG{+w}{ }\PYG{p}{\PYGZob{}}\PYG{+w}{ }\PYG{k}{return}\PYG{+w}{ }\PYG{n}{ctxt\PYGZus{}}\PYG{p}{;}\PYG{+w}{ }\PYG{p}{\PYGZcb{}}
+
+\PYG{+w}{        }\PYG{c+c1}{// Вернуть тип матрицы}
+\PYG{+w}{        }\PYG{n}{MATRIX\PYGZus{}TYPE}\PYG{+w}{ }\PYG{n+nf}{matrix\PYGZus{}type}\PYG{p}{()}\PYG{+w}{ }\PYG{k}{const}\PYG{+w}{ }\PYG{p}{\PYGZob{}}\PYG{+w}{ }\PYG{k}{return}\PYG{+w}{ }\PYG{n}{matrix\PYGZus{}type\PYGZus{}}\PYG{p}{;}\PYG{+w}{ }\PYG{p}{\PYGZcb{}}
+
+\PYG{+w}{        }\PYG{c+c1}{// Вернуть весь общий блок в виде одномерного массива}
+\PYG{+w}{        }\PYG{n}{Matrix}\PYG{o}{\PYGZlt{}}\PYG{n}{T}\PYG{o}{\PYGZgt{}\PYGZam{}}\PYG{+w}{ }\PYG{n}{get\PYGZus{}local\PYGZus{}matrix}\PYG{p}{()}\PYG{+w}{ }\PYG{p}{\PYGZob{}}\PYG{+w}{ }\PYG{k}{return}\PYG{+w}{ }\PYG{n}{local\PYGZus{}matrix\PYGZus{}}\PYG{p}{;\PYGZcb{}}
+\PYG{+w}{        }\PYG{k}{const}\PYG{+w}{ }\PYG{n}{Matrix}\PYG{o}{\PYGZlt{}}\PYG{n}{T}\PYG{o}{\PYGZgt{}\PYGZam{}}\PYG{+w}{ }\PYG{n}{get\PYGZus{}local\PYGZus{}matrix}\PYG{p}{()}\PYG{+w}{ }\PYG{k}{const}\PYG{+w}{ }\PYG{p}{\PYGZob{}}\PYG{+w}{ }\PYG{k}{return}\PYG{+w}{ }\PYG{n}{local\PYGZus{}matrix\PYGZus{}}\PYG{p}{;\PYGZcb{}}
+
+\PYG{+w}{        }\PYG{c+c1}{// Вернуть указатель на локальный элемент по локальным индексам i и j.}
+\PYG{+w}{        }\PYG{n}{T}\PYG{o}{*}\PYG{+w}{ }\PYG{n}{data}\PYG{p}{(}\PYG{k+kt}{size\PYGZus{}t}\PYG{+w}{ }\PYG{n}{i}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{p}{,}\PYG{+w}{ }\PYG{k+kt}{size\PYGZus{}t}\PYG{+w}{ }\PYG{n}{j}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{            }\PYG{k}{return}\PYG{+w}{ }\PYG{n}{local\PYGZus{}matrix\PYGZus{}}\PYG{p}{.}\PYG{n}{data}\PYG{p}{()}\PYG{+w}{ }\PYG{o}{+}\PYG{+w}{ }\PYG{n}{get\PYGZus{}local\PYGZus{}index}\PYG{p}{(}\PYG{n}{i}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{j}\PYG{p}{);}\PYG{+w}{ }\PYG{p}{\PYGZcb{}}
+\PYG{+w}{        }\PYG{k}{const}\PYG{+w}{ }\PYG{n}{T}\PYG{o}{*}\PYG{+w}{ }\PYG{n}{data}\PYG{p}{(}\PYG{k+kt}{size\PYGZus{}t}\PYG{+w}{ }\PYG{n}{i}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{p}{,}\PYG{+w}{ }\PYG{k+kt}{size\PYGZus{}t}\PYG{+w}{ }\PYG{n}{j}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{p}{)}\PYG{+w}{ }\PYG{k}{const}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{            }\PYG{k}{return}\PYG{+w}{ }\PYG{n}{local\PYGZus{}matrix\PYGZus{}}\PYG{p}{.}\PYG{n}{data}\PYG{p}{()}\PYG{+w}{ }\PYG{o}{+}\PYG{+w}{ }\PYG{n}{get\PYGZus{}local\PYGZus{}index}\PYG{p}{(}\PYG{n}{i}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{j}\PYG{p}{);}\PYG{+w}{ }\PYG{p}{\PYGZcb{}}
+
+\PYG{+w}{        }\PYG{c+c1}{// Вернуть локальный элемент по локальный индексам i и j.}
+\PYG{+w}{        }\PYG{n}{T}\PYG{o}{\PYGZam{}}\PYG{+w}{ }\PYG{k}{operator}\PYG{p}{()(}\PYG{k+kt}{size\PYGZus{}t}\PYG{+w}{ }\PYG{n}{i}\PYG{p}{,}\PYG{+w}{ }\PYG{k+kt}{size\PYGZus{}t}\PYG{+w}{ }\PYG{n}{j}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}\PYG{+w}{ }\PYG{k}{return}\PYG{+w}{ }\PYG{n}{local\PYGZus{}matrix\PYGZus{}}\PYG{p}{(}\PYG{n}{i}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{j}\PYG{p}{);}\PYG{+w}{ }\PYG{p}{\PYGZcb{}}
+\PYG{+w}{        }\PYG{k}{const}\PYG{+w}{ }\PYG{n}{T}\PYG{+w}{ }\PYG{k}{operator}\PYG{p}{()(}\PYG{k+kt}{size\PYGZus{}t}\PYG{+w}{ }\PYG{n}{i}\PYG{p}{,}\PYG{+w}{ }\PYG{k+kt}{size\PYGZus{}t}\PYG{+w}{ }\PYG{n}{j}\PYG{p}{)}\PYG{+w}{ }\PYG{k}{const}\PYG{+w}{ }\PYG{p}{\PYGZob{}}\PYG{+w}{ }\PYG{k}{return}\PYG{+w}{ }\PYG{n}{local\PYGZus{}matrix\PYGZus{}}\PYG{p}{(}\PYG{n}{i}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{j}\PYG{p}{);}\PYG{+w}{ }\PYG{p}{\PYGZcb{}}
+
+\PYG{+w}{        }\PYG{c+c1}{// Распечатать матрицу в блочной виде,}
+\PYG{+w}{        }\PYG{c+c1}{// то есть каждый процесс напечатает свой блок}
+\PYG{+w}{        }\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n}{print\PYGZus{}distributed}\PYG{p}{(}\PYG{k}{const}\PYG{+w}{ }\PYG{n}{std}\PYG{o}{::}\PYG{n}{string}\PYG{o}{\PYGZam{}}\PYG{+w}{ }\PYG{n}{name}\PYG{p}{)}\PYG{+w}{ }\PYG{k}{const}\PYG{p}{;}
+
+\PYG{+w}{        }\PYG{c+c1}{// Распечатать матрицу в виде обычной матрицы}
+\PYG{+w}{        }\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n+nf}{show}\PYG{p}{(}\PYG{k+kt}{size\PYGZus{}t}\PYG{+w}{ }\PYG{n}{width}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{QConfig}\PYG{o}{::}\PYG{n}{instance}\PYG{p}{().}\PYG{n}{width}\PYG{p}{(),}
+\PYG{+w}{                  }\PYG{n}{ILP\PYGZus{}TYPE}\PYG{+w}{ }\PYG{n}{root\PYGZus{}id}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{mpi}\PYG{o}{::}\PYG{n}{ROOT\PYGZus{}ID}\PYG{p}{)}\PYG{+w}{ }\PYG{k}{const}\PYG{p}{;}
+
+\PYG{+w}{        }\PYG{c+c1}{// Записать матрицу в файл формата CSV}
+\PYG{+w}{        }\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n+nf}{write\PYGZus{}to\PYGZus{}csv\PYGZus{}file}\PYG{p}{(}\PYG{k}{const}\PYG{+w}{ }\PYG{n}{std}\PYG{o}{::}\PYG{n}{string}\PYG{o}{\PYGZam{}}\PYG{+w}{ }\PYG{n}{filename}\PYG{p}{)}\PYG{+w}{ }\PYG{k}{const}\PYG{p}{;}
+
+\PYG{+w}{        }\PYG{c+c1}{// Получить глобальный номер измерения по локальному}
+\PYG{+w}{        }\PYG{n}{ILP\PYGZus{}TYPE}\PYG{+w}{ }\PYG{n+nf}{get\PYGZus{}global\PYGZus{}row}\PYG{p}{(}\PYG{k+kt}{size\PYGZus{}t}\PYG{+w}{ }\PYG{n}{i}\PYG{p}{)}\PYG{+w}{ }\PYG{k}{const}\PYG{p}{;}
+\PYG{+w}{        }\PYG{n}{ILP\PYGZus{}TYPE}\PYG{+w}{ }\PYG{n+nf}{get\PYGZus{}global\PYGZus{}col}\PYG{p}{(}\PYG{k+kt}{size\PYGZus{}t}\PYG{+w}{ }\PYG{n}{j}\PYG{p}{)}\PYG{+w}{ }\PYG{k}{const}\PYG{p}{;}
+
+\PYG{+w}{        }\PYG{c+c1}{// Получить локальный номер измерения по глобальному}
+\PYG{+w}{        }\PYG{n}{ILP\PYGZus{}TYPE}\PYG{+w}{ }\PYG{n+nf}{get\PYGZus{}local\PYGZus{}row}\PYG{p}{(}\PYG{k+kt}{size\PYGZus{}t}\PYG{+w}{ }\PYG{n}{i}\PYG{p}{)}\PYG{+w}{ }\PYG{k}{const}\PYG{p}{;}
+\PYG{+w}{        }\PYG{n}{ILP\PYGZus{}TYPE}\PYG{+w}{ }\PYG{n+nf}{get\PYGZus{}local\PYGZus{}col}\PYG{p}{(}\PYG{k+kt}{size\PYGZus{}t}\PYG{+w}{ }\PYG{n}{j}\PYG{p}{)}\PYG{+w}{ }\PYG{k}{const}\PYG{p}{;}
+
+\PYG{+w}{        }\PYG{c+c1}{// Получить строку, в которой находится процессор,}
+\PYG{+w}{        }\PYG{c+c1}{// которому принадлежит строка под номером i.}
+\PYG{+w}{        }\PYG{n}{ILP\PYGZus{}TYPE}\PYG{+w}{ }\PYG{n+nf}{get\PYGZus{}row\PYGZus{}proc}\PYG{p}{(}\PYG{k+kt}{size\PYGZus{}t}\PYG{+w}{ }\PYG{n}{i}\PYG{p}{)}\PYG{+w}{ }\PYG{k}{const}\PYG{p}{;}
+
+\PYG{+w}{        }\PYG{c+c1}{// Получить столбец, в которой находится процессор,}
+\PYG{+w}{        }\PYG{c+c1}{// которому принадлежит столбец под номером j.}
+\PYG{+w}{        }\PYG{n}{ILP\PYGZus{}TYPE}\PYG{+w}{ }\PYG{n+nf}{get\PYGZus{}col\PYGZus{}proc}\PYG{p}{(}\PYG{k+kt}{size\PYGZus{}t}\PYG{+w}{ }\PYG{n}{j}\PYG{p}{)}\PYG{+w}{ }\PYG{k}{const}\PYG{p}{;}
+
+\PYG{+w}{        }\PYG{c+c1}{// Сделать эрмитовое преобразование матрице}
+\PYG{+w}{        }\PYG{n}{BLOCKED\PYGZus{}Matrix}\PYG{o}{\PYGZlt{}}\PYG{n}{T}\PYG{o}{\PYGZgt{}}\PYG{+w}{ }\PYG{n}{hermit}\PYG{p}{()}\PYG{+w}{ }\PYG{k}{const}\PYG{p}{;}
+
+\PYG{+w}{        }\PYG{c+c1}{// Получить весь столбец целиком}
+\PYG{+w}{        }\PYG{n}{std}\PYG{o}{::}\PYG{n}{vector}\PYG{o}{\PYGZlt{}}\PYG{n}{T}\PYG{o}{\PYGZgt{}}\PYG{+w}{ }\PYG{n}{col}\PYG{p}{(}\PYG{k+kt}{size\PYGZus{}t}\PYG{+w}{ }\PYG{n}{i}\PYG{p}{)}\PYG{+w}{ }\PYG{k}{const}\PYG{p}{;}
+
+\PYG{+w}{        }\PYG{c+c1}{// Получить всю строку целиком}
+\PYG{+w}{        }\PYG{n}{std}\PYG{o}{::}\PYG{n}{vector}\PYG{o}{\PYGZlt{}}\PYG{n}{T}\PYG{o}{\PYGZgt{}}\PYG{+w}{ }\PYG{n}{row}\PYG{p}{(}\PYG{k+kt}{size\PYGZus{}t}\PYG{+w}{ }\PYG{n}{j}\PYG{p}{)}\PYG{+w}{ }\PYG{k}{const}\PYG{p}{;}
+\PYG{+w}{    }\PYG{k}{protected}\PYG{o}{:}
+\PYG{+w}{        }\PYG{k+kt}{size\PYGZus{}t}\PYG{+w}{ }\PYG{n}{get\PYGZus{}global\PYGZus{}index}\PYG{p}{(}\PYG{k+kt}{size\PYGZus{}t}\PYG{+w}{ }\PYG{n}{i}\PYG{p}{,}\PYG{+w}{ }\PYG{k+kt}{size\PYGZus{}t}\PYG{+w}{ }\PYG{n}{j}\PYG{p}{)}\PYG{+w}{ }\PYG{k}{const}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{            }\PYG{k}{return}\PYG{+w}{ }\PYG{n}{j}\PYG{+w}{ }\PYG{o}{*}\PYG{+w}{ }\PYG{n}{n\PYGZus{}}\PYG{+w}{ }\PYG{o}{+}\PYG{+w}{ }\PYG{n}{i}\PYG{p}{;}\PYG{+w}{ }\PYG{p}{\PYGZcb{}}
+\PYG{+w}{        }\PYG{k+kt}{size\PYGZus{}t}\PYG{+w}{ }\PYG{n}{get\PYGZus{}local\PYGZus{}index}\PYG{p}{(}\PYG{k+kt}{size\PYGZus{}t}\PYG{+w}{ }\PYG{n}{i}\PYG{p}{,}\PYG{+w}{ }\PYG{k+kt}{size\PYGZus{}t}\PYG{+w}{ }\PYG{n}{j}\PYG{p}{)}\PYG{+w}{ }\PYG{k}{const}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{            }\PYG{k}{return}\PYG{+w}{ }\PYG{n}{j}\PYG{+w}{ }\PYG{o}{*}\PYG{+w}{ }\PYG{n}{local\PYGZus{}matrix\PYGZus{}}\PYG{p}{.}\PYG{n}{n}\PYG{p}{()}\PYG{+w}{ }\PYG{o}{+}\PYG{+w}{ }\PYG{n}{i}\PYG{p}{;}\PYG{+w}{ }\PYG{p}{\PYGZcb{}}
+
+\PYG{+w}{        }\PYG{n}{MATRIX\PYGZus{}TYPE}\PYG{+w}{ }\PYG{n}{matrix\PYGZus{}type\PYGZus{}}\PYG{p}{;}\PYG{+w}{ }\PYG{c+c1}{// Тип матрицы}
+\PYG{+w}{        }\PYG{n}{ILP\PYGZus{}TYPE}\PYG{+w}{ }\PYG{n}{ctxt\PYGZus{}}\PYG{p}{;}\PYG{+w}{ }\PYG{c+c1}{// BLACS context}
+\PYG{+w}{        }\PYG{k+kt}{size\PYGZus{}t}\PYG{+w}{ }\PYG{n}{n\PYGZus{}}\PYG{p}{;}\PYG{+w}{ }\PYG{c+c1}{// Глобальное число строк матрицы}
+\PYG{+w}{        }\PYG{k+kt}{size\PYGZus{}t}\PYG{+w}{ }\PYG{n}{m\PYGZus{}}\PYG{p}{;}\PYG{+w}{ }\PYG{c+c1}{// Глобальное число столбцов в матрице}
+\PYG{+w}{        }\PYG{k+kt}{size\PYGZus{}t}\PYG{+w}{ }\PYG{n}{NB\PYGZus{}}\PYG{p}{;}\PYG{+w}{ }\PYG{c+c1}{// Число строк в подблоке}
+\PYG{+w}{        }\PYG{k+kt}{size\PYGZus{}t}\PYG{+w}{ }\PYG{n}{MB\PYGZus{}}\PYG{p}{;}\PYG{+w}{ }\PYG{c+c1}{// Число столбцов в подблоке}
+\PYG{+w}{        }\PYG{n}{Matrix}\PYG{o}{\PYGZlt{}}\PYG{n}{T}\PYG{o}{\PYGZgt{}}\PYG{+w}{ }\PYG{n}{local\PYGZus{}matrix\PYGZus{}}\PYG{p}{;}\PYG{+w}{ }\PYG{c+c1}{// Локальный общий блок матрицы}
+\PYG{p}{\PYGZcb{};}
+
+\end{Verbatim}

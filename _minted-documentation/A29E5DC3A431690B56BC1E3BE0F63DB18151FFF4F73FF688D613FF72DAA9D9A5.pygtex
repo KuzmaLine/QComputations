@@ -1,0 +1,90 @@
+\begin{Verbatim}[commandchars=\\\{\},codes={\catcode`\$=3\catcode`\^=7\catcode`\_=8\relax}]
+\PYG{k}{class}\PYG{+w}{ }\PYG{n+nc}{Basis\PYGZus{}State}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{    }\PYG{k}{public}\PYG{o}{:}
+\PYG{+w}{        }\PYG{c+c1}{// инициализация пустого состояния}
+\PYG{+w}{        }\PYG{k}{explicit}\PYG{+w}{ }\PYG{n}{Basis\PYGZus{}State}\PYG{p}{()}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{k}{default}\PYG{p}{;}
+
+\PYG{+w}{        }\PYG{c+c1}{// groups\PYGZus{}count делит кудиты на равные по размеру группы. max\PYGZus{}val \PYGZhy{} максимальное значение всех кудитов}
+\PYG{+w}{        }\PYG{k}{explicit}\PYG{+w}{ }\PYG{n}{Basis\PYGZus{}State}\PYG{p}{(}\PYG{k+kt}{size\PYGZus{}t}\PYG{+w}{ }\PYG{n}{qudits\PYGZus{}count}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{ValType}\PYG{+w}{ }\PYG{n}{max\PYGZus{}val}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{,}\PYG{+w}{ }\PYG{k+kt}{size\PYGZus{}t}\PYG{+w}{ }\PYG{n}{groups\PYGZus{}count}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{);}
+
+\PYG{+w}{        }\PYG{c+c1}{// добавление поддержки для разных кудитов. max\PYGZus{}vals \PYGZhy{} вектор, в котором для каждого кубита указано его максимальное значение.}
+\PYG{+w}{        }\PYG{k}{explicit}\PYG{+w}{ }\PYG{n}{Basis\PYGZus{}State}\PYG{p}{(}\PYG{k+kt}{size\PYGZus{}t}\PYG{+w}{ }\PYG{n}{qudits\PYGZus{}count}\PYG{p}{,}\PYG{+w}{ }\PYG{k}{const}\PYG{+w}{ }\PYG{n}{std}\PYG{o}{::}\PYG{n}{vector}\PYG{o}{\PYGZlt{}}\PYG{n}{ValType}\PYG{o}{\PYGZgt{}\PYGZam{}}\PYG{+w}{ }\PYG{n}{max\PYGZus{}vals}\PYG{p}{,}
+\PYG{+w}{                            }\PYG{k+kt}{size\PYGZus{}t}\PYG{+w}{ }\PYG{n}{groups\PYGZus{}count}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{);}
+
+\PYG{+w}{        }\PYG{c+c1}{// qudit\PYGZus{}count \PYGZhy{} чилсо кудитов. max\PYGZus{}val \PYGZhy{} максимальное значение их всех. groups \PYGZhy{} количество элементов в каждой группе.}
+\PYG{+w}{        }\PYG{c+c1}{// В сумме должно получиться qudits\PYGZus{}count, иначе ошибка.}
+\PYG{+w}{        }\PYG{c+c1}{// ВНИМАНИЕ!!! \PYGZhy{} groups потом хранится в другом виде. А именно, в нём хранятся индексы последних кудитов групп. Так сделано в целях удобства индексации.}
+\PYG{+w}{        }\PYG{c+c1}{// Например, для |10\PYGZgt{}|001\PYGZgt{} вектор groups\PYGZus{} = \PYGZob{}1, 4\PYGZcb{}}
+\PYG{+w}{        }\PYG{c+c1}{// Для ориентации в данном векторе сделаны отдельные методы, приведённые ниже}
+\PYG{+w}{        }\PYG{k}{explicit}\PYG{+w}{ }\PYG{n}{Basis\PYGZus{}State}\PYG{p}{(}\PYG{k+kt}{size\PYGZus{}t}\PYG{+w}{ }\PYG{n}{qudits\PYGZus{}count}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{ValType}\PYG{+w}{ }\PYG{n}{max\PYGZus{}val}\PYG{p}{,}\PYG{+w}{ }\PYG{k}{const}\PYG{+w}{ }\PYG{n}{std}\PYG{o}{::}\PYG{n}{vector}\PYG{o}{\PYGZlt{}}\PYG{k+kt}{size\PYGZus{}t}\PYG{o}{\PYGZgt{}\PYGZam{}}\PYG{+w}{ }\PYG{n}{groups}\PYG{p}{);}
+
+\PYG{+w}{        }\PYG{c+c1}{// ====== Далее идут варианты с иницализацией значений ========}
+
+\PYG{+w}{        }\PYG{c+c1}{// Создания состосния с инициализацией значений}
+\PYG{+w}{        }\PYG{k}{explicit}\PYG{+w}{ }\PYG{n}{Basis\PYGZus{}State}\PYG{p}{(}\PYG{k}{const}\PYG{+w}{ }\PYG{n}{std}\PYG{o}{::}\PYG{n}{vector}\PYG{o}{\PYGZlt{}}\PYG{n}{ValType}\PYG{o}{\PYGZgt{}\PYGZam{}}\PYG{+w}{ }\PYG{n}{qudits}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{ValType}\PYG{+w}{ }\PYG{n}{max\PYGZus{}vals}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{,}\PYG{+w}{ }\PYG{k+kt}{size\PYGZus{}t}\PYG{+w}{ }\PYG{n}{groups\PYGZus{}count}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{);}
+
+\PYG{+w}{        }\PYG{c+c1}{// Создание состояния с инициализация значений с поддержкой разных кудитов}
+\PYG{+w}{        }\PYG{k}{explicit}\PYG{+w}{ }\PYG{n}{Basis\PYGZus{}State}\PYG{p}{(}\PYG{k}{const}\PYG{+w}{ }\PYG{n}{std}\PYG{o}{::}\PYG{n}{vector}\PYG{o}{\PYGZlt{}}\PYG{n}{ValType}\PYG{o}{\PYGZgt{}\PYGZam{}}\PYG{+w}{ }\PYG{n}{qudits}\PYG{p}{,}\PYG{+w}{ }\PYG{k}{const}\PYG{+w}{ }\PYG{n}{std}\PYG{o}{::}\PYG{n}{vector}\PYG{o}{\PYGZlt{}}\PYG{n}{ValType}\PYG{o}{\PYGZgt{}\PYGZam{}}\PYG{+w}{ }\PYG{n}{max\PYGZus{}vals}\PYG{p}{,}
+\PYG{+w}{                            }\PYG{k+kt}{size\PYGZus{}t}\PYG{+w}{ }\PYG{n}{groups\PYGZus{}count}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{);}
+
+\PYG{+w}{        }\PYG{c+c1}{// Создание состояния с инициализация значений с поддержкой разных кудитов + разных групп}
+\PYG{+w}{        }\PYG{k}{explicit}\PYG{+w}{ }\PYG{n}{Basis\PYGZus{}State}\PYG{p}{(}\PYG{k}{const}\PYG{+w}{ }\PYG{n}{std}\PYG{o}{::}\PYG{n}{vector}\PYG{o}{\PYGZlt{}}\PYG{n}{ValType}\PYG{o}{\PYGZgt{}\PYGZam{}}\PYG{+w}{ }\PYG{n}{qudits}\PYG{p}{,}\PYG{+w}{  }\PYG{k}{const}\PYG{+w}{ }\PYG{n}{std}\PYG{o}{::}\PYG{n}{vector}\PYG{o}{\PYGZlt{}}\PYG{n}{ValType}\PYG{o}{\PYGZgt{}\PYGZam{}}\PYG{+w}{ }\PYG{n}{max\PYGZus{}vals}\PYG{p}{,}
+\PYG{+w}{                            }\PYG{k}{const}\PYG{+w}{ }\PYG{n}{std}\PYG{o}{::}\PYG{n}{vector}\PYG{o}{\PYGZlt{}}\PYG{k+kt}{size\PYGZus{}t}\PYG{o}{\PYGZgt{}\PYGZam{}}\PYG{+w}{ }\PYG{n}{groups\PYGZus{}sizes}\PYG{p}{);}
+
+\PYG{+w}{        }\PYG{c+c1}{// Установить кудиту значение. qudit\PYGZus{}index \PYGZhy{} индекс кудита. group\PYGZus{}id \PYGZhy{} номер группы (нумерация с нуля)}
+\PYG{+w}{        }\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n+nf}{set\PYGZus{}qudit}\PYG{p}{(}\PYG{n}{ValType}\PYG{+w}{ }\PYG{n}{val}\PYG{p}{,}\PYG{+w}{ }\PYG{k+kt}{size\PYGZus{}t}\PYG{+w}{ }\PYG{n}{qudit\PYGZus{}index}\PYG{p}{,}\PYG{+w}{ }\PYG{k+kt}{size\PYGZus{}t}\PYG{+w}{ }\PYG{n}{group\PYGZus{}id}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{p}{);}
+\PYG{+w}{        }\PYG{c+c1}{// Получить значение кудита}
+\PYG{+w}{        }\PYG{n}{ValType}\PYG{+w}{ }\PYG{n+nf}{get\PYGZus{}qudit}\PYG{p}{(}\PYG{k+kt}{size\PYGZus{}t}\PYG{+w}{ }\PYG{n}{qudit\PYGZus{}index}\PYG{p}{,}\PYG{+w}{ }\PYG{k+kt}{size\PYGZus{}t}\PYG{+w}{ }\PYG{n}{group\PYGZus{}id}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{p}{);}
+
+\PYG{+w}{        }\PYG{c+c1}{// Добавить кудит. Будет добавлен к последней группе}
+\PYG{+w}{        }\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n+nf}{append\PYGZus{}qudit}\PYG{p}{(}\PYG{n}{ValType}\PYG{+w}{ }\PYG{n}{init\PYGZus{}val}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{ValType}\PYG{+w}{ }\PYG{n}{max\PYGZus{}val}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{);}
+
+\PYG{+w}{        }\PYG{c+c1}{// Проверка, является ли состояние пустым}
+\PYG{+w}{        }\PYG{k+kt}{bool}\PYG{+w}{ }\PYG{n+nf}{is\PYGZus{}empty}\PYG{p}{();}
+
+\PYG{+w}{        }\PYG{c+c1}{// Получить дополнительную информацию о состоянии}
+\PYG{+w}{        }\PYG{n}{std}\PYG{o}{::}\PYG{n}{string}\PYG{+w}{ }\PYG{n+nf}{get\PYGZus{}info}\PYG{p}{();}
+\PYG{+w}{        }\PYG{c+c1}{// Записать дополнительную информацию о состоянии}
+\PYG{+w}{        }\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n+nf}{set\PYGZus{}info}\PYG{p}{(}\PYG{k}{const}\PYG{+w}{ }\PYG{n}{std}\PYG{o}{::}\PYG{n}{string}\PYG{o}{\PYGZam{}}\PYG{+w}{ }\PYG{n}{str}\PYG{p}{);}
+
+
+\PYG{+w}{        }\PYG{c+c1}{// Получить индексы последних кудитов групп}
+\PYG{+w}{        }\PYG{n}{std}\PYG{o}{::}\PYG{n}{vector}\PYG{o}{\PYGZlt{}}\PYG{k+kt}{size\PYGZus{}t}\PYG{o}{\PYGZgt{}}\PYG{+w}{ }\PYG{n}{get\PYGZus{}groups}\PYG{p}{();}
+\PYG{+w}{        }\PYG{c+c1}{// Получить индекс начала группы}
+\PYG{+w}{        }\PYG{k+kt}{size\PYGZus{}t}\PYG{+w}{ }\PYG{n+nf}{get\PYGZus{}group\PYGZus{}start}\PYG{p}{(}\PYG{k+kt}{size\PYGZus{}t}\PYG{+w}{ }\PYG{n}{group\PYGZus{}id}\PYG{p}{);}
+\PYG{+w}{        }\PYG{c+c1}{// Получить индекс конца группы (Например |10\PYGZgt{}|10\PYGZgt{} для 0 группы индекс конца будет 1)}
+\PYG{+w}{        }\PYG{k+kt}{size\PYGZus{}t}\PYG{+w}{ }\PYG{n+nf}{get\PYGZus{}group\PYGZus{}end}\PYG{p}{(}\PYG{k+kt}{size\PYGZus{}t}\PYG{+w}{ }\PYG{n}{group\PYGZus{}id}\PYG{p}{);}
+\PYG{+w}{        }\PYG{c+c1}{// Получить число групп}
+\PYG{+w}{        }\PYG{k+kt}{size\PYGZus{}t}\PYG{+w}{ }\PYG{n+nf}{get\PYGZus{}groups\PYGZus{}count}\PYG{p}{();}
+\PYG{+w}{        }\PYG{c+c1}{// Получить размер  группы}
+\PYG{+w}{        }\PYG{k+kt}{size\PYGZus{}t}\PYG{+w}{ }\PYG{n+nf}{get\PYGZus{}group\PYGZus{}size}\PYG{p}{(}\PYG{k+kt}{size\PYGZus{}t}\PYG{+w}{ }\PYG{n}{group\PYGZus{}id}\PYG{p}{);}
+
+\PYG{+w}{        }\PYG{c+c1}{// Получить в качестве состояния отдельную группу}
+\PYG{+w}{        }\PYG{n}{Basis\PYGZus{}State}\PYG{+w}{ }\PYG{n+nf}{get\PYGZus{}group}\PYG{p}{(}\PYG{k+kt}{size\PYGZus{}t}\PYG{+w}{ }\PYG{n}{group\PYGZus{}id}\PYG{p}{)}\PYG{+w}{ }\PYG{k}{const}\PYG{p}{;}
+
+\PYG{+w}{        }\PYG{c+c1}{// Конвертировать состояние в строку}
+\PYG{+w}{        }\PYG{n}{std}\PYG{o}{::}\PYG{n}{string}\PYG{+w}{ }\PYG{n+nf}{to\PYGZus{}string}\PYG{p}{()}\PYG{+w}{ }\PYG{k}{const}\PYG{p}{;}
+\PYG{+w}{        }\PYG{c+c1}{// Выдаст ошибку, если состояния различаются по группам или по максимальным значениям кудитов}
+\PYG{+w}{        }\PYG{k+kt}{bool}\PYG{+w}{ }\PYG{k}{operator}\PYG{o}{==}\PYG{p}{(}\PYG{k}{const}\PYG{+w}{ }\PYG{n}{Basis\PYGZus{}State}\PYG{o}{\PYGZam{}}\PYG{+w}{ }\PYG{n}{other}\PYG{p}{);}
+\PYG{+w}{        }\PYG{k+kt}{bool}\PYG{+w}{ }\PYG{k}{operator}\PYG{o}{\PYGZlt{}}\PYG{p}{(}\PYG{k}{const}\PYG{+w}{ }\PYG{n}{Basis\PYGZus{}State}\PYG{o}{\PYGZam{}}\PYG{+w}{ }\PYG{n}{other}\PYG{p}{);}
+
+\PYG{+w}{        }\PYG{c+c1}{// Поменять максимальное значение кудита}
+\PYG{+w}{        }\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n+nf}{set\PYGZus{}max\PYGZus{}val}\PYG{p}{(}\PYG{n}{ValType}\PYG{+w}{ }\PYG{n}{val}\PYG{p}{,}\PYG{+w}{ }\PYG{k+kt}{size\PYGZus{}t}\PYG{+w}{ }\PYG{n}{qudit\PYGZus{}index}\PYG{p}{,}\PYG{+w}{ }\PYG{k+kt}{size\PYGZus{}t}\PYG{+w}{ }\PYG{n}{group\PYGZus{}id}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{p}{);}
+\PYG{+w}{        }\PYG{c+c1}{// Получить максимальное значение кудита}
+\PYG{+w}{        }\PYG{n}{ValType}\PYG{+w}{ }\PYG{n+nf}{get\PYGZus{}max\PYGZus{}val}\PYG{p}{(}\PYG{k+kt}{size\PYGZus{}t}\PYG{+w}{ }\PYG{n}{qudit\PYGZus{}index}\PYG{p}{,}\PYG{+w}{ }\PYG{k+kt}{size\PYGZus{}t}\PYG{+w}{ }\PYG{n}{group\PYGZus{}id}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{p}{);}
+\PYG{+w}{        }\PYG{c+c1}{// Получить вектор максимальных значений}
+\PYG{+w}{        }\PYG{n}{std}\PYG{o}{::}\PYG{n}{vector}\PYG{o}{\PYGZlt{}}\PYG{n}{ValType}\PYG{o}{\PYGZgt{}}\PYG{+w}{ }\PYG{n}{max\PYGZus{}vals}\PYG{p}{();}
+
+\PYG{+w}{        }\PYG{c+c1}{// Получить индекс состояния в базисе}
+\PYG{+w}{        }\PYG{k+kt}{size\PYGZus{}t}\PYG{+w}{ }\PYG{n+nf}{get\PYGZus{}index}\PYG{p}{(}\PYG{k}{const}\PYG{+w}{ }\PYG{n}{std}\PYG{o}{::}\PYG{n}{set}\PYG{o}{\PYGZlt{}}\PYG{n}{Basis\PYGZus{}State}\PYG{o}{\PYGZgt{}\PYGZam{}}\PYG{+w}{ }\PYG{n}{basis}\PYG{p}{)}\PYG{+w}{ }\PYG{k}{const}\PYG{p}{;}
+
+\PYG{+w}{        }\PYG{c+c1}{// Очистить состояние}
+\PYG{+w}{        }\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n+nf}{clear}\PYG{p}{()}\PYG{+w}{ }\PYG{p}{\PYGZob{}}\PYG{+w}{ }\PYG{n}{qudits\PYGZus{}}\PYG{p}{.}\PYG{n}{resize}\PYG{p}{(}\PYG{l+m+mi}{0}\PYG{p}{);}\PYG{+w}{ }\PYG{n}{max\PYGZus{}vals\PYGZus{}}\PYG{p}{.}\PYG{n}{resize}\PYG{p}{(}\PYG{l+m+mi}{0}\PYG{p}{);}\PYG{+w}{ }\PYG{n}{groups\PYGZus{}}\PYG{p}{.}\PYG{n}{resize}\PYG{p}{(}\PYG{l+m+mi}{0}\PYG{p}{);}\PYG{+w}{ }\PYG{p}{\PYGZcb{}}
+\PYG{+w}{    }\PYG{k}{protected}\PYG{o}{:}
+\PYG{+w}{        }\PYG{n}{std}\PYG{o}{::}\PYG{n}{string}\PYG{+w}{ }\PYG{n}{info\PYGZus{}}\PYG{p}{;}\PYG{+w}{ }\PYG{c+c1}{// Дополнительная информация о состоянии}
+\PYG{+w}{        }\PYG{n}{std}\PYG{o}{::}\PYG{n}{vector}\PYG{o}{\PYGZlt{}}\PYG{n}{ValType}\PYG{o}{\PYGZgt{}}\PYG{+w}{ }\PYG{n}{qudits\PYGZus{}}\PYG{p}{;}\PYG{+w}{ }\PYG{c+c1}{// Вектор кудитов}
+\PYG{+w}{        }\PYG{n}{std}\PYG{o}{::}\PYG{n}{vector}\PYG{o}{\PYGZlt{}}\PYG{n}{ValType}\PYG{o}{\PYGZgt{}}\PYG{+w}{ }\PYG{n}{max\PYGZus{}vals\PYGZus{}}\PYG{p}{;}\PYG{+w}{ }\PYG{c+c1}{// Вектор максимальных значений кудитов}
+\PYG{+w}{        }\PYG{n}{std}\PYG{o}{::}\PYG{n}{vector}\PYG{o}{\PYGZlt{}}\PYG{k+kt}{size\PYGZus{}t}\PYG{o}{\PYGZgt{}}\PYG{+w}{ }\PYG{n}{groups\PYGZus{}}\PYG{p}{;}\PYG{+w}{ }\PYG{c+c1}{// Вектор начала групп}
+\PYG{p}{\PYGZcb{};}
+
+\end{Verbatim}

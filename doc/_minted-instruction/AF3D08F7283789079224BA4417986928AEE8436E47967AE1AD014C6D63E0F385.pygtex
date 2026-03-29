@@ -1,0 +1,45 @@
+\begin{Verbatim}[commandchars=\\\{\},codes={\catcode`\$=3\catcode`\^=7\catcode`\_=8\relax}]
+\PYG{k+kt}{int}\PYG{+w}{ }\PYG{n+nf}{main}\PYG{p}{(}\PYG{k+kt}{int}\PYG{+w}{ }\PYG{n}{argc}\PYG{p}{,}\PYG{+w}{ }\PYG{k+kt}{char}\PYG{o}{**}\PYG{+w}{ }\PYG{n}{argv}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{    }\PYG{k}{using}\PYG{+w}{ }\PYG{n}{OpType}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{Operator}\PYG{o}{\PYGZlt{}}\PYG{n}{TC\PYGZus{}State}\PYG{o}{\PYGZgt{}}\PYG{p}{;}
+\PYG{+w}{    }\PYG{k+kt}{double}\PYG{+w}{ }\PYG{n}{h}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{QConfig}\PYG{o}{::}\PYG{n}{instance}\PYG{p}{().}\PYG{n}{h}\PYG{p}{();}
+\PYG{+w}{    }\PYG{k+kt}{double}\PYG{+w}{ }\PYG{n}{w}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{QConfig}\PYG{o}{::}\PYG{n}{instance}\PYG{p}{().}\PYG{n}{w}\PYG{p}{();}
+\PYG{+w}{    }\PYG{k+kt}{double}\PYG{+w}{ }\PYG{n}{g\PYGZus{}leak}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mf}{0.01}\PYG{p}{;}
+
+
+\PYG{+w}{    }\PYG{n}{TC\PYGZus{}State}\PYG{+w}{ }\PYG{n}{state}\PYG{p}{(}\PYG{l+m+mi}{2}\PYG{p}{);}
+\PYG{+w}{    }\PYG{n}{state}\PYG{p}{.}\PYG{n}{set\PYGZus{}max\PYGZus{}photons}\PYG{p}{(}\PYG{l+m+mi}{1}\PYG{p}{);}
+\PYG{+w}{    }\PYG{n}{state}\PYG{p}{.}\PYG{n}{set\PYGZus{}n}\PYG{p}{(}\PYG{l+m+mi}{1}\PYG{p}{);}
+\PYG{+w}{    }\PYG{k+kt}{double}\PYG{+w}{ }\PYG{n}{g}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{state}\PYG{p}{.}\PYG{n}{g}\PYG{p}{();}
+
+\PYG{+w}{    }\PYG{n}{std}\PYG{o}{::}\PYG{n}{cout}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZlt{}}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}h = \PYGZdq{}}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZlt{}}\PYG{+w}{ }\PYG{n}{h}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZlt{}}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{} w = \PYGZdq{}}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZlt{}}\PYG{+w}{ }\PYG{n}{w}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZlt{}}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{} g = \PYGZdq{}}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZlt{}}\PYG{+w}{ }\PYG{n}{g}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZlt{}}\PYG{+w}{ }\PYG{n}{std}\PYG{o}{::}\PYG{n}{endl}\PYG{p}{;}
+\PYG{+w}{    }\PYG{n}{std}\PYG{o}{::}\PYG{n}{cout}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZlt{}}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}Вывод состояния: \PYGZdq{}}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZlt{}}\PYG{+w}{ }\PYG{n}{state}\PYG{p}{.}\PYG{n}{to\PYGZus{}string}\PYG{p}{()}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZlt{}}\PYG{+w}{ }\PYG{n}{std}\PYG{o}{::}\PYG{n}{endl}\PYG{p}{;}
+
+\PYG{+w}{    }\PYG{n}{OpType}\PYG{+w}{ }\PYG{n}{H\PYGZus{}op}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{OpType}\PYG{p}{(}\PYG{n}{a\PYGZus{}create}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{*}\PYG{+w}{ }\PYG{n}{OpType}\PYG{p}{(}\PYG{n}{a\PYGZus{}destroy}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{*}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{h}\PYG{+w}{ }\PYG{o}{*}\PYG{+w}{ }\PYG{n}{w}\PYG{p}{);}\PYG{+w}{ }\PYG{c+c1}{// hwaa+}
+
+\PYG{+w}{    }\PYG{c+c1}{// Для каждого атома добавляем его собственные операторы}
+\PYG{+w}{    }\PYG{k}{for}\PYG{+w}{ }\PYG{p}{(}\PYG{k+kt}{size\PYGZus{}t}\PYG{+w}{ }\PYG{n}{i}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{p}{;}\PYG{+w}{ }\PYG{n}{i}\PYG{+w}{ }\PYG{o}{\PYGZlt{}}\PYG{+w}{ }\PYG{n}{state}\PYG{p}{.}\PYG{n}{m}\PYG{p}{();}\PYG{+w}{ }\PYG{n}{i}\PYG{o}{++}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{        }\PYG{c+c1}{//sigma}
+\PYG{+w}{        }\PYG{k}{auto}\PYG{+w}{ }\PYG{n}{sigma}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{std}\PYG{o}{::}\PYG{n}{function}\PYG{o}{\PYGZlt{}}\PYG{n}{State}\PYG{o}{\PYGZlt{}}\PYG{n}{TC\PYGZus{}State}\PYG{o}{\PYGZgt{}}\PYG{p}{(}\PYG{k}{const}\PYG{+w}{ }\PYG{n}{TC\PYGZus{}State}\PYG{o}{\PYGZam{}}\PYG{p}{)}\PYG{o}{\PYGZgt{}}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{            }\PYG{p}{[}\PYG{n}{i}\PYG{p}{](}\PYG{k}{const}\PYG{+w}{ }\PYG{n}{TC\PYGZus{}State}\PYG{o}{\PYGZam{}}\PYG{+w}{ }\PYG{n}{st}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{                }\PYG{k}{return}\PYG{+w}{ }\PYG{n}{set\PYGZus{}qudit}\PYG{p}{(}\PYG{n}{st}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{st}\PYG{p}{.}\PYG{n}{get\PYGZus{}atom}\PYG{p}{(}\PYG{n}{i}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{\PYGZhy{}}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{i}\PYG{+w}{ }\PYG{o}{+}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{);}
+\PYG{+w}{            }\PYG{p}{\PYGZcb{}}
+\PYG{+w}{        }\PYG{p}{\PYGZcb{};}
+
+\PYG{+w}{        }\PYG{c+c1}{//sigma+}
+\PYG{+w}{        }\PYG{k}{auto}\PYG{+w}{ }\PYG{n}{sigma\PYGZus{}exc}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{std}\PYG{o}{::}\PYG{n}{function}\PYG{o}{\PYGZlt{}}\PYG{n}{State}\PYG{o}{\PYGZlt{}}\PYG{n}{TC\PYGZus{}State}\PYG{o}{\PYGZgt{}}\PYG{p}{(}\PYG{k}{const}\PYG{+w}{ }\PYG{n}{TC\PYGZus{}State}\PYG{o}{\PYGZam{}}\PYG{p}{)}\PYG{o}{\PYGZgt{}}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{            }\PYG{p}{[}\PYG{n}{i}\PYG{p}{](}\PYG{k}{const}\PYG{+w}{ }\PYG{n}{TC\PYGZus{}State}\PYG{o}{\PYGZam{}}\PYG{+w}{ }\PYG{n}{st}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{                }\PYG{k}{return}\PYG{+w}{ }\PYG{n}{set\PYGZus{}qudit}\PYG{p}{(}\PYG{n}{st}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{st}\PYG{p}{.}\PYG{n}{get\PYGZus{}atom}\PYG{p}{(}\PYG{n}{i}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{+}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{i}\PYG{+w}{ }\PYG{o}{+}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{);}
+\PYG{+w}{            }\PYG{p}{\PYGZcb{}}
+\PYG{+w}{        }\PYG{p}{\PYGZcb{};}
+
+\PYG{+w}{        }\PYG{c+c1}{// Энергия атома}
+\PYG{+w}{        }\PYG{n}{H\PYGZus{}op}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{H\PYGZus{}op}\PYG{+w}{ }\PYG{o}{+}\PYG{+w}{ }\PYG{n}{OpType}\PYG{p}{(}\PYG{n}{sigma\PYGZus{}exc}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{*}\PYG{+w}{ }\PYG{n}{OpType}\PYG{p}{(}\PYG{n}{sigma}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{*}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{h}\PYG{+w}{ }\PYG{o}{*}\PYG{+w}{ }\PYG{n}{w}\PYG{p}{);}
+
+\PYG{+w}{        }\PYG{c+c1}{// Возбуждение и релаксация атома}
+\PYG{+w}{        }\PYG{n}{H\PYGZus{}op}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{H\PYGZus{}op}\PYG{+w}{ }\PYG{o}{+}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{OpType}\PYG{p}{(}\PYG{n}{a\PYGZus{}destroy}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{*}\PYG{+w}{ }\PYG{n}{OpType}\PYG{p}{(}\PYG{n}{sigma\PYGZus{}exc}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{+}
+\PYG{+w}{                }\PYG{n}{OpType}\PYG{p}{(}\PYG{n}{a\PYGZus{}create}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{*}\PYG{+w}{ }\PYG{n}{OpType}\PYG{p}{(}\PYG{n}{sigma}\PYG{p}{))}\PYG{+w}{ }\PYG{o}{*}\PYG{+w}{ }\PYG{n}{g}\PYG{p}{;}
+\PYG{+w}{    }\PYG{p}{\PYGZcb{}}
+\PYG{+w}{    }\PYG{c+c1}{//...}
+\PYG{+w}{    }\PYG{k}{return}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{p}{;}
+\PYG{p}{\PYGZcb{}}
+\end{Verbatim}

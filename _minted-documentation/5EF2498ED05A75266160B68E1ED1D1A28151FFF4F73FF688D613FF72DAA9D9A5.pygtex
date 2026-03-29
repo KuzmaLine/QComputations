@@ -1,0 +1,144 @@
+\begin{Verbatim}[commandchars=\\\{\},codes={\catcode`\$=3\catcode`\^=7\catcode`\_=8\relax}]
+
+\PYG{c+c1}{// Значения по умолчанию}
+\PYG{k}{namespace}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{    }\PYG{c+c1}{// Параметры figure из matplotlib Python}
+\PYG{+w}{    }\PYG{c+c1}{// Только для версии со встроенным Python API}
+\PYG{+w}{    }\PYG{k}{enum}\PYG{+w}{ }\PYG{n+nc}{FIG\PYGZus{}PARAMS}\PYG{+w}{ }\PYG{p}{\PYGZob{}}\PYG{n}{FIG\PYGZus{}WIDTH}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{19}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{FIG\PYGZus{}HEIGHT}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{10}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{DPI}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{80}\PYG{p}{\PYGZcb{};}
+
+\PYG{+w}{    }\PYG{c+c1}{// Значение постоянной планка}
+\PYG{+w}{    }\PYG{k}{constexpr}\PYG{+w}{ }\PYG{k+kt}{double}\PYG{+w}{ }\PYG{n}{h\PYGZus{}default}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{;}
+\PYG{+w}{    }\PYG{c+c1}{// Значение частоты}
+\PYG{+w}{    }\PYG{k}{constexpr}\PYG{+w}{ }\PYG{k+kt}{double}\PYG{+w}{ }\PYG{n}{w\PYGZus{}default}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{;}
+\PYG{+w}{    }\PYG{c+c1}{// Значение силы взаимодействия частиц с полем}
+\PYG{+w}{    }\PYG{k}{constexpr}\PYG{+w}{ }\PYG{k+kt}{double}\PYG{+w}{ }\PYG{n}{g\PYGZus{}default}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mf}{0.01}\PYG{p}{;}
+\PYG{+w}{    }\PYG{c+c1}{// Значение длины волновода (Для реализации TCH\PYGZus{}State)}
+\PYG{+w}{    }\PYG{k}{constexpr}\PYG{+w}{ }\PYG{k+kt}{double}\PYG{+w}{ }\PYG{n}{waveguides\PYGZus{}length\PYGZus{}default}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{2}\PYG{o}{*}\PYG{n}{M\PYGZus{}PI}\PYG{p}{;}
+\PYG{+w}{    }\PYG{c+c1}{// Значение амплитуды волновода (Для реализации TCH\PYGZus{}State)}
+\PYG{+w}{    }\PYG{k}{constexpr}\PYG{+w}{ }\PYG{k+kt}{double}\PYG{+w}{ }\PYG{n}{waveguides\PYGZus{}amplitude\PYGZus{}default}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{p}{;}
+\PYG{+w}{    }\PYG{c+c1}{// Максимальное число фотонов (Для реализации TCH\PYGZus{}State)}
+\PYG{+w}{    }\PYG{k}{constexpr}\PYG{+w}{ }\PYG{k+kt}{int}\PYG{+w}{ }\PYG{n}{max\PYGZus{}photons\PYGZus{}default}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{;}
+\PYG{+w}{    }\PYG{c+c1}{//??????????????????????????????????????????}
+\PYG{+w}{    }\PYG{k}{constexpr}\PYG{+w}{ }\PYG{k+kt}{int}\PYG{+w}{ }\PYG{n}{E\PYGZus{}LEVELS\PYGZus{}COUNT\PYGZus{}DEFAULT}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{2}\PYG{p}{;}
+
+\PYG{+w}{    }\PYG{c+c1}{// Значение epsilon}
+\PYG{+w}{    }\PYG{k}{constexpr}\PYG{+w}{ }\PYG{k+kt}{double}\PYG{+w}{ }\PYG{n}{eps\PYGZus{}default}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mf}{1e\PYGZhy{}12}\PYG{p}{;}
+\PYG{+w}{    }\PYG{c+c1}{// Значение ширины для вывода матриц в stdout}
+\PYG{+w}{    }\PYG{k}{constexpr}\PYG{+w}{ }\PYG{k+kt}{int}\PYG{+w}{ }\PYG{n}{width\PYGZus{}default}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{15}\PYG{p}{;}
+
+\PYG{+w}{    }\PYG{c+c1}{// Число символов для одного числа при записи в файл}
+\PYG{+w}{    }\PYG{k}{constexpr}\PYG{+w}{ }\PYG{k+kt}{int}\PYG{+w}{ }\PYG{n}{csv\PYGZus{}max\PYGZus{}number\PYGZus{}size\PYGZus{}default}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{21}\PYG{p}{;}
+\PYG{+w}{    }\PYG{c+c1}{// Количество цифр после запятой}
+\PYG{+w}{    }\PYG{k}{constexpr}\PYG{+w}{ }\PYG{k+kt}{int}\PYG{+w}{ }\PYG{n}{csv\PYGZus{}num\PYGZus{}accuracy\PYGZus{}default}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{16}\PYG{p}{;}
+
+\PYG{+w}{    }\PYG{c+c1}{//??????????????????????????????????}
+\PYG{+w}{    }\PYG{k}{constexpr}\PYG{+w}{ }\PYG{k+kt}{bool}\PYG{+w}{ }\PYG{n}{is\PYGZus{}freq\PYGZus{}display\PYGZus{}default}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n+nb}{true}\PYG{p}{;}
+\PYG{+w}{    }\PYG{c+c1}{//?????????????????????????????????}
+\PYG{+w}{    }\PYG{k}{constexpr}\PYG{+w}{ }\PYG{k+kt}{bool}\PYG{+w}{ }\PYG{n}{is\PYGZus{}sequence\PYGZus{}default}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n+nb}{false}\PYG{p}{;}
+\PYG{+w}{    }\PYG{c+c1}{//WORKING?????}
+\PYG{+w}{    }\PYG{k}{const}\PYG{+w}{ }\PYG{n}{std}\PYG{o}{::}\PYG{n}{string}\PYG{+w}{ }\PYG{n}{python\PYGZus{}script\PYGZus{}path\PYGZus{}default}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}seaborn\PYGZus{}plot.py\PYGZdq{}}\PYG{p}{;}
+\PYG{p}{\PYGZcb{}}
+
+\PYG{k}{class}\PYG{+w}{ }\PYG{n+nc}{QConfig}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{    }\PYG{k}{public}\PYG{o}{:}
+\PYG{+w}{        }\PYG{c+c1}{// Реализация синглтона}
+\PYG{+w}{        }\PYG{n}{QConfig}\PYG{p}{(}\PYG{k}{const}\PYG{+w}{ }\PYG{n}{QConfig}\PYG{o}{\PYGZam{}}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{k}{delete}\PYG{p}{;}
+\PYG{+w}{        }\PYG{k+kt}{void}\PYG{+w}{ }\PYG{k}{operator}\PYG{o}{=}\PYG{p}{(}\PYG{k}{const}\PYG{+w}{ }\PYG{n}{QConfig}\PYG{o}{\PYGZam{}}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{k}{delete}\PYG{p}{;}
+
+\PYG{+w}{        }\PYG{k}{static}\PYG{+w}{ }\PYG{n}{QConfig}\PYG{o}{\PYGZam{}}\PYG{+w}{ }\PYG{n+nf}{instance}\PYG{p}{()}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{            }\PYG{k}{static}\PYG{+w}{ }\PYG{n}{QConfig}\PYG{+w}{ }\PYG{n}{instance}\PYG{p}{;}
+\PYG{+w}{            }\PYG{k}{return}\PYG{+w}{ }\PYG{n}{instance}\PYG{p}{;}
+\PYG{+w}{        }\PYG{p}{\PYGZcb{}}
+
+
+\PYG{+w}{        }\PYG{c+c1}{// Методы для установки значений}
+\PYG{+w}{        }\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n+nf}{set\PYGZus{}h}\PYG{p}{(}\PYG{k+kt}{double}\PYG{+w}{ }\PYG{n}{h}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}\PYG{+w}{ }\PYG{n}{h\PYGZus{}}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{h}\PYG{p}{;}\PYG{+w}{ }\PYG{p}{\PYGZcb{}}
+\PYG{+w}{        }\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n+nf}{set\PYGZus{}max\PYGZus{}photons}\PYG{p}{(}\PYG{k+kt}{int}\PYG{+w}{ }\PYG{n}{max\PYGZus{}photons}\PYG{p}{)}
+\PYG{+w}{             }\PYG{p}{\PYGZob{}}\PYG{+w}{ }\PYG{n}{max\PYGZus{}photons\PYGZus{}}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{max\PYGZus{}photons}\PYG{p}{;}\PYG{+w}{ }\PYG{p}{\PYGZcb{}}
+\PYG{+w}{        }\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n+nf}{set\PYGZus{}w}\PYG{p}{(}\PYG{k+kt}{double}\PYG{+w}{ }\PYG{n}{w}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}\PYG{+w}{ }\PYG{n}{w\PYGZus{}}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{w}\PYG{p}{;}\PYG{+w}{ }\PYG{p}{\PYGZcb{}}
+\PYG{+w}{        }\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n+nf}{set\PYGZus{}g}\PYG{p}{(}\PYG{k+kt}{double}\PYG{+w}{ }\PYG{n}{g}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}\PYG{+w}{ }\PYG{n}{g\PYGZus{}}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{g}\PYG{p}{;}\PYG{+w}{ }\PYG{p}{\PYGZcb{}}
+\PYG{+w}{        }\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n+nf}{set\PYGZus{}fig\PYGZus{}width}\PYG{p}{(}\PYG{k+kt}{int}\PYG{+w}{ }\PYG{n}{fig\PYGZus{}width}\PYG{p}{)}
+\PYG{+w}{              }\PYG{p}{\PYGZob{}}\PYG{+w}{ }\PYG{n}{fig\PYGZus{}width\PYGZus{}}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{fig\PYGZus{}width}\PYG{p}{;}\PYG{+w}{ }\PYG{p}{\PYGZcb{}}
+\PYG{+w}{        }\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n+nf}{set\PYGZus{}fig\PYGZus{}height}\PYG{p}{(}\PYG{k+kt}{int}\PYG{+w}{ }\PYG{n}{fig\PYGZus{}height}\PYG{p}{)}
+\PYG{+w}{              }\PYG{p}{\PYGZob{}}\PYG{+w}{ }\PYG{n}{fig\PYGZus{}height\PYGZus{}}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{fig\PYGZus{}height}\PYG{p}{;}\PYG{+w}{ }\PYG{p}{\PYGZcb{}}
+\PYG{+w}{        }\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n+nf}{set\PYGZus{}dpi}\PYG{p}{(}\PYG{k+kt}{int}\PYG{+w}{ }\PYG{n}{dpi}\PYG{p}{)}
+\PYG{+w}{              }\PYG{p}{\PYGZob{}}\PYG{+w}{ }\PYG{n}{dpi\PYGZus{}}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{dpi}\PYG{p}{;}\PYG{+w}{ }\PYG{p}{\PYGZcb{}}
+\PYG{+w}{        }\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n+nf}{set\PYGZus{}multiply\PYGZus{}mode}\PYG{p}{(}\PYG{n}{MULTIPLY\PYGZus{}ALGS}\PYG{+w}{ }\PYG{n}{MULTIPLY\PYGZus{}MODE}\PYG{p}{)}
+\PYG{+w}{              }\PYG{p}{\PYGZob{}}\PYG{+w}{ }\PYG{n}{MULTIPLY\PYGZus{}MODE\PYGZus{}}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{MULTIPLY\PYGZus{}MODE}\PYG{p}{;}\PYG{+w}{ }\PYG{p}{\PYGZcb{}}
+\PYG{+w}{        }\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n+nf}{set\PYGZus{}eps}\PYG{p}{(}\PYG{k+kt}{double}\PYG{+w}{ }\PYG{n}{eps}\PYG{p}{)}
+\PYG{+w}{              }\PYG{p}{\PYGZob{}}\PYG{+w}{ }\PYG{n}{eps\PYGZus{}}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{eps}\PYG{p}{;}\PYG{+w}{ }\PYG{p}{\PYGZcb{}}
+\PYG{+w}{        }\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n+nf}{set\PYGZus{}width}\PYG{p}{(}\PYG{k+kt}{int}\PYG{+w}{ }\PYG{n}{width}\PYG{p}{)}
+\PYG{+w}{              }\PYG{p}{\PYGZob{}}\PYG{+w}{ }\PYG{n}{width\PYGZus{}}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{width}\PYG{p}{;}\PYG{+w}{ }\PYG{p}{\PYGZcb{}}
+\PYG{+w}{        }\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n+nf}{set\PYGZus{}E\PYGZus{}LEVELS\PYGZus{}COUNT}\PYG{p}{(}\PYG{k+kt}{int}\PYG{+w}{ }\PYG{n}{E\PYGZus{}LEVELS\PYGZus{}COUNT}\PYG{p}{)}
+\PYG{+w}{              }\PYG{p}{\PYGZob{}}\PYG{+w}{ }\PYG{n}{E\PYGZus{}LEVELS\PYGZus{}COUNT\PYGZus{}}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{E\PYGZus{}LEVELS\PYGZus{}COUNT}\PYG{p}{;}\PYG{+w}{ }\PYG{p}{\PYGZcb{}}
+\PYG{+w}{        }\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n+nf}{set\PYGZus{}waveguides\PYGZus{}length}\PYG{p}{(}\PYG{k+kt}{double}\PYG{+w}{ }\PYG{n}{waveguides\PYGZus{}length}\PYG{p}{)}
+\PYG{+w}{              }\PYG{p}{\PYGZob{}}\PYG{+w}{ }\PYG{n}{wavegiudes\PYGZus{}length\PYGZus{}}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{waveguides\PYGZus{}length}\PYG{p}{;}\PYG{+w}{ }\PYG{p}{\PYGZcb{}}
+\PYG{+w}{        }\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n+nf}{set\PYGZus{}csv\PYGZus{}max\PYGZus{}number\PYGZus{}size}\PYG{p}{(}\PYG{k+kt}{int}\PYG{+w}{ }\PYG{n}{csv\PYGZus{}max\PYGZus{}number\PYGZus{}size}\PYG{p}{)}
+\PYG{+w}{              }\PYG{p}{\PYGZob{}}\PYG{+w}{ }\PYG{n}{csv\PYGZus{}max\PYGZus{}number\PYGZus{}size\PYGZus{}}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{csv\PYGZus{}max\PYGZus{}number\PYGZus{}size}\PYG{p}{;}\PYG{+w}{ }\PYG{p}{\PYGZcb{}}
+\PYG{+w}{        }\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n+nf}{set\PYGZus{}csv\PYGZus{}num\PYGZus{}accuracy}\PYG{p}{(}\PYG{k+kt}{int}\PYG{+w}{ }\PYG{n}{csv\PYGZus{}num\PYGZus{}accuracy}\PYG{p}{)}
+\PYG{+w}{              }\PYG{p}{\PYGZob{}}\PYG{+w}{ }\PYG{n}{csv\PYGZus{}num\PYGZus{}accuracy\PYGZus{}}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{csv\PYGZus{}num\PYGZus{}accuracy}\PYG{p}{;}\PYG{+w}{ }\PYG{p}{\PYGZcb{}}
+\PYG{+w}{        }\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n+nf}{set\PYGZus{}is\PYGZus{}sequence\PYGZus{}state}\PYG{p}{(}\PYG{k+kt}{bool}\PYG{+w}{ }\PYG{n}{is\PYGZus{}sequence\PYGZus{}state}\PYG{p}{)}
+\PYG{+w}{              }\PYG{p}{\PYGZob{}}\PYG{+w}{ }\PYG{n}{is\PYGZus{}sequence\PYGZus{}}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{is\PYGZus{}sequence\PYGZus{}state}\PYG{p}{;}\PYG{+w}{ }\PYG{p}{\PYGZcb{}}
+\PYG{+w}{        }\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n+nf}{set\PYGZus{}is\PYGZus{}freq\PYGZus{}display}\PYG{p}{(}\PYG{k+kt}{bool}\PYG{+w}{ }\PYG{n}{is\PYGZus{}freq\PYGZus{}display}\PYG{p}{)}
+\PYG{+w}{              }\PYG{p}{\PYGZob{}}\PYG{+w}{ }\PYG{n}{is\PYGZus{}freq\PYGZus{}display\PYGZus{}}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{is\PYGZus{}freq\PYGZus{}display}\PYG{p}{;}\PYG{+w}{ }\PYG{p}{\PYGZcb{}}
+\PYG{+w}{        }\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n+nf}{set\PYGZus{}state\PYGZus{}format}\PYG{p}{(}\PYG{k}{const}\PYG{+w}{ }\PYG{n}{std}\PYG{o}{::}\PYG{n}{string}\PYG{o}{\PYGZam{}}\PYG{+w}{ }\PYG{n}{state\PYGZus{}format}\PYG{p}{)}
+\PYG{+w}{              }\PYG{p}{\PYGZob{}}\PYG{+w}{ }\PYG{n}{state\PYGZus{}format\PYGZus{}}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{state\PYGZus{}format}\PYG{p}{;}\PYG{+w}{ }\PYG{p}{\PYGZcb{}}
+\PYG{+w}{        }\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n+nf}{set\PYGZus{}state\PYGZus{}delimeter}\PYG{p}{(}\PYG{k}{const}\PYG{+w}{ }\PYG{n}{std}\PYG{o}{::}\PYG{n}{string}\PYG{o}{\PYGZam{}}\PYG{+w}{ }\PYG{n}{state\PYGZus{}delimeter}\PYG{p}{)}
+\PYG{+w}{              }\PYG{p}{\PYGZob{}}\PYG{+w}{ }\PYG{n}{state\PYGZus{}delimeter\PYGZus{}}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{state\PYGZus{}delimeter}\PYG{p}{;}\PYG{+w}{ }\PYG{p}{\PYGZcb{}}
+\PYG{+w}{        }\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n+nf}{set\PYGZus{}excitation\PYGZus{}state\PYGZus{}format}\PYG{p}{(}
+\PYG{+w}{            }\PYG{k}{const}\PYG{+w}{ }\PYG{n}{std}\PYG{o}{::}\PYG{n}{string}\PYG{o}{\PYGZam{}}\PYG{+w}{ }\PYG{n}{excitation\PYGZus{}state\PYGZus{}format}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{                }\PYG{n}{excitation\PYGZus{}state\PYGZus{}format\PYGZus{}}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{excitation\PYGZus{}state\PYGZus{}format}\PYG{p}{;}\PYG{+w}{ }\PYG{p}{\PYGZcb{}}
+
+\PYG{+w}{        }\PYG{c+c1}{// Методы для получения значений}
+\PYG{+w}{        }\PYG{k+kt}{double}\PYG{+w}{ }\PYG{n+nf}{h}\PYG{p}{()}\PYG{+w}{ }\PYG{k}{const}\PYG{+w}{ }\PYG{p}{\PYGZob{}}\PYG{+w}{ }\PYG{k}{return}\PYG{+w}{ }\PYG{n}{h\PYGZus{}}\PYG{p}{;}\PYG{+w}{ }\PYG{p}{\PYGZcb{}}
+\PYG{+w}{        }\PYG{k+kt}{int}\PYG{+w}{ }\PYG{n+nf}{max\PYGZus{}photons}\PYG{p}{()}\PYG{+w}{ }\PYG{k}{const}\PYG{+w}{ }\PYG{p}{\PYGZob{}}\PYG{+w}{ }\PYG{k}{return}\PYG{+w}{ }\PYG{n}{max\PYGZus{}photons\PYGZus{}}\PYG{p}{;}\PYG{+w}{ }\PYG{p}{\PYGZcb{}}
+\PYG{+w}{        }\PYG{k+kt}{double}\PYG{+w}{ }\PYG{n+nf}{w}\PYG{p}{()}\PYG{+w}{ }\PYG{k}{const}\PYG{+w}{ }\PYG{p}{\PYGZob{}}\PYG{+w}{ }\PYG{k}{return}\PYG{+w}{ }\PYG{n}{w\PYGZus{}}\PYG{p}{;}\PYG{+w}{ }\PYG{p}{\PYGZcb{}}
+\PYG{+w}{        }\PYG{k+kt}{double}\PYG{+w}{ }\PYG{n+nf}{g}\PYG{p}{()}\PYG{+w}{ }\PYG{k}{const}\PYG{+w}{ }\PYG{p}{\PYGZob{}}\PYG{+w}{ }\PYG{k}{return}\PYG{+w}{ }\PYG{n}{g\PYGZus{}}\PYG{p}{;}\PYG{+w}{ }\PYG{p}{\PYGZcb{}}
+\PYG{+w}{        }\PYG{k+kt}{int}\PYG{+w}{ }\PYG{n+nf}{fig\PYGZus{}width}\PYG{p}{()}\PYG{+w}{ }\PYG{k}{const}\PYG{+w}{ }\PYG{p}{\PYGZob{}}\PYG{+w}{ }\PYG{k}{return}\PYG{+w}{ }\PYG{n}{fig\PYGZus{}width\PYGZus{}}\PYG{p}{;}\PYG{+w}{ }\PYG{p}{\PYGZcb{}}
+\PYG{+w}{        }\PYG{k+kt}{int}\PYG{+w}{ }\PYG{n+nf}{fig\PYGZus{}height}\PYG{p}{()}\PYG{+w}{ }\PYG{k}{const}\PYG{+w}{ }\PYG{p}{\PYGZob{}}\PYG{+w}{ }\PYG{k}{return}\PYG{+w}{ }\PYG{n}{fig\PYGZus{}height\PYGZus{}}\PYG{p}{;}\PYG{+w}{ }\PYG{p}{\PYGZcb{}}
+\PYG{+w}{        }\PYG{k+kt}{int}\PYG{+w}{ }\PYG{n+nf}{dpi}\PYG{p}{()}\PYG{+w}{ }\PYG{k}{const}\PYG{+w}{ }\PYG{p}{\PYGZob{}}\PYG{+w}{ }\PYG{k}{return}\PYG{+w}{ }\PYG{n}{dpi\PYGZus{}}\PYG{p}{;}\PYG{+w}{ }\PYG{p}{\PYGZcb{}}
+\PYG{+w}{        }\PYG{k+kt}{double}\PYG{+w}{ }\PYG{n+nf}{eps}\PYG{p}{()}\PYG{+w}{ }\PYG{k}{const}\PYG{+w}{ }\PYG{p}{\PYGZob{}}\PYG{+w}{ }\PYG{k}{return}\PYG{+w}{ }\PYG{n}{eps\PYGZus{}}\PYG{p}{;}\PYG{+w}{ }\PYG{p}{\PYGZcb{}}
+\PYG{+w}{        }\PYG{k+kt}{int}\PYG{+w}{ }\PYG{n+nf}{width}\PYG{p}{()}\PYG{+w}{ }\PYG{k}{const}\PYG{+w}{ }\PYG{p}{\PYGZob{}}\PYG{+w}{ }\PYG{k}{return}\PYG{+w}{ }\PYG{n}{width\PYGZus{}}\PYG{p}{;}\PYG{+w}{ }\PYG{p}{\PYGZcb{}}
+\PYG{+w}{        }\PYG{k+kt}{int}\PYG{+w}{ }\PYG{n+nf}{E\PYGZus{}LEVELS\PYGZus{}COUNT}\PYG{p}{()}\PYG{+w}{ }\PYG{k}{const}\PYG{+w}{ }\PYG{p}{\PYGZob{}}\PYG{+w}{ }\PYG{k}{return}\PYG{+w}{ }\PYG{n}{E\PYGZus{}LEVELS\PYGZus{}COUNT\PYGZus{}}\PYG{p}{;}\PYG{+w}{ }\PYG{p}{\PYGZcb{}}
+\PYG{+w}{        }\PYG{k+kt}{double}\PYG{+w}{ }\PYG{n+nf}{waveguides\PYGZus{}length}\PYG{p}{()}\PYG{+w}{ }\PYG{k}{const}\PYG{+w}{ }\PYG{p}{\PYGZob{}}\PYG{+w}{ }\PYG{k}{return}\PYG{+w}{ }\PYG{n}{wavegiudes\PYGZus{}length\PYGZus{}}\PYG{p}{;}\PYG{+w}{ }\PYG{p}{\PYGZcb{}}
+\PYG{+w}{        }\PYG{k+kt}{double}\PYG{+w}{ }\PYG{n+nf}{waveguides\PYGZus{}amplitude}\PYG{p}{()}\PYG{+w}{ }\PYG{k}{const}\PYG{+w}{ }\PYG{p}{\PYGZob{}}\PYG{+w}{ }\PYG{k}{return}\PYG{+w}{ }\PYG{n}{wavegiudes\PYGZus{}amplitude\PYGZus{}}\PYG{p}{;}\PYG{+w}{ }\PYG{p}{\PYGZcb{}}
+\PYG{+w}{        }\PYG{k+kt}{int}\PYG{+w}{ }\PYG{n+nf}{csv\PYGZus{}max\PYGZus{}number\PYGZus{}size}\PYG{p}{()}\PYG{+w}{ }\PYG{k}{const}\PYG{+w}{ }\PYG{p}{\PYGZob{}}\PYG{+w}{ }\PYG{k}{return}\PYG{+w}{ }\PYG{n}{csv\PYGZus{}max\PYGZus{}number\PYGZus{}size\PYGZus{}}\PYG{p}{;}\PYG{+w}{ }\PYG{p}{\PYGZcb{}}
+\PYG{+w}{        }\PYG{k+kt}{int}\PYG{+w}{ }\PYG{n+nf}{csv\PYGZus{}num\PYGZus{}accuracy}\PYG{p}{()}\PYG{+w}{ }\PYG{k}{const}\PYG{+w}{ }\PYG{p}{\PYGZob{}}\PYG{+w}{ }\PYG{k}{return}\PYG{+w}{ }\PYG{n}{csv\PYGZus{}num\PYGZus{}accuracy\PYGZus{}}\PYG{p}{;}\PYG{+w}{ }\PYG{p}{\PYGZcb{}}
+\PYG{+w}{        }\PYG{k+kt}{bool}\PYG{+w}{ }\PYG{n+nf}{is\PYGZus{}sequence\PYGZus{}state}\PYG{p}{()}\PYG{+w}{ }\PYG{k}{const}\PYG{+w}{ }\PYG{p}{\PYGZob{}}\PYG{+w}{ }\PYG{k}{return}\PYG{+w}{ }\PYG{n}{is\PYGZus{}sequence\PYGZus{}}\PYG{p}{;}\PYG{+w}{ }\PYG{p}{\PYGZcb{}}
+\PYG{+w}{        }\PYG{k+kt}{bool}\PYG{+w}{ }\PYG{n+nf}{is\PYGZus{}freq\PYGZus{}display}\PYG{p}{()}\PYG{+w}{ }\PYG{k}{const}\PYG{+w}{ }\PYG{p}{\PYGZob{}}\PYG{+w}{ }\PYG{k}{return}\PYG{+w}{ }\PYG{n}{is\PYGZus{}freq\PYGZus{}display\PYGZus{}}\PYG{p}{;}\PYG{+w}{ }\PYG{p}{\PYGZcb{}}
+\PYG{+w}{        }\PYG{n}{std}\PYG{o}{::}\PYG{n}{string}\PYG{+w}{ }\PYG{n+nf}{state\PYGZus{}format}\PYG{p}{()}\PYG{+w}{ }\PYG{k}{const}\PYG{+w}{ }\PYG{p}{\PYGZob{}}\PYG{+w}{ }\PYG{k}{return}\PYG{+w}{ }\PYG{n}{state\PYGZus{}format\PYGZus{}}\PYG{p}{;}\PYG{+w}{ }\PYG{p}{\PYGZcb{}}
+\PYG{+w}{        }\PYG{n}{std}\PYG{o}{::}\PYG{n}{string}\PYG{+w}{ }\PYG{n+nf}{state\PYGZus{}delimeter}\PYG{p}{()}\PYG{+w}{ }\PYG{k}{const}\PYG{+w}{ }\PYG{p}{\PYGZob{}}\PYG{+w}{ }\PYG{k}{return}\PYG{+w}{ }\PYG{n}{state\PYGZus{}delimeter\PYGZus{}}\PYG{p}{;}\PYG{+w}{ }\PYG{p}{\PYGZcb{}}
+\PYG{+w}{        }\PYG{n}{std}\PYG{o}{::}\PYG{n}{string}\PYG{+w}{ }\PYG{n+nf}{excitation\PYGZus{}state\PYGZus{}format}\PYG{p}{()}\PYG{+w}{ }\PYG{k}{const}
+\PYG{+w}{            }\PYG{p}{\PYGZob{}}\PYG{+w}{ }\PYG{k}{return}\PYG{+w}{ }\PYG{n}{excitation\PYGZus{}state\PYGZus{}format\PYGZus{}}\PYG{p}{;}\PYG{+w}{ }\PYG{p}{\PYGZcb{}}
+\PYG{+w}{        }\PYG{n}{std}\PYG{o}{::}\PYG{n}{string}\PYG{+w}{ }\PYG{n+nf}{python\PYGZus{}script\PYGZus{}path}\PYG{p}{()}\PYG{+w}{ }\PYG{k}{const}\PYG{+w}{ }\PYG{p}{\PYGZob{}}\PYG{+w}{ }\PYG{k}{return}\PYG{+w}{ }\PYG{n}{python\PYGZus{}script\PYGZus{}path\PYGZus{}}\PYG{p}{;}\PYG{+w}{ }\PYG{p}{\PYGZcb{}}
+\PYG{+w}{    }\PYG{k}{private}\PYG{o}{:}
+\PYG{+w}{        }\PYG{n}{QConfig}\PYG{p}{()}\PYG{+w}{ }\PYG{p}{\PYGZob{}\PYGZcb{}}
+\PYG{+w}{        }\PYG{o}{\PYGZti{}}\PYG{n}{QConfig}\PYG{p}{()}\PYG{+w}{ }\PYG{p}{\PYGZob{}\PYGZcb{}}\PYG{+w}{ }\PYG{c+c1}{// Память освобождается в конце программы}
+\PYG{+w}{        }\PYG{k+kt}{int}\PYG{+w}{ }\PYG{n}{fig\PYGZus{}width\PYGZus{}}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{k+kt}{int}\PYG{p}{(}\PYG{n}{FIG\PYGZus{}WIDTH}\PYG{p}{);}
+\PYG{+w}{        }\PYG{k+kt}{int}\PYG{+w}{ }\PYG{n}{fig\PYGZus{}height\PYGZus{}}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{k+kt}{int}\PYG{p}{(}\PYG{n}{FIG\PYGZus{}HEIGHT}\PYG{p}{);}
+\PYG{+w}{        }\PYG{k+kt}{int}\PYG{+w}{ }\PYG{n}{dpi\PYGZus{}}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{k+kt}{int}\PYG{p}{(}\PYG{n}{DPI}\PYG{p}{);}
+
+\PYG{+w}{        }\PYG{k+kt}{int}\PYG{+w}{ }\PYG{n}{csv\PYGZus{}max\PYGZus{}number\PYGZus{}size\PYGZus{}}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{csv\PYGZus{}max\PYGZus{}number\PYGZus{}size\PYGZus{}default}\PYG{p}{;}
+\PYG{+w}{        }\PYG{k+kt}{int}\PYG{+w}{ }\PYG{n}{csv\PYGZus{}num\PYGZus{}accuracy\PYGZus{}}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{csv\PYGZus{}num\PYGZus{}accuracy\PYGZus{}default}\PYG{p}{;}
+
+\PYG{+w}{        }\PYG{k+kt}{int}\PYG{+w}{ }\PYG{n}{width\PYGZus{}}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{width\PYGZus{}default}\PYG{p}{;}
+
+\PYG{+w}{        }\PYG{k+kt}{double}\PYG{+w}{ }\PYG{n}{eps\PYGZus{}}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{eps\PYGZus{}default}\PYG{p}{;}
+
+\PYG{+w}{        }\PYG{k+kt}{int}\PYG{+w}{ }\PYG{n}{max\PYGZus{}photons\PYGZus{}}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{max\PYGZus{}photons\PYGZus{}default}\PYG{p}{;}
+\PYG{+w}{        }\PYG{k+kt}{int}\PYG{+w}{ }\PYG{n}{E\PYGZus{}LEVELS\PYGZus{}COUNT\PYGZus{}}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{E\PYGZus{}LEVELS\PYGZus{}COUNT\PYGZus{}DEFAULT}\PYG{p}{;}
+\PYG{+w}{        }\PYG{k+kt}{double}\PYG{+w}{ }\PYG{n}{wavegiudes\PYGZus{}length\PYGZus{}}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{waveguides\PYGZus{}length\PYGZus{}default}\PYG{p}{;}
+\PYG{+w}{        }\PYG{k+kt}{double}\PYG{+w}{ }\PYG{n}{wavegiudes\PYGZus{}amplitude\PYGZus{}}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{waveguides\PYGZus{}amplitude\PYGZus{}default}\PYG{p}{;}
+
+\PYG{+w}{        }\PYG{k+kt}{double}\PYG{+w}{ }\PYG{n}{h\PYGZus{}}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{h\PYGZus{}default}\PYG{p}{;}
+\PYG{+w}{        }\PYG{k+kt}{double}\PYG{+w}{ }\PYG{n}{w\PYGZus{}}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{w\PYGZus{}default}\PYG{p}{;}
+\PYG{+w}{        }\PYG{k+kt}{double}\PYG{+w}{ }\PYG{n}{g\PYGZus{}}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{g\PYGZus{}default}\PYG{p}{;}
+
+\PYG{+w}{        }\PYG{k+kt}{bool}\PYG{+w}{ }\PYG{n}{is\PYGZus{}sequence\PYGZus{}}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{is\PYGZus{}sequence\PYGZus{}default}\PYG{p}{;}
+\PYG{+w}{        }\PYG{k+kt}{bool}\PYG{+w}{ }\PYG{n}{is\PYGZus{}freq\PYGZus{}display\PYGZus{}}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{is\PYGZus{}freq\PYGZus{}display\PYGZus{}default}\PYG{p}{;}
+\PYG{+w}{        }\PYG{n}{std}\PYG{o}{::}\PYG{n}{string}\PYG{+w}{ }\PYG{n}{state\PYGZus{}format\PYGZus{}}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{state\PYGZus{}format\PYGZus{}default}\PYG{p}{;}
+\PYG{+w}{        }\PYG{n}{std}\PYG{o}{::}\PYG{n}{string}\PYG{+w}{ }\PYG{n}{state\PYGZus{}delimeter\PYGZus{}}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{state\PYGZus{}delimeter\PYGZus{}default}\PYG{p}{;}
+\PYG{+w}{        }\PYG{n}{std}\PYG{o}{::}\PYG{n}{string}\PYG{+w}{ }\PYG{n}{excitation\PYGZus{}state\PYGZus{}format\PYGZus{}}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{excitation\PYGZus{}state\PYGZus{}format\PYGZus{}default}\PYG{p}{;}
+\PYG{+w}{        }\PYG{n}{std}\PYG{o}{::}\PYG{n}{string}\PYG{+w}{ }\PYG{n}{python\PYGZus{}script\PYGZus{}path\PYGZus{}}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{python\PYGZus{}script\PYGZus{}path\PYGZus{}default}\PYG{p}{;}
+\PYG{p}{\PYGZcb{};}
+\end{Verbatim}
