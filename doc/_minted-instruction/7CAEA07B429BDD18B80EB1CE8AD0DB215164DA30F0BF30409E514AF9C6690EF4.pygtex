@@ -1,0 +1,12 @@
+\begin{Verbatim}[commandchars=\\\{\},codes={\catcode`\$=3\catcode`\^=7\catcode`\_=8\relax}]
+\PYG{p}{\PYGZob{}}
+\PYG{+w}{    }\PYG{n+nt}{\PYGZdq{}format\PYGZdq{}}\PYG{p}{:}\PYG{+w}{ }\PYG{l+s+s2}{\PYGZdq{}gif\PYGZdq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{c+c1}{// Формат файла. Либо gif либо png.}
+\PYG{+w}{    }\PYG{n+nt}{\PYGZdq{}filename\PYGZdq{}}\PYG{p}{:}\PYG{+w}{ }\PYG{l+s+s2}{\PYGZdq{}tc\PYGZus{}gif.gif\PYGZdq{}}\PYG{p}{,}
+\PYG{+w}{    }\PYG{n+nt}{\PYGZdq{}width\PYGZdq{}}\PYG{p}{:}\PYG{+w}{ }\PYG{l+s+s2}{\PYGZdq{}19\PYGZdq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{c+c1}{// Ширина файла (в 100 пикселях)}
+\PYG{+w}{    }\PYG{n+nt}{\PYGZdq{}height\PYGZdq{}}\PYG{p}{:}\PYG{+w}{ }\PYG{l+s+s2}{\PYGZdq{}10\PYGZdq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{c+c1}{// Высота графика (в 100 пикселях)}
+\PYG{+w}{    }\PYG{n+nt}{\PYGZdq{}dirs\PYGZdq{}}\PYG{p}{:}\PYG{+w}{ }\PYG{l+s+s2}{\PYGZdq{}*\PYGZdq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{c+c1}{// Какие директории нужно обработать, выбор происходит также}
+\PYG{+w}{                }\PYG{c+c1}{// как в линуксе}
+\PYG{+w}{    }\PYG{n+nt}{\PYGZdq{}frames\PYGZdq{}}\PYG{p}{:}\PYG{+w}{ }\PYG{l+s+s2}{\PYGZdq{}500\PYGZdq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{c+c1}{// Если выбран гиф \PYGZhy{} количество кадров}
+\PYG{+w}{    }\PYG{n+nt}{\PYGZdq{}interval\PYGZdq{}}\PYG{p}{:}\PYG{+w}{ }\PYG{l+s+s2}{\PYGZdq{}100\PYGZdq{}}\PYG{+w}{ }\PYG{c+c1}{// Время в миллисекундах, с которой сменяется кадр}
+\PYG{p}{\PYGZcb{}}
+\end{Verbatim}

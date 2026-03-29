@@ -1,0 +1,9 @@
+{
+    "format": "png",
+    "filename": "original.png",
+    "width": "19",
+    "height": "10",
+    "dirs": "*",
+    "frames": "20",
+    "interval": "100"
+}

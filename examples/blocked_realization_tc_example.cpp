@@ -129,21 +129,23 @@ int main(int argc, char** argv) {
     MPI_Init(&argc, &argv);
 
     using OpType = Operator<TC_State>;
-    double h = QConfig::instance().h();
-    double w = QConfig::instance().w();
+    COMPLEX h = QConfig::instance().h();
+    COMPLEX w = QConfig::instance().w();
     std::cout << "h = " << h << " w = " << w << std::endl;
 
+    auto start = MPI_Wtime();
+
     TC_State state(2);
-    state.set_max_photons(1);
-    state.set_n(1);
+    state.set_max_photons(250);
+    state.set_n(250);
     state.set_leak(0.01);
-    std::cout << "Вывод остояния: " << state.to_string() << std::endl;
+    //std::cout << "Вывод остояния: " << state.to_string() << std::endl;
 
     OpType H_op = OpType(atoms_count) * h * w + OpType(photons_count) * h * w + OpType(exc_relax_atoms);
 
     auto res = H_op.run(State<TC_State>(state));
 
-    std::cout << "Вывод состояния: " << res.to_string() << std::endl;
+    //std::cout << "Вывод состояния: " << res.to_string() << std::endl;
 
     std::vector<std::pair<double, OpType>> dec;
     OpType A_out(a_destroy);
@@ -163,14 +165,22 @@ int main(int argc, char** argv) {
 
     BLOCKED_H_by_Operator<TC_State> H(ctxt, state, H_op, dec);
 
-    show_basis(H.get_basis());
-    H.show();
+    auto end = MPI_Wtime();
+    MPI_Barrier(MPI_COMM_WORLD);
+    if (is_main_proc()) std::cout << "GENERATE: " << end - start << std::endl;
+
+    //show_basis(H.get_basis());
+    //H.show();
 
     if (is_main_proc()) std::cout << "H_size: " << H.size() << std::endl; 
 
-    auto time_vec = linspace(0, 1000, 1000);
+    auto time_vec = linspace(0, 50, 50);
 
+    start = MPI_Wtime();
     auto probs = quantum_master_equation(state, H, time_vec);
+    end = MPI_Wtime();
+    MPI_Barrier(MPI_COMM_WORLD);
+    if (is_main_proc()) std::cout << "CALCULATION: " << end - start << std::endl;
 
     make_probs_files(H, probs, time_vec, H.get_basis(), "seaborn_results/tc_example_seaborn");
 

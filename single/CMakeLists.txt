@@ -19,9 +19,10 @@ file(GLOB SOURCE_FILES "../src/QComputations/*.cpp")
 function(create_build_target TARGET_NAME PYTHON_FLAG)
     # Create target
     add_library(${TARGET_NAME} SHARED ${SOURCE_FILES})
+    include_directories(../src/QComputations/*.hpp)
 
     # Set flags
-    target_compile_options(${TARGET_NAME} PRIVATE -qmkl=parallel -qtbb)
+    target_compile_options(${TARGET_NAME} PRIVATE -g -DENABLE_ONEAPI -qopenmp -qmkl=parallel)
 
     # Link libraries
     #target_link_libraries(${TARGET_NAME} /lib/x86_64-linux-gnu/libdl.so.2)
@@ -41,9 +42,9 @@ function(create_build_target TARGET_NAME PYTHON_FLAG)
     endif()
 
     #target_include_directories(${TARGET_NAME} PRIVATE ${MKL_INCLUDE_DIRS})
-    target_link_options(${TARGET_NAME} PRIVATE -qmkl=parallel -qtbb)
+    target_link_options(${TARGET_NAME} PRIVATE -qmkl=parallel)
 endfunction()
 
 # Create build targets
-create_build_target(QComputations_SINGLE ON)
-create_build_target(QComputations_SINGLE_NO_PLOTS OFF)
+# create_build_target(QComputations_SINGLE ON)
+create_build_target(QComputations_SINGLE OFF)

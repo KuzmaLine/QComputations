@@ -30,27 +30,33 @@ int main(int argc, char** argv) {
     QConfig::instance().set_width(30); // Ширина ячейки элемента матрицы для stdout
     double h = QConfig::instance().h(); // Получить постоянную планка
     double w = QConfig::instance().w(); // Получить частоту
-    QConfig::instance().set_g(0.005); // сила взаимодействия с полем атома
+    QConfig::instance().set_g(0.01); // сила взаимодействия с полем атома
 
-    std::vector<size_t> grid_config = {1, 1};
+    std::vector<size_t> grid_config = {499, 499};
 
     TCH_State state(grid_config);
     state.set_n(1, 0);
     state.set_waveguide(0, 1, 0.01);
-    state.set_leak_for_cavity(1, 0.2);
+    //state.set_leak_for_cavity(1, 0.2);
 
     int ctxt;
     mpi::init_grid(ctxt);
     
     BLOCKED_H_TCH H(ctxt, state);
 
-    if (is_main_proc()) { show_basis(H.get_basis()); }
+    if (is_main_proc()) { 
+        //show_basis(H.get_basis());
+        std::cout << H.size() << std::endl;
+    }
 
-    H.show();
+    auto time_vec = linspace(0, 20000, 20000);
 
-    auto time_vec = linspace(0, 5000, 5000);
-
-    auto probs = quantum_master_equation(State<Basis_State>(state), H, time_vec);
+    MPI_Barrier(MPI_COMM_WORLD);
+    auto start = MPI_Wtime();
+    auto probs = schrodinger(State<Basis_State>(state), H, time_vec);
+    auto end = MPI_Wtime();
+    MPI_Barrier(MPI_COMM_WORLD);
+    if (is_main_proc()) std::cout << end - start << std::endl;
 
     if (is_python_api) {
         if (is_main_proc()) {
@@ -64,7 +70,7 @@ int main(int argc, char** argv) {
         matplotlib::probs_to_plot(probs, time_vec, H.get_basis());
 
         if (is_main_proc()) {
-            matplotlib::savefig("general_tch_plots/python_api_result.png");
+            //matplotlib::savefig("general_tch_plots/python_api_result.png");
             matplotlib::show();
         }
     } else {

@@ -1,0 +1,6 @@
+\begin{Verbatim}[commandchars=\\\{\},codes={\catcode`\$=3\catcode`\^=7\catcode`\_=8\relax}]
+\PYG{n}{State}\PYG{o}{\PYGZlt{}}\PYG{n}{StateType}\PYG{o}{\PYGZgt{}}\PYG{+w}{ }\PYG{n}{op\PYGZus{}func}\PYG{p}{(}\PYG{k}{const}\PYG{+w}{ }\PYG{n}{StateType}\PYG{o}{\PYGZam{}}\PYG{+w}{ }\PYG{n}{state}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{    }\PYG{c+c1}{// do something}
+\PYG{+w}{    }\PYG{c+c1}{// return State\PYGZlt{}StateType\PYGZgt{} res}
+\PYG{p}{\PYGZcb{}}
+\end{Verbatim}

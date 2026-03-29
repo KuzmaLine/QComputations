@@ -1,0 +1,18 @@
+\begin{Verbatim}[commandchars=\\\{\},codes={\catcode`\$=3\catcode`\^=7\catcode`\_=8\relax}]
+\PYG{c+c1}{// ctxt \PYGZhy{} новый контекст,}
+\PYG{c+c1}{// согласно которому идёт распределение.}
+\PYG{c+c1}{//  То есть ядра будут работать уже с другой сеткой BLACS.}
+
+\PYG{n}{BLOCKED\PYGZus{}Vector}\PYG{o}{\PYGZlt{}}\PYG{k+kt}{double}\PYG{o}{\PYGZgt{}}\PYG{+w}{ }\PYG{n}{blocked\PYGZus{}matrix\PYGZus{}get\PYGZus{}col}\PYG{p}{(}\PYG{k+kt}{int}\PYG{+w}{ }\PYG{n}{ctxt}\PYG{p}{,}
+\PYG{+w}{        }\PYG{k}{const}\PYG{+w}{ }\PYG{n}{BLOCKED\PYGZus{}Matrix}\PYG{o}{\PYGZlt{}}\PYG{k+kt}{double}\PYG{o}{\PYGZgt{}\PYGZam{}}\PYG{+w}{ }\PYG{n}{A}\PYG{p}{,}\PYG{+w}{ }\PYG{k+kt}{size\PYGZus{}t}\PYG{+w}{ }\PYG{n}{col}\PYG{p}{);}
+\PYG{n}{BLOCKED\PYGZus{}Vector}\PYG{o}{\PYGZlt{}}\PYG{k+kt}{double}\PYG{o}{\PYGZgt{}}\PYG{+w}{ }\PYG{n}{blocked\PYGZus{}matrix\PYGZus{}get\PYGZus{}row}\PYG{p}{(}\PYG{k+kt}{int}\PYG{+w}{ }\PYG{n}{ctxt}\PYG{p}{,}
+\PYG{+w}{        }\PYG{k}{const}\PYG{+w}{ }\PYG{n}{BLOCKED\PYGZus{}Matrix}\PYG{o}{\PYGZlt{}}\PYG{k+kt}{double}\PYG{o}{\PYGZgt{}\PYGZam{}}\PYG{+w}{ }\PYG{n}{A}\PYG{p}{,}\PYG{+w}{ }\PYG{k+kt}{size\PYGZus{}t}\PYG{+w}{ }\PYG{n}{row}\PYG{p}{);}
+\PYG{n}{BLOCKED\PYGZus{}Vector}\PYG{o}{\PYGZlt{}}\PYG{n}{COMPLEX}\PYG{o}{\PYGZgt{}}\PYG{+w}{ }\PYG{n}{blocked\PYGZus{}matrix\PYGZus{}get\PYGZus{}col}\PYG{p}{(}\PYG{k+kt}{int}\PYG{+w}{ }\PYG{n}{ctxt}\PYG{p}{,}
+\PYG{+w}{        }\PYG{k}{const}\PYG{+w}{ }\PYG{n}{BLOCKED\PYGZus{}Matrix}\PYG{o}{\PYGZlt{}}\PYG{n}{COMPLEX}\PYG{o}{\PYGZgt{}\PYGZam{}}\PYG{+w}{ }\PYG{n}{A}\PYG{p}{,}\PYG{+w}{ }\PYG{k+kt}{size\PYGZus{}t}\PYG{+w}{ }\PYG{n}{col}\PYG{p}{);}
+\PYG{n}{BLOCKED\PYGZus{}Vector}\PYG{o}{\PYGZlt{}}\PYG{n}{COMPLEX}\PYG{o}{\PYGZgt{}}\PYG{+w}{ }\PYG{n}{blocked\PYGZus{}matrix\PYGZus{}get\PYGZus{}row}\PYG{p}{(}\PYG{k+kt}{int}\PYG{+w}{ }\PYG{n}{ctxt}\PYG{p}{,}
+\PYG{+w}{        }\PYG{k}{const}\PYG{+w}{ }\PYG{n}{BLOCKED\PYGZus{}Matrix}\PYG{o}{\PYGZlt{}}\PYG{n}{COMPLEX}\PYG{o}{\PYGZgt{}\PYGZam{}}\PYG{+w}{ }\PYG{n}{A}\PYG{p}{,}\PYG{+w}{ }\PYG{k+kt}{size\PYGZus{}t}\PYG{+w}{ }\PYG{n}{row}\PYG{p}{);}
+\PYG{n}{std}\PYG{o}{::}\PYG{n}{vector}\PYG{o}{\PYGZlt{}}\PYG{n}{BLOCKED\PYGZus{}Vector}\PYG{o}{\PYGZlt{}}\PYG{k+kt}{double}\PYG{o}{\PYGZgt{}\PYGZgt{}}\PYG{+w}{ }\PYG{n}{blocked\PYGZus{}matrix\PYGZus{}to\PYGZus{}blocked\PYGZus{}vectors}\PYG{p}{(}\PYG{k+kt}{int}\PYG{+w}{ }\PYG{n}{ctxt}\PYG{p}{,}
+\PYG{+w}{        }\PYG{k}{const}\PYG{+w}{ }\PYG{n}{BLOCKED\PYGZus{}Matrix}\PYG{o}{\PYGZlt{}}\PYG{k+kt}{double}\PYG{o}{\PYGZgt{}\PYGZam{}}\PYG{+w}{ }\PYG{n}{A}\PYG{p}{);}
+\PYG{n}{std}\PYG{o}{::}\PYG{n}{vector}\PYG{o}{\PYGZlt{}}\PYG{n}{BLOCKED\PYGZus{}Vector}\PYG{o}{\PYGZlt{}}\PYG{n}{COMPLEX}\PYG{o}{\PYGZgt{}\PYGZgt{}}\PYG{+w}{ }\PYG{n}{blocked\PYGZus{}matrix\PYGZus{}to\PYGZus{}blocked\PYGZus{}vectors}\PYG{p}{(}\PYG{k+kt}{int}\PYG{+w}{ }\PYG{n}{ctxt}\PYG{p}{,}
+\PYG{+w}{        }\PYG{k}{const}\PYG{+w}{ }\PYG{n}{BLOCKED\PYGZus{}Matrix}\PYG{o}{\PYGZlt{}}\PYG{n}{COMPLEX}\PYG{o}{\PYGZgt{}\PYGZam{}}\PYG{+w}{ }\PYG{n}{A}\PYG{p}{);}
+\end{Verbatim}

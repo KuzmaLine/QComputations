@@ -1,0 +1,3 @@
+\begin{Verbatim}[commandchars=\\\{\},codes={\catcode`\$=3\catcode`\^=7\catcode`\_=8\relax}]
+\PYG{n}{QComputations}\PYG{o}{::}\PYG{n}{instance}\PYG{p}{().}\PYG{n}{set\PYGZus{}qme\PYGZus{}algorithm}\PYG{p}{(}\PYG{n}{RUNGE\PYGZus{}KUTT\PYGZus{}4}\PYG{p}{);}
+\end{Verbatim}

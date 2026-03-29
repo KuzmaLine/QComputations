@@ -1,0 +1,25 @@
+\begin{Verbatim}[commandchars=\\\{\},codes={\catcode`\$=3\catcode`\^=7\catcode`\_=8\relax}]
+\PYG{k}{using}\PYG{+w}{ }\PYG{n}{OpType}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{Operator}\PYG{o}{\PYGZlt{}}\PYG{n}{TC\PYGZus{}State}\PYG{o}{\PYGZgt{}}\PYG{p}{;}
+
+\PYG{k}{class}\PYG{+w}{ }\PYG{n+nc}{H\PYGZus{}TC}\PYG{+w}{ }\PYG{o}{:}\PYG{+w}{ }\PYG{k}{public}\PYG{+w}{ }\PYG{n}{H\PYGZus{}by\PYGZus{}Operator}\PYG{o}{\PYGZlt{}}\PYG{n}{TC\PYGZus{}State}\PYG{o}{\PYGZgt{}}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{    }\PYG{k}{public}\PYG{o}{:}
+\PYG{+w}{        }\PYG{k}{explicit}\PYG{+w}{ }\PYG{n}{H\PYGZus{}TC}\PYG{p}{(}\PYG{k}{const}\PYG{+w}{ }\PYG{n}{State}\PYG{o}{\PYGZlt{}}\PYG{n}{TC\PYGZus{}State}\PYG{o}{\PYGZgt{}\PYGZam{}}\PYG{+w}{ }\PYG{n}{state}\PYG{p}{);}
+\PYG{p}{\PYGZcb{};}
+
+\PYG{n}{OpType}\PYG{+w}{ }\PYG{n+nf}{H\PYGZus{}TC\PYGZus{}OP}\PYG{p}{()}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{    }\PYG{n}{OpType}\PYG{+w}{ }\PYG{n}{H\PYGZus{}op}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{OpType}\PYG{p}{(}\PYG{n}{atoms\PYGZus{}count}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{*}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{QConfig}\PYG{o}{::}\PYG{n}{instance}\PYG{p}{().}\PYG{n}{h}\PYG{p}{()}\PYG{+w}{ }\PYG{o}{*}\PYG{+w}{ }\PYG{n}{QConfig}\PYG{o}{::}\PYG{n}{instance}\PYG{p}{().}\PYG{n}{w}\PYG{p}{())}\PYG{+w}{ }\PYG{o}{+}
+\PYG{+w}{                  }\PYG{n}{OpType}\PYG{p}{(}\PYG{n}{photons\PYGZus{}count}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{*}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{QConfig}\PYG{o}{::}\PYG{n}{instance}\PYG{p}{().}\PYG{n}{h}\PYG{p}{()}\PYG{+w}{ }\PYG{o}{*}\PYG{+w}{ }\PYG{n}{QConfig}\PYG{o}{::}\PYG{n}{instance}\PYG{p}{().}\PYG{n}{w}\PYG{p}{())}\PYG{+w}{ }\PYG{o}{+}
+\PYG{+w}{                  }\PYG{n}{OpType}\PYG{p}{(}\PYG{n}{exc\PYGZus{}relax\PYGZus{}atoms}\PYG{p}{);}
+
+\PYG{+w}{    }\PYG{k}{return}\PYG{+w}{ }\PYG{n}{H\PYGZus{}op}\PYG{p}{;}
+\PYG{p}{\PYGZcb{}}
+
+\PYG{n}{std}\PYG{o}{::}\PYG{n}{vector}\PYG{o}{\PYGZlt{}}\PYG{n}{std}\PYG{o}{::}\PYG{n}{pair}\PYG{o}{\PYGZlt{}}\PYG{k+kt}{double}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{OpType}\PYG{o}{\PYGZgt{}\PYGZgt{}}\PYG{+w}{ }\PYG{n}{make\PYGZus{}decs}\PYG{p}{(}\PYG{k}{const}\PYG{+w}{ }\PYG{n}{State}\PYG{o}{\PYGZlt{}}\PYG{n}{TC\PYGZus{}State}\PYG{o}{\PYGZgt{}\PYGZam{}}\PYG{+w}{ }\PYG{n}{st}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{    }\PYG{n}{std}\PYG{o}{::}\PYG{n}{vector}\PYG{o}{\PYGZlt{}}\PYG{n}{std}\PYG{o}{::}\PYG{n}{pair}\PYG{o}{\PYGZlt{}}\PYG{k+kt}{double}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{OpType}\PYG{o}{\PYGZgt{}\PYGZgt{}}\PYG{+w}{ }\PYG{n}{res}\PYG{p}{;}
+\PYG{+w}{    }\PYG{n}{res}\PYG{p}{.}\PYG{n}{emplace\PYGZus{}back}\PYG{p}{(}\PYG{n}{st}\PYG{p}{(}\PYG{l+m+mi}{0}\PYG{p}{)}\PYG{o}{\PYGZhy{}\PYGZgt{}}\PYG{n}{get\PYGZus{}leak}\PYG{p}{(),}\PYG{+w}{ }\PYG{n}{OpType}\PYG{p}{(}\PYG{n}{a\PYGZus{}destroy}\PYG{p}{));}
+
+\PYG{+w}{    }\PYG{k}{return}\PYG{+w}{ }\PYG{n}{res}\PYG{p}{;}
+\PYG{p}{\PYGZcb{}}
+
+\PYG{n}{H\PYGZus{}TC}\PYG{o}{::}\PYG{n}{H\PYGZus{}TC}\PYG{p}{(}\PYG{k}{const}\PYG{+w}{ }\PYG{n}{State}\PYG{o}{\PYGZlt{}}\PYG{n}{TC\PYGZus{}State}\PYG{o}{\PYGZgt{}\PYGZam{}}\PYG{+w}{ }\PYG{n}{st}\PYG{p}{)}\PYG{o}{:}\PYG{+w}{ }\PYG{n}{H\PYGZus{}by\PYGZus{}Operator}\PYG{p}{(}\PYG{n}{st}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{H\PYGZus{}TC\PYGZus{}OP}\PYG{p}{(),}\PYG{+w}{ }\PYG{n}{make\PYGZus{}decs}\PYG{p}{(}\PYG{n}{st}\PYG{p}{))}\PYG{+w}{ }\PYG{p}{\PYGZob{}\PYGZcb{}}
+\end{Verbatim}

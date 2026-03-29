@@ -1,0 +1,3 @@
+\begin{Verbatim}[commandchars=\\\{\},codes={\catcode`\$=3\catcode`\^=7\catcode`\_=8\relax}]
+\PYG{+w}{            }\PYG{k}{enum}\PYG{+w}{ }\PYG{n+nc}{MATRIX\PYGZus{}TYPE}\PYG{+w}{ }\PYG{p}{\PYGZob{}}\PYG{+w}{ }\PYG{n}{GE}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{120}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{SY}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{121}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{HE}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{122}\PYG{p}{\PYGZcb{};}
+\end{Verbatim}

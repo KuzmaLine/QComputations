@@ -1,36 +1,42 @@
 #pragma once
 #include <complex>
 #include <iostream>
+#include <omp.h>
 
 namespace QComputations {
 
-    // Рудимент - УБРАТЬ (Осторожно с private переменной QConfig)
-    enum MULTIPLY_ALGS { COMMON_MODE = 0 };
+// Рудимент - УБРАТЬ (Осторожно с private переменной QConfig)
+enum MULTIPLY_ALGS {COMMON_MODE = 0};
 
-    enum FUNCTION_QME { RUNGE_KUTT_4 = 121, RUNGE_KUTT_2 = 122 };
-    namespace {
-        const std::string angle_bracket_right = "\u29FD";
-        enum FIG_PARAMS { FIG_WIDTH = 19, FIG_HEIGHT = 10, DPI = 80 };
-        constexpr double h_default = 1;
-        constexpr double w_default = 1;
-        constexpr double g_default = 0.01;
-        constexpr double waveguides_length_default = 0;
-        constexpr double waveguides_amplitude_default = 0;
-        constexpr int max_photons_default = 1;
+enum FUNCTION_QME {RUNGE_KUTT_4 = 121, RUNGE_KUTT_2 = 122};
+namespace {
+    const std::string angle_bracket_right = "\u29FD";
+    enum FIG_PARAMS {FIG_WIDTH = 19, FIG_HEIGHT = 10, DPI = 80};
+    constexpr double h_default = 1;
+    constexpr double w_default = 1;
+    constexpr double g_default = 0.01;
+    constexpr double waveguides_length_default = 0;
+    constexpr double waveguides_amplitude_default = 0;
+    constexpr int max_photons_default = 1;
 
-        constexpr double eps_default = 1e-12;
-        constexpr int width_default = 15;
+    constexpr double eps_default = 1e-12;
+    constexpr int width_default = 15;
 
-        constexpr int csv_max_number_size_default = 21;
-        constexpr int csv_num_accuracy_default = 16;
+    constexpr int csv_max_number_size_default = 21;
+    constexpr int csv_num_accuracy_default = 16;
 
-        const std::string python_script_path_default = "seaborn_plot.py";
-        constexpr FUNCTION_QME qme_algorithm_default = RUNGE_KUTT_2;
-        constexpr size_t exp_accuracy_default = 10;
-    }  // namespace
+    const std::string python_script_path_default = "seaborn_plot.py";
+    constexpr FUNCTION_QME qme_algorithm_default = RUNGE_KUTT_2;
+    constexpr size_t exp_accuracy_default = 10;
 
-    class QConfig {
-       public:
+#ifdef __CUDACC__
+    constexpr size_t cuda_grid_size_default = 1024;
+    constexpr size_t cuda_block_size_default = 1024;
+#endif
+}
+
+class QConfig {
+    public:
         QConfig(const QConfig&) = delete;
         void operator=(const QConfig&) = delete;
 
@@ -52,7 +58,7 @@ namespace QComputations {
         void set_waveguides_length(double waveguides_length) { wavegiudes_length_ = waveguides_length; }
         void set_csv_max_number_size(int csv_max_number_size) { csv_max_number_size_ = csv_max_number_size; }
         void set_csv_num_accuracy(int csv_num_accuracy) { csv_num_accuracy_ = csv_num_accuracy; }
-        void set_qme_algorithm(const FUNCTION_QME alg) { qme_algorithm_ = alg; }
+        void set_qme_algorithm(const FUNCTION_QME alg) { qme_algorithm_ = alg;}
         void set_exp_accuracy(const size_t exp_accuracy) { exp_accuracy_ = exp_accuracy; }
 
         double h() const { return h_; }
@@ -70,8 +76,16 @@ namespace QComputations {
         int csv_max_number_size() const { return csv_max_number_size_; }
         int csv_num_accuracy() const { return csv_num_accuracy_; }
         std::string python_script_path() const { return python_script_path_; }
-        FUNCTION_QME qme_algorithm() const { return qme_algorithm_; }
+        FUNCTION_QME qme_algorithm() const { return qme_algorithm_;}
         size_t exp_accuracy() const { return exp_accuracy_; }
+
+#ifdef __CUDACC__
+        void set_cuda_grid_size(size_t grid_size) { cuda_grid_size_ = grid_size; }
+        void set_cuda_block_size(size_t block_size) { cuda_block_size_ = block_size; }
+
+        size_t cuda_grid_size() const { return cuda_grid_size_; }
+        size_t cuda_block_size() const { return cuda_block_size_; }
+#endif
 
         void show() const {
             std::cout << "CONFIG PARAMS: " << std::endl;
@@ -85,26 +99,25 @@ namespace QComputations {
             std::cout << " print width - " << width_ << std::endl;
             std::cout << " MULTIPLY_MODE - " << (MULTIPLY_MODE_ == COMMON_MODE ? "COMMON_MODE" : "") << std::endl;
         }
-
-       private:
+    private:
         QConfig() {}
         ~QConfig() {}
         MULTIPLY_ALGS MULTIPLY_MODE_ = COMMON_MODE;
         int fig_width_ = int(FIG_WIDTH);
         int fig_height_ = int(FIG_HEIGHT);
         int dpi_ = int(DPI);
-
+        
         int csv_max_number_size_ = csv_max_number_size_default;
         int csv_num_accuracy_ = csv_num_accuracy_default;
 
         int width_ = width_default;
 
         double eps_ = eps_default;
-
+        
         int max_photons_ = max_photons_default;
         double wavegiudes_length_ = waveguides_length_default;
         double wavegiudes_amplitude_ = waveguides_amplitude_default;
-
+    
         double h_ = h_default;
         double w_ = w_default;
         double g_ = g_default;
@@ -113,6 +126,11 @@ namespace QComputations {
 
         std::string python_script_path_ = python_script_path_default;
         FUNCTION_QME qme_algorithm_ = qme_algorithm_default;
-    };
 
-}  // namespace QComputations
+#ifdef __CUDACC__
+        size_t cuda_grid_size_ = cuda_grid_size_default;
+        size_t cuda_block_size_ = cuda_block_size_default;
+#endif
+};
+
+} // namespace QComputations

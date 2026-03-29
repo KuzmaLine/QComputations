@@ -13,13 +13,14 @@ ChartManager::ChartManager(QObject *parent) : QObject(parent) {
     });
     connect(m_2dManager, &ChartManager2D::lineSeriesRemoved, this, [this](QLineSeries *series) {
         emit lineSeriesRemoved(series);
-    });
+    }); // signals probros to here
     connect(m_2dManager, &ChartManager2D::lineSeriesListChanged, this, &ChartManager::lineSeriesListChanged);
     connect(m_2dManager, &ChartManager2D::minMaxValuesChanged, this, &ChartManager::minMaxValuesChanged);
 
     // Forward 3D signals
     connect(m_3dManager, &ChartManager3D::surfaceSeriesChanged, this, &ChartManager::surfaceSeriesChanged);
     connect(m_3dManager, &ChartManager3D::minMaxValuesChanged, this, &ChartManager::minMaxValuesChanged);
+    // signals probros to here
 }
 
 ChartManager::~ChartManager() = default;
@@ -47,7 +48,7 @@ void ChartManager::clearAllLineSeries() {
 void ChartManager::setShow2D(bool visible) {
     if (m_show2D == visible) return;
     m_show2D = visible;
-    emit show2DChanged();
+    emit show2DChanged(); // FIX 2D TO 3D
 }
 
 void ChartManager::setShow3D(bool visible) {
@@ -62,9 +63,9 @@ void ChartManager::setShow3D(bool visible) {
 // ------------------- Folder loading -------------------
 void ChartManager::loadFolder(const QString &path) {
     QString folderName = QDir(path).dirName();
-    bool is3D = folderName.endsWith("3d", Qt::CaseInsensitive);
+    bool is3D = folderName.endsWith("3d", Qt::CaseInsensitive); // ????
 
-    setGraphType(is3D);
+    setGraphType(is3D); // ChartManager::setGraphType
     m_lastLoadedPath = path;
 
     if (is3D && m_3dManager)
@@ -119,3 +120,4 @@ void ChartManager::setGraphType(bool is3D) {
 }
 
 QObject *ChartManager::surfaceSeries() const { return m_3dManager ? m_3dManager->surfaceSeries() : nullptr; }
+                                                                                                // death

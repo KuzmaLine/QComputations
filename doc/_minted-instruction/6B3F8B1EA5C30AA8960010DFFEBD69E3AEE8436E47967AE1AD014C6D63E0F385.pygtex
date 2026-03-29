@@ -1,0 +1,20 @@
+\begin{Verbatim}[commandchars=\\\{\},codes={\catcode`\$=3\catcode`\^=7\catcode`\_=8\relax}]
+\PYG{n}{std}\PYG{o}{::}\PYG{n}{vector}\PYG{o}{\PYGZlt{}}\PYG{n}{std}\PYG{o}{::}\PYG{n}{pair}\PYG{o}{\PYGZlt{}}\PYG{k+kt}{double}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{OpType}\PYG{o}{\PYGZgt{}\PYGZgt{}}\PYG{+w}{ }\PYG{n}{dec}\PYG{p}{;}
+\PYG{n}{OpType}\PYG{+w}{ }\PYG{n+nf}{A\PYGZus{}out}\PYG{p}{(}\PYG{n}{a\PYGZus{}destroy}\PYG{p}{);}
+\PYG{n}{dec}\PYG{p}{.}\PYG{n}{emplace\PYGZus{}back}\PYG{p}{(}\PYG{n}{state}\PYG{p}{.}\PYG{n}{get\PYGZus{}leak}\PYG{p}{(),}\PYG{+w}{ }\PYG{n}{A\PYGZus{}out}\PYG{p}{);}
+
+\PYG{k+kt}{int}\PYG{+w}{ }\PYG{n}{ctxt}\PYG{p}{;}
+\PYG{n}{mpi}\PYG{o}{::}\PYG{n}{init\PYGZus{}grid}\PYG{p}{(}\PYG{n}{ctxt}\PYG{p}{);}
+
+\PYG{n}{BLOCKED\PYGZus{}H\PYGZus{}by\PYGZus{}Operator}\PYG{o}{\PYGZlt{}}\PYG{n}{TC\PYGZus{}State}\PYG{o}{\PYGZgt{}}\PYG{+w}{ }\PYG{n}{H}\PYG{p}{(}\PYG{n}{ctxt}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{state}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{H\PYGZus{}op}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{dec}\PYG{p}{);}
+
+\PYG{k}{auto}\PYG{+w}{ }\PYG{n}{time\PYGZus{}vec}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{linspace}\PYG{p}{(}\PYG{l+m+mi}{0}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{1000}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{1000}\PYG{p}{);}
+
+\PYG{k}{auto}\PYG{+w}{ }\PYG{n}{probs}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{quantum\PYGZus{}master\PYGZus{}equation}\PYG{p}{(}\PYG{n}{state}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{H}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{time\PYGZus{}vec}\PYG{p}{);}
+
+\PYG{c+c1}{// \PYGZdq{}seaborn\PYGZus{}results/tc\PYGZus{}example\PYGZus{}seaborn\PYGZdq{} имя директории,}
+\PYG{c+c1}{// в которую буду записаны файлы}
+\PYG{c+c1}{// ВНИМАНИЕ! Если директория уже существует, она будет удалена!}
+\PYG{c+c1}{// Рекомендуется записывать файлы в отдельную директорию}
+\PYG{n}{make\PYGZus{}probs\PYGZus{}files}\PYG{p}{(}\PYG{n}{H}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{probs}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{time\PYGZus{}vec}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{H}\PYG{p}{.}\PYG{n}{get\PYGZus{}basis}\PYG{p}{(),}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}tc\PYGZus{}example\PYGZus{}seboarn\PYGZdq{}}\PYG{p}{);}
+\end{Verbatim}

@@ -1,0 +1,29 @@
+\begin{Verbatim}[commandchars=\\\{\},codes={\catcode`\$=3\catcode`\^=7\catcode`\_=8\relax}]
+\PYG{c+c1}{// Создаём базисные состояния}
+\PYG{n}{Basis\PYGZus{}State}\PYG{+w}{ }\PYG{n}{zero}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}|0;0\PYGZgt{}\PYGZdq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{);}
+\PYG{n}{Basis\PYGZus{}State}\PYG{+w}{ }\PYG{n}{one}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}|1;1\PYGZgt{}\PYGZdq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{);}
+
+\PYG{c+c1}{// Инициализация State\PYGZlt{}Basis\PYGZus{}State\PYGZgt{}}
+\PYG{n}{State}\PYG{o}{\PYGZlt{}}\PYG{n}{Basis\PYGZus{}State}\PYG{o}{\PYGZgt{}}\PYG{+w}{ }\PYG{n}{st}\PYG{p}{(}\PYG{n}{zero}\PYG{p}{);}
+\PYG{n}{st}\PYG{+w}{ }\PYG{o}{+=}\PYG{+w}{ }\PYG{n}{one}\PYG{p}{;}
+\PYG{n}{st}\PYG{+w}{ }\PYG{o}{*=}\PYG{+w}{ }\PYG{l+m+mi}{2}\PYG{p}{;}
+
+\PYG{n}{std}\PYG{o}{::}\PYG{n}{cout}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZlt{}}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}State\PYGZlt{}Basis\PYGZus{}State\PYGZgt{}: \PYGZdq{}}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZlt{}}\PYG{+w}{ }\PYG{n}{st}\PYG{p}{.}\PYG{n}{to\PYGZus{}string}\PYG{p}{()}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZlt{}}\PYG{+w}{ }\PYG{n}{std}\PYG{o}{::}\PYG{n}{endl}\PYG{p}{;}
+\PYG{c+c1}{// 2 * |0;0\PYGZgt{} + 2 * |1;1\PYGZgt{}}
+
+\PYG{n}{st}\PYG{p}{.}\PYG{n}{normalize}\PYG{p}{();}
+
+\PYG{n}{std}\PYG{o}{::}\PYG{n}{cout}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZlt{}}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}State\PYGZlt{}Basis\PYGZus{}State\PYGZgt{} NORMALIZE: \PYGZdq{}}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZlt{}}\PYG{+w}{ }\PYG{n}{st}\PYG{p}{.}\PYG{n}{to\PYGZus{}string}\PYG{p}{()}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZlt{}}\PYG{+w}{ }\PYG{n}{std}\PYG{o}{::}\PYG{n}{endl}\PYG{p}{;}
+\PYG{c+c1}{// (|0;0\PYGZgt{} + |1;1\PYGZgt{})/sqrt(2)}
+
+\PYG{c+c1}{// Теперь, если мы хотим добавить в базис суперпозиции состояние,}
+\PYG{c+c1}{// но не хотим присваивать ему какой\PYGZhy{}либо коэффициент,}
+\PYG{c+c1}{// тогда метод insert}
+\PYG{n}{Basis\PYGZus{}State}\PYG{+w}{ }\PYG{n}{zero\PYGZus{}one}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}|0;1\PYGZgt{}\PYGZdq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{);}
+\PYG{c+c1}{// Add state in basis of State\PYGZlt{}Basis\PYGZus{}State\PYGZgt{}, but with coefficient = 0}
+\PYG{n}{st}\PYG{p}{.}\PYG{n}{insert}\PYG{p}{(}\PYG{n}{zero\PYGZus{}one}\PYG{p}{);}
+
+\PYG{n}{std}\PYG{o}{::}\PYG{n}{cout}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZlt{}}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}State\PYGZlt{}Basis\PYGZus{}State\PYGZgt{} + zero\PYGZus{}one: \PYGZdq{}}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZlt{}}\PYG{+w}{ }\PYG{n}{st}\PYG{p}{.}\PYG{n}{to\PYGZus{}string}\PYG{p}{()}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZlt{}}\PYG{+w}{ }\PYG{n}{std}\PYG{o}{::}\PYG{n}{endl}\PYG{p}{;}
+\PYG{c+c1}{// (|0;0\PYGZgt{} + |1;1\PYGZgt{})/sqrt(2) + 0*|0;1\PYGZgt{}}
+
+\end{Verbatim}

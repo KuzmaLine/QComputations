@@ -38,7 +38,7 @@ Item {
         Component.onCompleted: Graph2DState.initialize(graphView)
     }
 
-    Timer {
+    Timer { // for inertia
         id: inertiaTimer
         interval: 16
         repeat: true
@@ -52,7 +52,7 @@ Item {
         }
     }
 
-    DragHandler {
+    DragHandler { // for dragging
         id: dragHandler
         target: graphView
         acceptedDevices: PointerDevice.Mouse | PointerDevice.TouchPad | PointerDevice.TouchScreen
@@ -73,7 +73,7 @@ Item {
             }
         }
 
-        onTranslationChanged: {
+        onTranslationChanged: { // for moving 
             const dx = translation.x - prevX;
             const dy = translation.y - prevY;
             Graph2DState.panBy(dx, dy);
@@ -84,7 +84,7 @@ Item {
         }
     }
 
-    MouseArea {
+    MouseArea { // for scrolling with middle mouse button
         anchors.fill: parent
         hoverEnabled: true
         acceptedButtons: Qt.NoButton
@@ -94,7 +94,7 @@ Item {
         property real scrollIncrement: 0.1
         property real horizontalPanMultiplier: 3.0
         property real verticalPanMultiplier: 2.0
-        property real pixelDeltaScale: 40.0
+        property real pixelDeltaScale: 40.0 // for max speed of scrolling
 
         onWheel: function (event) {
             if (Graph2DState.uiHovering)

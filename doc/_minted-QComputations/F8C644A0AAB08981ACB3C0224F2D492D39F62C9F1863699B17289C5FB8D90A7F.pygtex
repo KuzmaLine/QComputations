@@ -1,0 +1,122 @@
+\begin{Verbatim}[commandchars=\\\{\},codes={\catcode`\$=3\catcode`\^=7\catcode`\_=8\relax}]
+\PYG{k}{namespace}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{    }\PYG{k}{template}\PYG{o}{\PYGZlt{}}\PYG{k}{typename}\PYG{+w}{ }\PYG{n+nc}{StateType}\PYG{o}{\PYGZgt{}}
+\PYG{+w}{        }\PYG{k}{using}\PYG{+w}{ }\PYG{n}{OperatorT}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{std}\PYG{o}{::}\PYG{n}{function}\PYG{o}{\PYGZlt{}}\PYG{n}{State}\PYG{o}{\PYGZlt{}}\PYG{n}{StateType}\PYG{o}{\PYGZgt{}}\PYG{p}{(}\PYG{k}{const}\PYG{+w}{ }\PYG{n}{StateType}\PYG{o}{\PYGZam{}}\PYG{+w}{ }\PYG{n}{state}\PYG{p}{)}\PYG{o}{\PYGZgt{}}\PYG{p}{;}
+\PYG{p}{\PYGZcb{}}
+
+\PYG{k}{template}\PYG{o}{\PYGZlt{}}\PYG{k}{typename}\PYG{+w}{ }\PYG{n+nc}{StateType}\PYG{o}{\PYGZgt{}}
+\PYG{k}{class}\PYG{+w}{ }\PYG{n+nc}{Operator}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{    }\PYG{k}{using}\PYG{+w}{ }\PYG{n}{OperatorType}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{OperatorT}\PYG{o}{\PYGZlt{}}\PYG{n}{StateType}\PYG{o}{\PYGZgt{}}\PYG{p}{;}
+
+\PYG{+w}{    }\PYG{k}{public}\PYG{o}{:}
+\PYG{+w}{        }\PYG{k}{explicit}\PYG{+w}{ }\PYG{n}{Operator}\PYG{p}{()}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{k}{default}\PYG{p}{;}
+\PYG{+w}{        }\PYG{c+c1}{// Инициализация оператора через функцию}
+\PYG{+w}{        }\PYG{n}{Operator}\PYG{p}{(}\PYG{n}{State}\PYG{o}{\PYGZlt{}}\PYG{n}{StateType}\PYG{o}{\PYGZgt{}}\PYG{p}{(}\PYG{o}{*}\PYG{n}{op}\PYG{p}{)(}\PYG{k}{const}\PYG{+w}{ }\PYG{n}{StateType}\PYG{o}{\PYGZam{}}\PYG{p}{))}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{                            }\PYG{n}{root\PYGZus{}}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{k}{new}\PYG{+w}{ }\PYG{n}{OperatorNode}\PYG{p}{(}\PYG{n}{op}\PYG{p}{);\PYGZcb{}}
+\PYG{+w}{        }\PYG{c+c1}{// Копирование}
+\PYG{+w}{        }\PYG{n}{Operator}\PYG{p}{(}\PYG{n}{OperatorType}\PYG{+w}{ }\PYG{n}{op}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}\PYG{+w}{ }\PYG{n}{root\PYGZus{}}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{k}{new}\PYG{+w}{ }\PYG{n}{OperatorNode}\PYG{p}{(}\PYG{n}{op}\PYG{p}{);\PYGZcb{}}
+
+\PYG{+w}{        }\PYG{c+c1}{// Сложение операторов (Спуск вправо)}
+\PYG{+w}{        }\PYG{n}{Operator}\PYG{o}{\PYGZlt{}}\PYG{n}{StateType}\PYG{o}{\PYGZgt{}}\PYG{+w}{ }\PYG{k}{operator}\PYG{o}{+}\PYG{p}{(}\PYG{n}{Operator}\PYG{o}{\PYGZlt{}}\PYG{n}{StateType}\PYG{o}{\PYGZgt{}}\PYG{+w}{ }\PYG{n}{other}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{            }\PYG{k}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{other}\PYG{p}{.}\PYG{n}{root\PYGZus{}}\PYG{+w}{ }\PYG{o}{==}\PYG{+w}{ }\PYG{n+nb}{NULL}\PYG{p}{)}\PYG{+w}{ }\PYG{k}{return}\PYG{+w}{ }\PYG{p}{(}\PYG{o}{*}\PYG{k}{this}\PYG{p}{);}
+\PYG{+w}{            }\PYG{k}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{k}{this}\PYG{o}{\PYGZhy{}\PYGZgt{}}\PYG{n}{root\PYGZus{}}\PYG{+w}{ }\PYG{o}{==}\PYG{+w}{ }\PYG{n+nb}{NULL}\PYG{p}{)}\PYG{+w}{ }\PYG{k}{return}\PYG{+w}{ }\PYG{n}{other}\PYG{p}{;}
+
+\PYG{+w}{            }\PYG{n}{OperatorNode}\PYG{o}{*}\PYG{+w}{ }\PYG{n}{cur\PYGZus{}node}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{k}{this}\PYG{o}{\PYGZhy{}\PYGZgt{}}\PYG{n}{root\PYGZus{}}\PYG{p}{;}
+\PYG{+w}{            }\PYG{k}{while}\PYG{p}{(}\PYG{n}{cur\PYGZus{}node}\PYG{o}{\PYGZhy{}\PYGZgt{}}\PYG{n}{right}\PYG{+w}{ }\PYG{o}{!=}\PYG{+w}{ }\PYG{n+nb}{NULL}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{                }\PYG{n}{cur\PYGZus{}node}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{cur\PYGZus{}node}\PYG{o}{\PYGZhy{}\PYGZgt{}}\PYG{n}{right}\PYG{p}{;}
+\PYG{+w}{            }\PYG{p}{\PYGZcb{}}
+
+\PYG{+w}{            }\PYG{k}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{k}{this}\PYG{o}{\PYGZhy{}\PYGZgt{}}\PYG{n}{root\PYGZus{}}\PYG{+w}{ }\PYG{o}{!=}\PYG{+w}{ }\PYG{n+nb}{NULL}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{                }\PYG{n}{other}\PYG{p}{.}\PYG{n}{root\PYGZus{}}\PYG{o}{\PYGZhy{}\PYGZgt{}}\PYG{n}{insert\PYGZus{}up}\PYG{p}{(}\PYG{n}{cur\PYGZus{}node}\PYG{p}{);}
+\PYG{+w}{                }\PYG{n}{cur\PYGZus{}node}\PYG{o}{\PYGZhy{}\PYGZgt{}}\PYG{n}{right}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{other}\PYG{p}{.}\PYG{n}{root\PYGZus{}}\PYG{p}{;}
+\PYG{+w}{            }\PYG{p}{\PYGZcb{}}
+
+\PYG{+w}{            }\PYG{k}{return}\PYG{+w}{ }\PYG{p}{(}\PYG{o}{*}\PYG{k}{this}\PYG{p}{);}
+\PYG{+w}{        }\PYG{p}{\PYGZcb{}}
+
+\PYG{+w}{        }\PYG{c+c1}{// Умножение операторов. Каждой вершине 1 графа,}
+\PYG{+w}{        }\PYG{c+c1}{// у которого слева оператора,}
+\PYG{+w}{        }\PYG{c+c1}{// слева присваивается корень 2 графа}
+\PYG{+w}{        }\PYG{n}{Operator}\PYG{o}{\PYGZlt{}}\PYG{n}{StateType}\PYG{o}{\PYGZgt{}}\PYG{+w}{ }\PYG{k}{operator}\PYG{o}{*}\PYG{p}{(}\PYG{n}{Operator}\PYG{o}{\PYGZlt{}}\PYG{n}{StateType}\PYG{o}{\PYGZgt{}}\PYG{+w}{ }\PYG{n}{other}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{            }\PYG{k}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{other}\PYG{p}{.}\PYG{n}{root\PYGZus{}}\PYG{+w}{ }\PYG{o}{==}\PYG{+w}{ }\PYG{n+nb}{NULL}\PYG{p}{)}\PYG{+w}{ }\PYG{k}{return}\PYG{+w}{ }\PYG{p}{(}\PYG{o}{*}\PYG{k}{this}\PYG{p}{);}
+
+\PYG{+w}{            }\PYG{c+c1}{// Пустой оператор умножить на не пустой??}
+\PYG{+w}{            }\PYG{k}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{k}{this}\PYG{o}{\PYGZhy{}\PYGZgt{}}\PYG{n}{root\PYGZus{}}\PYG{+w}{ }\PYG{o}{==}\PYG{+w}{ }\PYG{n+nb}{NULL}\PYG{p}{)}\PYG{+w}{ }\PYG{n}{assert}\PYG{p}{(}\PYG{n+nb}{false}\PYG{p}{);}
+
+\PYG{+w}{            }\PYG{n}{std}\PYG{o}{::}\PYG{n}{stack}\PYG{o}{\PYGZlt{}}\PYG{n}{OperatorNode}\PYG{o}{*\PYGZgt{}}\PYG{+w}{ }\PYG{n}{st}\PYG{p}{;}
+\PYG{+w}{            }\PYG{n}{OperatorNode}\PYG{o}{*}\PYG{+w}{ }\PYG{n}{cur\PYGZus{}op}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{k}{this}\PYG{o}{\PYGZhy{}\PYGZgt{}}\PYG{n}{root\PYGZus{}}\PYG{p}{;}
+
+\PYG{+w}{            }\PYG{k}{while}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{cur\PYGZus{}op}\PYG{+w}{ }\PYG{o}{!=}\PYG{+w}{ }\PYG{n+nb}{NULL}\PYG{+w}{ }\PYG{k}{or}\PYG{+w}{ }\PYG{o}{!}\PYG{n}{st}\PYG{p}{.}\PYG{n}{empty}\PYG{p}{())}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{                }\PYG{k}{while}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{cur\PYGZus{}op}\PYG{+w}{ }\PYG{o}{!=}\PYG{+w}{ }\PYG{n+nb}{NULL}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{                    }\PYG{n}{st}\PYG{p}{.}\PYG{n}{push}\PYG{p}{(}\PYG{n}{cur\PYGZus{}op}\PYG{p}{);}
+\PYG{+w}{                    }\PYG{n}{cur\PYGZus{}op}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{cur\PYGZus{}op}\PYG{o}{\PYGZhy{}\PYGZgt{}}\PYG{n}{left}\PYG{p}{;}
+\PYG{+w}{                }\PYG{p}{\PYGZcb{}}
+
+\PYG{+w}{                }\PYG{k}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{st}\PYG{p}{.}\PYG{n}{top}\PYG{p}{()}\PYG{o}{\PYGZhy{}\PYGZgt{}}\PYG{n}{left}\PYG{+w}{ }\PYG{o}{==}\PYG{+w}{ }\PYG{n+nb}{NULL}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{                    }\PYG{n}{other}\PYG{p}{.}\PYG{n}{root\PYGZus{}}\PYG{o}{\PYGZhy{}\PYGZgt{}}\PYG{n}{insert\PYGZus{}up}\PYG{p}{(}\PYG{n}{st}\PYG{p}{.}\PYG{n}{top}\PYG{p}{());}
+\PYG{+w}{                    }\PYG{n}{st}\PYG{p}{.}\PYG{n}{top}\PYG{p}{()}\PYG{o}{\PYGZhy{}\PYGZgt{}}\PYG{n}{left}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{other}\PYG{p}{.}\PYG{n}{root\PYGZus{}}\PYG{p}{;}
+\PYG{+w}{                }\PYG{p}{\PYGZcb{}}
+
+\PYG{+w}{                }\PYG{n}{cur\PYGZus{}op}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{st}\PYG{p}{.}\PYG{n}{top}\PYG{p}{()}\PYG{o}{\PYGZhy{}\PYGZgt{}}\PYG{n}{right}\PYG{p}{;}
+\PYG{+w}{                }\PYG{n}{st}\PYG{p}{.}\PYG{n}{pop}\PYG{p}{();}
+\PYG{+w}{            }\PYG{p}{\PYGZcb{}}
+
+\PYG{+w}{            }\PYG{k}{return}\PYG{+w}{ }\PYG{p}{(}\PYG{o}{*}\PYG{k}{this}\PYG{p}{);}
+\PYG{+w}{        }\PYG{p}{\PYGZcb{}}
+
+\PYG{+w}{        }\PYG{c+c1}{// Умножение на число (создаётся отдельный узел)}
+\PYG{+w}{        }\PYG{n}{Operator}\PYG{o}{\PYGZlt{}}\PYG{n}{StateType}\PYG{o}{\PYGZgt{}}\PYG{+w}{ }\PYG{k}{operator}\PYG{o}{*}\PYG{p}{(}\PYG{k}{const}\PYG{+w}{ }\PYG{n}{COMPLEX}\PYG{o}{\PYGZam{}}\PYG{+w}{ }\PYG{n}{num}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{            }\PYG{c+c1}{// Пустой оператор умножить на число??}
+\PYG{+w}{            }\PYG{k}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{k}{this}\PYG{o}{\PYGZhy{}\PYGZgt{}}\PYG{n}{root\PYGZus{}}\PYG{+w}{ }\PYG{o}{==}\PYG{+w}{ }\PYG{n+nb}{NULL}\PYG{p}{)}\PYG{+w}{ }\PYG{n}{assert}\PYG{p}{(}\PYG{n+nb}{false}\PYG{p}{);}
+
+\PYG{+w}{            }\PYG{n}{OperatorType}\PYG{+w}{ }\PYG{n}{func}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{p}{\PYGZob{}[}\PYG{n}{num}\PYG{p}{](}\PYG{k}{const}\PYG{+w}{ }\PYG{n}{StateType}\PYG{o}{\PYGZam{}}\PYG{+w}{ }\PYG{n}{state}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{                }\PYG{k}{return}\PYG{+w}{ }\PYG{n}{State}\PYG{o}{\PYGZlt{}}\PYG{n}{StateType}\PYG{o}{\PYGZgt{}}\PYG{p}{(}\PYG{n}{state}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{*}\PYG{+w}{ }\PYG{n}{num}\PYG{p}{;}
+\PYG{+w}{            }\PYG{p}{\PYGZcb{}\PYGZcb{};}
+
+\PYG{+w}{            }\PYG{k}{return}\PYG{+w}{  }\PYG{n}{Operator}\PYG{o}{\PYGZlt{}}\PYG{n}{StateType}\PYG{o}{\PYGZgt{}}\PYG{p}{(}\PYG{n}{func}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{*}\PYG{+w}{ }\PYG{p}{(}\PYG{o}{*}\PYG{k}{this}\PYG{p}{);}
+\PYG{+w}{        }\PYG{p}{\PYGZcb{}}
+
+
+\PYG{+w}{        }\PYG{c+c1}{// Прогнать через оператор состояние}
+\PYG{+w}{        }\PYG{n}{State}\PYG{o}{\PYGZlt{}}\PYG{n}{StateType}\PYG{o}{\PYGZgt{}}\PYG{+w}{ }\PYG{n}{run}\PYG{p}{(}\PYG{k}{const}\PYG{+w}{ }\PYG{n}{State}\PYG{o}{\PYGZlt{}}\PYG{n}{StateType}\PYG{o}{\PYGZgt{}\PYGZam{}}\PYG{+w}{ }\PYG{n}{init\PYGZus{}state}\PYG{p}{)}\PYG{+w}{ }\PYG{k}{const}\PYG{p}{;}
+\PYG{+w}{        }\PYG{n}{State}\PYG{o}{\PYGZlt{}}\PYG{n}{StateType}\PYG{o}{\PYGZgt{}}\PYG{+w}{ }\PYG{k}{operator}\PYG{p}{()(}\PYG{k}{const}\PYG{+w}{ }\PYG{n}{State}\PYG{o}{\PYGZlt{}}\PYG{n}{StateType}\PYG{o}{\PYGZgt{}\PYGZam{}}\PYG{+w}{ }\PYG{n}{init\PYGZus{}state}\PYG{p}{)}\PYG{+w}{ }\PYG{k}{const}
+\PYG{+w}{                                            }\PYG{p}{\PYGZob{}}\PYG{+w}{ }\PYG{k}{return}\PYG{+w}{ }\PYG{k}{this}\PYG{o}{\PYGZhy{}\PYGZgt{}}\PYG{n}{run}\PYG{p}{(}\PYG{n}{init\PYGZus{}state}\PYG{p}{);}\PYG{+w}{ }\PYG{p}{\PYGZcb{};}
+\PYG{+w}{        }\PYG{n}{State}\PYG{o}{\PYGZlt{}}\PYG{n}{StateType}\PYG{o}{\PYGZgt{}}\PYG{+w}{ }\PYG{k}{operator}\PYG{o}{*}\PYG{p}{(}\PYG{k}{const}\PYG{+w}{ }\PYG{n}{State}\PYG{o}{\PYGZlt{}}\PYG{n}{StateType}\PYG{o}{\PYGZgt{}\PYGZam{}}\PYG{+w}{ }\PYG{n}{init\PYGZus{}state}\PYG{p}{)}\PYG{+w}{ }\PYG{k}{const}
+\PYG{+w}{                                            }\PYG{p}{\PYGZob{}}\PYG{+w}{ }\PYG{k}{return}\PYG{+w}{ }\PYG{k}{this}\PYG{o}{\PYGZhy{}\PYGZgt{}}\PYG{n}{run}\PYG{p}{(}\PYG{n}{init\PYGZus{}state}\PYG{p}{);}\PYG{+w}{ }\PYG{p}{\PYGZcb{};}
+\PYG{+w}{    }\PYG{k}{private}\PYG{o}{:}
+\PYG{+w}{        }\PYG{c+c1}{// Обновить вспомогательные значения для прогонки в узлах}
+\PYG{+w}{        }\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n}{refresh\PYGZus{}tree}\PYG{p}{()}\PYG{+w}{ }\PYG{k}{const}\PYG{p}{;}
+
+\PYG{+w}{        }\PYG{c+c1}{// Узел в графе}
+\PYG{+w}{        }\PYG{k}{struct}\PYG{+w}{ }\PYG{n+nc}{OperatorNode}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{            }\PYG{n}{OperatorNode}\PYG{p}{(}\PYG{n}{OperatorType}\PYG{+w}{ }\PYG{n}{op}\PYG{p}{)}\PYG{o}{:}\PYG{+w}{ }\PYG{n}{func\PYGZus{}}\PYG{p}{(}\PYG{n}{op}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}\PYGZcb{}}
+\PYG{+w}{            }\PYG{n}{OperatorNode}\PYG{p}{(}\PYG{n}{State}\PYG{o}{\PYGZlt{}}\PYG{n}{StateType}\PYG{o}{\PYGZgt{}}\PYG{p}{(}\PYG{o}{*}\PYG{n}{op}\PYG{p}{)(}\PYG{k}{const}\PYG{+w}{ }\PYG{n}{StateType}\PYG{o}{\PYGZam{}}\PYG{p}{))}\PYG{o}{:}\PYG{+w}{ }\PYG{n}{func\PYGZus{}}\PYG{p}{(}\PYG{n}{op}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}\PYGZcb{}}
+
+\PYG{+w}{            }\PYG{n}{OperatorNode}\PYG{o}{*}\PYG{+w}{ }\PYG{n}{up}\PYG{p}{()}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{                }\PYG{k}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{up\PYGZus{}}\PYG{p}{.}\PYG{n}{size}\PYG{p}{()}\PYG{+w}{ }\PYG{o}{==}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{p}{)}\PYG{+w}{ }\PYG{k}{return}\PYG{+w}{ }\PYG{k}{this}\PYG{p}{;}
+\PYG{+w}{                }\PYG{n}{which\PYGZus{}way\PYGZus{}}\PYG{o}{++}\PYG{p}{;}
+\PYG{+w}{                }\PYG{k}{return}\PYG{+w}{ }\PYG{n}{up\PYGZus{}}\PYG{p}{[}\PYG{n}{which\PYGZus{}way\PYGZus{}}\PYG{+w}{ }\PYG{o}{\PYGZpc{}}\PYG{+w}{ }\PYG{n}{up\PYGZus{}}\PYG{p}{.}\PYG{n}{size}\PYG{p}{()];}
+\PYG{+w}{            }\PYG{p}{\PYGZcb{}}
+
+\PYG{+w}{            }\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n}{insert\PYGZus{}up}\PYG{p}{(}\PYG{n}{OperatorNode}\PYG{o}{*}\PYG{+w}{ }\PYG{n}{up}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{                }\PYG{n}{up\PYGZus{}}\PYG{p}{.}\PYG{n}{emplace\PYGZus{}back}\PYG{p}{(}\PYG{n}{up}\PYG{p}{);}
+\PYG{+w}{            }\PYG{p}{\PYGZcb{}}
+
+\PYG{+w}{            }\PYG{n}{State}\PYG{o}{\PYGZlt{}}\PYG{n}{StateType}\PYG{o}{\PYGZgt{}}\PYG{+w}{ }\PYG{n}{invoke}\PYG{p}{(}\PYG{k}{const}\PYG{+w}{ }\PYG{n}{State}\PYG{o}{\PYGZlt{}}\PYG{n}{StateType}\PYG{o}{\PYGZgt{}\PYGZam{}}\PYG{+w}{ }\PYG{n}{st}\PYG{p}{)}\PYG{+w}{ }\PYG{k}{const}\PYG{p}{;}
+
+\PYG{+w}{            }\PYG{n}{OperatorType}\PYG{+w}{ }\PYG{n}{func\PYGZus{}}\PYG{p}{;}
+\PYG{+w}{            }\PYG{n}{std}\PYG{o}{::}\PYG{n}{vector}\PYG{o}{\PYGZlt{}}\PYG{n}{OperatorNode}\PYG{o}{*\PYGZgt{}}\PYG{+w}{ }\PYG{n}{up\PYGZus{}}\PYG{p}{;}
+\PYG{+w}{            }\PYG{n}{OperatorNode}\PYG{o}{*}\PYG{+w}{ }\PYG{n}{left}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n+nb}{NULL}\PYG{p}{;}\PYG{+w}{ }\PYG{c+c1}{// умножение}
+\PYG{+w}{            }\PYG{n}{OperatorNode}\PYG{o}{*}\PYG{+w}{ }\PYG{n}{right}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n+nb}{NULL}\PYG{p}{;}\PYG{+w}{ }\PYG{c+c1}{// Сложение}
+
+\PYG{+w}{            }\PYG{k}{mutable}\PYG{+w}{ }\PYG{n}{State}\PYG{o}{\PYGZlt{}}\PYG{n}{StateType}\PYG{o}{\PYGZgt{}}\PYG{+w}{ }\PYG{n}{cur\PYGZus{}res\PYGZus{}}\PYG{p}{;}
+\PYG{+w}{            }\PYG{k}{mutable}\PYG{+w}{ }\PYG{k+kt}{int}\PYG{+w}{ }\PYG{n}{from\PYGZus{}tree\PYGZus{}}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{p}{;}\PYG{+w}{ }\PYG{c+c1}{// 0 \PYGZhy{} не спускался}
+\PYG{+w}{                                }\PYG{c+c1}{// 1 \PYGZhy{} пройден левый путь}
+\PYG{+w}{                                }\PYG{c+c1}{// 2 \PYGZhy{} пройден правый путь}
+\PYG{+w}{                                }\PYG{c+c1}{// 3 \PYGZhy{} пройдены обе ветви}
+\PYG{+w}{            }\PYG{k}{mutable}\PYG{+w}{ }\PYG{k+kt}{int}\PYG{+w}{ }\PYG{n}{which\PYGZus{}way\PYGZus{}}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{\PYGZhy{}1}\PYG{p}{;}\PYG{+w}{ }\PYG{c+c1}{// По какому пути нужно пройти вверх}
+\PYG{+w}{        }\PYG{p}{\PYGZcb{};}
+
+\PYG{+w}{        }\PYG{n}{OperatorNode}\PYG{o}{*}\PYG{+w}{ }\PYG{n}{root\PYGZus{}}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n+nb}{NULL}\PYG{p}{;}\PYG{+w}{ }\PYG{c+c1}{// Корневой оператор}
+\PYG{p}{\PYGZcb{};}
+\end{Verbatim}

@@ -1,0 +1,12 @@
+\begin{Verbatim}[commandchars=\\\{\},codes={\catcode`\$=3\catcode`\^=7\catcode`\_=8\relax}]
+\PYG{c+c1}{// Оператор декогеренции задаётся с помощью}
+\PYG{c+c1}{// такого массива пар}
+\PYG{c+c1}{// 1 число \PYGZhy{} интенсивность декогеренции}
+\PYG{c+c1}{// 2 \PYGZhy{} сам оператор}
+\PYG{n}{std}\PYG{o}{::}\PYG{n}{vector}\PYG{o}{\PYGZlt{}}\PYG{n}{std}\PYG{o}{::}\PYG{n}{pair}\PYG{o}{\PYGZlt{}}\PYG{k+kt}{double}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{OpType}\PYG{o}{\PYGZgt{}\PYGZgt{}}\PYG{+w}{ }\PYG{n}{dec}\PYG{p}{;}
+\PYG{n}{OpType}\PYG{+w}{ }\PYG{n+nf}{A\PYGZus{}out}\PYG{p}{(}\PYG{n}{a\PYGZus{}destroy}\PYG{p}{);}
+\PYG{n}{dec}\PYG{p}{.}\PYG{n}{emplace\PYGZus{}back}\PYG{p}{(}\PYG{n}{g\PYGZus{}leak}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{A\PYGZus{}out}\PYG{p}{);}
+
+\PYG{c+c1}{// Гамильтониан через оператор декогеренции}
+\PYG{n}{BLOCKED\PYGZus{}H\PYGZus{}by\PYGZus{}Operator}\PYG{o}{\PYGZlt{}}\PYG{n}{TC\PYGZus{}State}\PYG{o}{\PYGZgt{}}\PYG{+w}{ }\PYG{n}{H}\PYG{p}{(}\PYG{n}{state}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{H\PYGZus{}op}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{dec}\PYG{p}{);}
+\end{Verbatim}
