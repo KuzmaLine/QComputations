@@ -1,0 +1,9 @@
+#!/bin/bash
+
+for FILE in $(git diff --cached --name-only)
+do
+    if [[ "$FILE" == *.hpp || "$FILE" == *.cpp ]]; then
+        clang-format-15 -i $FILE
+        git add $FILE
+    fi
+done
