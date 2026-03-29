@@ -1,0 +1,33 @@
+\begin{Verbatim}[commandchars=\\\{\},codes={\catcode`\$=3\catcode`\^=7\catcode`\_=8\relax}]
+\PYG{c+c1}{// Матрица вероятностей (Matrix\PYGZlt{}double\PYGZgt{})}
+\PYG{k}{auto}\PYG{+w}{ }\PYG{n}{probs}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{quantum\PYGZus{}master\PYGZus{}equation}\PYG{p}{(}\PYG{n}{state}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{H}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{time\PYGZus{}vec}\PYG{p}{);}
+
+\PYG{c+c1}{// Создаём фигуру}
+\PYG{n}{matplotlib}\PYG{o}{::}\PYG{n}{make\PYGZus{}figure}\PYG{p}{(}\PYG{l+m+mi}{1200}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{800}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{80}\PYG{p}{);}
+\PYG{c+c1}{// Именуем ветви}
+\PYG{n}{matplotlib}\PYG{o}{::}\PYG{n}{xlabel}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}Time\PYGZdq{}}\PYG{p}{);}
+\PYG{n}{matplotlib}\PYG{o}{::}\PYG{n}{ylabel}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}Probability\PYGZdq{}}\PYG{p}{);}
+
+\PYG{c+c1}{// Создаём сетку для графика}
+\PYG{n}{matplotlib}\PYG{o}{::}\PYG{n}{grid}\PYG{p}{();}
+
+\PYG{c+c1}{// Даём название графику (не файлу!)}
+\PYG{n}{matplotlib}\PYG{o}{::}\PYG{n}{title}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}TC: leak\PYGZus{}photons=\PYGZdq{}}\PYG{+w}{ }\PYG{o}{+}\PYG{+w}{ }\PYG{n}{std}\PYG{o}{::}\PYG{n}{to\PYGZus{}string}\PYG{p}{(}\PYG{n}{state}\PYG{p}{.}\PYG{n}{get\PYGZus{}leak}\PYG{p}{()));}
+
+\PYG{c+c1}{// Создаём сам график}
+\PYG{n}{matplotlib}\PYG{o}{::}\PYG{n}{probs\PYGZus{}to\PYGZus{}plot}\PYG{p}{(}\PYG{n}{probs}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{time\PYGZus{}vec}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{H}\PYG{p}{.}\PYG{n}{get\PYGZus{}basis}\PYG{p}{());}
+
+\PYG{c+c1}{// Легенда для графиков}
+\PYG{c+c1}{// Для графиков с большим числом состояний данная функция}
+\PYG{c+c1}{// усложняет его чтение, поэтому оно опционально.}
+\PYG{c+c1}{// В будушем планируются интерактивные графики,}
+\PYG{c+c1}{// для решения этой проблемы.}
+\PYG{n}{matplotlib}\PYG{o}{::}\PYG{n}{legend}\PYG{p}{();}
+
+\PYG{n}{matplotlib}\PYG{o}{::}\PYG{n}{savefig}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}tc\PYGZus{}example.png\PYGZdq{}}\PYG{p}{);}
+
+\PYG{c+c1}{// Показать график}
+\PYG{c+c1}{// ВНИМАНИЕ! Как и в matplotlib}
+\PYG{c+c1}{// график после этого уничтожается.}
+\PYG{n}{matplotlib}\PYG{o}{::}\PYG{n}{show}\PYG{p}{();}
+\end{Verbatim}

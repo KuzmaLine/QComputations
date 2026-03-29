@@ -1,0 +1,16 @@
+\begin{Verbatim}[commandchars=\\\{\},codes={\catcode`\$=3\catcode`\^=7\catcode`\_=8\relax}]
+\PYG{c+c1}{// ctxt \PYGZhy{} контекст BLACS}
+\PYG{c+c1}{// init\PYGZus{}state \PYGZhy{} начальное состояние}
+\PYG{c+c1}{// H\PYGZus{}op \PYGZhy{} оператор гамильтониана}
+\PYG{c+c1}{// decoherence \PYGZhy{} вектор пар из интенсивностей и}
+\PYG{c+c1}{// оператор декогеренции}
+
+\PYG{k}{template}\PYG{o}{\PYGZlt{}}\PYG{k}{typename}\PYG{+w}{ }\PYG{n+nc}{StateType}\PYG{o}{\PYGZgt{}}
+\PYG{k}{class}\PYG{+w}{ }\PYG{n+nc}{BLOCKED\PYGZus{}H\PYGZus{}by\PYGZus{}Operator}\PYG{o}{:}\PYG{+w}{ }\PYG{k}{public}\PYG{+w}{ }\PYG{n}{BLOCKED\PYGZus{}Hamiltonian}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{    }\PYG{k}{public}\PYG{o}{:}
+\PYG{+w}{        }\PYG{k}{explicit}\PYG{+w}{ }\PYG{n}{BLOCKED\PYGZus{}H\PYGZus{}by\PYGZus{}Operator}\PYG{p}{(}\PYG{n}{ILP\PYGZus{}TYPE}\PYG{+w}{ }\PYG{n}{ctxt}\PYG{p}{,}\PYG{+w}{ }\PYG{k}{const}\PYG{+w}{ }\PYG{n}{State}\PYG{o}{\PYGZlt{}}\PYG{n}{StateType}\PYG{o}{\PYGZgt{}\PYGZam{}}\PYG{+w}{ }\PYG{n}{init\PYGZus{}state}\PYG{p}{,}
+\PYG{+w}{                                       }\PYG{k}{const}\PYG{+w}{ }\PYG{n}{Operator}\PYG{o}{\PYGZlt{}}\PYG{n}{StateType}\PYG{o}{\PYGZgt{}\PYGZam{}}\PYG{+w}{ }\PYG{n}{H\PYGZus{}op}\PYG{p}{,}
+\PYG{+w}{                                       }\PYG{k}{const}\PYG{+w}{ }\PYG{n}{std}\PYG{o}{::}\PYG{n}{vector}\PYG{o}{\PYGZlt{}}\PYG{n}{std}\PYG{o}{::}\PYG{n}{pair}\PYG{o}{\PYGZlt{}}\PYG{k+kt}{double}\PYG{p}{,}
+\PYG{+w}{                                       }\PYG{n}{Operator}\PYG{o}{\PYGZlt{}}\PYG{n}{StateType}\PYG{o}{\PYGZgt{}\PYGZgt{}\PYGZgt{}\PYGZam{}}\PYG{+w}{ }\PYG{n}{decoherence}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{p}{\PYGZob{}\PYGZcb{});}
+\PYG{p}{\PYGZcb{};}
+\end{Verbatim}

@@ -1,0 +1,11 @@
+\begin{Verbatim}[commandchars=\\\{\},codes={\catcode`\$=3\catcode`\^=7\catcode`\_=8\relax}]
+\PYG{c+c1}{// \PYGZlt{}b|a\PYGZgt{}, (a, b)}
+\PYG{k+kt}{double}\PYG{+w}{ }\PYG{n+nf}{scalar\PYGZus{}product}\PYG{p}{(}\PYG{k}{const}\PYG{+w}{ }\PYG{n}{std}\PYG{o}{::}\PYG{n}{vector}\PYG{o}{\PYGZlt{}}\PYG{k+kt}{double}\PYG{o}{\PYGZgt{}\PYGZam{}}\PYG{+w}{ }\PYG{n}{a}\PYG{p}{,}
+\PYG{+w}{                      }\PYG{k}{const}\PYG{+w}{ }\PYG{n}{std}\PYG{o}{::}\PYG{n}{vector}\PYG{o}{\PYGZlt{}}\PYG{k+kt}{double}\PYG{o}{\PYGZgt{}\PYGZam{}}\PYG{+w}{ }\PYG{n}{b}\PYG{p}{);}
+\PYG{n}{COMPLEX}\PYG{+w}{ }\PYG{n+nf}{scalar\PYGZus{}product}\PYG{p}{(}\PYG{k}{const}\PYG{+w}{ }\PYG{n}{std}\PYG{o}{::}\PYG{n}{vector}\PYG{o}{\PYGZlt{}}\PYG{n}{COMPLEX}\PYG{o}{\PYGZgt{}\PYGZam{}}\PYG{+w}{ }\PYG{n}{a}\PYG{p}{,}
+\PYG{+w}{                       }\PYG{k}{const}\PYG{+w}{ }\PYG{n}{std}\PYG{o}{::}\PYG{n}{vector}\PYG{o}{\PYGZlt{}}\PYG{n}{COMPLEX}\PYG{o}{\PYGZgt{}\PYGZam{}}\PYG{+w}{ }\PYG{n}{b}\PYG{p}{);}
+\PYG{k+kt}{double}\PYG{+w}{ }\PYG{n+nf}{scalar\PYGZus{}product}\PYG{p}{(}\PYG{k}{const}\PYG{+w}{ }\PYG{n}{BLOCKED\PYGZus{}Vector}\PYG{o}{\PYGZlt{}}\PYG{k+kt}{double}\PYG{o}{\PYGZgt{}\PYGZam{}}\PYG{+w}{ }\PYG{n}{a}\PYG{p}{,}
+\PYG{+w}{                      }\PYG{k}{const}\PYG{+w}{ }\PYG{n}{BLOCKED\PYGZus{}Vector}\PYG{o}{\PYGZlt{}}\PYG{k+kt}{double}\PYG{o}{\PYGZgt{}\PYGZam{}}\PYG{+w}{ }\PYG{n}{b}\PYG{p}{);}
+\PYG{n}{COMPLEX}\PYG{+w}{ }\PYG{n+nf}{scalar\PYGZus{}product}\PYG{p}{(}\PYG{k}{const}\PYG{+w}{ }\PYG{n}{BLOCKED\PYGZus{}Vector}\PYG{o}{\PYGZlt{}}\PYG{n}{COMPLEX}\PYG{o}{\PYGZgt{}\PYGZam{}}\PYG{+w}{ }\PYG{n}{a}\PYG{p}{,}
+\PYG{+w}{                       }\PYG{k}{const}\PYG{+w}{ }\PYG{n}{BLOCKED\PYGZus{}Vector}\PYG{o}{\PYGZlt{}}\PYG{n}{COMPLEX}\PYG{o}{\PYGZgt{}\PYGZam{}}\PYG{+w}{ }\PYG{n}{b}\PYG{p}{);}
+\end{Verbatim}

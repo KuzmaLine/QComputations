@@ -1,0 +1,93 @@
+\begin{Verbatim}[commandchars=\\\{\},codes={\catcode`\$=3\catcode`\^=7\catcode`\_=8\relax}]
+\PYG{c+c1}{// Создать фигуру определённого размера.}
+\PYG{c+c1}{// нулевые значения \PYGZhy{} выбор значений по умолчанию}
+\PYG{c+c1}{// (ЛУЧШЕ ВСЕГО ПИСАТЬ ДО МОДЕЛИРОВАНИЯ)}
+\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n+nf}{make\PYGZus{}figure}\PYG{p}{(}\PYG{k+kt}{size\PYGZus{}t}\PYG{+w}{ }\PYG{n}{x}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{p}{,}\PYG{+w}{ }\PYG{k+kt}{size\PYGZus{}t}\PYG{+w}{ }\PYG{n}{y}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{p}{,}\PYG{+w}{ }\PYG{k+kt}{size\PYGZus{}t}\PYG{+w}{ }\PYG{n}{dpi}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{QConfig}\PYG{o}{::}\PYG{n}{instance}\PYG{p}{().}\PYG{n}{dpi}\PYG{p}{());}
+
+\PYG{c+c1}{// Создать график вероятностей}
+\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n+nf}{probs\PYGZus{}to\PYGZus{}plot}\PYG{p}{(}\PYG{k}{const}\PYG{+w}{ }\PYG{n}{Evolution}\PYG{o}{::}\PYG{n}{Probs}\PYG{o}{\PYGZam{}}\PYG{+w}{ }\PYG{n}{probs}\PYG{p}{,}
+\PYG{+w}{                    }\PYG{k}{const}\PYG{+w}{ }\PYG{n}{std}\PYG{o}{::}\PYG{n}{vector}\PYG{o}{\PYGZlt{}}\PYG{k+kt}{double}\PYG{o}{\PYGZgt{}\PYGZam{}}\PYG{+w}{ }\PYG{n}{time\PYGZus{}vec}\PYG{p}{,}
+\PYG{+w}{                    }\PYG{k}{const}\PYG{+w}{ }\PYG{n}{std}\PYG{o}{::}\PYG{n}{set}\PYG{o}{\PYGZlt{}}\PYG{n}{Basis\PYGZus{}State}\PYG{o}{\PYGZgt{}\PYGZam{}}\PYG{+w}{ }\PYG{n}{basis}\PYG{p}{,}
+\PYG{+w}{                    }\PYG{n}{std}\PYG{o}{::}\PYG{n}{vector}\PYG{o}{\PYGZlt{}}\PYG{n}{std}\PYG{o}{::}\PYG{n}{map}\PYG{o}{\PYGZlt{}}\PYG{n}{std}\PYG{o}{::}\PYG{n}{string}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{std}\PYG{o}{::}\PYG{n}{string}\PYG{o}{\PYGZgt{}\PYGZgt{}}\PYG{+w}{ }\PYG{n}{keywords}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{p}{\PYGZob{}\PYGZcb{});}
+
+\PYG{c+c1}{// Создать график вероятностей, но написать вместо базисов другие строки}
+\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n+nf}{probs\PYGZus{}to\PYGZus{}plot}\PYG{p}{(}\PYG{k}{const}\PYG{+w}{ }\PYG{n}{Evolution}\PYG{o}{::}\PYG{n}{Probs}\PYG{o}{\PYGZam{}}\PYG{+w}{ }\PYG{n}{probs}\PYG{p}{,}
+\PYG{+w}{                    }\PYG{k}{const}\PYG{+w}{ }\PYG{n}{std}\PYG{o}{::}\PYG{n}{vector}\PYG{o}{\PYGZlt{}}\PYG{k+kt}{double}\PYG{o}{\PYGZgt{}\PYGZam{}}\PYG{+w}{ }\PYG{n}{time\PYGZus{}vec}\PYG{p}{,}
+\PYG{+w}{                    }\PYG{k}{const}\PYG{+w}{ }\PYG{n}{std}\PYG{o}{::}\PYG{n}{vector}\PYG{o}{\PYGZlt{}}\PYG{n}{std}\PYG{o}{::}\PYG{n}{string}\PYG{o}{\PYGZgt{}\PYGZam{}}\PYG{+w}{ }\PYG{n}{basis\PYGZus{}str}\PYG{p}{,}
+\PYG{+w}{                    }\PYG{n}{std}\PYG{o}{::}\PYG{n}{vector}\PYG{o}{\PYGZlt{}}\PYG{n}{std}\PYG{o}{::}\PYG{n}{map}\PYG{o}{\PYGZlt{}}\PYG{n}{std}\PYG{o}{::}\PYG{n}{string}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{std}\PYG{o}{::}\PYG{n}{string}\PYG{o}{\PYGZgt{}\PYGZgt{}}\PYG{+w}{ }\PYG{n}{keywords}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{p}{\PYGZob{}\PYGZcb{});}
+
+\PYG{c+c1}{// Создать собственный график}
+\PYG{k}{template}\PYG{o}{\PYGZlt{}}\PYG{k}{typename}\PYG{+w}{ }\PYG{n+nc}{T}\PYG{p}{,}\PYG{+w}{ }\PYG{k}{typename}\PYG{+w}{ }\PYG{n+nc}{V}\PYG{o}{\PYGZgt{}}
+\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n}{plot}\PYG{p}{(}\PYG{k}{const}\PYG{+w}{ }\PYG{n}{std}\PYG{o}{::}\PYG{n}{vector}\PYG{o}{\PYGZlt{}}\PYG{n}{T}\PYG{o}{\PYGZgt{}\PYGZam{}}\PYG{+w}{ }\PYG{n}{x}\PYG{p}{,}
+\PYG{+w}{            }\PYG{k}{const}\PYG{+w}{ }\PYG{n}{std}\PYG{o}{::}\PYG{n}{vector}\PYG{o}{\PYGZlt{}}\PYG{n}{V}\PYG{o}{\PYGZgt{}\PYGZam{}}\PYG{+w}{ }\PYG{n}{y}\PYG{p}{,}
+\PYG{+w}{            }\PYG{n}{std}\PYG{o}{::}\PYG{n}{map}\PYG{o}{\PYGZlt{}}\PYG{n}{std}\PYG{o}{::}\PYG{n}{string}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{std}\PYG{o}{::}\PYG{n}{string}\PYG{o}{\PYGZgt{}}\PYG{+w}{ }\PYG{n}{keywords}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{p}{\PYGZob{}\PYGZcb{});}
+
+\PYG{c+c1}{// Дать название графику (не название файлу)}
+\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n+nf}{title}\PYG{p}{(}\PYG{k}{const}\PYG{+w}{ }\PYG{n}{std}\PYG{o}{::}\PYG{n}{string}\PYG{o}{\PYGZam{}}\PYG{+w}{ }\PYG{n}{name}\PYG{p}{);}
+\PYG{c+c1}{// Подписать ось x}
+\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n+nf}{xlabel}\PYG{p}{(}\PYG{k}{const}\PYG{+w}{ }\PYG{n}{std}\PYG{o}{::}\PYG{n}{string}\PYG{o}{\PYGZam{}}\PYG{+w}{ }\PYG{n}{name}\PYG{p}{);}
+\PYG{c+c1}{// Подписать ось y}
+\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n+nf}{ylabel}\PYG{p}{(}\PYG{k}{const}\PYG{+w}{ }\PYG{n}{std}\PYG{o}{::}\PYG{n}{string}\PYG{o}{\PYGZam{}}\PYG{+w}{ }\PYG{n}{name}\PYG{p}{);}
+\PYG{c+c1}{// Подписать ось z (Только для трёхмерных графиков)}
+\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n+nf}{zlabel}\PYG{p}{(}\PYG{k}{const}\PYG{+w}{ }\PYG{n}{std}\PYG{o}{::}\PYG{n}{string}\PYG{o}{\PYGZam{}}\PYG{+w}{ }\PYG{n}{name}\PYG{p}{);}
+
+
+\PYG{c+c1}{// Создать трёхмерный график}
+\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n+nf}{surface}\PYG{p}{(}\PYG{k}{const}\PYG{+w}{ }\PYG{n}{std}\PYG{o}{::}\PYG{n}{vector}\PYG{o}{\PYGZlt{}}\PYG{n}{std}\PYG{o}{::}\PYG{n}{vector}\PYG{o}{\PYGZlt{}}\PYG{k+kt}{double}\PYG{o}{\PYGZgt{}\PYGZgt{}\PYGZam{}}\PYG{+w}{ }\PYG{n}{x}\PYG{p}{,}
+\PYG{+w}{            }\PYG{k}{const}\PYG{+w}{ }\PYG{n}{std}\PYG{o}{::}\PYG{n}{vector}\PYG{o}{\PYGZlt{}}\PYG{n}{std}\PYG{o}{::}\PYG{n}{vector}\PYG{o}{\PYGZlt{}}\PYG{k+kt}{double}\PYG{o}{\PYGZgt{}\PYGZgt{}\PYGZam{}}\PYG{+w}{ }\PYG{n}{y}\PYG{p}{,}
+\PYG{+w}{            }\PYG{k}{const}\PYG{+w}{ }\PYG{n}{std}\PYG{o}{::}\PYG{n}{vector}\PYG{o}{\PYGZlt{}}\PYG{n}{std}\PYG{o}{::}\PYG{n}{vector}\PYG{o}{\PYGZlt{}}\PYG{k+kt}{double}\PYG{o}{\PYGZgt{}\PYGZgt{}\PYGZam{}}\PYG{+w}{ }\PYG{n}{z}\PYG{p}{,}
+\PYG{+w}{            }\PYG{n}{std}\PYG{o}{::}\PYG{n}{map}\PYG{o}{\PYGZlt{}}\PYG{n}{std}\PYG{o}{::}\PYG{n}{string}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{std}\PYG{o}{::}\PYG{n}{string}\PYG{o}{\PYGZgt{}}\PYG{+w}{ }\PYG{n}{keywords}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{p}{\PYGZob{}\PYGZcb{});}
+
+\PYG{c+c1}{// График всех элементов матрицы плотности}
+\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n+nf}{rho\PYGZus{}probs\PYGZus{}to\PYGZus{}plot}\PYG{p}{(}\PYG{k}{const}\PYG{+w}{ }\PYG{n}{Evolution}\PYG{o}{::}\PYG{n}{Probs}\PYG{o}{\PYGZam{}}\PYG{+w}{ }\PYG{n}{probs}\PYG{p}{,}
+\PYG{+w}{                }\PYG{k}{const}\PYG{+w}{ }\PYG{n}{std}\PYG{o}{::}\PYG{n}{vector}\PYG{o}{\PYGZlt{}}\PYG{k+kt}{double}\PYG{o}{\PYGZgt{}\PYGZam{}}\PYG{+w}{ }\PYG{n}{time\PYGZus{}vec}\PYG{p}{,}
+\PYG{+w}{                }\PYG{k}{const}\PYG{+w}{ }\PYG{n}{std}\PYG{o}{::}\PYG{n}{set}\PYG{o}{\PYGZlt{}}\PYG{n}{Basis\PYGZus{}State}\PYG{o}{\PYGZgt{}\PYGZam{}}\PYG{+w}{ }\PYG{n}{basis}\PYG{p}{,}
+\PYG{+w}{                }\PYG{n}{std}\PYG{o}{::}\PYG{n}{vector}\PYG{o}{\PYGZlt{}}\PYG{n}{std}\PYG{o}{::}\PYG{n}{map}\PYG{o}{\PYGZlt{}}\PYG{n}{std}\PYG{o}{::}\PYG{n}{string}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{std}\PYG{o}{::}\PYG{n}{string}\PYG{o}{\PYGZgt{}\PYGZgt{}}\PYG{+w}{ }\PYG{n}{keywords}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{p}{\PYGZob{}\PYGZcb{});}
+
+\PYG{c+c1}{// График только диагональных элементов}
+\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n+nf}{rho\PYGZus{}diag\PYGZus{}to\PYGZus{}plot}\PYG{p}{(}\PYG{k}{const}\PYG{+w}{ }\PYG{n}{Evolution}\PYG{o}{::}\PYG{n}{Probs}\PYG{o}{\PYGZam{}}\PYG{+w}{ }\PYG{n}{probs}\PYG{p}{,}
+\PYG{+w}{               }\PYG{k}{const}\PYG{+w}{ }\PYG{n}{std}\PYG{o}{::}\PYG{n}{vector}\PYG{o}{\PYGZlt{}}\PYG{k+kt}{double}\PYG{o}{\PYGZgt{}\PYGZam{}}\PYG{+w}{ }\PYG{n}{time\PYGZus{}vec}\PYG{p}{,}
+\PYG{+w}{               }\PYG{k}{const}\PYG{+w}{ }\PYG{n}{std}\PYG{o}{::}\PYG{n}{set}\PYG{o}{\PYGZlt{}}\PYG{n}{Basis\PYGZus{}State}\PYG{o}{\PYGZgt{}\PYGZam{}}\PYG{+w}{ }\PYG{n}{basis}\PYG{p}{,}
+\PYG{+w}{               }\PYG{n}{std}\PYG{o}{::}\PYG{n}{vector}\PYG{o}{\PYGZlt{}}\PYG{n}{std}\PYG{o}{::}\PYG{n}{map}\PYG{o}{\PYGZlt{}}\PYG{n}{std}\PYG{o}{::}\PYG{n}{string}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{std}\PYG{o}{::}\PYG{n}{string}\PYG{o}{\PYGZgt{}\PYGZgt{}}\PYG{+w}{ }\PYG{n}{keywords}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{p}{\PYGZob{}\PYGZcb{});}
+
+\PYG{c+c1}{// График только недиагональных элементов}
+\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n+nf}{rho\PYGZus{}subdiag\PYGZus{}to\PYGZus{}plot}\PYG{p}{(}\PYG{k}{const}\PYG{+w}{ }\PYG{n}{Evolution}\PYG{o}{::}\PYG{n}{Probs}\PYG{o}{\PYGZam{}}\PYG{+w}{ }\PYG{n}{probs}\PYG{p}{,}
+\PYG{+w}{                  }\PYG{k}{const}\PYG{+w}{ }\PYG{n}{std}\PYG{o}{::}\PYG{n}{vector}\PYG{o}{\PYGZlt{}}\PYG{k+kt}{double}\PYG{o}{\PYGZgt{}\PYGZam{}}\PYG{+w}{ }\PYG{n}{time\PYGZus{}vec}\PYG{p}{,}
+\PYG{+w}{                  }\PYG{k}{const}\PYG{+w}{ }\PYG{n}{std}\PYG{o}{::}\PYG{n}{set}\PYG{o}{\PYGZlt{}}\PYG{n}{Basis\PYGZus{}State}\PYG{o}{\PYGZgt{}\PYGZam{}}\PYG{+w}{ }\PYG{n}{basis}\PYG{p}{,}
+\PYG{+w}{                  }\PYG{n}{std}\PYG{o}{::}\PYG{n}{vector}\PYG{o}{\PYGZlt{}}\PYG{n}{std}\PYG{o}{::}\PYG{n}{map}\PYG{o}{\PYGZlt{}}\PYG{n}{std}\PYG{o}{::}\PYG{n}{string}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{std}\PYG{o}{::}\PYG{n}{string}\PYG{o}{\PYGZgt{}\PYGZgt{}}\PYG{+w}{ }\PYG{n}{keywords}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{p}{\PYGZob{}\PYGZcb{});}
+
+\PYG{c+c1}{// Создать график для конкретной группы}
+\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n+nf}{probs\PYGZus{}in\PYGZus{}cavity\PYGZus{}to\PYGZus{}plot}\PYG{p}{(}\PYG{k}{const}\PYG{+w}{ }\PYG{n}{Evolution}\PYG{o}{::}\PYG{n}{Probs}\PYG{o}{\PYGZam{}}\PYG{+w}{ }\PYG{n}{probs}\PYG{p}{,}
+\PYG{+w}{                     }\PYG{k}{const}\PYG{+w}{ }\PYG{n}{std}\PYG{o}{::}\PYG{n}{vector}\PYG{o}{\PYGZlt{}}\PYG{k+kt}{double}\PYG{o}{\PYGZgt{}\PYGZam{}}\PYG{+w}{ }\PYG{n}{time\PYGZus{}vec}\PYG{p}{,}
+\PYG{+w}{                     }\PYG{k}{const}\PYG{+w}{ }\PYG{n}{std}\PYG{o}{::}\PYG{n}{set}\PYG{o}{\PYGZlt{}}\PYG{n}{Basis\PYGZus{}State}\PYG{o}{\PYGZgt{}\PYGZam{}}\PYG{+w}{ }\PYG{n}{basis}\PYG{p}{,}
+\PYG{+w}{                     }\PYG{k+kt}{size\PYGZus{}t}\PYG{+w}{ }\PYG{n}{cavity\PYGZus{}id}\PYG{p}{,}
+\PYG{+w}{                     }\PYG{n}{std}\PYG{o}{::}\PYG{n}{vector}\PYG{o}{\PYGZlt{}}\PYG{n}{std}\PYG{o}{::}\PYG{n}{map}\PYG{o}{\PYGZlt{}}\PYG{n}{std}\PYG{o}{::}\PYG{n}{string}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{std}\PYG{o}{::}\PYG{n}{string}\PYG{o}{\PYGZgt{}\PYGZgt{}}\PYG{+w}{ }\PYG{n}{keywords}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{p}{\PYGZob{}\PYGZcb{});}
+
+\PYG{c+c1}{// Вывести график}
+\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n+nf}{show}\PYG{p}{(}\PYG{k+kt}{bool}\PYG{+w}{ }\PYG{n}{is\PYGZus{}block}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n+nb}{true}\PYG{p}{);}
+\PYG{c+c1}{// Сохранить график в файл}
+\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n+nf}{savefig}\PYG{p}{(}\PYG{k}{const}\PYG{+w}{ }\PYG{n}{std}\PYG{o}{::}\PYG{n}{string}\PYG{o}{\PYGZam{}}\PYG{+w}{ }\PYG{n}{filename}\PYG{p}{,}\PYG{+w}{ }\PYG{k+kt}{size\PYGZus{}t}\PYG{+w}{ }\PYG{n}{dpi}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{QConfig}\PYG{o}{::}\PYG{n}{instance}\PYG{p}{().}\PYG{n}{dpi}\PYG{p}{());}
+\PYG{c+c1}{// Включить решётку на графике}
+\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n+nf}{grid}\PYG{p}{(}\PYG{k+kt}{bool}\PYG{+w}{ }\PYG{n}{is\PYGZus{}enable}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n+nb}{true}\PYG{p}{);}
+
+\PYG{c+c1}{// BLOCKED\PYGZus{}Probs}
+
+\PYG{c+c1}{// Создать график для вероятностей}
+\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n+nf}{probs\PYGZus{}to\PYGZus{}plot}\PYG{p}{(}\PYG{k}{const}\PYG{+w}{ }\PYG{n}{Evolution}\PYG{o}{::}\PYG{n}{BLOCKED\PYGZus{}Probs}\PYG{o}{\PYGZam{}}\PYG{+w}{ }\PYG{n}{probs}\PYG{p}{,}
+\PYG{+w}{    }\PYG{k}{const}\PYG{+w}{ }\PYG{n}{std}\PYG{o}{::}\PYG{n}{vector}\PYG{o}{\PYGZlt{}}\PYG{k+kt}{double}\PYG{o}{\PYGZgt{}\PYGZam{}}\PYG{+w}{ }\PYG{n}{time\PYGZus{}vec}\PYG{p}{,}
+\PYG{+w}{    }\PYG{k}{const}\PYG{+w}{ }\PYG{n}{std}\PYG{o}{::}\PYG{n}{set}\PYG{o}{\PYGZlt{}}\PYG{n}{Basis\PYGZus{}State}\PYG{o}{\PYGZgt{}\PYGZam{}}\PYG{+w}{ }\PYG{n}{basis}\PYG{p}{,}
+\PYG{+w}{    }\PYG{n}{std}\PYG{o}{::}\PYG{n}{vector}\PYG{o}{\PYGZlt{}}\PYG{n}{std}\PYG{o}{::}\PYG{n}{map}\PYG{o}{\PYGZlt{}}\PYG{n}{std}\PYG{o}{::}\PYG{n}{string}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{std}\PYG{o}{::}\PYG{n}{string}\PYG{o}{\PYGZgt{}\PYGZgt{}}\PYG{+w}{ }\PYG{n}{keywords}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{p}{\PYGZob{}\PYGZcb{});}
+
+\PYG{c+c1}{// Создать график для вероятностей, но с возможность переименования базиса}
+\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n+nf}{probs\PYGZus{}to\PYGZus{}plot}\PYG{p}{(}\PYG{k}{const}\PYG{+w}{ }\PYG{n}{Evolution}\PYG{o}{::}\PYG{n}{BLOCKED\PYGZus{}Probs}\PYG{o}{\PYGZam{}}\PYG{+w}{ }\PYG{n}{probs}\PYG{p}{,}
+\PYG{+w}{    }\PYG{k}{const}\PYG{+w}{ }\PYG{n}{std}\PYG{o}{::}\PYG{n}{vector}\PYG{o}{\PYGZlt{}}\PYG{k+kt}{double}\PYG{o}{\PYGZgt{}\PYGZam{}}\PYG{+w}{ }\PYG{n}{time\PYGZus{}vec}\PYG{p}{,}
+\PYG{+w}{    }\PYG{k}{const}\PYG{+w}{ }\PYG{n}{std}\PYG{o}{::}\PYG{n}{vector}\PYG{o}{\PYGZlt{}}\PYG{n}{std}\PYG{o}{::}\PYG{n}{string}\PYG{o}{\PYGZgt{}\PYGZam{}}\PYG{+w}{ }\PYG{n}{basis\PYGZus{}str}\PYG{p}{,}
+\PYG{+w}{    }\PYG{n}{std}\PYG{o}{::}\PYG{n}{vector}\PYG{o}{\PYGZlt{}}\PYG{n}{std}\PYG{o}{::}\PYG{n}{map}\PYG{o}{\PYGZlt{}}\PYG{n}{std}\PYG{o}{::}\PYG{n}{string}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{std}\PYG{o}{::}\PYG{n}{string}\PYG{o}{\PYGZgt{}\PYGZgt{}}\PYG{+w}{ }\PYG{n}{keywords}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{p}{\PYGZob{}\PYGZcb{});}
+
+\PYG{c+c1}{// Создать график вероятностей в конкретной группе}
+\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n+nf}{probs\PYGZus{}in\PYGZus{}cavity\PYGZus{}to\PYGZus{}plot}\PYG{p}{(}\PYG{k}{const}\PYG{+w}{ }\PYG{n}{Evolution}\PYG{o}{::}\PYG{n}{BLOCKED\PYGZus{}Probs}\PYG{o}{\PYGZam{}}\PYG{+w}{ }\PYG{n}{probs}\PYG{p}{,}
+\PYG{+w}{    }\PYG{k}{const}\PYG{+w}{ }\PYG{n}{std}\PYG{o}{::}\PYG{n}{vector}\PYG{o}{\PYGZlt{}}\PYG{k+kt}{double}\PYG{o}{\PYGZgt{}\PYGZam{}}\PYG{+w}{ }\PYG{n}{time\PYGZus{}vec}\PYG{p}{,}
+\PYG{+w}{    }\PYG{k}{const}\PYG{+w}{ }\PYG{n}{std}\PYG{o}{::}\PYG{n}{set}\PYG{o}{\PYGZlt{}}\PYG{n}{Basis\PYGZus{}State}\PYG{o}{\PYGZgt{}\PYGZam{}}\PYG{+w}{ }\PYG{n}{basis}\PYG{p}{,}
+\PYG{+w}{    }\PYG{k+kt}{size\PYGZus{}t}\PYG{+w}{ }\PYG{n}{cavity\PYGZus{}id}\PYG{p}{,}
+\PYG{+w}{    }\PYG{n}{std}\PYG{o}{::}\PYG{n}{vector}\PYG{o}{\PYGZlt{}}\PYG{n}{std}\PYG{o}{::}\PYG{n}{map}\PYG{o}{\PYGZlt{}}\PYG{n}{std}\PYG{o}{::}\PYG{n}{string}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{std}\PYG{o}{::}\PYG{n}{string}\PYG{o}{\PYGZgt{}\PYGZgt{}}\PYG{+w}{ }\PYG{n}{keywords}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{p}{\PYGZob{}\PYGZcb{});}
+\end{Verbatim}

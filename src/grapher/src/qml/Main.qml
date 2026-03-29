@@ -4,7 +4,7 @@ import QtQuick.Dialogs
 import QtQuick.Layouts
 
 ApplicationWindow {
-    id: root
+    id: root // main qml name
     width: 1000
     height: 600
     visible: true
@@ -12,6 +12,7 @@ ApplicationWindow {
     property string lastFolderSelected: ""
     property string exportDir: ""
 
+    // palette from fusion in Theme.qml
     palette.window: Theme.window
     palette.button: Theme.button
     palette.base: Theme.base
@@ -26,8 +27,8 @@ ApplicationWindow {
     GridLayout {
         id: mainLayout
         anchors.fill: parent
-        columns: 2
-        rowSpacing: 10
+        columns: 2 // TODO: remove
+        rowSpacing: 10 // in pt ????
         columnSpacing: 10
         anchors.margins: 10
 
@@ -57,7 +58,7 @@ ApplicationWindow {
             Button {
                 Layout.fillWidth: true
                 text: "Export PNG"
-                onClicked: exportGraphAndLegend()
+                onClicked: exportGraphAndLegend() // export to png what you see with legend
             }
         }
 
@@ -70,7 +71,7 @@ ApplicationWindow {
             Layout.fillHeight: true
 
             GridLayout {
-                anchors.fill: parent
+                anchors.fill: parent // save of size from parent
                 columns: 2
                 columnSpacing: 0
 

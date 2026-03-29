@@ -131,8 +131,9 @@ class H_TC : public H_by_Operator<TC_State> {
 };
 
 OpType H_TC_OP() {
-    OpType H_op = OpType(atoms_count) * (QConfig::instance().h() * QConfig::instance().w()) + 
-                  OpType(photons_count) * (QConfig::instance().h() * QConfig::instance().w()) + OpType(exc_relax_atoms);
+    COMPLEX coef = QConfig::instance().h() * QConfig::instance().w();
+    OpType H_op = OpType(atoms_count) * coef + 
+                  OpType(photons_count) * coef + OpType(exc_relax_atoms);
 
     return H_op;
 }
@@ -147,9 +148,8 @@ std::vector<std::pair<double, OpType>> make_decs(const State<TC_State>& st) {
 H_TC::H_TC(const State<TC_State>& st): H_by_Operator(st, H_TC_OP(), make_decs(st)) {}
 
 int main(int argc, char** argv) {
-
-    double h = QConfig::instance().h();
-    double w = QConfig::instance().w();
+    COMPLEX h = QConfig::instance().h();
+    COMPLEX w = QConfig::instance().w();
     std::cout << "h = " << h << " w = " << w << std::endl;
 
     TC_State state(2);
@@ -157,14 +157,14 @@ int main(int argc, char** argv) {
     state.set_n(1);
     state.set_leak(0.01);
 
-    std::cout << "Вывод состояния: " << state.to_string() << std::endl;
+    std::cout << "Вывод состояния: " << state.to_string() << " " << state.g() << " " << h << std::endl;
 
     // -------------------------------------
     // Пример создания собственного класса гамильтониана
     // Дальше в этом примере не используется.
     H_TC H_tc(state);
 
-    H_tc.show();
+    //H_tc.show();
 
     // ------------------------------------
 
@@ -200,10 +200,12 @@ int main(int argc, char** argv) {
 
     H_by_Operator<TC_State> H(state, H_op, dec);
 
+    show_basis(H.get_basis());
+    //H.show();
+
     std::cout << "H_size: " << H.size() << std::endl; 
 
-    auto time_vec = linspace(0, 1000, 1000);
-
+    auto time_vec = linspace(0, 100, 1000);
     auto probs = quantum_master_equation(state, H, time_vec);
 
     matplotlib::make_figure(1200, 800, 80);

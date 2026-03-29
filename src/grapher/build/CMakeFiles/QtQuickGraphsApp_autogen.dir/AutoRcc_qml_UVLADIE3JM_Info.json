@@ -1,0 +1,30 @@
+{
+	"BUILD_DIR" : "/home/kuzmaline/Quantum/QComputations/QComputationsDEV/src/grapher/build/QtQuickGraphsApp_autogen",
+	"CMAKE_BINARY_DIR" : "/home/kuzmaline/Quantum/QComputations/QComputationsDEV/src/grapher/build",
+	"CMAKE_CURRENT_BINARY_DIR" : "/home/kuzmaline/Quantum/QComputations/QComputationsDEV/src/grapher/build",
+	"CMAKE_CURRENT_SOURCE_DIR" : "/home/kuzmaline/Quantum/QComputations/QComputationsDEV/src/grapher",
+	"CMAKE_SOURCE_DIR" : "/home/kuzmaline/Quantum/QComputations/QComputationsDEV/src/grapher",
+	"INCLUDE_DIR" : "/home/kuzmaline/Quantum/QComputations/QComputationsDEV/src/grapher/build/QtQuickGraphsApp_autogen/include",
+	"INPUTS" : 
+	[
+		"/home/kuzmaline/Quantum/QComputations/QComputationsDEV/src/grapher/src/qml/Main.qml",
+		"/home/kuzmaline/Quantum/QComputations/QComputationsDEV/src/grapher/src/qml/Graph2DState.qml",
+		"/home/kuzmaline/Quantum/QComputations/QComputationsDEV/src/grapher/src/qml/Graph2DView.qml",
+		"/home/kuzmaline/Quantum/QComputations/QComputationsDEV/src/grapher/src/qml/SettingsPopup.qml",
+		"/home/kuzmaline/Quantum/QComputations/QComputationsDEV/src/grapher/src/qml/Theme.qml",
+		"/home/kuzmaline/Quantum/QComputations/QComputationsDEV/src/grapher/src/qml/AxisRangeSelector.qml",
+		"/home/kuzmaline/Quantum/QComputations/QComputationsDEV/src/grapher/src/qml/Legend.qml",
+		"/home/kuzmaline/Quantum/QComputations/QComputationsDEV/src/grapher/src/qml/Graph3DView.qml",
+		"/home/kuzmaline/Quantum/QComputations/QComputationsDEV/src/grapher/src/assets/icons/icon.png"
+	],
+	"LOCK_FILE" : "/home/kuzmaline/Quantum/QComputations/QComputationsDEV/src/grapher/build/CMakeFiles/QtQuickGraphsApp_autogen.dir/AutoRcc_qml_UVLADIE3JM_Lock.lock",
+	"MULTI_CONFIG" : false,
+	"OPTIONS" : [ "-name", "qml" ],
+	"OUTPUT_CHECKSUM" : "UVLADIE3JM",
+	"OUTPUT_NAME" : "qrc_qml.cpp",
+	"RCC_EXECUTABLE" : "/home/kuzmaline/Qt/6.9.3/gcc_64/libexec/rcc",
+	"RCC_LIST_OPTIONS" : [ "--list" ],
+	"SETTINGS_FILE" : "/home/kuzmaline/Quantum/QComputations/QComputationsDEV/src/grapher/build/CMakeFiles/QtQuickGraphsApp_autogen.dir/AutoRcc_qml_UVLADIE3JM_Used.txt",
+	"SOURCE" : "/home/kuzmaline/Quantum/QComputations/QComputationsDEV/src/grapher/src/qml.qrc",
+	"VERBOSITY" : 0
+}

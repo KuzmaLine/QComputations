@@ -11,7 +11,7 @@ ChartManager3D::ChartManager3D(QObject *parent) : QObject(parent) {
     m_surfaceSeries = new QSurface3DSeries(new QSurfaceDataProxy(), this);
     m_surfaceSeries->setDrawMode(QSurface3DSeries::DrawSurfaceAndWireframe);
     m_surfaceSeries->setBaseColor(Qt::blue);
-    m_surfaceSeries->setItemLabelVisible(true);
+    m_surfaceSeries->setItemLabelVisible(true); // points coords
     m_surfaceSeries->setName("Surface3D");
 }
 

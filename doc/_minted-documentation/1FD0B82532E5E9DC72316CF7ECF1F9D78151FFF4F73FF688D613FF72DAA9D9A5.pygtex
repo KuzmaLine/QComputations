@@ -1,0 +1,10 @@
+\begin{Verbatim}[commandchars=\\\{\},codes={\catcode`\$=3\catcode`\^=7\catcode`\_=8\relax}]
+\PYG{k}{using}\PYG{+w}{ }\PYG{n}{OpType}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{Operator}\PYG{o}{\PYGZlt{}}\PYG{n}{Some\PYGZus{}State}\PYG{o}{\PYGZgt{}}\PYG{p}{;}
+\PYG{n}{OpType}\PYG{+w}{ }\PYG{n}{H}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{OpType}\PYG{p}{(}\PYG{n}{some\PYGZus{}op\PYGZus{}1\PYGZus{}1}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{*}\PYG{+w}{ }\PYG{n}{OpType}\PYG{p}{(}\PYG{n}{some\PYGZus{}op\PYGZus{}1\PYGZus{}2}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{*}\PYG{+w}{ }\PYG{p}{...}\PYG{+w}{ }\PYG{o}{*}
+\PYG{+w}{           }\PYG{n}{OpType}\PYG{p}{(}\PYG{n}{some\PYGZus{}op\PYGZus{}1\PYGZus{}n}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{+}
+\PYG{+w}{           }\PYG{n}{OpType}\PYG{p}{(}\PYG{n}{some\PYGZus{}op\PYGZus{}2\PYGZus{}1}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{*}\PYG{+w}{ }\PYG{n}{OpType}\PYG{p}{(}\PYG{n}{some\PYGZus{}op\PYGZus{}2\PYGZus{}2}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{*}\PYG{+w}{ }\PYG{p}{...}\PYG{+w}{ }\PYG{o}{*}
+\PYG{+w}{           }\PYG{n}{OpType}\PYG{p}{(}\PYG{n}{some\PYGZus{}op\PYGZus{}2\PYGZus{}n}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{+}
+\PYG{+w}{           }\PYG{p}{...}
+\PYG{+w}{           }\PYG{n}{OpType}\PYG{p}{(}\PYG{n}{some\PYGZus{}op\PYGZus{}m\PYGZus{}1}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{*}\PYG{+w}{ }\PYG{n}{OpType}\PYG{p}{(}\PYG{n}{some\PYGZus{}op\PYGZus{}m\PYGZus{}2}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{*}\PYG{+w}{ }\PYG{p}{...}\PYG{+w}{ }\PYG{o}{*}
+\PYG{+w}{           }\PYG{n}{OpType}\PYG{p}{(}\PYG{n}{some\PYGZus{}op\PYGZus{}m\PYGZus{}n}\PYG{p}{);}
+\end{Verbatim}

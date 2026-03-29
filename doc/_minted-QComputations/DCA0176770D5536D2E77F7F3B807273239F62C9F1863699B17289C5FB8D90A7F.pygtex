@@ -1,0 +1,3 @@
+\begin{Verbatim}[commandchars=\\\{\},codes={\catcode`\$=3\catcode`\^=7\catcode`\_=8\relax}]
+\PYG{+w}{                }\PYG{n}{State}\PYG{o}{\PYGZlt{}}\PYG{n}{Some\PYGZus{}State}\PYG{o}{\PYGZgt{}}\PYG{+w}{ }\PYG{n}{some\PYGZus{}op}\PYG{p}{(}\PYG{k}{const}\PYG{+w}{ }\PYG{n}{Some\PYGZus{}State}\PYG{o}{\PYGZam{}}\PYG{+w}{ }\PYG{n}{state}\PYG{p}{);}
+\end{Verbatim}

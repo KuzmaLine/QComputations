@@ -1,4 +1,4 @@
-#!/opt/intel/oneapi/intelpython/latest/bin/python
+#!/usr/bin/python3
 
 import os
 import json
@@ -19,6 +19,7 @@ json_file = os.environ.get('SEABORN_CONFIG')
 with open(json_file) as json_data:
     config = json.load(json_data)
 
+
 def read_files(dir):
     time_vec = pd.read_csv("./" + dir + "/time.csv", header=None).to_numpy().squeeze().tolist()
     basis = pd.read_csv("./" + dir + "/basis.csv", header=None).to_numpy().squeeze().tolist()
@@ -26,7 +27,6 @@ def read_files(dir):
 
     if (not type(basis) is list):
         basis = [basis]
-
 
     probs.index=time_vec
     if (config.get("enable_legend")):
@@ -89,13 +89,16 @@ elif (format == "ready_gif"):
     for dir_path in dir_list:
         os.remove(f"{dir_path}")
 else:
+    plt.rcParams.update({'font.size': int(config.get("fontsize")), 'legend.fontsize': int(config.get("fontsize"))})
     dirs = config.get("dirs")
 
     fig = plt.figure(figsize=(int(config.get("width")), int(config.get("height"))))
 
+    dirs_count = 0
     dir_list = []
     for p in Path('.').glob(dirs):
         if (os.path.isdir(str(p))):
+            dirs_count += 1
             dir_list.append(str(p))
 
     dir_list.sort()
@@ -106,8 +109,12 @@ else:
         print(dir + " files readed!")
 
         fig = plt.figure(figsize=(int(config.get("width")), int(config.get("height"))))
-        sns.lineplot(data=probs)
-        plt.title(dir)
+        sns.set_context("paper", font_scale=int(config.get("fontsize")) / float(8))
+        sns.lineplot(data=probs, linewidth=int(config.get("linewidth")))
+        if (dirs_count == 1 and config.get("title") != "None"):
+            plt.title(config.get("title"))
+        else:
+            plt.title(dir)
         #plt.xlabel("Time (6.626 * 10^(-34) seconds)")
         plt.xlabel(config.get("xlabel"))
         plt.ylabel(config.get("ylabel"))
