@@ -48,20 +48,7 @@ int main(int argc, char** argv) {
 
     auto probs = schrodinger(State<Basis_State>(state), H, time_vec);
 
-    if (is_python_api) {
-        matplotlib::make_figure(1900, 1000, 80);
-        matplotlib::grid();
-        matplotlib::title("PYTHON_API_PLOT");
-        matplotlib::xlabel("time");
-        matplotlib::ylabel("Probability");
-
-        matplotlib::probs_to_plot(probs, time_vec, H.get_basis());
-
-        matplotlib::savefig("blocked_tch_plots/python_api_result.png");
-        matplotlib::show();
-    } else {
-        make_probs_files(H, probs, time_vec, H.get_basis(), "blocked_tch_plots/CSV_FILES");
-    }
+    make_probs_files(H, probs, time_vec, H.get_basis(), "blocked_tch_plots/CSV_FILES");
 
     return 0;
 }
