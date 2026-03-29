@@ -165,6 +165,7 @@ int main(int argc, char** argv) {
     //std::cout << "Вывод остояния: " << state.to_string() << std::endl;
 
     OpType H_op = OpType(atoms_count) * h * w + OpType(photons_count) * h * w + OpType(exc_relax_atoms);
+    // H = hwa^+a + hwsigma^+sigma + g(a+sigma + asigma+)
 
     auto res = H_op.run(State<TC_State>(state));
 
