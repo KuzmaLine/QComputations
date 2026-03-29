@@ -21,11 +21,11 @@ Rectangle {
             id: legendColumn
             spacing: 6
 
-            Repeater {
+            Repeater { // desc for vars from list
                 id: legendRepeater
                 model: []
 
-                delegate: RowLayout {
+                delegate: RowLayout { // delegate - how to desc
                     Layout.fillWidth: true
                     spacing: 8
                     height: 32
@@ -70,7 +70,7 @@ Rectangle {
                         enabled: modelData !== null
                     }
 
-                    CheckBox {
+                    CheckBox { // galochka
                         checked: modelData ? modelData.visible : false
                         enabled: modelData !== null
                         onCheckedChanged: {
@@ -137,7 +137,7 @@ Rectangle {
         }
     }
 
-    function updateLegendModel() {
+    function updateLegendModel() { // with change of data
         if (!chartManager) {
             console.warn("[Legend.qml] updateLegendModel: chartManager is null");
             return;

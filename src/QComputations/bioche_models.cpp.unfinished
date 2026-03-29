@@ -1,0 +1,40 @@
+#pragma once
+#include <iostream>
+
+enum ENV { VACUUM = 100 };
+
+class BioChe_Model {
+    public:
+        BioChe_Model() {}
+        ~BioChe_Model() {}
+
+        virtual int H_own() const = 0;
+        virtual int H_env(ENV) const = 0;
+}
+
+class A: public virtual BioChe_Model {
+    public:
+        A(int x) : x_(x) {}
+
+        virtual int H_own() const override { return x_ + 1;}
+        virtual int H_env(ENV env) const override { return x_ + env;}
+    private:
+        int x_;
+}
+
+class B: public virtual BioChe_Model {
+    public:
+        B(int x) : x_(x) {}
+
+        virtual int H_own() const override { return x_ * 3;}
+        virtual int H_env(ENV env) const override { return x_ + env * 2;}
+    private:
+        int x_;
+}
+
+class Model {
+    public:
+        explicit Model(): models_(0)
+    private:
+        std::vector<std::unique_ptr<BioChe_Model>> models_;
+}

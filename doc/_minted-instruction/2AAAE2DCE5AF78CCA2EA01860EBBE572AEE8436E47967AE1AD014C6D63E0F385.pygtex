@@ -1,0 +1,12 @@
+\begin{Verbatim}[commandchars=\\\{\},codes={\catcode`\$=3\catcode`\^=7\catcode`\_=8\relax}]
+\PYG{n}{TC\PYGZus{}State}\PYG{+w}{ }\PYG{n+nf}{state}\PYG{p}{(}\PYG{l+m+mi}{2}\PYG{p}{);}
+\PYG{n}{state}\PYG{p}{.}\PYG{n}{set\PYGZus{}max\PYGZus{}photons}\PYG{p}{(}\PYG{l+m+mi}{1}\PYG{p}{);}
+\PYG{n}{state}\PYG{p}{.}\PYG{n}{set\PYGZus{}n}\PYG{p}{(}\PYG{l+m+mi}{1}\PYG{p}{);}
+
+\PYG{k}{auto}\PYG{+w}{ }\PYG{n}{res}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{H\PYGZus{}op}\PYG{p}{.}\PYG{n}{run}\PYG{p}{(}\PYG{n}{state}\PYG{p}{);}
+
+\PYG{n}{std}\PYG{o}{::}\PYG{n}{cout}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZlt{}}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}Вывод состояния: \PYGZdq{}}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZlt{}}\PYG{+w}{ }\PYG{n}{res}\PYG{p}{.}\PYG{n}{to\PYGZus{}string}\PYG{p}{()}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZlt{}}\PYG{+w}{ }\PYG{n}{std}\PYG{o}{::}\PYG{n}{endl}\PYG{p}{;}
+\PYG{c+c1}{// Вывод состояния: (1.000000 + 0.000000j) * |1;0,0\PYGZgt{} +}
+\PYG{c+c1}{// (0.010000 + 0.000000j) * |0;1,0\PYGZgt{} +}
+\PYG{c+c1}{// (0.010000 + 0.000000j) * |0;0,1\PYGZgt{}}
+\end{Verbatim}

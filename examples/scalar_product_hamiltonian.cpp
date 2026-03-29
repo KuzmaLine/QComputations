@@ -2,7 +2,7 @@
 Демонстрация реализации собственного понятия состояния и 
 операторов. Одноядерная версия.
 */
-#include "QComputations_SINGLE.hpp"
+#include "QComputations_SINGLE_NO_PLOTS.hpp"
 
 #include <iostream>
 #include <complex>

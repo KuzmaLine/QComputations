@@ -9,7 +9,7 @@
 #include "ChartManager3D.h"
 
 class ChartManager : public QObject {
-    Q_OBJECT
+    Q_OBJECT // macros
     Q_PROPERTY(bool show2D READ show2D WRITE setShow2D NOTIFY show2DChanged)
     Q_PROPERTY(bool show3D READ show3D WRITE setShow3D NOTIFY show3DChanged)
     Q_PROPERTY(double maxX READ maxX NOTIFY minMaxValuesChanged)

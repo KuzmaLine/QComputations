@@ -1,0 +1,118 @@
+diff --git a/examples/water_cluster.cpp b/examples/water_cluster.cpp
+index 6d7e7ec..db53db5 100644
+--- a/examples/water_cluster.cpp
++++ b/examples/water_cluster.cpp
+@@ -5,7 +5,7 @@ namespace QComputations {
+ constexpr int HYDROGEN_SIZE_STATE = 2;
+ constexpr int OXYGEN_VACANT_COUNT = 2;
+ 
+-//|1122>|0;0>|1;1>|1;1>|0;1>|1;1>|0;1>|0;0>
++//|1122>|0;0>|1;1>|1;1>|0;1>|1;1>|0;1>
+ 
+ class WaterState : public Basis_State {
+     public:
+@@ -14,8 +14,8 @@ class WaterState : public Basis_State {
+                             OXYGEN_VACANT_COUNT * oxygen_count),
+                             oxygen_count_(oxygen_count), hydrogen_count_(hydrogen_count),
+                             g_(C_STYLE, OXYGEN_VACANT_COUNT * oxygen_count, OXYGEN_VACANT_COUNT * oxygen_count, COMPLEX(1, 0)),
+-                            g_cov_(C_STYLE, oxygen_count * hydrogen_count, oxygen_count * hydrogen_count, COMPLEX(1, 0)) {
+-            std::vector<size_t> groups = {hydrogen_count};
++                            g_cov_(oxygen_count * OXYGEN_VACANT_COUNT, 0) {
++            std::vector<size_t> groups = {size_t(hydrogen_count)};
+             for (size_t i = 0; i < oxygen_count; i++) {
+                 groups.emplace_back(OXYGEN_VACANT_COUNT);
+             }
+@@ -31,8 +31,8 @@ class WaterState : public Basis_State {
+         }
+ 
+         
+-        COMPLEX g_cov(size_t i, size_t j) const {
+-            return g_cov_[i][j];
++        COMPLEX g_cov(size_t i) const {
++            return g_cov_[i];
+         }
+ 
+         size_t get_hydrogen_index_start() const {
+@@ -45,18 +45,37 @@ class WaterState : public Basis_State {
+ 
+         int hydrogen_count() const { return hydrogen_count_; }
+         int positions_count() const { return OXYGEN_VACANT_COUNT * oxygen_count_; }
++        int oxygen_count() const { return oxygen_count_; }
+ 
+         bool is_free_position(size_t i) const {
+             return this->get_qudit(i, 1) == 0;
+         }
+ 
++        std::string to_string() const override {
++            std::string res;
++            for (size_t i = 0; i < this->get_group_size(0); i++) {
++                res += ";" + std::to_string(this->get_qudit(i, 0) / 2);
++            }
++
++            res[0] = '|';
++            res += ">";
++
++            for (size_t i = 1; i < this->get_groups_count(); i++) {
++                res += this->group_to_string(i);
++            }
++
++            return res;
++        }
++
+     private:
+         int oxygen_count_;
+         int hydrogen_count_;
+         Matrix<COMPLEX> g_;
+-        Matrix<COMPLEX> g_cov_;
++        std::vector<COMPLEX> g_cov_;
+ };
+ 
++enum DIST{FAR = 0, CLOSE};
++
+ State<WaterState> MoveHydrogenFunc(const WaterState& state) {
+     State<WaterState> res;
+     auto tmp = state;
+@@ -65,10 +84,10 @@ State<WaterState> MoveHydrogenFunc(const WaterState& state) {
+         auto cur_position = state.get_qudit(i, 0);
+         for (int j = 0; j < state.positions_count(); j++) {
+             if (j != cur_position && state.is_free_position(j)) {
+-                std::cout << i << " " << j << std::endl;
+                 tmp.set_qudit(j, i, 0); // Меняем позицию водорода
+                 tmp.set_qudit(0, cur_position % 2, 1 + cur_position / 2); // Освобождаем позицию
+-                res += set_qudit(tmp, 1, j % 2, 1 + j / 2) * state.g(i, j); // Вернуть суперпозицию с установленной занятой позицией
++                res += check(tmp, int(FAR), 0, 1 + state.oxygen_count() + i) * 
++                       set_qudit(tmp, 1, j % 2, 1 + j / 2) * state.g(i, j); // Вернуть суперпозицию с установленной занятой позицией
+ 
+                 tmp = state;
+             }
+@@ -78,17 +97,28 @@ State<WaterState> MoveHydrogenFunc(const WaterState& state) {
+     return res;
+ }
+ 
+-/*
++
++State<WaterState> DistHydOxygenFunc(const WaterState& state) {
++    State<WaterState> res;
++    auto tmp = state;
++
++    for (size_t i = 0; i < state.hydrogen_count(); i++) {
++        res += sigma_x(state, 0, 1 + state.oxygen_count() + i);
++    }
++
++    return res;
++}
++
+ State<WaterState> CovHydOxygenFunc(const WaterState& state) {
+     State<WaterState> res;
+     auto tmp = state;
+ 
+     for (size_t i = 0; i < state.hydrogen_count(); i++) {
++        res += check(state, int(CLOSE), 0, 1 + state.oxygen_count() + i) * sigma_x(state, 1, 1 + state.oxygen_count() + i);
+     }
+ 
+     return res;
+ }
+-*/
+ 
+ }
+ 

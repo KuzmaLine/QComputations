@@ -146,7 +146,7 @@ QtObject {
         }
     }
 
-    function panBy(dx_px, dy_px) {
+    function panBy(dx_px, dy_px) { // for move in zoomed picture
         if (!initialized || !chartView)
             return;
 
@@ -266,7 +266,7 @@ QtObject {
         console.log(`[Graph2DState] resetPosition() done → X ${clampedMinX} → ${clampedMaxX}, Y ${clampedMinY} → ${clampedMaxY}`);
     }
 
-    property var chartConnections: Connections {
+    property var chartConnections: Connections { // adding with serries
         target: chartManager
         function onLineSeriesAdded(series) {
             if (series && graph2DState.chartView)

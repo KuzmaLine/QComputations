@@ -17,20 +17,20 @@ void ChartManager2D::loadFolder2D(const QString &path) {
     QFile basisFile(path + "/basis.csv");
     QFile probsFile(path + "/probs.csv");
     QFile timeFile(path + "/time.csv");
-    if (!basisFile.open(QIODevice::ReadOnly | QIODevice::Text) ||
+    if (!basisFile.open(QIODevice::ReadOnly | QIODevice::Text) || // QIODevice::BIN nadobi sdelat
         !probsFile.open(QIODevice::ReadOnly | QIODevice::Text) ||
         !timeFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
         qWarning() << "[ChartManager2D] Could not open CSV files in folder:" << path;
         return;
     }
 
-    QTextStream basisIn(&basisFile), probsIn(&probsFile), timeIn(&timeFile);
+    QTextStream basisIn(&basisFile), probsIn(&probsFile), timeIn(&timeFile); // fstream
     QVector<QString> namesVec = basisIn.readLine().split(",");
     basisFile.close();
 
     QVector<double> timeVec;
     for (const auto &str : timeIn.readLine().split(",")) {
-        bool ok = false;
+        bool ok = false; //text check format for toDouble
         double val = str.toDouble(&ok);
         if (ok) timeVec.append(val);
     }
@@ -41,7 +41,7 @@ void ChartManager2D::loadFolder2D(const QString &path) {
         QStringList lineParts = probsIn.readLine().split(",");
         if (lineParts.size() != namesVec.size()) continue;
         for (int i = 0; i < lineParts.size(); ++i) {
-            bool ok = false;
+            bool ok = false; //text check format for toDouble
             double val = lineParts[i].toDouble(&ok);
             if (ok) probsVec[i].append(val);
         }

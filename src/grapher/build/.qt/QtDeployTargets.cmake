@@ -1,0 +1,2 @@
+set(__QT_DEPLOY_TARGET_QtQuickGraphsApp_FILE /home/kuzmaline/Quantum/QComputations/QComputationsDEV/src/grapher/build/QtQuickGraphsApp)
+set(__QT_DEPLOY_TARGET_QtQuickGraphsApp_TYPE EXECUTABLE)

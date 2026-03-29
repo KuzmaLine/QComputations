@@ -4,4 +4,6 @@ cd cpu_cluster
 rm -rf `ls | grep -v "CMakeLists.txt"`
 cd ../single
 rm -rf `ls | grep -v "CMakeLists.txt"`
+cd ../cuda
+rm -rf `ls | grep -v "CMakeLists.txt"`
 cd ..

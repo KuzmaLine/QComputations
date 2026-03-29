@@ -30,7 +30,8 @@ function(create_build_target TARGET_NAME PYTHON_FLAG)
     add_library(${TARGET_NAME} SHARED ${SOURCE_FILES})
 
     # Set flags
-    target_compile_options(${TARGET_NAME} PRIVATE -qopenmp -qmkl=parallel -DENABLE_MPI -DENABLE_CLUSTER)
+    target_compile_options(${TARGET_NAME} PRIVATE -qmkl=parallel -g -DENABLE_MPI -DENABLE_CLUSTER -DENABLE_ONEAPI)
+    include_directories(../src/QComputations/*.hpp)
 
     # Link libraries
     #target_link_libraries(${TARGET_NAME} /lib/x86_64-linux-gnu/libdl.so.2)
@@ -61,5 +62,5 @@ function(create_build_target TARGET_NAME PYTHON_FLAG)
 endfunction()
 
 # Create build targets
-create_build_target(QComputations_CPU_CLUSTER ON)
-create_build_target(QComputations_CPU_CLUSTER_NO_PLOTS OFF)
+#create_build_target(QComputations_CPU_CLUSTER ON)
+create_build_target(QComputations_CPU_CLUSTER OFF)

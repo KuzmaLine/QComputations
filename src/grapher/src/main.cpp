@@ -41,7 +41,7 @@ void messageHandler(QtMsgType type, const QMessageLogContext &context, const QSt
 
 int main(int argc, char *argv[]) {
     qInstallMessageHandler(messageHandler);
-    QQuickStyle::setStyle("Fusion");
+    QQuickStyle::setStyle("Fusion"); // Qt style for buttons
     QGuiApplication app(argc, argv);
 
     app.setWindowIcon(QIcon(":/assets/icons/icon.png"));
@@ -54,11 +54,11 @@ int main(int argc, char *argv[]) {
     engine.rootContext()->setContextProperty("CurDirPath", QDir::currentPath());
 
     // Register singleton types
-    qmlRegisterSingletonType(QUrl("qrc:/qml/Graph2DState.qml"), "Graph2D", 1, 0, "Graph2DState");
-    qmlRegisterSingletonType(QUrl("qrc:/qml/Theme.qml"), "Theme", 1, 0, "Theme");
+    qmlRegisterSingletonType(QUrl("qrc:/qml/Graph2DState.qml"), "Graph2D", 1, 0, "Graph2DState"); // Zoom sync
+    qmlRegisterSingletonType(QUrl("qrc:/qml/Theme.qml"), "Theme", 1, 0, "Theme"); // colors save
 
     // Add import path for qml folder
-#ifdef Q_OS_WIN
+#ifdef Q_OS_WIN // for windows nahua????
     QString extraImportPath =
         QStringLiteral("%1/../../../../%2").arg(QGuiApplication::applicationDirPath(), QString::fromLatin1("qml"));
 #else
