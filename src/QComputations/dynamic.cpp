@@ -454,6 +454,107 @@ Probs quantum_master_equation(const State<Basis_State>& init_state,
     return probs;
 }
 
+Probs quantum_master_equation(const std::vector<COMPLEX>& init_state,
+                            CSR_Hamiltonian& H,
+                            const std::vector<double>& time_vec,
+                            bool is_full_rho) {
+    
+    size_t dim = H.size();
+    std::vector<std::function<void(const Rho& rho)>> lindblads;
+
+    CSR_Matrix<COMPLEX> T1(dim, dim);
+    Matrix<COMPLEX> T2(C_STYLE, dim, dim);
+    CSR_Matrix<COMPLEX> T3(dim, dim);
+
+    auto H_matrix = H.get_matrix();
+
+    for (const auto& p: H.get_decoherence()) {
+        auto gamma = p.first;
+        //std::cout << "BEFORE: " << p.second.matrix_type() << std::endl;
+        //BLOCKED_Matrix<COMPLEX> A(p.second);
+        const CSR_Matrix<COMPLEX>& A = p.second;
+        //A.show();
+        lindblads.push_back(std::function<void(const Rho& rho)> {
+            [A, &T1, &T2, &T3, gamma](const Rho& rho) {
+                optimized_multiply(A, A, T1, COMPLEX(1, 0), COMPLEX(0, 0), 'C'); // AconjA -> T1
+                optimized_multiply(T1, rho, T2, COMPLEX(1, 0), COMPLEX(0, 0)); // AconjA*rho -> T2
+                optimized_multiply(rho, T1, T2, COMPLEX(1, 0), COMPLEX(1, 0)); // rho * AconjA + AconjA * rho
+                // optimized_multiply(A, rho, T1, COMPLEX(1, 0), COMPLEX(0, 0)); // A*rho -> T1
+                // optimized_multiply(T1, A, T2, COMPLEX(gamma, 0), COMPLEX(-0.5 * gamma, 0), 'N', 'C'); // res -> T2
+                sparse_syrd(A, rho, T2, COMPLEX(gamma, 0), COMPLEX(-0.5 * gamma, 0));
+            }
+        }
+        );
+    }
+
+    
+    std::function<void(double t, const Rho&, Matrix<COMPLEX>&)> equation 
+    {[&H_matrix, &T1, &T2, &lindblads](double t, const Rho& rho, Matrix<COMPLEX>& res) {
+        //std::cout << "HERE1\n";
+        optimized_multiply(rho, H_matrix, res, COMPLEX(1, 0), COMPLEX(0, 0)); // rho * H_matrix -> res
+        //std::cout << "HERE2\n";
+        optimized_multiply(H_matrix, rho, res, COMPLEX(0, -1 / QConfig::instance().h()), COMPLEX(0, 1 / QConfig::instance().h())); // result -> res
+        //std::cout << "HERE3\n";
+
+        for (const auto& lindblad: lindblads) {
+            lindblad(rho);
+            //std::cout << "HERE10\n";
+            //optimized_add(T2, res, COMPLEX(1 / QConfig::instance().h(), 0), COMPLEX(1, 0));
+            T2 /= QConfig::instance().h();
+            res += T2;
+            //std::cout << "HERE11\n";
+        }
+
+        //res = (H_matrix * rho - rho * H_matrix) * COMPLEX(0, -1/QConfig::instance().h());
+        //for (const auto& lindblad: lindblads) {
+        //    lindblad(rho);
+        //    res += (T2 / QConfig::instance().h());
+        //}
+    }};
+
+    auto rho_0 = create_init_rho(init_state.fit_to_basis_state(H.get_basis()).get_vector());
+    //rho_0.show();
+    auto begin_c = std::chrono::steady_clock::now();
+    //std::cout << "HERE\n";
+    Probs probs(C_STYLE, dim, time_vec.size());
+    if (QConfig::instance().qme_algorithm() == RUNGE_KUTT_4) {
+        //rho_vec = Runge_Kutt_4<double, Rho>(time_vec, rho_0, equation);
+        QME_OPT_Runge_Kutt_4(time_vec, rho_0, equation, probs);
+    } else if (QConfig::instance().qme_algorithm() == RUNGE_KUTT_2) {
+        //rho_vec = Runge_Kutt_2<double, Rho>(time_vec, rho_0, equation);
+        QME_OPT_Runge_Kutt_2(time_vec, rho_0, equation, probs);
+    } else {
+        assert(false); // Неизвестный алгоритм решения ОКУ
+    }
+    auto end_c = std::chrono::steady_clock::now();
+    std::cout << "SINGLE_QME_TIME:  " << std::chrono::duration_cast<std::chrono::milliseconds>(end_c - begin_c).count() << std::endl;
+    //std::cout << "HERE 2\n";
+
+    /*
+    for (size_t i = 0; i < dim; i++) {
+        for (size_t t = 0; t < time_vec.size(); t++) {
+            probs[i][t] = std::abs(rho_vec[t][i][i]);
+        }
+    }
+    */
+
+    /*
+    for (size_t t = 0; t < time_vec.size(); t++) {
+        double res = 0.0;
+        for (size_t i = 0; i < dim; i++) {
+            res += probs[i][t];
+        }
+
+        //std::cout << t << " " << res << std::endl;
+
+        if (std::abs(res - 1) >= QConfig::instance().eps()) {
+            //std::cout << t << " " << res << std::endl;
+        }
+    }
+    */
+    return probs;
+}
+
 #endif
 
 // Переделать на шаблоны

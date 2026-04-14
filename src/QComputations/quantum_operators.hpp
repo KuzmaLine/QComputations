@@ -5,6 +5,7 @@
 #include <functional>
 #include "blocked_matrix.hpp"
 #include <stack>
+#include "csr_matrix.hpp"
 
 namespace QComputations {
 
@@ -263,6 +264,8 @@ State<StateType> Operator<StateType>::run(const State<StateType>& init_state, co
     return res;
 }
 
+// !!!!!!!!!!!!!!!!!!!!!!!!!!!!! REWRITE TO res_state.set_sorted(true) like in hamiltonian !!!!!!!!!!!!!!!!!!!!!
+
 template<typename StateType>
 Matrix<COMPLEX> operator_to_matrix(const Operator<StateType>& op, const std::vector<std::shared_ptr<StateType>>& basis, MATRIX_STYLE matrix_style = C_STYLE) {
     size_t dim = basis.size();
@@ -344,6 +347,62 @@ inline Matrix<COMPLEX> operator_to_matrix(const Operator<StateType>& op, const B
     // */
 
     return operator_to_matrix(op, sort_basis(basis), matrix_style);
+}
+
+// !!!!!!!!!!!!!!!!!! REWRITE to CSR_Matrix manipulations vals, ia, ja without copy !!!!!!!!!!!!!!!!!!!!!!
+
+template<typename StateType>
+CSR_Matrix<COMPLEX> operator_to_matrix_csr(const Operator<StateType>& op, const std::vector<std::shared_ptr<StateType>>& basis) {
+    size_t dim = basis.size();
+    State<StateType> basis_map(basis);
+    size_t col_state = 0;
+
+    std::vector<COMPLEX> vals;
+    std::vector<ILP_TYPE> ia({0});
+    std::vector<ILP_TYPE> ja;
+
+    size_t index = 0;
+    for (auto state: basis) {
+        auto res_state = op.run(State<StateType>(state));
+        res_state.set_sorted(true);
+
+        auto res_state_vec = res_state.get_basis();
+        for (auto state_res: res_state_vec) {
+            // if (matrix_style == C_STYLE) A[get_index_state_in_basis(*state_res, basis)][col_state] = res_state[index++];
+            // else A(get_index_state_in_basis(*state_res, basis), col_state) = res_state[index++];
+            vals.emplace_back(std::conj(res_state[index++]));
+            ja.emplace_back(basis_map.get_index(state_res));
+        }
+
+        ia.emplace_back(index);
+    }
+
+    CSR_Matrix A(ia.size() - 1, basis.size(), vals, ia, ja);
+    A.sort_ja();
+    /*
+    std::function<COMPLEX(size_t i, size_t j)> func = {
+        [&basis, &op](size_t i, size_t j) {
+            auto state_from = get_state_from_basis(basis, j);
+            auto state_to = get_state_from_basis(basis, i);
+            auto res_state = op.run(State<StateType>(*state_from));
+            
+            if (res_state.is_in_state(*state_to)) {
+                return res_state[*state_to];
+            } else {
+                return COMPLEX(0, 0);
+            }
+        }
+    };
+
+    Matrix<COMPLEX> A(C_STYLE, dim, dim, func);
+    */
+
+    return A;
+}
+
+template<typename StateType>
+inline CSR_Matrix<COMPLEX> operator_to_matrix_csr(const Operator<StateType>& op, const BasisType<StateType>& basis) {
+    return operator_to_matrix_csr(op, sort_basis(basis));
 }
 
 

@@ -3,6 +3,7 @@
 #include <memory>
 #include "state.hpp"
 #include "hamiltonian.hpp"
+#include "hamiltonian_csr.hpp"
 
 /* modified: 
     schrodinger_step */
@@ -59,6 +60,15 @@ namespace QComputations {
                                    const std::vector<double>& time_vec,
                                    const std::vector<double>& gamma_vec,
                                    double target);
+
+
+    Probs quantum_master_equation(const State<Basis_State>& init_state,
+                        CSR_Hamiltonian& H,
+                        const std::vector<double>& time_vec);
+
+    Probs quantum_master_equation(const std::vector<COMPLEX>& init_state,
+                                CSR_Hamiltonian& H,
+                                const std::vector<double>& time_vec);
 
     //Probs exp_evolution(const State<Basis_State>& init_state, Hamiltonian& H,
     //                    double dt, size_t STEPS_COUNT, 

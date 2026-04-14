@@ -11,8 +11,9 @@
 #pragma once
 #include "QComputations/functions.hpp"
 #include "QComputations/matrix.hpp"
-//#include "QComputations/csr_matrix.hpp"
+#include "QComputations/csr_matrix.hpp"
 #include "QComputations/hamiltonian.hpp"
+#include "QComputations/hamiltonian_csr.hpp"
 #include "QComputations/state.hpp"
 #include "QComputations/quantum_operators.hpp"
 #include "QComputations/graph.hpp"
