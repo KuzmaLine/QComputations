@@ -42,7 +42,7 @@ sudo mv ./*.so $2/.
 #cd ..
 
 
-# cd single
-# cmake -DCMAKE_CXX_COMPILER=icpx -B .
-# make -j4 -B
-# sudo mv ./*.so $2/.
+#cd single
+#cmake -DCMAKE_CXX_COMPILER=icpx -B .
+#make -j4 -B
+## sudo mv ./*.so $2/.

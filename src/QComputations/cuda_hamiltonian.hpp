@@ -120,7 +120,7 @@ CUDA_H_by_Operator<StateType>::CUDA_H_by_Operator(cublasHandle_t handle, const S
         res_state.set_sorted(true);
         for (auto p: res_state.state_map()) {
             auto idx = basis_map.get_index(p.first);
-            H_tmp[idx][col_state] = res_state[p.second];
+            H_tmp(idx, col_state) = res_state[p.second];
         }
 
         col_state++;
@@ -129,7 +129,7 @@ CUDA_H_by_Operator<StateType>::CUDA_H_by_Operator(cublasHandle_t handle, const S
     H_ = CUDA_Matrix<COMPLEX>(handle, H_tmp);
     //H_ = Matrix<COMPLEX>(C_STYLE, size, size, func);
     for (const auto& p: decoherence) {
-        auto A = CUDA_Matrix<COMPLEX>(handle, Matrix<COMPLEX>(operator_to_matrix<StateType>(p.second, basis_original, FORTRAN_STYLE)));
+        auto A = CUDA_Matrix<COMPLEX>(handle, operator_to_matrix<StateType>(p.second, basis_original, FORTRAN_STYLE));
         decoherence_.push_back(std::make_pair(p.first, A));
     }
 }

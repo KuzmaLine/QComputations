@@ -276,15 +276,15 @@ Matrix<COMPLEX> operator_to_matrix(const Operator<StateType>& op, const std::vec
 
     for (auto state: basis) {
         auto res_state = op.run(State<StateType>(state));
-        res_state.sort();
+        // res_state.sort();
 
-        size_t index = 0;
+        res_state.set_sorted(true);
         auto res_state_vec = res_state.get_basis();
-        for (auto state_res: res_state_vec) {
+        for (auto p: res_state.state_map()) {
             // if (matrix_style == C_STYLE) A[get_index_state_in_basis(*state_res, basis)][col_state] = res_state[index++];
             // else A(get_index_state_in_basis(*state_res, basis), col_state) = res_state[index++];
-            if (matrix_style == C_STYLE) A[basis_map.get_index(state_res)][col_state] = res_state[index++];
-            else A(basis_map.get_index(state_res), col_state) = res_state[index++];
+            if (matrix_style == C_STYLE) A[basis_map.get_index(p.first)][col_state] = res_state[p.second];
+            else A(basis_map.get_index(p.first), col_state) = res_state[p.second];
         }
 
         col_state++;

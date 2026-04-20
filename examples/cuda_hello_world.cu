@@ -29,7 +29,7 @@ int main(int argc, char** argv) {
     B.show();
     CUDA_Matrix<double> res(handle, 3, 3);
 
-    optimized_multiply(A, B, res, double(1), double(0), CUBLAS_OP_N, CUBLAS_OP_T);
+    optimized_multiply(A, B, res, double(1), double(0), CUBLAS_OP_N, CUBLAS_OP_N);
     res.show();
 
     cublasDestroy(handle);

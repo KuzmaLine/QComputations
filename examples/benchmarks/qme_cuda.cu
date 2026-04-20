@@ -6,7 +6,7 @@
 #include <mkl.h>
 
 constexpr bool is_python_api = false;
-constexpr int max_photons = 1;
+constexpr int max_photons = 2;
 
 using COMPLEX = std::complex<double>;
 
@@ -22,7 +22,7 @@ int main(int argc, char** argv) {
     QConfig::instance().set_g(0.005); // сила взаимодействия с полем атома
     QConfig::instance().set_max_photons(max_photons);
 
-    std::vector<size_t> grid_config = {60, 61};
+    std::vector<size_t> grid_config = {21, 30};
 
     TCH_State state(grid_config);
     state.set_n(QConfig::instance().max_photons(), 0);

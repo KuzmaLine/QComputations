@@ -382,19 +382,19 @@ TCH_State::TCH_State(const std::string& grid_state, const std::string& format,
 
 void TCH_State::set_waveguide(double amplitude, double length) {
     waveguides_ = Matrix<std::pair<double, double>>(C_STYLE, groups_->size(), groups_->size(),
-        std::make_pair(0, 0));
+        std::pair<double, double>(0, 0));
     for (size_t from_id = 0; from_id < groups_->size(); from_id++) {
         auto neighbours = neighbours_[from_id];
 
         for (const auto to_id: neighbours) {
-            waveguides_[from_id][to_id] = std::make_pair(amplitude, length);
+            waveguides_[from_id][to_id] = std::pair<double, double>(amplitude, length);
         }
     }
 }
 
 void TCH_State::set_waveguide(size_t from_cavity_id, size_t to_cavity_id, double amplitude, double length) {
-    waveguides_[from_cavity_id][to_cavity_id] = std::make_pair(amplitude, length);
-    waveguides_[to_cavity_id][from_cavity_id] = std::make_pair(amplitude, length);
+    waveguides_[from_cavity_id][to_cavity_id] = std::pair<double, double>(amplitude, length);
+    waveguides_[to_cavity_id][from_cavity_id] = std::pair<double, double>(amplitude, length);
 
     if (amplitude >= QConfig::instance().eps()) {
         if (!is_in_vector(neighbours_[from_cavity_id], to_cavity_id)) {
@@ -425,7 +425,7 @@ void TCH_State::reshape(size_t x_size, size_t y_size, size_t z_size) {
     z_size_ = z_size;
 
     waveguides_ = Matrix<std::pair<double, double>>(C_STYLE, groups_->size(), groups_->size(),
-            std::make_pair(QConfig::instance().waveguides_amplitude(), QConfig::instance().waveguides_length()));
+            std::pair<double, double>(QConfig::instance().waveguides_amplitude(), QConfig::instance().waveguides_length()));
 
     neighbours_ = update_neighbours(x_size_, y_size_, z_size_);
 }
@@ -485,7 +485,7 @@ TCH_State::TCH_State(const std::vector<size_t>& grid_config, size_t levels_count
                                                               gamma_gain_cavities_(grid_config.size(), 0),
                                                               waveguides_(C_STYLE, grid_config.size(),
                                                               grid_config.size(),
-                                                              std::make_pair(QConfig::instance().waveguides_amplitude(), QConfig::instance().waveguides_length())),
+                                                              std::pair<double, double>(QConfig::instance().waveguides_amplitude(), QConfig::instance().waveguides_length())),
                                                               freq_levels_(levels_count),
                                                               g_(C_STYLE, levels_count, levels_count, COMPLEX(0)) {
     is_move_ = std::vector<std::vector<std::vector<bool>>>(qudits_.size(), std::vector<std::vector<bool>>(levels_count, std::vector<bool>(levels_count, false)));

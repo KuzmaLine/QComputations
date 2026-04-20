@@ -19,11 +19,11 @@ int main(int argc, char** argv) {
     QConfig::instance().set_g(0.005); // сила взаимодействия с полем атома
     QConfig::instance().set_max_photons(max_photons);
 
-    std::vector<size_t> grid_config = {5};
+    std::vector<size_t> grid_config = {20, 30};
 
     TCH_State state(grid_config);
     state.set_n(QConfig::instance().max_photons(), 0);
-    // state.set_waveguide(0, 1, 0.01);
+    state.set_waveguide(0, 1, 0.01);
     state.set_leak_for_cavity(0, 0.2);
     
     H_TCH H(state);
@@ -33,13 +33,13 @@ int main(int argc, char** argv) {
     // H.show();
     // std::cout << H.size() << std::endl;
 
-    auto time_vec = linspace(0, 100, 100);
+    auto time_vec = linspace(0, 50, 50);
 
     std::cout << "H size = " << H.size() << " TIME SIZE = " << time_vec.size() << std::endl;
 
     auto start = std::chrono::high_resolution_clock::now();
 
-    auto probs = quantum_master_equation(State<Basis_State>(state), H, time_vec);
+    // auto probs = quantum_master_equation(State<Basis_State>(state), H, time_vec);
 
     auto end = std::chrono::high_resolution_clock::now();
 
