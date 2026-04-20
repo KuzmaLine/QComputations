@@ -351,6 +351,8 @@ inline Matrix<COMPLEX> operator_to_matrix(const Operator<StateType>& op, const B
 
 // !!!!!!!!!!!!!!!!!! REWRITE to CSR_Matrix manipulations vals, ia, ja without copy !!!!!!!!!!!!!!!!!!!!!!
 
+#ifdef ENABLE_ONEAPI
+
 template<typename StateType>
 CSR_Matrix<COMPLEX> operator_to_matrix_csr(const Operator<StateType>& op, const std::vector<std::shared_ptr<StateType>>& basis) {
     size_t dim = basis.size();
@@ -405,6 +407,7 @@ inline CSR_Matrix<COMPLEX> operator_to_matrix_csr(const Operator<StateType>& op,
     return operator_to_matrix_csr(op, sort_basis(basis));
 }
 
+#endif
 
 #ifdef ENABLE_MPI
 #ifdef ENABLE_CLUSTER

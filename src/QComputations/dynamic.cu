@@ -364,7 +364,6 @@ namespace QComputations {
             std::cerr << "Configuration: grid(" << grid_x << "," << grid_y 
               << "), block(" << block_x << "," << block_y << ")" << std::endl;
         }
-    
 
         std::vector<double> probs_host(n * time_vec.size());
         cudaMemcpy(probs_host.data(), d_probs, sizeof(double) * n * time_vec.size(), cudaMemcpyDeviceToHost);

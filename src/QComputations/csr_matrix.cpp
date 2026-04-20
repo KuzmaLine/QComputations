@@ -1,4 +1,6 @@
+#ifdef ENABLE_ONEAPI
 #include "csr_matrix.hpp"
+#include <mkl_trans.h>
 
 namespace QComputations {
 
@@ -220,7 +222,8 @@ namespace QComputations {
                     const Matrix<COMPLEX>& B,
                     Matrix<COMPLEX>& C,
                     COMPLEX alpha,
-                    COMPLEX betta) {
+                    COMPLEX betta,
+                    char op) {
         assert(A.n() == B.n());
         assert(B.n() == B.m());
         assert(C.n() == A.m() && C.m() == A.m());
@@ -234,8 +237,8 @@ namespace QComputations {
                                     ? SPARSE_LAYOUT_ROW_MAJOR
                                     : SPARSE_LAYOUT_COLUMN_MAJOR;
 
-        COMPLEX mkl_alpha = {alpha.real(), alpha.imag()};
-        COMPLEX mkl_beta  = {betta.real(), betta.imag()};
+        MKL_Complex16 mkl_alpha = {alpha.real(), alpha.imag()};
+        MKL_Complex16 mkl_beta  = {betta.real(), betta.imag()};
 
         struct matrix_descr descrC;
         descrC.type = SPARSE_MATRIX_TYPE_HERMITIAN;
@@ -244,17 +247,16 @@ namespace QComputations {
 
         // C = alpha * A * B * A^H + beta * C
         sparse_status_t status = mkl_sparse_z_syprd(
-            get_sparse_operation(op), 
-            A.mkl_matrix(),
-            descrB,
-            layout,
-            reinterpret_cast<const MKL_Complex16*>(B.data()),
-            B.LD(),
-            mkl_alpha,
-            mkl_beta,
-            descrC,
-            reinterpret_cast<MKL_Complex16*>(C.data()),
-            C.LD()
+            get_sparse_operation(op),       // op
+            A.mkl_matrix(),                 // A (sparse)
+            reinterpret_cast<const MKL_Complex16*>(B.data()), // B (dense)
+            layout,                         // layoutB
+            B.LD(),                         // ldb
+            mkl_alpha,                      // alpha
+            mkl_beta,                       // beta
+            reinterpret_cast<MKL_Complex16*>(C.data()), // C (dense)
+            layout,                         // layoutC
+            C.LD()                          // ldc
         );
 
         if (status != SPARSE_STATUS_SUCCESS) {
@@ -268,7 +270,7 @@ namespace QComputations {
             'C',
             C.n(),
             C.m(),
-            COMPLEX(1.0, 0),
+            MKL_Complex16{1.0, 0},
             reinterpret_cast<const MKL_Complex16*>(C.data()),
             C.LD(),
             reinterpret_cast<MKL_Complex16*>(C.data()),
@@ -355,4 +357,52 @@ namespace QComputations {
                         C.LD());
     }
 
+    template <>
+    void optimized_multiply(const Matrix<COMPLEX>& A,
+                            const CSR_Matrix<COMPLEX>& B,
+                            Matrix<COMPLEX>& C,
+                            COMPLEX alpha,
+                            COMPLEX betta,
+                            char op) {
+        sparse_operation_t op_mkl = get_sparse_operation(op);
+        
+        sparse_layout_t layout = (A.matrix_style() == C_STYLE) ? SPARSE_LAYOUT_ROW_MAJOR : SPARSE_LAYOUT_COLUMN_MAJOR;
+        
+        struct matrix_descr descr;
+        descr.type = SPARSE_MATRIX_TYPE_GENERAL;
+        descr.mode = SPARSE_FILL_MODE_FULL;
+        descr.diag = SPARSE_DIAG_NON_UNIT;
+        
+        MKL_Complex16 mkl_alpha = {alpha.real(), alpha.imag()};
+        MKL_Complex16 mkl_betta = {betta.real(), betta.imag()};
+
+        Matrix<COMPLEX> A_T = A.transpose();
+        Matrix<COMPLEX> C_T = std::move(C.transpose());
+        
+
+        sparse_operation_t op_B_for_mm;
+        switch (op) {
+            case 'N': op_B_for_mm = SPARSE_OPERATION_TRANSPOSE; break;
+            case 'T': op_B_for_mm = SPARSE_OPERATION_NON_TRANSPOSE; break;
+            case 'C': op_B_for_mm = SPARSE_OPERATION_CONJUGATE_TRANSPOSE; break;
+            default: op_B_for_mm = SPARSE_OPERATION_TRANSPOSE;
+        }
+        
+        // C_T = alpha * op_B_for_mm(B) * A_T + beta * C_T
+        mkl_sparse_z_mm(op_B_for_mm,
+                        mkl_alpha,
+                        B.mkl_matrix(),
+                        descr,
+                        layout,
+                        reinterpret_cast<MKL_Complex16*>(A_T.data()),
+                        A_T.m(),
+                        A_T.LD(),
+                        mkl_betta,
+                        reinterpret_cast<MKL_Complex16*>(C_T.data()),
+                        C_T.LD());
+
+        C = std::move(C_T.transpose());
+    }
+
 }  // namespace QComputations
+#endif

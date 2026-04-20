@@ -1,3 +1,4 @@
+#ifdef ENABLE_ONEAPI
 #include "hamiltonian_csr.hpp"
 
 #ifdef ENABLE_MPI
@@ -67,3 +68,4 @@ CSR_H_TCH::CSR_H_TCH(const State<TCH_State>& state):
                        CSR_H_by_Operator<TCH_State>(state, H_TCH_OP(), decs(state)) {}
 
 } // namespace QComputations
+#endif

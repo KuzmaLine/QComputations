@@ -1,3 +1,6 @@
+// QME 
+// T2 /= QConfig::instance().h()????
+
 #include "dynamic.hpp"
 #include "additional_operators.hpp"
 #include "functions.hpp"
@@ -454,10 +457,15 @@ Probs quantum_master_equation(const State<Basis_State>& init_state,
     return probs;
 }
 
+Probs quantum_master_equation(const State<Basis_State>& init_state,
+                            CSR_Hamiltonian& H,
+                            const std::vector<double>& time_vec) {
+    return quantum_master_equation(init_state.fit_to_basis_state(H.get_basis()).get_vector(), H, time_vec);
+}
+
 Probs quantum_master_equation(const std::vector<COMPLEX>& init_state,
                             CSR_Hamiltonian& H,
-                            const std::vector<double>& time_vec,
-                            bool is_full_rho) {
+                            const std::vector<double>& time_vec) {
     
     size_t dim = H.size();
     std::vector<std::function<void(const Rho& rho)>> lindblads;
@@ -504,18 +512,9 @@ Probs quantum_master_equation(const std::vector<COMPLEX>& init_state,
             res += T2;
             //std::cout << "HERE11\n";
         }
-
-        //res = (H_matrix * rho - rho * H_matrix) * COMPLEX(0, -1/QConfig::instance().h());
-        //for (const auto& lindblad: lindblads) {
-        //    lindblad(rho);
-        //    res += (T2 / QConfig::instance().h());
-        //}
     }};
 
-    auto rho_0 = create_init_rho(init_state.fit_to_basis_state(H.get_basis()).get_vector());
-    //rho_0.show();
-    auto begin_c = std::chrono::steady_clock::now();
-    //std::cout << "HERE\n";
+    auto rho_0 = create_init_rho(init_state);
     Probs probs(C_STYLE, dim, time_vec.size());
     if (QConfig::instance().qme_algorithm() == RUNGE_KUTT_4) {
         //rho_vec = Runge_Kutt_4<double, Rho>(time_vec, rho_0, equation);
@@ -526,32 +525,7 @@ Probs quantum_master_equation(const std::vector<COMPLEX>& init_state,
     } else {
         assert(false); // Неизвестный алгоритм решения ОКУ
     }
-    auto end_c = std::chrono::steady_clock::now();
-    std::cout << "SINGLE_QME_TIME:  " << std::chrono::duration_cast<std::chrono::milliseconds>(end_c - begin_c).count() << std::endl;
-    //std::cout << "HERE 2\n";
 
-    /*
-    for (size_t i = 0; i < dim; i++) {
-        for (size_t t = 0; t < time_vec.size(); t++) {
-            probs[i][t] = std::abs(rho_vec[t][i][i]);
-        }
-    }
-    */
-
-    /*
-    for (size_t t = 0; t < time_vec.size(); t++) {
-        double res = 0.0;
-        for (size_t i = 0; i < dim; i++) {
-            res += probs[i][t];
-        }
-
-        //std::cout << t << " " << res << std::endl;
-
-        if (std::abs(res - 1) >= QConfig::instance().eps()) {
-            //std::cout << t << " " << res << std::endl;
-        }
-    }
-    */
     return probs;
 }
 

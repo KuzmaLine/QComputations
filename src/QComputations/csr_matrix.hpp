@@ -1,3 +1,4 @@
+#ifdef ENABLE_ONEAPI
 #pragma once
 #include <mkl_spblas.h>
 
@@ -47,6 +48,7 @@ namespace QComputations {
             explicit CSR_Matrix() = default;
             // explicit CSR_Matrix(const Matrix<T>& A, T default_value = T(0));
             CSR_Matrix(const CSR_Matrix<T>& A);
+            explicit CSR_Matrix(ILP_TYPE n, ILP_TYPE m, T default_value = T(0));
             explicit CSR_Matrix(ILP_TYPE n,
                                 ILP_TYPE m,
                                 const std::vector<T>& vals,
@@ -79,6 +81,7 @@ namespace QComputations {
             inline const ILP_TYPE* ia() const { return ia_; }
             inline ILP_TYPE* ja() { return ja_; }
             inline const ILP_TYPE* ja() const { return ja_; }
+            inline ILP_TYPE nnz() const { return nnz_; }
 
 
             CSR_Matrix(CSR_Matrix&& other) noexcept;
@@ -109,6 +112,7 @@ namespace QComputations {
             bool owns_arrays_ = false;
             ILP_TYPE n_ = 0;
             ILP_TYPE m_ = 0;
+            ILP_TYPE nnz_ = 0;
             T default_value_ = T(0);
             T* vals_ = nullptr;
             ILP_TYPE* ia_ = nullptr;
@@ -149,6 +153,19 @@ namespace QComputations {
     // }
 
     template <typename T>
+    CSR_Matrix<T>::CSR_Matrix(ILP_TYPE n, ILP_TYPE m, T default_value)
+        : n_(n), m_(m), default_value_(default_value), owns_arrays_(true)
+    {
+        ia_ = new ILP_TYPE[n_ + 1];
+        std::fill_n(ia_, n_ + 1, 0);
+
+        ja_ = nullptr;
+        vals_ = nullptr;
+     
+        to_mkl_sparse(n_, m_, ia_, ja_, vals_, &mkl_matrix_);
+    }
+
+    template <typename T>
     CSR_Matrix<T>::CSR_Matrix(ILP_TYPE n, ILP_TYPE m,
                             std::function<T(ILP_TYPE, ILP_TYPE)> func,
                             T default_value)
@@ -176,12 +193,12 @@ namespace QComputations {
         ia_ = new ILP_TYPE[n_ + 1];
         std::copy(ia_vec.begin(), ia_vec.end(), ia_);
 
-        ILP_TYPE nnz = vals_vec.size();
-        if (nnz > 0) {
-            ja_ = new ILP_TYPE[nnz];
+        nnz_ = vals_vec.size();
+        if (nnz_ > 0) {
+            ja_ = new ILP_TYPE[nnz_];
             std::copy(ja_vec.begin(), ja_vec.end(), ja_);
 
-            vals_ = new T[nnz];
+            vals_ = new T[nnz_];
             std::copy(vals_vec.begin(), vals_vec.end(), vals_);
         } else {
             ja_ = nullptr;
@@ -200,8 +217,8 @@ namespace QComputations {
         : n_(n), m_(m), default_value_(T(0)), owns_arrays_(true)
     {
         assert(ia.size() == static_cast<size_t>(n_ + 1));
-        ILP_TYPE nnz = static_cast<ILP_TYPE>(vals.size());
-        assert(ja.size() == static_cast<size_t>(nnz));
+        nnz_ = static_cast<ILP_TYPE>(vals.size());
+        assert(ja.size() == static_cast<size_t>(nnz_));
 
         std::vector<ILP_TYPE> sorted_ia = ia;
         std::vector<ILP_TYPE> sorted_ja = ja;
@@ -210,11 +227,11 @@ namespace QComputations {
         ia_ = new ILP_TYPE[n_ + 1];
         std::copy(sorted_ia.begin(), sorted_ia.end(), ia_);
 
-        if (nnz > 0) {
-            ja_ = new ILP_TYPE[nnz];
+        if (nnz_ > 0) {
+            ja_ = new ILP_TYPE[nnz_];
             std::copy(sorted_ja.begin(), sorted_ja.end(), ja_);
 
-            vals_ = new T[nnz];
+            vals_ = new T[nnz_];
             std::copy(sorted_vals.begin(), sorted_vals.end(), vals_);
         } else {
             ja_ = nullptr;
@@ -258,6 +275,7 @@ namespace QComputations {
             mkl_matrix_ = other.mkl_matrix_;
             matrix_type_ = other.matrix_type_;
             owns_arrays_ = other.owns_arrays_;
+            nnz_ = other.nnz_;
 
             other.n_ = other.m_ = 0;
             other.default_value_ = T(0);
@@ -267,6 +285,7 @@ namespace QComputations {
             other.mkl_matrix_ = nullptr;
             other.owns_arrays_ = false;
             other.matrix_type_ = SPARSE_MATRIX_TYPE_GENERAL;
+            other.nnz_ = 0;
         }
         return *this;
     }
@@ -357,6 +376,22 @@ namespace QComputations {
                             char op);
 
     template <typename T>
+    void optimized_multiply(const Matrix<T>& A,
+                            const CSR_Matrix<T>& B,
+                            Matrix<T>& C,
+                            T alpha = T(1),
+                            T betta = T(0),
+                            char op = 'N');
+    
+    template <>
+    void optimized_multiply(const Matrix<COMPLEX>& A,
+                            const CSR_Matrix<COMPLEX>& B,
+                            Matrix<COMPLEX>& C,
+                            COMPLEX alpha,
+                            COMPLEX betta,
+                            char op);
+
+    template <typename T>
     void optimized_multiply(const CSR_Matrix<T>& A,
                             const Matrix<T>& B,
                             Matrix<T>& C,
@@ -399,3 +434,4 @@ namespace QComputations {
     void optimized_add(const CSR_Matrix<COMPLEX>& A, const Matrix<COMPLEX>& B, Matrix<COMPLEX>& C);
 
 }  // namespace QComputations
+#endif

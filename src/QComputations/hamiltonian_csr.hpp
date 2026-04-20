@@ -1,3 +1,4 @@
+#ifdef ENABLE_ONEAPI
 #pragma once
 #include "hamiltonian.hpp"
 #include "csr_matrix.hpp"
@@ -227,3 +228,5 @@ class CSR_H_TCH : public CSR_H_by_Operator<TCH_State> {
 };
 
 } // namespace QComputations
+
+#endif
