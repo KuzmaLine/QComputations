@@ -458,7 +458,7 @@ BLOCKED_Matrix<T>::BLOCKED_Matrix(ILP_TYPE ctxt, MATRIX_TYPE type,
 template<typename T>
 std::vector<ILP_TYPE> BLOCKED_Matrix<T>::desc() const {
     ILP_TYPE iZERO = 0;
-    ILP_TYPE info;
+    ILP_TYPE info = 0;
     ILP_TYPE LLD = std::max(1, ILP_TYPE(local_matrix_.n()));
     return mpi::descinit(n_, m_, NB_, MB_, iZERO, iZERO, ctxt_, LLD, info);
 }

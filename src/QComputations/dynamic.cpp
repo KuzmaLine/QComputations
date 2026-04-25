@@ -483,7 +483,7 @@ Probs quantum_master_equation(const std::vector<COMPLEX>& init_state,
         const CSR_Matrix<COMPLEX>& A = p.second;
         //A.show();
         lindblads.push_back(std::function<void(const Rho& rho)> {
-            [A, &T1, &T2, &T3, gamma](const Rho& rho) {
+            [&A, &T1, &T2, &T3, gamma](const Rho& rho) {
                 optimized_multiply(A, A, T1, COMPLEX(1, 0), COMPLEX(0, 0), 'C'); // AconjA -> T1
                 optimized_multiply(T1, rho, T2, COMPLEX(1, 0), COMPLEX(0, 0)); // AconjA*rho -> T2
                 optimized_multiply(rho, T1, T2, COMPLEX(1, 0), COMPLEX(1, 0)); // rho * AconjA + AconjA * rho

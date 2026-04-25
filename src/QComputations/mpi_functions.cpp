@@ -1,4 +1,6 @@
 #ifdef ENABLE_MPI
+#ifdef ENABLE_ONEAPI
+#ifdef ENABLE_CLUSTER
 
 #define MKL_Complex16 std::complex<double>
 
@@ -7,7 +9,7 @@
 #include "hamiltonian.hpp"
 #include "dynamic.hpp"
 
-#ifdef ENABLE_CLUSTER
+
 
 #include <mkl_pblas.h>
 #include <mkl_scalapack.h>
@@ -37,11 +39,8 @@ extern "C" {
     //void pdscal_(ILP_TYPE*, double*, double*, ILP_TYPE*, ILP_TYPE*, ILP_TYPE*, ILP_TYPE*);
 }
 
-#endif
-
 namespace QComputations {
 
-#ifdef ENABLE_CLUSTER
 bool is_main_proc() {
     ILP_TYPE rank;
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
@@ -56,7 +55,6 @@ ILP_TYPE get_proc_rank() {
 
     return rank;
 }
-#endif
 
 std::vector<COMPLEX> mpi::bcast_vector_complex(const std::vector<COMPLEX>& v) {
     int rank;
@@ -90,8 +88,6 @@ std::vector<double> mpi::bcast_vector_double(const std::vector<double>& v) {
 }
 
 // ##################################### BLACS, PBLAS ###########################################
-
-#ifdef ENABLE_CLUSTER
     
 // UNUSED
 MPI_Datatype Create_Block_Type_double (ILP_TYPE N, ILP_TYPE M, ILP_TYPE NB, ILP_TYPE MB) {
@@ -1266,8 +1262,8 @@ void mpi::parallel_zaxpy(const std::vector<COMPLEX>& x, std::vector<COMPLEX>& y,
     pzaxpy(&n, &alpha, x.data(), &iONE, &iONE, descx.data(), &incx, y.data(), &iONE, &iONE, descy.data(), &incy);
 }
 
-#endif // ENABLE_CLUSTER
-
 } // namespace QComputations
+#endif // ENABLE_CLUSTER
+#endif
 #endif // ENABLE_MPI
 

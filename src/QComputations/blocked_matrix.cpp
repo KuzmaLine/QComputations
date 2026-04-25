@@ -1,3 +1,4 @@
+#ifdef ENABLE_ONEAPI
 #ifdef ENABLE_MPI
 #ifdef ENABLE_CLUSTER
 #define MKL_Complex16 std::complex<double>
@@ -1117,5 +1118,6 @@ std::vector<BLOCKED_Matrix<COMPLEX>> MPI_Runge_Kutt_2(const std::vector<double>&
 
 } // namespace QComputations
 
+#endif
 #endif
 #endif

@@ -191,12 +191,12 @@ BLOCKED_H_by_Scalar_Product<StateType>::BLOCKED_H_by_Scalar_Product(ILP_TYPE ctx
 
         StateType cur_state = *zero_state;
 
-        for (size_t i = 0; i < cur_state.qudits_count(); i++) {
+        for (ILP_TYPE i = 0; i < cur_state.qudits_count(); i++) {
             if (cur_state.get_max_val(i) > cur_state.get_qudit(i)) {
                 cur_state.set_qudit(cur_state.get_qudit(i) + 1, i);
                 basis.insert(std::shared_ptr<StateType>(new StateType(cur_state)));
 
-                for (size_t j = i - 1; j >= 0; j--) {
+                for (ILP_TYPE j = i - 1; j >= 0; j--) {
                     cur_state.set_qudit(0, j);
                 }
 

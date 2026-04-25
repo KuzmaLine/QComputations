@@ -22,7 +22,7 @@ function(create_build_target TARGET_NAME PYTHON_FLAG)
     include_directories(../src/QComputations/*.hpp)
 
     # Set flags
-    target_compile_options(${TARGET_NAME} PRIVATE -DENABLE_ONEAPI -qopenmp -qmkl=parallel)
+    target_compile_options(${TARGET_NAME} PRIVATE -DENABLE_ONEAPI -qopenmp -g -qmkl=parallel)
 
     # Link libraries
     #target_link_libraries(${TARGET_NAME} /lib/x86_64-linux-gnu/libdl.so.2)

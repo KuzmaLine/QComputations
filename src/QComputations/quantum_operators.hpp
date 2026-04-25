@@ -366,14 +366,17 @@ CSR_Matrix<COMPLEX> operator_to_matrix_csr(const Operator<StateType>& op, const 
     size_t index = 0;
     for (auto state: basis) {
         auto res_state = op.run(State<StateType>(state));
+        // std::cout << res_state.to_string() << std::endl;
         res_state.set_sorted(true);
 
-        auto res_state_vec = res_state.get_basis();
-        for (auto state_res: res_state_vec) {
+        // auto res_state_vec = res_state.get_basis();
+        for (auto p: res_state.state_map()) {
+            // std::cout << res_state.to_string() << std::endl;
             // if (matrix_style == C_STYLE) A[get_index_state_in_basis(*state_res, basis)][col_state] = res_state[index++];
             // else A(get_index_state_in_basis(*state_res, basis), col_state) = res_state[index++];
-            vals.emplace_back(std::conj(res_state[index++]));
-            ja.emplace_back(basis_map.get_index(state_res));
+            vals.emplace_back(std::conj(res_state[p.second]));
+            ja.emplace_back(basis_map.get_index(p.first));
+            index++;
         }
 
         ia.emplace_back(index);
@@ -381,6 +384,8 @@ CSR_Matrix<COMPLEX> operator_to_matrix_csr(const Operator<StateType>& op, const 
 
     CSR_Matrix A(ia.size() - 1, basis.size(), vals, ia, ja);
     A.sort_ja();
+    std::cout << A.nnz() << std::endl;
+    if (!A.mkl_matrix()) throw std::runtime_error("operator_to_matrix_csr: MKL handle is null");
     /*
     std::function<COMPLEX(size_t i, size_t j)> func = {
         [&basis, &op](size_t i, size_t j) {

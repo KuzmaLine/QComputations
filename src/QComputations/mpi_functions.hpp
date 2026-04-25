@@ -14,12 +14,11 @@
 namespace {
 #ifdef MKL_ILP64
     using ILP_TYPE = long long;
-    constexpr MPI_Datatype MPI_BCAST_DATATYPE = MPI_LONG_LONG;
+    const MPI_Datatype MPI_BCAST_DATATYPE = MPI_LONG_LONG;
 #else
     using ILP_TYPE = int;
-    constexpr MPI_Datatype MPI_BCAST_DATATYPE = MPI_INT;
+    const MPI_Datatype MPI_BCAST_DATATYPE = MPI_INT;
 #endif
-
     using COMPLEX = std::complex<double>;
 }
 

@@ -26,7 +26,7 @@ int main(int argc, char** argv) {
     state.set_waveguide(0, 1, 0.01);
     state.set_leak_for_cavity(0, 0.2);
     
-    H_TCH H(state);
+    CSR_H_TCH H(state);
 
     // show_basis(H.get_basis());
 

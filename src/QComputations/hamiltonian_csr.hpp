@@ -12,7 +12,7 @@ class CSR_Hamiltonian {
         size_t n() const { return H_.n(); }
         size_t size() const { return H_.n(); }
         std::vector<std::shared_ptr<Basis_State>> get_basis() const { return basis_; }
-        std::vector<std::pair<double, CSR_Matrix<COMPLEX>>> get_decoherence() const { return decoherence_;}
+        const std::vector<std::pair<double, CSR_Matrix<COMPLEX>>>& get_decoherence() const { return decoherence_; }
 
 // #ifdef ENABLE_ONEAPI
 //         void virtual eigen() {
@@ -124,8 +124,13 @@ CSR_H_by_Operator<StateType>::CSR_H_by_Operator(const State<StateType>& init_sta
 
     for (const auto& p: decoherence) {
         CSR_Matrix<COMPLEX> A(std::move(operator_to_matrix_csr<StateType>(p.second, basis_original)));
-        A.sort_ja();
+        if (!A.mkl_matrix()) {
+            throw std::runtime_error("CSR_H_by_Operator: decoherence matrix has no MKL handle");
+        }
         decoherence_.push_back(std::make_pair(p.first, std::move(A)));
+        if (!decoherence_[decoherence_.size() - 1].second.mkl_matrix()) {
+            throw std::runtime_error("CSR_H_by_Operator 2: decoherence matrix has no MKL handle");
+        }
     }
 }
 

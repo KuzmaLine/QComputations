@@ -24,12 +24,19 @@ namespace QComputations {
         ILP_TYPE get_index_value(ILP_TYPE row_index, const MKL_INT* ia) { return ia[row_index]; }
 
         void to_mkl_sparse(ILP_TYPE n, ILP_TYPE m, ILP_TYPE* ia, ILP_TYPE* ja, double* data, sparse_matrix_t* A) {
-            mkl_sparse_d_create_csr(A, SPARSE_INDEX_BASE_ZERO, n, m, ia, ia + 1, ja, data);
+            sparse_status_t status = mkl_sparse_d_create_csr(A, SPARSE_INDEX_BASE_ZERO, n, m, ia, ia + 1, ja, data);
+            if (status != SPARSE_STATUS_SUCCESS) {
+                throw std::runtime_error("to_mkl_sparse: failed to create MKL handle, status = " + std::to_string(status));
+            }
         }
 
         void to_mkl_sparse(ILP_TYPE n, ILP_TYPE m, ILP_TYPE* ia, ILP_TYPE* ja, COMPLEX* data, sparse_matrix_t* A) {
-            mkl_sparse_z_create_csr(
+            sparse_status_t status = mkl_sparse_z_create_csr(
                 A, SPARSE_INDEX_BASE_ZERO, n, m, ia, ia + 1, ja, reinterpret_cast<MKL_Complex16*>(data));
+
+            if (status != SPARSE_STATUS_SUCCESS) {
+                throw std::runtime_error("to_mkl_sparse: failed to create MKL handle, status = " + std::to_string(status));
+            }
         }
 
         sparse_operation_t get_sparse_operation(char op) {
@@ -47,7 +54,66 @@ namespace QComputations {
         public:
             explicit CSR_Matrix() = default;
             // explicit CSR_Matrix(const Matrix<T>& A, T default_value = T(0));
-            CSR_Matrix(const CSR_Matrix<T>& A);
+            CSR_Matrix(const CSR_Matrix& A)
+                : n_(A.n_), m_(A.m_), nnz_(A.nnz_), default_value_(A.default_value_),
+                owns_arrays_(true), matrix_type_(A.matrix_type_)
+            {
+                if (A.mkl_matrix_) {
+                    sparse_matrix_t copy = nullptr;
+                    struct matrix_descr descr;
+                    descr.type = matrix_type_;
+                    descr.mode = SPARSE_FILL_MODE_FULL;
+                    descr.diag = SPARSE_DIAG_NON_UNIT;
+                    sparse_status_t status = mkl_sparse_copy(A.mkl_matrix_, descr, &copy);
+                    if (status != SPARSE_STATUS_SUCCESS) {
+                        throw std::runtime_error("mkl_sparse_copy failed in copy constructor");
+                    }
+
+                    sparse_index_base_t indexing;
+                    ILP_TYPE rows, cols;
+                    ILP_TYPE *ia_begin, *ia_end, *ja;
+                    if constexpr (std::is_same_v<T, double>) {
+                        double* vals;
+                        mkl_sparse_d_export_csr(copy, &indexing, &rows, &cols, &ia_begin, &ia_end, &ja, &vals);
+                        vals_ = vals;
+                    } else if constexpr (std::is_same_v<T, COMPLEX>) {
+                        MKL_Complex16* vals;
+                        mkl_sparse_z_export_csr(copy, &indexing, &rows, &cols, &ia_begin, &ia_end, &ja, &vals);
+                        vals_ = reinterpret_cast<COMPLEX*>(vals);
+                    } else {
+                        throw std::logic_error("CSR_Matrix copy constructor only supports double and COMPLEX");
+                    }
+                    ia_ = ia_begin;
+                    ja_ = ja;
+                    mkl_matrix_ = copy;
+                    owns_arrays_ = false;
+                    nnz_ = ia_[n_];
+                }
+                else if (A.ia_ != nullptr) {
+                    ia_ = new ILP_TYPE[n_ + 1];
+                    std::copy(A.ia_, A.ia_ + n_ + 1, ia_);
+                    if (nnz_ > 0) {
+                        ja_ = new ILP_TYPE[nnz_];
+                        std::copy(A.ja_, A.ja_ + nnz_, ja_);
+                        vals_ = new T[nnz_];
+                        std::copy(A.vals_, A.vals_ + nnz_, vals_);
+                    } else {
+                        ja_ = nullptr;
+                        vals_ = nullptr;
+                    }
+                    to_mkl_sparse(n_, m_, ia_, ja_, vals_, &mkl_matrix_);
+                    owns_arrays_ = true;
+                }
+                else {
+                    ia_ = new ILP_TYPE[n_ + 1];
+                    std::fill_n(ia_, n_ + 1, 0);
+                    ja_ = nullptr;
+                    vals_ = nullptr;
+                    to_mkl_sparse(n_, m_, ia_, ja_, vals_, &mkl_matrix_);
+                    owns_arrays_ = true;
+                    nnz_ = 0;
+                }
+            }
             explicit CSR_Matrix(ILP_TYPE n, ILP_TYPE m, T default_value = T(0));
             explicit CSR_Matrix(ILP_TYPE n,
                                 ILP_TYPE m,
@@ -87,6 +153,83 @@ namespace QComputations {
             CSR_Matrix(CSR_Matrix&& other) noexcept;
             explicit CSR_Matrix(sparse_matrix_t mkl_matrix);
 
+            CSR_Matrix& operator=(const CSR_Matrix& other) {
+                std::cerr << "CSR_Matrix copy constructor called for " << typeid(T).name() << std::endl;
+                if (this != &other) {
+                    // Освобождаем текущие ресурсы
+                    if (mkl_matrix_) {
+                        mkl_sparse_destroy(mkl_matrix_);
+                    }
+                    if (owns_arrays_) {
+                        delete[] ia_;
+                        delete[] ja_;
+                        delete[] vals_;
+                    }
+
+                    // Копируем метаданные
+                    n_ = other.n_;
+                    m_ = other.m_;
+                    nnz_ = other.nnz_;
+                    default_value_ = other.default_value_;
+                    matrix_type_ = other.matrix_type_;
+                    owns_arrays_ = true;
+
+                    if (other.mkl_matrix_) {
+                        // Глубокое копирование через MKL
+                        sparse_matrix_t copy = nullptr;
+                        struct matrix_descr descr;
+                        descr.type = matrix_type_;
+                        descr.mode = SPARSE_FILL_MODE_FULL;
+                        descr.diag = SPARSE_DIAG_NON_UNIT;
+                        sparse_status_t status = mkl_sparse_copy(other.mkl_matrix_, descr, &copy);
+                        if (status != SPARSE_STATUS_SUCCESS) {
+                            throw std::runtime_error("mkl_sparse_copy failed in operator=");
+                        }
+
+                        sparse_index_base_t indexing;
+                        ILP_TYPE rows, cols;
+                        ILP_TYPE *ia_begin, *ia_end, *ja;
+                        if constexpr (std::is_same_v<T, double>) {
+                            double* vals;
+                            mkl_sparse_d_export_csr(copy, &indexing, &rows, &cols, &ia_begin, &ia_end, &ja, &vals);
+                            vals_ = vals;
+                        } else if constexpr (std::is_same_v<T, COMPLEX>) {
+                            MKL_Complex16* vals;
+                            mkl_sparse_z_export_csr(copy, &indexing, &rows, &cols, &ia_begin, &ia_end, &ja, &vals);
+                            vals_ = reinterpret_cast<COMPLEX*>(vals);
+                        } else {
+                            throw std::logic_error("operator= only supported for double and COMPLEX");
+                        }
+                        ia_ = ia_begin;
+                        ja_ = ja;
+                        mkl_matrix_ = copy;
+                        owns_arrays_ = false;
+                        nnz_ = ia_[n_];
+                    }
+                    else if (other.ia_ != nullptr) {
+                        // Ручное копирование массивов
+                        ia_ = new ILP_TYPE[n_ + 1];
+                        std::copy(other.ia_, other.ia_ + n_ + 1, ia_);
+                        ja_ = new ILP_TYPE[nnz_];
+                        std::copy(other.ja_, other.ja_ + nnz_, ja_);
+                        vals_ = new T[nnz_];
+                        std::copy(other.vals_, other.vals_ + nnz_, vals_);
+                        to_mkl_sparse(n_, m_, ia_, ja_, vals_, &mkl_matrix_);
+                        owns_arrays_ = true;
+                    }
+                    else {
+                        // Пустая матрица
+                        ia_ = new ILP_TYPE[n_ + 1];
+                        std::fill_n(ia_, n_ + 1, 0);
+                        ja_ = nullptr;
+                        vals_ = nullptr;
+                        to_mkl_sparse(n_, m_, ia_, ja_, vals_, &mkl_matrix_);
+                        owns_arrays_ = true;
+                        nnz_ = 0;
+                    }
+                }
+                return *this;
+            }
             CSR_Matrix& operator=(CSR_Matrix&& other) noexcept;
 
             void sort_ja();
@@ -239,6 +382,9 @@ namespace QComputations {
         }
 
         to_mkl_sparse(n_, m_, ia_, ja_, vals_, &mkl_matrix_);
+        if (!mkl_matrix_) {
+            throw std::runtime_error("CSR_Matrix(vals, ia, ja): MKL handle is nullptr after creation");
+        }
     }
 
     template <typename T>
@@ -252,6 +398,7 @@ namespace QComputations {
         , mkl_matrix_(std::exchange(other.mkl_matrix_, nullptr))
         , matrix_type_(std::exchange(other.matrix_type_, SPARSE_MATRIX_TYPE_GENERAL))
         , owns_arrays_(std::exchange(other.owns_arrays_, false))
+        , nnz_(std::exchange(other.nnz_, 0))
     {}
 
     template <typename T>
@@ -339,14 +486,17 @@ namespace QComputations {
         }
     }
 
+
     // ---------------------------------------------- FUNCTIONS -----------------------------------------------------
 
     template<typename T>
-    CSR_Matrix<T> sparse_spmm(const CSR_Matrix<T>& A, const CSR_Matrix<T>& B, char op = 'N') {
-        sparse_operation_t tmp = get_sparse_operation(op);
-        sparse_matrix_t C;
-        mkl_sparse_spmm(tmp, A.mkl_matrix(), B.mkl_matrix(), &C);
-
+    CSR_Matrix<T> sparse_spmm(const CSR_Matrix<T>& A, const CSR_Matrix<T>& B, char op) {
+        if (!A.mkl_matrix() || !B.mkl_matrix())
+            throw std::runtime_error("sparse_spmm: input matrix has no MKL handle");
+        sparse_matrix_t C = nullptr;
+        sparse_status_t st = mkl_sparse_spmm(get_sparse_operation(op), A.mkl_matrix(), B.mkl_matrix(), &C);
+        if (st != SPARSE_STATUS_SUCCESS)
+            throw std::runtime_error("mkl_sparse_spmm failed");
         return CSR_Matrix<T>(C);
     }
 
