@@ -5,7 +5,7 @@
 #include <chrono>
 
 constexpr bool is_python_api = false;
-constexpr int max_photons = 2;
+constexpr int max_photons = 1;
 
 using COMPLEX = std::complex<double>;
 
@@ -42,7 +42,7 @@ int main(int argc, char** argv) {
     QConfig::instance().set_g(0.005); // сила взаимодействия с полем атома
     QConfig::instance().set_max_photons(max_photons);
 
-    std::vector<size_t> grid_config = {21, 30};
+    std::vector<size_t> grid_config = {1, 1};
 
     TCH_State state(grid_config);
     state.set_n(QConfig::instance().max_photons(), 0);
@@ -53,9 +53,9 @@ int main(int argc, char** argv) {
     
     BLOCKED_CUDA_H_TCH H(MPI_COMM_WORLD, ncclComm, handle, grid, state);
 
-    // show_basis(H.get_basis());
+    show_basis(H.get_basis());
 
-    // H.print_distributed();
+    H.print_distributed();
 
     // H.show();
     // std::cout << H.size() << std::endl;
