@@ -77,7 +77,7 @@ public:
     // Пустая матрица заданных глобальных размеров
     BLOCKED_CUDA_Matrix(MPI_Comm comm, ncclComm_t nccl_comm,
                         cublasMpHandle_t handle, cublasMpGrid_t grid,
-                        int64_t n, int64_t m, int64_t nb, int64_t mb,
+                        int64_t n, int64_t m, int64_t nb = 0, int64_t mb = 0,
                         int64_t rsrc = 0, int64_t csrc = 0);
 
     // Заполнение через функтор (CPU‑лямбда)
@@ -164,6 +164,14 @@ private:
     void local_axpy(T alpha, const BLOCKED_CUDA_Matrix& X);
     void local_scal(T alpha);
     void local_copy(const BLOCKED_CUDA_Matrix& src);
+    inline void compute_optimal_blocks() {
+        nb_ = (n_ + grid_rows_ - 1) / grid_rows_;   // ceil division
+        mb_ = (m_ + grid_cols_ - 1) / grid_cols_;
+        // Для унификации можно сделать их одинаковыми, взяв максимум
+        int64_t min_block = std::min(n_, m_);
+        n_ = min_block;
+        m_ = min_block;
+    }
 };
 
 template <typename T, typename GPU_T>
@@ -230,6 +238,8 @@ void BLOCKED_CUDA_Matrix<T, GPU_T>::init(int64_t rsrc, int64_t csrc) {
 
     local_rows_ = cublasMpNumroc(n_, nb_, my_grid_row_, rsrc, grid_rows_);
     local_cols_ = cublasMpNumroc(m_, mb_, my_grid_col_, csrc, grid_cols_);
+
+    if (nb_ == 0) compute_optimal_blocks();
 
     size_t elem_size = (std::is_same<T, COMPLEX>::value ? sizeof(cuDoubleComplex) : sizeof(double));
     CUDA_CHECK(cudaMalloc(&local_dev_ptr_, local_rows_ * local_cols_ * elem_size));

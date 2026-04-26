@@ -381,7 +381,7 @@ namespace QComputations {
 
 BLOCKED_CUDA_Matrix<COMPLEX, cuDoubleComplex> create_BLOCKED_CUDA_init_rho(
     MPI_Comm comm, ncclComm_t nccl_comm, cublasMpHandle_t handle, cublasMpGrid_t grid,
-    const std::vector<COMPLEX>& init_state, int64_t NB = 64, int64_t MB = 64)
+    const std::vector<COMPLEX>& init_state, int64_t NB = 0, int64_t MB = 0)
 {
     int64_t dim = init_state.size();
     BLOCKED_CUDA_Matrix<COMPLEX, cuDoubleComplex> rho(comm, nccl_comm, handle, grid, dim, dim, NB, MB);
@@ -411,10 +411,10 @@ void quantum_master_equation(const std::vector<COMPLEX>& init_state,
     size_t dim = H.size();
     std::vector<std::function<void(const BLOCKED_CUDA_Matrix<COMPLEX>& rho)>> lindblads;
 
-    size_t NB = 64, MB = 64;
+    // size_t NB = 64, MB = 64;
 
-    BLOCKED_CUDA_Matrix<COMPLEX> T1(MPI_COMM_WORLD, H.nccl_comm(), H.handle(), H.grid(), dim, dim, NB, MB);
-    BLOCKED_CUDA_Matrix<COMPLEX> T2(MPI_COMM_WORLD, H.nccl_comm(), H.handle(), H.grid(), dim, dim, NB, MB);
+    BLOCKED_CUDA_Matrix<COMPLEX> T1(MPI_COMM_WORLD, H.nccl_comm(), H.handle(), H.grid(), dim, dim);
+    BLOCKED_CUDA_Matrix<COMPLEX> T2(MPI_COMM_WORLD, H.nccl_comm(), H.handle(), H.grid(), dim, dim);
     const auto& H_matrix = H.get_blocked_matrix();
 
     // size_t hostSize = 0, devSize = 0, hostSizeAdd = 0, devSizeAdd = 0;
@@ -515,7 +515,7 @@ void quantum_master_equation(const std::vector<COMPLEX>& init_state,
         //}
     }};
 
-    BLOCKED_CUDA_Matrix<COMPLEX> rho_0(create_BLOCKED_CUDA_init_rho(MPI_COMM_WORLD, H.nccl_comm(), H.handle(), H.grid(), init_state, NB, MB));
+    BLOCKED_CUDA_Matrix<COMPLEX> rho_0(create_BLOCKED_CUDA_init_rho(MPI_COMM_WORLD, H.nccl_comm(), H.handle(), H.grid(), init_state));
     //std::cout << "RHO_0: " << rho_0.matrix_type() << std::endl;
     //rho_0.show();
     // auto begin_c = std::chrono::steady_clock::now();

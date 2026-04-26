@@ -117,7 +117,7 @@ BLOCKED_CUDA_H_by_Operator<StateType>::BLOCKED_CUDA_H_by_Operator(MPI_Comm comm,
 
 
     // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    int64_t NB = 64, MB = 64;
+    // int64_t NB = 64, MB = 64;
 
     // ILP_TYPE proc_rows, proc_cols, myrow, mycol, NB, MB;
     // mpi::blacs_gridinfo(ctxt, proc_rows, proc_cols, myrow, mycol);
@@ -139,7 +139,7 @@ BLOCKED_CUDA_H_by_Operator<StateType>::BLOCKED_CUDA_H_by_Operator(MPI_Comm comm,
 
 
     BLOCKED_CUDA_Matrix<COMPLEX, cuDoubleComplex> H_gpu(comm, nccl_comm, handle, grid,
-                                                         size, size, NB, MB);
+                                                         size, size);
 
     int64_t lrows = H_gpu.local_rows();
     int64_t lcols = H_gpu.local_cols();
@@ -173,7 +173,7 @@ BLOCKED_CUDA_H_by_Operator<StateType>::BLOCKED_CUDA_H_by_Operator(MPI_Comm comm,
 
     for (const auto& p : decoherence) {
         BLOCKED_CUDA_Matrix<COMPLEX, cuDoubleComplex> A_gpu(comm, nccl_comm, handle, grid,
-                                                             size, size, NB, MB);
+                                                             size, size);
         std::vector<COMPLEX> local_A(lrows * lcols, COMPLEX(0.0, 0.0));
         for (int64_t j = 0; j < lcols; ++j) {
             int64_t global_col = A_gpu.get_global_col(j);
