@@ -119,6 +119,7 @@ public:
     cublasMpHandle_t handle() const { return handle_; }
     cublasMpGrid_t grid() const { return grid_; }
     ncclComm_t nccl_comm() const { return nccl_comm_; }
+    MPI_Comm comm() const { return comm_; }
 
     // ---------- индексация ----------
     int64_t get_global_row(int64_t local_row) const;
@@ -132,6 +133,10 @@ public:
     Matrix<T> gather_to_cpu(int root = 0) const;
     void show_local(size_t width = QConfig::instance().width()) const;
     void show(size_t width = QConfig::instance().width()) const;
+
+    void get_buffersize_gemm(const BLOCKED_CUDA_Matrix<T, GPU_T>& B, const BLOCKED_CUDA_Matrix<T, GPU_T>& C, size_t& dev_size, size_t& host_size) const;
+    void get_buffersize_geadd(const BLOCKED_CUDA_Matrix<T, GPU_T>& C, size_t& dev_size, size_t& host_size) const;
+
 
 private:
     MPI_Comm comm_;
@@ -161,6 +166,13 @@ private:
     void local_copy(const BLOCKED_CUDA_Matrix& src);
 };
 
+template <typename T, typename GPU_T>
+static cublasComputeType_t getMpComputeType() {
+    if constexpr (std::is_same<T, double>::value) return CUBLAS_COMPUTE_64F;
+    else if constexpr (std::is_same<T, COMPLEX>::value) return CUBLAS_COMPUTE_64F;
+    else return CUBLAS_COMPUTE_32F;
+}
+
 // ---------------------------------------------------------------------------
 // Реализация шаблонных методов (должна быть в заголовочном файле)
 // ---------------------------------------------------------------------------
@@ -172,6 +184,41 @@ void BLOCKED_CUDA_Matrix<T, GPU_T>::compute_grid_dims() {
     grid_rows_ = (int)std::sqrt(world_size);
     while (world_size % grid_rows_ != 0) --grid_rows_;
     grid_cols_ = world_size / grid_rows_;
+}
+
+template<typename T, typename GPU_T>
+void BLOCKED_CUDA_Matrix<T, GPU_T>::get_buffersize_geadd(const BLOCKED_CUDA_Matrix<T, GPU_T>& C, size_t& devSize, size_t& hostSize) const {
+    GPU_T a{}, b{};                        // значения не важны
+    const void* alpha = static_cast<const void*>(&a);
+    const void* A     = static_cast<const void*>(this->local_data());
+    const void* beta  = static_cast<const void*>(&b);
+    void*       C_ptr = const_cast<GPU_T*>(C.local_data());   // приведение const -> void*
+
+    CUBLASMP_CHECK((cublasMpGeadd_bufferSize(
+        this->handle(), CUBLAS_OP_N, this->n(), this->m(),
+        alpha, A, 1, 1, this->matrix_desc(),
+        beta,  C_ptr, 1, 1, C.matrix_desc(),
+        &devSize, &hostSize)));
+}
+
+template<typename T, typename GPU_T>
+void BLOCKED_CUDA_Matrix<T, GPU_T>::get_buffersize_gemm(const BLOCKED_CUDA_Matrix<T, GPU_T>& B, const BLOCKED_CUDA_Matrix<T, GPU_T>& C, size_t& devSize, size_t& hostSize) const {
+    GPU_T a{}, b{};
+    const void* alpha = static_cast<const void*>(&a);
+    const void* A     = static_cast<const void*>(this->local_data());
+    const void* B_ptr = static_cast<const void*>(B.local_data());
+    const void* beta  = static_cast<const void*>(&b);
+    void*       C_ptr = const_cast<GPU_T*>(C.local_data());
+
+    cublasComputeType_t comp = getMpComputeType<T, GPU_T>();
+
+    CUBLASMP_CHECK((cublasMpGemm_bufferSize(
+        this->handle(), CUBLAS_OP_N, CUBLAS_OP_N,
+        this->n(), B.m(), this->m(),
+        alpha, A, 1, 1, this->matrix_desc(),
+        B_ptr, 1, 1, B.matrix_desc(),
+        beta,  C_ptr, 1, 1, C.matrix_desc(),
+        comp, &devSize, &hostSize)));
 }
 
 template <typename T, typename GPU_T>
@@ -316,12 +363,6 @@ bool BLOCKED_CUDA_Matrix<T, GPU_T>::is_my_elem_col(int64_t global_col) const {
 }
 
 // ---------------------------- умножение матриц (распределённое) ----------------------------
-template <typename T, typename GPU_T>
-static cublasComputeType_t getMpComputeType() {
-    if constexpr (std::is_same<T, double>::value) return CUBLAS_COMPUTE_64F;
-    else if constexpr (std::is_same<T, COMPLEX>::value) return CUBLAS_COMPUTE_64F;
-    else return CUBLAS_COMPUTE_32F;
-}
 
 template <typename T, typename GPU_T>
 BLOCKED_CUDA_Matrix<T, GPU_T> BLOCKED_CUDA_Matrix<T, GPU_T>::operator*(const BLOCKED_CUDA_Matrix& other) const {
@@ -536,6 +577,189 @@ void BLOCKED_CUDA_Matrix<T, GPU_T>::show(size_t width) const {
         full.show(width);
     }
 }
+
+
+template <typename T, typename GPU_T>
+void optimized_multiply(const BLOCKED_CUDA_Matrix<T, GPU_T>& A,
+                        const BLOCKED_CUDA_Matrix<T, GPU_T>& B,
+                        BLOCKED_CUDA_Matrix<T, GPU_T>& C,
+                        T alpha = T(1), T beta = T(0),
+                        cublasOperation_t transA = CUBLAS_OP_N,
+                        cublasOperation_t transB = CUBLAS_OP_N,
+                        void* d_work = nullptr, size_t devSize = 0, void* h_work = nullptr, size_t hostSize = 0)
+{
+    static_assert(std::is_same<T, double>::value || std::is_same<T, COMPLEX>::value,
+                  "optimized_multiply only for double or COMPLEX");
+    GPU_T a, b;
+    if constexpr (std::is_same<T, double>::value) {
+        a = alpha;
+        b = beta;
+    } else {
+        a = make_cuDoubleComplex(alpha.real(), alpha.imag());
+        b = make_cuDoubleComplex(beta.real(), beta.imag());
+    }
+
+    bool is_our_work = false;
+    cublasComputeType_t comp = getMpComputeType<T, GPU_T>();
+    if (!d_work) {
+        is_our_work = true;
+        CUBLASMP_CHECK((cublasMpGemm_bufferSize(
+            A.handle(), transA, transB, A.n(), B.m(), A.m(),
+            &a, A.local_data(), 1, 1, A.matrix_desc(),
+            B.local_data(), 1, 1, B.matrix_desc(),
+            &b, C.local_data(), 1, 1, C.matrix_desc(),
+            comp, &devSize, &hostSize)));
+
+        if (devSize) CUDA_CHECK(cudaMalloc(&d_work, devSize));
+        if (hostSize) h_work = malloc(hostSize);
+    }
+
+    CUBLASMP_CHECK((cublasMpGemm(
+        A.handle(), transA, transB, A.n(), B.m(), A.m(),
+        &a, A.local_data(), 1, 1, A.matrix_desc(),
+        B.local_data(), 1, 1, B.matrix_desc(),
+        &b, C.local_data(), 1, 1, C.matrix_desc(),
+        comp, d_work, devSize, h_work, hostSize)));
+
+    if (is_our_work) {
+        if (d_work) cudaFree(d_work);
+        if (h_work) free(h_work);
+    }
+}
+
+template <typename T, typename GPU_T>
+void optimized_add(const BLOCKED_CUDA_Matrix<T, GPU_T>& A,
+                        BLOCKED_CUDA_Matrix<T, GPU_T>& C,
+                        T alpha = T(1), T beta = T(0),
+                        cublasOperation_t transA = CUBLAS_OP_N,
+                        void* d_work = nullptr, size_t devSize = 0, void* h_work = nullptr, size_t hostSize = 0)
+{
+    static_assert(std::is_same<T, double>::value || std::is_same<T, COMPLEX>::value,
+                  "optimized_multiply only for double or COMPLEX");
+    GPU_T a, b;
+    if constexpr (std::is_same<T, double>::value) {
+        a = alpha;
+        b = beta;
+    } else {
+        a = make_cuDoubleComplex(alpha.real(), alpha.imag());
+        b = make_cuDoubleComplex(beta.real(), beta.imag());
+    }
+
+    bool is_our_work = false;
+    if (!d_work) {
+        is_our_work = true;
+        CUBLASMP_CHECK((cublasMpGeadd_bufferSize(
+            A.handle(), transA, A.n(), A.m(),
+            &a, A.local_data(), 1, 1, A.matrix_desc(),
+            &b, C.local_data(), 1, 1, C.matrix_desc(),
+            &devSize, &hostSize)));
+
+        if (devSize) CUDA_CHECK(cudaMalloc(&d_work, devSize));
+        if (hostSize) h_work = malloc(hostSize);
+    }
+
+    CUBLASMP_CHECK((cublasMpGeadd(
+        A.handle(), transA, A.n(), A.m(),
+        &a, A.local_data(), 1, 1, A.matrix_desc(),
+        &b, C.local_data(), 1, 1, C.matrix_desc(),
+        d_work, devSize, h_work, hostSize)));
+
+    if (is_our_work) {
+        if (d_work) cudaFree(d_work);
+        if (h_work) free(h_work);
+    }
+}
+
+template <typename T, typename GPU_T>
+std::vector<BLOCKED_CUDA_Matrix<T, GPU_T>> CUDA_MPI_Runge_Kutt_2(
+    const std::vector<double>& x,
+    BLOCKED_CUDA_Matrix<T, GPU_T> y0,   // по значению, чтобы использовать move
+    std::function<void(double, const BLOCKED_CUDA_Matrix<T, GPU_T>&, BLOCKED_CUDA_Matrix<T, GPU_T>&)> f)
+{
+    size_t len = x.size();
+    if (len == 0) return {};
+
+    size_t dim = y0.n();   // предполагаем квадратную матрицу
+    auto comm = y0.comm();
+    auto nccl_comm = y0.nccl_comm();
+    auto handle = y0.handle();
+    auto grid = y0.grid();
+    int64_t nb = y0.nb();
+    int64_t mb = y0.mb();
+
+    std::vector<BLOCKED_CUDA_Matrix<T, GPU_T>> y;
+    y.reserve(len);
+    y.emplace_back(std::move(y0));   // начальное условие
+
+    // Вспомогательные матрицы для стадий Рунге-Кутты
+    BLOCKED_CUDA_Matrix<T, GPU_T> k1(comm, nccl_comm, handle, grid, dim, dim, nb, mb);
+    BLOCKED_CUDA_Matrix<T, GPU_T> k2(comm, nccl_comm, handle, grid, dim, dim, nb, mb);
+    BLOCKED_CUDA_Matrix<T, GPU_T> y_temp(comm, nccl_comm, handle, grid, dim, dim, nb, mb);
+
+    // Функция копирования данных с устройства на устройство
+    auto copy_matrix = [](const BLOCKED_CUDA_Matrix<T, GPU_T>& src, BLOCKED_CUDA_Matrix<T, GPU_T>& dst) {
+        assert(src.local_rows() == dst.local_rows() && src.local_cols() == dst.local_cols());
+        cudaMemcpy(dst.local_data(), src.local_data(),
+                   src.local_rows() * src.local_cols() * sizeof(GPU_T),
+                   cudaMemcpyDeviceToDevice);
+    };
+
+    for (size_t i = 0; i < len - 1; ++i) {
+        double h = x[i + 1] - x[i];
+
+        // k1 = f(x_i, y_i)
+        f(x[i], y[i], k1);
+
+        // y_temp = y_i + h * k1
+        copy_matrix(y[i], y_temp);
+        optimized_add(k1, y_temp,
+                      static_cast<T>(h),
+                      static_cast<T>(1.0));
+
+        // k2 = f(x_i + h, y_temp)
+        f(x[i] + h, y_temp, k2);
+
+        // y_{i+1} = y_i + (h/2)*(k1 + k2)
+        BLOCKED_CUDA_Matrix<T, GPU_T> y_next(comm, nccl_comm, handle, grid, dim, dim, nb, mb);
+        copy_matrix(y[i], y_next);
+        optimized_add(k1, y_next,
+                      static_cast<T>(h / 2.0),
+                      static_cast<T>(1.0));
+        optimized_add(k2, y_next,
+                      static_cast<T>(h / 2.0),
+                      static_cast<T>(1.0));
+
+        y.emplace_back(std::move(y_next));
+    }
+    return y;
+}
+
+// template <typename T, typename GPU_T>
+// void optimized_add(const BLOCKED_CUDA_Matrix<T, GPU_T>& A,
+//                    BLOCKED_CUDA_Matrix<T, GPU_T>& C,
+//                    T alpha, T beta,
+//                    cublasOperation_t transA = CUBLAS_OP_N)
+// {
+//     static_assert(std::is_same<T, double>::value || std::is_same<T, COMPLEX>::value,
+//                   "optimized_add only for double or COMPLEX");
+//     if constexpr (std::is_same<T, double>::value) {
+//         CUBLASMP_CHECK((cublasMpGeadd(A.handle(),
+//                                       transA,
+//                                       A.n(), A.m(),
+//                                       &alpha, A.local_data(), 0, 0, A.matrix_desc(),
+//                                       &beta,  C.local_data(), 0, 0, C.matrix_desc(),
+//                                       nullptr, 0, nullptr, 0)));
+//     } else {
+//         cuDoubleComplex a = make_cuDoubleComplex(alpha.real(), alpha.imag());
+//         cuDoubleComplex b = make_cuDoubleComplex(beta.real(), beta.imag());
+//         CUBLASMP_CHECK((cublasMpGeadd(A.handle(),
+//                                       transA,
+//                                       A.n(), A.m(),
+//                                       &a, A.local_data(), 0, 0, A.matrix_desc(),
+//                                       &b,  C.local_data(), 0, 0, C.matrix_desc(),
+//                                       nullptr, 0, nullptr, 0)));
+//     }
+// }
 
 } // namespace QComputations
 

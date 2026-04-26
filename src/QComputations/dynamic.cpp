@@ -153,6 +153,7 @@ Probs schrodinger(const State<Basis_State>& init_state, Hamiltonian& H, const st
 
 #ifdef ENABLE_MPI
 #ifdef ENABLE_CLUSTER
+#ifdef ENABLE_ONEAPI
 
 BLOCKED_Probs schrodinger(const State<Basis_State>& init_state, BLOCKED_Hamiltonian& H,
                                                 const std::vector<double>& time_vec) {
@@ -207,7 +208,7 @@ BLOCKED_Probs schrodinger(const State<Basis_State>& init_state, BLOCKED_Hamilton
 
 #endif
 #endif
-
+#endif
 
 /*
 Probs quantum_master_equation(const std::vector<COMPLEX>& init_state,
@@ -627,6 +628,7 @@ std::vector<double> scan_gamma(const TCH_State& init_state,
 
 #ifdef ENABLE_MPI
 #ifdef ENABLE_CLUSTER
+#ifdef ENABLE_ONEAPI
 
 /*
 BLOCKED_Probs schrodinger(const std::vector<COMPLEX>& init_state, BLOCKED_Hamiltonian& H, const std::vector<double>& time_vec) {
@@ -1581,5 +1583,6 @@ Probs Parallel_QME(const std::vector<COMPLEX>& init_state,
 
 #endif // ENABLE_CLUSTER
 #endif // ENABLE_MPI
+#endif
 
 } // namespace QComputations

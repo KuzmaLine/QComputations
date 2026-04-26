@@ -113,6 +113,7 @@ namespace printing {
 
 #ifdef ENABLE_MPI
 #ifdef ENABLE_CLUSTER
+#ifdef ENABLE_ONEAPI
     void probs_print(const BLOCKED_Matrix<double>& probs, const std::set<Basis_State>& basis, const std::vector<double>& time_vec) {
         ILP_TYPE rank;
         MPI_Comm_rank(MPI_COMM_WORLD, &rank);
@@ -127,6 +128,7 @@ namespace printing {
             index++;
         }
     }
+#endif
 #endif
 #endif
 
@@ -154,6 +156,7 @@ namespace probs_testing {
 
 #ifdef ENABLE_MPI
 #ifdef ENABLE_CLUSTER
+#ifdef ENABLE_ONEAPI
 
     void check_probs(const BLOCKED_Matrix<double>& probs, const std::set<TCH_State>& basis,
                 const std::vector<double>& time_vec, double eps = QConfig::instance().eps()) {
@@ -179,6 +182,7 @@ namespace probs_testing {
         if (rank == mpi::ROOT_ID) std::cout << std::endl;
     }
 
+#endif
 #endif
 #endif
 

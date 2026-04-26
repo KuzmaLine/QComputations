@@ -1,5 +1,6 @@
 #ifdef ENABLE_MPI
 #ifdef ENABLE_CLUSTER
+#ifdef ENABLE_ONEAPI
 
 #pragma once
 #include "blocked_matrix.hpp"
@@ -115,5 +116,6 @@ std::vector<BLOCKED_Vector<COMPLEX>> blocked_matrix_to_blocked_vectors(ILP_TYPE 
 
 } // namespace QComputations
 
+#endif
 #endif
 #endif

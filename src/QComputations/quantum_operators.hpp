@@ -416,6 +416,7 @@ inline CSR_Matrix<COMPLEX> operator_to_matrix_csr(const Operator<StateType>& op,
 
 #ifdef ENABLE_MPI
 #ifdef ENABLE_CLUSTER
+#ifdef ENABLE_ONEAPI
 template<typename StateType>
 BLOCKED_Matrix<COMPLEX> operator_to_matrix(ILP_TYPE ctxt, const Operator<StateType>& op, const BasisType<StateType>& basis) {
     // size_t dim = basis.size();
@@ -553,6 +554,7 @@ BLOCKED_Matrix<COMPLEX> operator_to_matrix(ILP_TYPE ctxt, const Operator<StateTy
     */
     return A;
 }
+#endif
 #endif
 #endif
 
@@ -754,7 +756,7 @@ State<TCH_State> atoms_exc_count(const TCH_State& state);
 
 #ifdef ENABLE_MPI
 #ifdef ENABLE_CLUSTER
-
+#ifdef ENABLE_ONEAPI
 template<typename StateType>
 BLOCKED_Matrix<COMPLEX> BLOCKED_Matrix_by_Scalar_Product(ILP_TYPE ctxt, const std::function<COMPLEX(const StateType&, const StateType&)>& func, const BasisType<StateType>& basis) {
 //BLOCKED_Matrix<COMPLEX> BLOCKED_Matrix_by_Scalar_Product(ILP_TYPE ctxt, const std::function<COMPLEX(const std::shared_ptr<StateType>&, const std::shared_ptr<StateType>&)>& func, const BasisType<StateType>& basis) {
@@ -794,6 +796,7 @@ BLOCKED_Matrix<COMPLEX> WH_Matrix(ILP_TYPE ctxt, const std::vector<std::shared_p
     return BLOCKED_Matrix<COMPLEX>(ctxt, GE, basis.size(), basis.size(), matrix_func);
 }
 
+#endif
 #endif
 #endif
 

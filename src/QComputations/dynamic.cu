@@ -375,6 +375,216 @@ namespace QComputations {
         
         return probs;
     }
+
+#ifdef ENABLE_MPI
+#ifdef ENABLE_CLUSTER
+
+BLOCKED_CUDA_Matrix<COMPLEX, cuDoubleComplex> create_BLOCKED_CUDA_init_rho(
+    MPI_Comm comm, ncclComm_t nccl_comm, cublasMpHandle_t handle, cublasMpGrid_t grid,
+    const std::vector<COMPLEX>& init_state, int64_t NB = 64, int64_t MB = 64)
+{
+    int64_t dim = init_state.size();
+    BLOCKED_CUDA_Matrix<COMPLEX, cuDoubleComplex> rho(comm, nccl_comm, handle, grid, dim, dim, NB, MB);
+
+    std::vector<COMPLEX> psi(dim);
+    std::copy(init_state.begin(), init_state.end(), psi.begin());
+
+    int64_t lrows = rho.local_rows();
+    int64_t lcols = rho.local_cols();
+    std::vector<COMPLEX> local_rho(lrows * lcols, COMPLEX(0.0, 0.0));
+    for (int64_t j = 0; j < lcols; ++j) {
+        int64_t global_col = rho.get_global_col(j);
+        COMPLEX psi_col = psi[global_col];
+        for (int64_t i = 0; i < lrows; ++i) {
+            int64_t global_row = rho.get_global_row(i);
+            COMPLEX psi_row = psi[global_row];
+            local_rho[i + j * lrows] = psi_row * std::conj(psi_col);
+        }
+    }
+    cudaMemcpy(rho.local_data(), local_rho.data(), lrows * lcols * sizeof(cuDoubleComplex), cudaMemcpyHostToDevice);
+    return rho;
+}
+
+void quantum_master_equation(const std::vector<COMPLEX>& init_state,
+                                BLOCKED_CUDA_Hamiltonian& H,
+                                const std::vector<double>& time_vec) {
+    size_t dim = H.size();
+    std::vector<std::function<void(const BLOCKED_CUDA_Matrix<COMPLEX>& rho)>> lindblads;
+
+    size_t NB = 64, MB = 64;
+
+    BLOCKED_CUDA_Matrix<COMPLEX> T1(MPI_COMM_WORLD, H.nccl_comm(), H.handle(), H.grid(), dim, dim, NB, MB);
+    BLOCKED_CUDA_Matrix<COMPLEX> T2(MPI_COMM_WORLD, H.nccl_comm(), H.handle(), H.grid(), dim, dim, NB, MB);
+    const auto& H_matrix = H.get_blocked_matrix();
+
+    // size_t hostSize = 0, devSize = 0, hostSizeAdd = 0, devSizeAdd = 0;
+
+    // H.get_buffersize_gemm(hostSize, devSize);
+
+    // void* d_work = nullptr;
+    // void* h_work = nullptr;
+    // if (devSize) CUDA_CHECK(cudaMalloc(&d_work, devSize));
+    // if (hostSize) h_work = malloc(hostSize);
+
+    for (const auto& p: H.get_decoherence()) {
+        auto gamma = p.first;
+        //std::cout << "BEFORE: " << p.second.matrix_type() << std::endl;
+        //BLOCKED_Matrix<COMPLEX> A(p.second);
+        const auto& A = p.second;
+        //A.show();
+        lindblads.push_back(std::function<void(const BLOCKED_CUDA_Matrix<COMPLEX>& rho)> {
+            // [&H_matrix, &A, &T1, &T2, gamma, d_work, h_work, hostSize, devSize](const BLOCKED_CUDA_Matrix<COMPLEX>& rho) {
+            [&H_matrix, &A, &T1, &T2, gamma](const BLOCKED_CUDA_Matrix<COMPLEX>& rho) {
+                // std::cout << "HERE4\n";
+                //std::cout << A.matrix_type() << std::endl;
+                optimized_multiply(A, A, T1, COMPLEX(1, 0), COMPLEX(0, 0), CUBLAS_OP_C, CUBLAS_OP_N); // AconjA -> T1
+                // std::cout << "HERE5\n";
+                //std::cout << T1.matrix_type() << " " << rho.matrix_type() << std::endl;
+                optimized_multiply(T1, rho, T2, COMPLEX(1, 0), COMPLEX(0, 0), CUBLAS_OP_N, CUBLAS_OP_N); // AconjA*rho -> T2
+                // std::cout << "HERE6\n";
+                optimized_multiply(rho, T1, T2, COMPLEX(1, 0), COMPLEX(1, 0), CUBLAS_OP_N, CUBLAS_OP_N); // rho * AconjA + AconjA * rho
+                // std::cout << "HERE7\n";
+                optimized_multiply(A, rho, T1, COMPLEX(1, 0), COMPLEX(0, 0), CUBLAS_OP_N, CUBLAS_OP_N); // A*rho -> T1
+                // std::cout << "HERE8\n";
+                optimized_multiply(T1, A, T2, COMPLEX(gamma, 0), COMPLEX(-0.5 * gamma, 0), CUBLAS_OP_N, CUBLAS_OP_C); // res -> T2
+                // std::cout << "HERE9\n";
+
+                // std::cout << "HERE4\n";
+                // //std::cout << A.matrix_type() << std::endl;
+                // optimized_multiply(A, A, T1, COMPLEX(1, 0), COMPLEX(0, 0), CUBLAS_OP_C, CUBLAS_OP_N, d_work, devSize, h_work, hostSize); // AconjA -> T1
+                // std::cout << "HERE5\n";
+                // //std::cout << T1.matrix_type() << " " << rho.matrix_type() << std::endl;
+                // optimized_multiply(T1, rho, T2, COMPLEX(1, 0), COMPLEX(0, 0), CUBLAS_OP_N, CUBLAS_OP_N, d_work, devSize, h_work, hostSize); // AconjA*rho -> T2
+                // std::cout << "HERE6\n";
+                // optimized_multiply(rho, T1, T2, COMPLEX(1, 0), COMPLEX(1, 0), CUBLAS_OP_N, CUBLAS_OP_N, d_work, devSize, h_work, hostSize); // rho * AconjA + AconjA * rho
+                // std::cout << "HERE7\n";
+                // optimized_multiply(A, rho, T1, COMPLEX(1, 0), COMPLEX(0, 0), CUBLAS_OP_N, CUBLAS_OP_N, d_work, devSize, h_work, hostSize); // A*rho -> T1
+                // std::cout << "HERE8\n";
+                // optimized_multiply(T1, A, T2, COMPLEX(gamma, 0), COMPLEX(-0.5 * gamma, 0), CUBLAS_OP_N, CUBLAS_OP_C, d_work, devSize, h_work, hostSize); // res -> T2
+                // std::cout << "HERE9\n";
+                //auto Aconj = A.hermit();
+                //auto AconjA = Aconj * A;
+                //T2 = (A * rho * Aconj - (AconjA * rho + rho * AconjA) * COMPLEX(0.5, 0)) * gamma;
+            }
+        }
+        );
+    }
+
+    // H.get_buffersize_geadd(hostSizeAdd, devSizeAdd);
+
+    // void* d_work_geadd = nullptr;
+    // void* h_work_geadd = nullptr;
+    // if (devSizeAdd) CUDA_CHECK(cudaMalloc(&d_work_geadd, devSizeAdd));
+    // if (hostSizeAdd) h_work_geadd = malloc(hostSizeAdd);
+
+
+    std::function<void(double t, const BLOCKED_CUDA_Matrix<COMPLEX>&, BLOCKED_CUDA_Matrix<COMPLEX>&)> equation 
+    // {[&H_matrix, &T1, &T2, &lindblads, d_work, h_work, devSize, hostSize, d_work_geadd, h_work_geadd, devSizeAdd, hostSizeAdd](double t, const BLOCKED_CUDA_Matrix<COMPLEX>& rho, 
+    {[&H_matrix, &T1, &T2, &lindblads](double t, const BLOCKED_CUDA_Matrix<COMPLEX>& rho, 
+    BLOCKED_CUDA_Matrix<COMPLEX>& res) {
+        // std::cout << "HERE1\n";
+        optimized_multiply(rho, H_matrix, res, COMPLEX(1, 0), COMPLEX(0, 0), CUBLAS_OP_N, CUBLAS_OP_N); // rho * H_matrix -> res
+        // std::cout << "HERE2\n";
+        optimized_multiply(H_matrix, rho, res, COMPLEX(0, -1 / QConfig::instance().h()), COMPLEX(0, 1 / QConfig::instance().h()), CUBLAS_OP_N, CUBLAS_OP_N); // result -> res
+        // std::cout << "HERE3\n";
+
+        for (const auto& lindblad: lindblads) {
+            lindblad(rho);
+            //std::cout << "HERE10\n";
+            optimized_add(T2, res, COMPLEX(1 / QConfig::instance().h(), 0), COMPLEX(1, 0), CUBLAS_OP_N);
+            //std::cout << "HERE11\n";
+        }
+
+        //         std::cout << "HERE1\n";
+        // optimized_multiply(rho, H_matrix, res, COMPLEX(1, 0), COMPLEX(0, 0), CUBLAS_OP_N, CUBLAS_OP_N, d_work, devSize, h_work, hostSize); // rho * H_matrix -> res
+        // std::cout << "HERE2\n";
+        // optimized_multiply(H_matrix, rho, res, COMPLEX(0, -1 / QConfig::instance().h()), COMPLEX(0, 1 / QConfig::instance().h()), CUBLAS_OP_N, CUBLAS_OP_N, d_work, devSize, h_work, hostSize); // result -> res
+        // std::cout << "HERE3\n";
+
+        // for (const auto& lindblad: lindblads) {
+        //     lindblad(rho);
+        //     //std::cout << "HERE10\n";
+        //     optimized_add(T2, res, COMPLEX(1 / QConfig::instance().h(), 0), COMPLEX(1, 0), CUBLAS_OP_N, d_work_geadd, devSizeAdd, h_work_geadd, hostSizeAdd);
+        //     //std::cout << "HERE11\n";
+        // }
+
+        //res = (H_matrix * rho - rho * H_matrix) * COMPLEX(0, -1/QConfig::instance().h());
+        //for (const auto& lindblad: lindblads) {
+        //    lindblad(rho);
+        //    res += (T2 / QConfig::instance().h());
+        //}
+    }};
+
+    BLOCKED_CUDA_Matrix<COMPLEX> rho_0(create_BLOCKED_CUDA_init_rho(MPI_COMM_WORLD, H.nccl_comm(), H.handle(), H.grid(), init_state, NB, MB));
+    //std::cout << "RHO_0: " << rho_0.matrix_type() << std::endl;
+    //rho_0.show();
+    // auto begin_c = std::chrono::steady_clock::now();
+    //std::cout << "HERE\n";
+    std::vector<BLOCKED_CUDA_Matrix<COMPLEX>> rho_vec;
+    // std::cout << "HERE START\n";
+    if (QConfig::instance().qme_algorithm() == RUNGE_KUTT_4) {
+        //rho_vec = Runge_Kutt_4<double, BLOCKED_Rho>(time_vec, rho_0, equation);
+        // rho_vec = CUDA_MPI_Runge_Kutt_4(time_vec, rho_0, equation);
+        assert(false);
+    } else if (QConfig::instance().qme_algorithm() == RUNGE_KUTT_2) {
+        //rho_vec = Runge_Kutt_2<double, BLOCKED_Rho>(time_vec, rho_0, equation);
+        rho_vec = CUDA_MPI_Runge_Kutt_2<COMPLEX>(time_vec, std::move(rho_0), equation);
+    } else {
+        assert(false); // Неизвестный алгоритм решения ОКУ
+    }
+
+    //std::cout << "HERE 2\n";
+
+    // ILP_TYPE world_size, rank;
+    // MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+    // MPI_Comm_size(MPI_COMM_WORLD, &world_size);
+    // ILP_TYPE probs_ctxt;
+    // mpi::init_grid(probs_ctxt, world_size, 1);
+    // ILP_TYPE proc_rows, proc_cols, myrow, mycol;
+    // mpi::blacs_gridinfo(probs_ctxt, proc_rows, proc_cols, myrow, mycol);
+    // BLOCKED_Probs probs(probs_ctxt, GE, dim, time_vec.size(), (H.size() >= world_size ? H.size() / world_size : 1), time_vec.size());
+
+    // //std::cout << myrow << " " << mycol << " : " << probs.local_n() << " " << probs.local_m() << std::endl;
+    // for (size_t t = 0; t < time_vec.size(); t++) {
+    //     auto probs_vec = mpi::get_diagonal_elements<COMPLEX>(rho_vec[t].get_local_matrix(), rho_vec[t].desc());
+    //     //if (rank == 0) std::cout << probs_vec << std::endl;
+    //     //std::cout << myrow << " " << mycol << " - " << start << std::endl;
+    //     for (size_t i = 0; i < probs.local_n(); i++) {   
+    //         probs(i, t) = std::abs(probs_vec[probs.get_global_row(i)]);
+    //     }
+    // }
+
+    /*
+    for (size_t t = 0; t < time_vec.size(); t++) {
+        double res = 0.0;
+        for (size_t i = 0; i < dim; i++) {
+            res += probs[i][t];
+        }
+
+        //std::cout << t << " " << res << std::endl;
+
+        if (std::abs(res - 1) >= QConfig::instance().eps()) {
+            //std::cout << t << " " << res << std::endl;
+        }
+    }
+    */
+    // if (d_work) cudaFree(d_work);
+    // if (h_work) free(h_work);
+    // if (d_work_geadd) cudaFree(d_work_geadd);
+    // if (h_work_geadd) free(h_work_geadd);
+
+    // return probs;
+}
+
+void quantum_master_equation(const State<Basis_State>& init_state,
+                            BLOCKED_CUDA_Hamiltonian& H,
+                            const std::vector<double>& time_vec) {
+    quantum_master_equation(init_state.fit_to_basis_state(H.get_basis()).get_vector(), H, time_vec);
+}
+
+#endif
+#endif
+
 }
 
 #endif

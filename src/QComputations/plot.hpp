@@ -49,6 +49,7 @@ void make_plot_files(const Probs& probs,
 
 #ifdef ENABLE_MPI
 #ifdef ENABLE_CLUSTER
+#ifdef ENABLE_ONEAPI
 
 void hamiltonian_to_file(const std::string& filename, const BLOCKED_Hamiltonian& H, std::string dir = "", ILP_TYPE main_rank = 0);
 void probs_to_file(const std::string& filename, const BLOCKED_Probs& probs, std::string dir = "", ILP_TYPE main_rank = 0);
@@ -100,6 +101,7 @@ void make_plot_files(const BLOCKED_Probs& probs,
                std::string dir = "",
                ILP_TYPE main_rank = 0);
 
+#endif
 #endif
 #endif
 

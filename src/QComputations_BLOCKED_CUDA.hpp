@@ -4,12 +4,18 @@
 #define ENABLE_MPI
 #endif
 
+#ifndef ENABLE_CLUSTER
+#define ENABLE_CLUSTER
+#endif
+
 #pragma once
 #include "QComputations/functions.hpp"
 #include "QComputations/blocked_cuda_matrix.hpp"
 #include "QComputations/matrix.hpp"
+#include "QComputations/mpi_functions.hpp"
 #include "QComputations/csr_matrix.hpp"
 #include "QComputations/hamiltonian.hpp"
+#include "QComputations/hamiltonian_cuda_blocked.hpp"
 #include "QComputations/state.hpp"
 #include "QComputations/cuda_matrix.hpp"
 #include "QComputations/quantum_operators.hpp"

@@ -1,8 +1,8 @@
 #ifdef ENABLE_MPI
 #ifdef ENABLE_CLUSTER
-#ifdef ENABLE_ONEAPI
+#ifdef __CUDACC__
 
-#include "hamiltonian_blocked.hpp"
+#include "hamiltonian_cuda_blocked.hpp"
 #include "quantum_operators.hpp"
 #include "hamiltonian.hpp"
 #include <cassert>
@@ -56,8 +56,8 @@ namespace {
     }
 }
 
-BLOCKED_H_TCH::BLOCKED_H_TCH(ILP_TYPE ctxt, const State<TCH_State>& state):
-                        BLOCKED_H_by_Operator<TCH_State>(ctxt, state, H_TCH_OP(), decs(state)) {}
+BLOCKED_CUDA_H_TCH::BLOCKED_CUDA_H_TCH(MPI_Comm comm, ncclComm_t nccl_comm, cublasMpHandle_t handle, cublasMpGrid_t grid, const State<TCH_State>& state):
+                        BLOCKED_CUDA_H_by_Operator<TCH_State>(comm, nccl_comm, handle, grid, state, H_TCH_OP(), decs(state)) {}
 
 /*
 BLOCKED_H_TC::BLOCKED_H_TC(ILP_TYPE ctxt, const State& grid) {

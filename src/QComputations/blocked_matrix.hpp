@@ -1,5 +1,6 @@
 #ifdef ENABLE_MPI
 #ifdef ENABLE_CLUSTER
+#ifdef ENABLE_ONEAPI
 
 #pragma once
 #include <iostream>
@@ -539,5 +540,6 @@ std::vector<BLOCKED_Matrix<COMPLEX>> MPI_Runge_Kutt_4(const std::vector<double>&
 
 } // namespace QComputations
 
+#endif
 #endif
 #endif

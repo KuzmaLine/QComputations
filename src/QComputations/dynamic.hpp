@@ -19,6 +19,7 @@
 
 #ifdef __CUDACC__
 #include "cuda_hamiltonian.hpp"
+#include "hamiltonian_cuda_blocked.hpp"
 #endif
 
 namespace QComputations {
@@ -121,10 +122,13 @@ namespace QComputations {
         bool is_full_rho = false);
 
     Probs schrodinger(const State<Basis_State>& init_state, CUDA_Hamiltonian& H, const std::vector<double>& time_vec);
+
 #endif
 
 #ifdef ENABLE_MPI
 #ifdef ENABLE_CLUSTER
+#ifdef ENABLE_ONEAPI
+
     using BLOCKED_Probs = BLOCKED_Matrix<double>;
     using BLOCKED_Rho = BLOCKED_Matrix<COMPLEX>;
 
@@ -163,6 +167,15 @@ namespace QComputations {
                                     const std::vector<double>& time_vec,
                                     const std::vector<double>& gamma_vec,
                                     double target, const BasisType<TCH_State>& basis);
+
+#endif
+
+#ifdef __CUDACC__
+
+   void quantum_master_equation(const State<Basis_State>& init_state, BLOCKED_CUDA_Hamiltonian& H, const std::vector<double>& time_vec);
+   void quantum_master_equation(const std::vector<COMPLEX>& init_state, BLOCKED_CUDA_Hamiltonian& H, const std::vector<double>& time_vec);
+
+#endif
 
 #endif
 #endif

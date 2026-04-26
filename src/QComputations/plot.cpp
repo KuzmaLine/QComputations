@@ -72,6 +72,7 @@ void make_plot_files(const Probs& probs,
 
 #else
 #ifdef ENABLE_MPI
+#ifdef ENABLE_ONEAPI
 
 void check_dir(std::string& dir, ILP_TYPE main_rank, bool remove_is_exist = false) {
     if (dir != "") {
@@ -136,6 +137,7 @@ void make_plot_files(const BLOCKED_Probs& probs,
     probs_to_file("probs.csv", probs, dir, main_rank);
 }
 
+#endif
 #endif
 #endif
 
@@ -258,6 +260,7 @@ void time_vec_to_file(const std::string& filename, const std::vector<double>& ti
 #endif
 
 #ifdef ENABLE_MPI
+#ifdef ENABLE_ONEAPI
 #ifdef ENABLE_CLUSTER
 
 void hamiltonian_to_file(const std::string& filename, const Hamiltonian& H, std::string dir, ILP_TYPE main_rank) {
@@ -515,6 +518,7 @@ void make_plot(const std::string& plotname,
 }
 */
 
+#endif
 #endif
 #endif
 

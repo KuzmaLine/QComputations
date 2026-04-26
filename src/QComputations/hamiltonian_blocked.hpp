@@ -1,4 +1,5 @@
 #ifdef ENABLE_MPI
+#ifdef ENABLE_ONEAPI
 #pragma once
 #include "graph.hpp"
 #include "mpi_functions.hpp"
@@ -250,4 +251,5 @@ class BLOCKED_H_TCH_EXC: BLOCKED_Hamiltonian {
 
 } // namespace QComputations
 
+#endif
 #endif
