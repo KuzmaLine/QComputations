@@ -3,6 +3,7 @@
 #include <iostream>
 #include <typeinfo>
 #include <cublas_v2.h>
+#include <cusparse.h>
 #include <cuda.h>
 #include <cstdio>
 #include <cusolverDn.h>
@@ -35,6 +36,16 @@ do {                                                                          \
     }                                                                         \
 } while(0)
 
+#define CUSPARSESC(func)                                                    \
+    do {                                                                    \
+        cusparseStatus_t status = (func);                                   \
+        if (status != CUSPARSE_STATUS_SUCCESS) {                            \
+            std::cerr << "cuSPARSE error in " << __FILE__ << ":" << __LINE__ \
+                      << " code = " << status << std::endl;                 \
+            exit(EXIT_FAILURE);                                             \
+        }                                                                   \
+    } while(0)
+
 // For CUSOLVER errors
 static const char* cusolverGetErrorString(cusolverStatus_t status) {
     switch(status) {
@@ -55,6 +66,18 @@ static const char* cusolverGetErrorString(cusolverStatus_t status) {
 }
 
 namespace QComputations {
+
+inline cusparseOperation_t get_sparse_operation(char op) {
+    if (op == 'T') return CUSPARSE_OPERATION_TRANSPOSE;
+    if (op == 'C') return CUSPARSE_OPERATION_CONJUGATE_TRANSPOSE;
+    return CUSPARSE_OPERATION_NON_TRANSPOSE;
+}
+
+inline cublasOperation_t get_cublas_operation(char op) {
+    if (op == 'T') return CUBLAS_OP_T;
+    if (op == 'C') return CUBLAS_OP_C;
+    return CUBLAS_OP_N;
+}
 
 namespace CUDA {
     __host__ void cudaMalloc(void** dev_ptr, size_t dev_size);

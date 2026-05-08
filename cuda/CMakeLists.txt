@@ -38,7 +38,7 @@ function(create_build_target TARGET_NAME PYTHON_FLAG)
     #target_compile_options(${TARGET_NAME} PRIVATE)
 
     # Link libraries
-    target_link_libraries(${TARGET_NAME} cublas cusolver)
+    target_link_libraries(${TARGET_NAME} cublas cusolver cusparse)
     #target_link_libraries(${TARGET_NAME} /lib/x86_64-linux-gnu/libm.so.6)
     #target_link_libraries(${TARGET_NAME} ${MKL_LIBRARIES}/libmkl_intel_lp64.so)
     #target_link_libraries(${TARGET_NAME} ${MKL_LIBRARIES}/libmkl_intel_thread.so)

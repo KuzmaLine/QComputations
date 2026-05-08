@@ -16,11 +16,6 @@
 namespace QComputations {
 
     namespace {
-        template <typename T>
-        bool is_close(T a, T b) {
-            return (std::abs(a - b) < QConfig::instance().eps());
-        }
-
         ILP_TYPE get_index_value(ILP_TYPE row_index, const MKL_INT* ia) { return ia[row_index]; }
 
         void to_mkl_sparse(ILP_TYPE n, ILP_TYPE m, ILP_TYPE* ia, ILP_TYPE* ja, double* data, sparse_matrix_t* A) {

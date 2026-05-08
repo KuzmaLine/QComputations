@@ -6,32 +6,27 @@
 #include <mkl.h>
 
 constexpr bool is_python_api = false;
-constexpr int max_photons = 256;
+constexpr int max_photons = 2;
 
 using COMPLEX = std::complex<double>;
 
 int main(int argc, char** argv) {
     using namespace QComputations;
 
-    cublasHandle_t handle;
-    cublasCreate(&handle);
-
     QConfig::instance().set_width(20); // Ширина ячейки элемента матрицы для stdout
     double h = QConfig::instance().h(); // Получить постоянную планка
     double w = QConfig::instance().w(); // Получить частоту
-    QConfig::instance().set_g(0.01); // сила взаимодействия с полем атома
+    QConfig::instance().set_g(0.005); // сила взаимодействия с полем атома
     QConfig::instance().set_max_photons(max_photons);
 
-    std::vector<size_t> grid_config = {2};
+    std::vector<size_t> grid_config = {20, 30};
 
     TCH_State state(grid_config);
     state.set_n(QConfig::instance().max_photons(), 0);
-    // state.set_atom(1, 0);
-    // state.set_atom(1, 1);
-    // state.set_waveguide(0, 1, 0.01);
-    state.set_leak_for_cavity(0, 0.01);
+    state.set_waveguide(0, 1, 0.01);
+    state.set_leak_for_cavity(0, 0.2);
     
-    CUDA_H_TCH H(handle, state);
+    CUDA_CSR_H_TCH H(state);
 
     // show_basis(H.get_basis());
 
@@ -42,25 +37,16 @@ int main(int argc, char** argv) {
 
     std::cout << "H size = " << H.size() << " TIME SIZE = " << time_vec.size() << std::endl;
 
-    cudaEvent_t start, stop;
-
-    cudaEventCreate(&start); cudaEventCreate(&stop);
-
-    cudaEventRecord(start, 0);
+    auto start = std::chrono::high_resolution_clock::now();
 
     auto probs = quantum_master_equation(State<Basis_State>(state), H, time_vec);
 
-    cudaEventRecord(stop, 0);
-    cudaEventSynchronize(stop);
-    float elapsed_ms;
+    auto end = std::chrono::high_resolution_clock::now();
 
-    cudaEventElapsedTime(&elapsed_ms, start, stop);
-
-    std::cout << elapsed_ms << std::endl;
+    auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
+    std::cout << "Execution time: " << elapsed.count() << " ms" << std::endl;
 
     // make_probs_files(H, probs, time_vec, H.get_basis(), "results/general_tch_QME");
-
-    cublasDestroy(handle);
 
     return 0;
 }

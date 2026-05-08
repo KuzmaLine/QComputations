@@ -20,7 +20,7 @@ class CUDA_Matrix {
 
         explicit CUDA_Matrix(cublasHandle_t handle, ILP_TYPE n, ILP_TYPE m, const std::vector<T>& matrix): handle_(handle), n_(n), m_(m) {
             CUDA::cudaMalloc(reinterpret_cast<void**>(&dev_mass_), sizeof(GPU_T) * n_ * m_);
-            CUDA::cublasSetMatrix(n_, m_, sizeof(T), matrix.data(), n_, dev_mass_, n_);
+            CUDA::cublasSetMatrix(n_, m_, sizeof(T), matrix.data(), n_, dev_mass_, m_);
         }
 
         explicit CUDA_Matrix(cublasHandle_t handle, ILP_TYPE n, ILP_TYPE m, T default_value): handle_(handle), n_(n), m_(m) {
@@ -30,12 +30,18 @@ class CUDA_Matrix {
         explicit CUDA_Matrix(cublasHandle_t handle, const Matrix<T>& matrix): handle_(handle), n_(matrix.n()), m_(matrix.m()) {
             assert(matrix.matrix_style() == FORTRAN_STYLE);
             CUDA::cudaMalloc(reinterpret_cast<void**>(&dev_mass_), sizeof(GPU_T)*n_*m_);
-            CUDA::cublasSetMatrix(n_, m_, sizeof(T), matrix.data(), matrix.LD(), dev_mass_, n_);
+            CUDA::cublasSetMatrix(n_, m_, sizeof(T), matrix.data(), matrix.LD(), dev_mass_, m_);
         }
 
         CUDA_Matrix(const CUDA_Matrix<T>& other): handle_(other.handle_), n_(other.n_), m_(other.m_) {
             CUDA::cudaMalloc(reinterpret_cast<void**>(&(this->dev_mass_)), sizeof(GPU_T)*n_*m_);
             CUDA::cudaMemcpy(this->dev_mass_, other.dev_mass_, sizeof(GPU_T)*n_*m_, cudaMemcpyDeviceToDevice);
+        }
+
+        CUDA_Matrix(cublasHandle_t handle, ILP_TYPE n, ILP_TYPE m, std::function<T(ILP_TYPE, ILP_TYPE)> func):handle_(handle), n_(n), m_(m) {
+            CUDA::cudaMalloc(reinterpret_cast<void**>(&dev_mass_), sizeof(GPU_T) * n_ * m_);
+            Matrix<T> matrix(FORTRAN_STYLE, n, m, func);
+            CUDA::cublasSetMatrix(n_, m_, sizeof(T), matrix.data(), matrix.LD(), dev_mass_, m_);
         }
 
         CUDA_Matrix(CUDA_Matrix<T>&& other) noexcept: handle_(other.handle_), n_(other.n_), m_(other.m_), dev_mass_(other.dev_mass_) {

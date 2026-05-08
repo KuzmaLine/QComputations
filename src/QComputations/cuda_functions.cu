@@ -24,6 +24,7 @@ namespace CUDA {
 /* -------------------------------------------------- CUBLAS ----------------------------------------------------------------------- */
 
     __host__ void cublasSetMatrix(ILP_TYPE n, ILP_TYPE m, ILP_TYPE elem_size, const void* A, ILP_TYPE LDA, void* B, ILP_TYPE LDB) {
+        // std::cout << n << " " << m << " " << elem_size << " " << LDA << " " << LDB << std::endl;
         CUBLASSC(::cublasSetMatrix(n, m, elem_size, A, LDA, B, LDB));
     }
 

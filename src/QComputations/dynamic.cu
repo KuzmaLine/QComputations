@@ -287,6 +287,82 @@ namespace QComputations {
         return probs_cpu;
     }
 
+    Probs quantum_master_equation(const State<Basis_State>& init_state,
+                            CUDA_CSR_Hamiltonian& H,
+                            const std::vector<double>& time_vec) {
+        return quantum_master_equation(init_state.fit_to_basis_state(H.get_basis()).get_vector(), H, time_vec);
+    }
+
+    Probs quantum_master_equation(const std::vector<COMPLEX>& init_state,
+                                CUDA_CSR_Hamiltonian& H,
+                                const std::vector<double>& time_vec) {
+        
+        size_t dim = H.size();
+        std::vector<std::function<void(const CUDA_Matrix<COMPLEX>& rho)>> lindblads;
+        cublasHandle_t handle;
+        cublasCreate(&handle);
+
+        CUDA_CSR_Matrix<COMPLEX> T1(H.handle(), dim, dim);
+        CUDA_Matrix<COMPLEX> T2(handle, dim, dim);
+        CUDA_Matrix<COMPLEX> T3(handle, dim, dim);
+
+        for (const auto& p: H.get_decoherence()) {
+            auto gamma = p.first;
+            //std::cout << "BEFORE: " << p.second.matrix_type() << std::endl;
+            //BLOCKED_Matrix<COMPLEX> A(p.second);
+            const CUDA_CSR_Matrix<COMPLEX>& A = p.second;
+            //A.show();
+            lindblads.push_back(std::function<void(const CUDA_Matrix<COMPLEX>& rho)> {
+                [&A, &T1, &T2, &T3, gamma](const CUDA_Matrix<COMPLEX>& rho) {
+                    optimized_multiply(A, A, T1, cuDoubleComplex{1, 0}, cuDoubleComplex{0, 0}, 'C', 'N'); // AconjA -> T1
+                    //std::cout << "HERE5\n";
+                    //std::cout << T1.matrix_type() << " " << rho.matrix_type() << std::endl;
+                    optimized_multiply(T1, rho, T2, cuDoubleComplex{1, 0}, cuDoubleComplex{0, 0}); // AconjA*rho -> T2
+                    //std::cout << "HERE6\n";
+                    optimized_multiply(rho, T1, T2, cuDoubleComplex{1, 0}, cuDoubleComplex{1, 0}); // rho * AconjA + AconjA * rho
+                    //std::cout << "HERE7\n";
+                    optimized_multiply(A, rho, T3, cuDoubleComplex{1, 0}, cuDoubleComplex{0, 0}); // A*rho -> T1
+                    //std::cout << "HERE8\n";
+                    optimized_multiply(T3, A, T2, cuDoubleComplex{gamma, 0}, cuDoubleComplex{-0.5 * gamma, 0}, 'N', 'C'); // res -> T2
+                }
+            }
+            );
+        }
+
+        const CSR_CUDA_Matrix<COMPLEX>& H_matrix = H.get_matrix();
+        std::function<void(double t, const CUDA_Matrix<COMPLEX>&, CUDA_Matrix<COMPLEX>&)> equation 
+        {[&H_matrix, &T1, &T2, &lindblads](double t, const CUDA_Matrix<COMPLEX>& rho, CUDA_Matrix<COMPLEX>& res) {
+            //std::cout << "HERE1\n";
+            optimized_multiply(rho, H_matrix, res, cuDoubleComplex{1, 0}, cuDoubleComplex{0, 0}); // rho * H_matrix -> res
+            //std::cout << "HERE2\n";
+            optimized_multiply(H_matrix, rho, res, cuDoubleComplex{0, -1 / QConfig::instance().h()}, cuDoubleComplex{0, 1 / QConfig::instance().h()}); // result -> res
+            //std::cout << "HERE3\n";
+
+            for (const auto& lindblad: lindblads) {
+                lindblad(rho);
+                //std::cout << "HERE10\n";
+                //optimized_add(T2, res, COMPLEX(1 / QConfig::instance().h(), 0), COMPLEX(1, 0));
+                optimized_add(T2, res, res, cuDoubleComplex{1 / QConfig::instance().h(), 0}, cuDoubleComplex{1, 0});
+                //std::cout << "HERE11\n";
+            }
+        }};
+
+        auto rho_0 = create_init_rho(init_state);
+        Probs probs(C_STYLE, dim, time_vec.size());
+        if (QConfig::instance().qme_algorithm() == RUNGE_KUTT_4) {
+            //rho_vec = Runge_Kutt_4<double, Rho>(time_vec, rho_0, equation);
+            // QME_OPT_Runge_Kutt_4(time_vec, rho_0, equation, probs);
+        } else if (QConfig::instance().qme_algorithm() == RUNGE_KUTT_2) {
+            //rho_vec = Runge_Kutt_2<double, Rho>(time_vec, rho_0, equation);
+            QME_OPT_Runge_Kutt_2(time_vec, rho_0, equation, probs);
+        } else {
+            assert(false); // Неизвестный алгоритм решения ОКУ
+        }
+
+        cublasDestroy(handle);
+        return probs;
+    }
+
     __global__ void rho_to_probs(cuDoubleComplex** rho_vec, double* probs, size_t time_length, size_t basis_size) {
         int idx = blockIdx.x * blockDim.x + threadIdx.x;
         int grid_size = blockDim.x * gridDim.x;

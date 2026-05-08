@@ -29,17 +29,17 @@ fi
 
 sudo chmod +x $1/QComputations/seaborn_plot.py
 
-cd blocked_cuda
-cmake -B .
-make -j4 -B
-sudo mv ./*.so $2/.
-cd ..
-
-#cd cuda
+#cd blocked_cuda
 #cmake -B .
 #make -j4 -B
 #sudo mv ./*.so $2/.
 #cd ..
+
+cd cuda
+cmake -B .
+make -j4 -B
+sudo mv ./*.so $2/.
+cd ..
 
 #cd cpu_cluster
 #cmake -DCMAKE_CXX_COMPILER=mpiicpx -B .

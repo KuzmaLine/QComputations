@@ -44,6 +44,11 @@ Matrix<COMPLEX> FROM_lapack_complex_double_TO_Matrix(lapack_complex_double* A, l
 // start = 0, end = 4, step = 2 -> {0, 2, 4}
 //std::vector<double> make_timeline(double start, double end, double step);
 
+template <typename T>
+bool is_close(T a, T b) {
+    return (std::abs(a - b) < QConfig::instance().eps());
+}
+
 template<typename T>
 std::vector<double> linspace(T start_in, T end_in, int num_in)
 {

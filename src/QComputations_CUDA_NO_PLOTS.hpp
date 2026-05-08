@@ -16,3 +16,4 @@
 #include "QComputations/plot.hpp"
 #include "QComputations/cuda_hamiltonian.hpp"
 #include "QComputations/wave_func_state.hpp"
+#include "QComputations/cuda_csr_matrix.hpp"

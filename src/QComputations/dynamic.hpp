@@ -20,6 +20,7 @@
 #ifdef __CUDACC__
 #include "cuda_hamiltonian.hpp"
 #include "hamiltonian_cuda_blocked.hpp"
+#include "cuda_hamiltonian_csr.hpp"
 #endif
 
 namespace QComputations {
@@ -122,6 +123,14 @@ namespace QComputations {
         bool is_full_rho = false);
 
     Probs schrodinger(const State<Basis_State>& init_state, CUDA_Hamiltonian& H, const std::vector<double>& time_vec);
+
+    Probs quantum_master_equation(const State<Basis_State>& init_state,
+                    CUDA_CSR_Hamiltonian& H,
+                    const std::vector<double>& time_vec);
+    
+    Probs quantum_master_equation(const std::vector<COMPLEX>& init_state,
+        CUDA_CSR_Hamiltonian& H,
+        const std::vector<double>& time_vec);
 
 #endif
 
