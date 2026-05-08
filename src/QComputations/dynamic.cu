@@ -329,7 +329,7 @@ namespace QComputations {
             );
         }
 
-        const CSR_CUDA_Matrix<COMPLEX>& H_matrix = H.get_matrix();
+        const CUDA_CSR_Matrix<COMPLEX>& H_matrix = H.get_matrix();
         std::function<void(double t, const CUDA_Matrix<COMPLEX>&, CUDA_Matrix<COMPLEX>&)> equation 
         {[&H_matrix, &T1, &T2, &lindblads](double t, const CUDA_Matrix<COMPLEX>& rho, CUDA_Matrix<COMPLEX>& res) {
             //std::cout << "HERE1\n";
@@ -347,20 +347,63 @@ namespace QComputations {
             }
         }};
 
-        auto rho_0 = create_init_rho(init_state);
-        Probs probs(C_STYLE, dim, time_vec.size());
+        CUDA_Rho rho_0(std::move(create_init_rho_cuda(handle, init_state)));
+
+        std::vector<CUDA_Rho> rho_vec;
+        CUDA_Probs probs(handle, dim, time_vec.size());
         if (QConfig::instance().qme_algorithm() == RUNGE_KUTT_4) {
             //rho_vec = Runge_Kutt_4<double, Rho>(time_vec, rho_0, equation);
             // QME_OPT_Runge_Kutt_4(time_vec, rho_0, equation, probs);
         } else if (QConfig::instance().qme_algorithm() == RUNGE_KUTT_2) {
             //rho_vec = Runge_Kutt_2<double, Rho>(time_vec, rho_0, equation);
-            QME_OPT_Runge_Kutt_2(time_vec, rho_0, equation, probs);
+            rho_vec = CUDA_QME_OPT_Runge_Kutt_2(time_vec, rho_0, equation);
         } else {
             assert(false); // Неизвестный алгоритм решения ОКУ
         }
 
+        std::vector<cuDoubleComplex*> rho_pointers(time_vec.size());
+        for (size_t t = 0; t < time_vec.size(); t++) {
+            rho_pointers[t] = rho_vec[t].data();
+        }
+
+        cuDoubleComplex** rho_pointers_dev;
+        CUDA::cudaMalloc(reinterpret_cast<void**>(&rho_pointers_dev), sizeof(cuDoubleComplex*) * time_vec.size());
+        CUDA::cudaMemcpy(rho_pointers_dev, rho_pointers.data(), sizeof(cuDoubleComplex*) * time_vec.size(), cudaMemcpyHostToDevice);
+
+        rho_to_probs<<<QConfig::instance().cuda_grid_size(), QConfig::instance().cuda_block_size()>>>(rho_pointers_dev, probs.data(), time_vec.size(), H.n());
+        cudaDeviceSynchronize();
+        //std::cout << probs.n() << " " << probs.m() << " " << probs.ld() << "\n";
+        auto probs_cpu = probs.to_cpu();
+        //auto end_c = std::chrono::steady_clock::now();
+        //std::cout << " c " << std::chrono::duration_cast<std::chrono::milliseconds>(end_c - begin_c).count() << std::endl;
+        //std::cout << "HERE 2\n";
+
+        /*
+        for (size_t i = 0; i < dim; i++) {
+            for (size_t t = 0; t < time_vec.size(); t++) {
+                probs[i][t] = std::abs(rho_vec[t][i][i]);
+            }
+        }
+        */
+
+        /*
+        for (size_t t = 0; t < time_vec.size(); t++) {
+            double res = 0.0;
+            for (size_t i = 0; i < dim; i++) {
+                res += probs[i][t];
+            }
+
+            //std::cout << t << " " << res << std::endl;
+
+            if (std::abs(res - 1) >= QConfig::instance().eps()) {
+                //std::cout << t << " " << res << std::endl;
+            }
+        }
+        */
+
+        cudaFree(rho_pointers_dev);
         cublasDestroy(handle);
-        return probs;
+        return probs_cpu;
     }
 
     __global__ void rho_to_probs(cuDoubleComplex** rho_vec, double* probs, size_t time_length, size_t basis_size) {

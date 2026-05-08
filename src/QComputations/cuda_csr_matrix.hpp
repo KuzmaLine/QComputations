@@ -18,7 +18,24 @@ namespace QComputations {
     namespace {
         using IndexType = int;
 
+        __global__ void identity_permutation_kernel(int* P, int n) {
+            int i = blockIdx.x * blockDim.x + threadIdx.x;
+            if (i < n) P[i] = i;
+        }
 
+        template <typename T>
+        __global__ void gather_values_kernel(const T* src, T* dst, const int* P, int n) {
+            int i = blockIdx.x * blockDim.x + threadIdx.x;
+            if (i < n) dst[i] = src[P[i]];
+        }
+
+        template <typename T>
+        __global__ void conjugate_values_kernel(T* vals, int nnz) {
+            int i = blockIdx.x * blockDim.x + threadIdx.x;
+            if (i < nnz) {
+                vals[i] = cuConj(vals[i]);
+            }
+        }
     }  // namespace
 
 
@@ -82,6 +99,13 @@ template <typename T, typename GPU_T = typename std::conditional_t<
                 if (d_row_offsets_) cudaFree(d_row_offsets_);
                 if (d_col_indices_) cudaFree(d_col_indices_);
                 if (d_values_) cudaFree(d_values_);
+
+                if (cached_trans_valid_) {
+                    cudaFree(cached_trans_row_offsets_);
+                    cudaFree(cached_trans_col_indices_);
+                    cudaFree(cached_trans_values_);
+                    cusparseDestroySpMat(cached_trans_descr_);
+                }
             }
 
             CUDA_CSR_Matrix(const CUDA_CSR_Matrix&) = delete;
@@ -90,11 +114,21 @@ template <typename T, typename GPU_T = typename std::conditional_t<
             CUDA_CSR_Matrix(CUDA_CSR_Matrix&& other) noexcept
                 : handle_(other.handle_), n_(other.n_), m_(other.m_), nnz_(other.nnz_),
                   d_row_offsets_(other.d_row_offsets_), d_col_indices_(other.d_col_indices_),
-                  d_values_(other.d_values_), descr_(other.descr_) {
+                  d_values_(other.d_values_), descr_(other.descr_), cached_trans_valid_(other.cached_trans_valid_),
+                  cached_trans_row_offsets_(other.cached_trans_row_offsets_),
+                  cached_trans_col_indices_(other.cached_trans_col_indices_),
+                  cached_trans_values_(other.cached_trans_values_),
+                  cached_trans_descr_(other.cached_trans_descr_),
+                  cached_conjugated_(other.cached_conjugated_) {
                 other.d_row_offsets_ = nullptr;
                 other.d_col_indices_ = nullptr;
                 other.d_values_ = nullptr;
                 other.descr_ = nullptr;
+
+                other.cached_trans_descr_ = nullptr;
+                other.cached_trans_row_offsets_ = nullptr;
+                other.cached_trans_col_indices_ = nullptr;
+                other.cached_trans_values_ = nullptr;
             }
 
             CUDA_CSR_Matrix& operator=(CUDA_CSR_Matrix&& other) noexcept {
@@ -104,6 +138,13 @@ template <typename T, typename GPU_T = typename std::conditional_t<
                     if (d_row_offsets_) cudaFree(d_row_offsets_);
                     if (d_col_indices_) cudaFree(d_col_indices_);
                     if (d_values_) cudaFree(d_values_);
+
+                    if (cached_trans_valid_) {
+                        cudaFree(cached_trans_row_offsets_);
+                        cudaFree(cached_trans_col_indices_);
+                        cudaFree(cached_trans_values_);
+                        cusparseDestroySpMat(cached_trans_descr_);
+                    }
                     m_ = other.m_; n_ = other.n_; nnz_ = other.nnz_;
                     descr_ = other.descr_;
                     d_col_indices_ = other.d_col_indices_;
@@ -113,6 +154,23 @@ template <typename T, typename GPU_T = typename std::conditional_t<
                     other.d_col_indices_ = nullptr;
                     other.d_values_ = nullptr;
                     other.descr_ = nullptr;
+                    
+                    if (other.cached_trans_valid_) {
+                        cached_trans_descr_ = other.cached_trans_descr_;
+                        cached_trans_row_offsets_ = other.cached_trans_row_offsets_;
+                        cached_trans_col_indices_ = other.cached_trans_col_indices_;
+                        cached_trans_values_ = other.cached_trans_values_;
+                        cached_trans_valid_ = true;
+                        cached_conjugated_ = other.cached_conjugated_;
+
+                        other.cached_trans_valid_ = false;
+
+                        other.cached_trans_descr_ = nullptr;
+                        other.cached_trans_row_offsets_ = nullptr;
+                        other.cached_trans_col_indices_ = nullptr;
+                        other.cached_trans_values_ = nullptr;
+                        other.cached_conjugated_ = false;
+                    }
                 }
                 return *this;
             }
@@ -125,21 +183,124 @@ template <typename T, typename GPU_T = typename std::conditional_t<
             IndexType* d_ia() { return d_row_offsets_; }
             IndexType* d_ja() { return d_col_indices_; }
             GPU_T* vals() { return d_values_; }
-            cusparseSpMatDescr_t& descr() { return descr_; }
-            cusparseSpMatDescr_t descr() const { return descr_;}
+            inline cusparseSpMatDescr_t& descr(char op = 'N') { if (op == 'N') { return descr_;} else { return cached_trans_descr_;} }
+            inline cusparseSpMatDescr_t descr(char op = 'N') const { if(op == 'N') {return descr_;} else { return cached_trans_descr_;}}
+            void get_transposed(bool conjugate = false) const;
 
-            void show(size_t width = QConfig::instance().width());
-            void show_data(size_t width = QConfig::instance().width());
+            void show(size_t width = QConfig::instance().width()) const;
+            void show_data(size_t width = QConfig::instance().width()) const;
 
             void sort_ja();
 
         private:
+            void conjugate_vals() {
+                if (!descr_ || nnz_ == 0) return;
+
+                int64_t rows, cols, nnz;
+                void *d_offsets = nullptr, *d_cols = nullptr, *d_vals = nullptr;
+                cusparseIndexType_t off_type, col_type;
+                cusparseIndexBase_t idx_base;
+                cudaDataType val_type;
+
+                CUSPARSESC(cusparseCsrGet(descr_, &rows, &cols, &nnz,
+                                        &d_offsets, &d_cols, &d_vals,
+                                        &off_type, &col_type, &idx_base, &val_type));
+
+                int block = 256;
+                int grid = (nnz_ + block - 1) / block;
+                conjugate_values_kernel<<<grid, block>>>((cuDoubleComplex*)d_vals, nnz_);
+                cudaDeviceSynchronize();
+            }
+
             cusparseHandle_t handle_;
             IndexType n_, m_, nnz_;
             IndexType *d_row_offsets_ = nullptr, *d_col_indices_ = nullptr;
             GPU_T* d_values_ = nullptr;
             cusparseSpMatDescr_t descr_;
+
+            mutable cusparseSpMatDescr_t cached_trans_descr_ = nullptr;
+            mutable IndexType* cached_trans_row_offsets_ = nullptr;
+            mutable IndexType* cached_trans_col_indices_ = nullptr;
+            mutable GPU_T* cached_trans_values_ = nullptr;
+            mutable bool cached_trans_valid_ = false;
+            mutable bool cached_conjugated_ = false;
     };
+
+template <typename T, typename GPU_T>
+void CUDA_CSR_Matrix<T, GPU_T>::get_transposed(bool conjugate) const {
+    if (cached_trans_valid_) {
+        if (conjugate == cached_conjugated_) return;
+        else {
+            cached_conjugated_ = conjugate;
+
+            int block = QConfig::instance().cuda_block_size();
+            int grid = (nnz_ + block - 1) / block;
+            conjugate_values_kernel<<<grid, block>>>((cuDoubleComplex*)cached_trans_values_, nnz_);
+            cudaDeviceSynchronize();
+        }
+    }
+
+    if (!descr_ || nnz_ == 0) return;
+
+    int64_t rows, cols, nnz;
+    void *d_offsets = nullptr, *d_cols = nullptr, *d_vals = nullptr;
+    cusparseIndexType_t off_type, col_type;
+    cusparseIndexBase_t idx_base;
+    cudaDataType val_type;
+
+    CUSPARSESC(cusparseCsrGet(descr_, &rows, &cols, &nnz,
+                              &d_offsets, &d_cols, &d_vals,
+                              &off_type, &col_type, &idx_base, &val_type));
+
+    // Выделяем память под обратные массивы
+    cudaMalloc((void**)&cached_trans_row_offsets_, (cols + 1) * sizeof(IndexType));
+    cudaMalloc((void**)&cached_trans_col_indices_, nnz * sizeof(IndexType));
+    cudaMalloc((void**)&cached_trans_values_, nnz * sizeof(GPU_T));
+
+    // Legacy-дескриптор для cusparseXcsr2csc
+    cusparseMatDescr_t legacy_descr;
+    CUSPARSESC(cusparseCreateMatDescr(&legacy_descr));
+    cusparseSetMatType(legacy_descr, CUSPARSE_MATRIX_TYPE_GENERAL);
+    cusparseSetMatIndexBase(legacy_descr, idx_base);
+
+    size_t bufferSize = 0;
+    CUSPARSESC(cusparseCsr2cscEx2_bufferSize(
+        handle_, rows, cols, nnz,
+        d_vals, (int*)d_offsets, (int*)d_cols,
+        cached_trans_values_, cached_trans_row_offsets_, cached_trans_col_indices_,
+        val_type, CUSPARSE_ACTION_NUMERIC,
+        idx_base, CUSPARSE_CSR2CSC_ALG1, &bufferSize));
+
+    void* dBuffer = nullptr;
+    if (bufferSize > 0) cudaMalloc(&dBuffer, bufferSize);
+
+    CUSPARSESC(cusparseCsr2cscEx2(
+        handle_, rows, cols, nnz,
+        d_vals, (int*)d_offsets, (int*)d_cols,
+        cached_trans_values_, cached_trans_row_offsets_, cached_trans_col_indices_,
+        val_type, CUSPARSE_ACTION_NUMERIC,
+        idx_base, CUSPARSE_CSR2CSC_ALG1, dBuffer));
+
+    cusparseDestroyMatDescr(legacy_descr);
+    if (dBuffer) cudaFree(dBuffer);
+
+    // Создаём CSR-дескриптор для транспонированной матрицы
+    CUSPARSESC(cusparseCreateCsr(&cached_trans_descr_, cols, rows, nnz,
+                                 cached_trans_row_offsets_, cached_trans_col_indices_,
+                                 cached_trans_values_,
+                                 off_type, col_type, idx_base, val_type));
+
+    cached_trans_valid_ = true;
+
+    if (conjugate) {
+        cached_conjugated_ = conjugate;
+
+        int block = QConfig::instance().cuda_block_size();
+        int grid = (nnz_ + block - 1) / block;
+        conjugate_values_kernel<<<grid, block>>>((cuDoubleComplex*)cached_trans_values_, nnz_);
+        cudaDeviceSynchronize();
+    }
+}
 
 template <typename T, typename GPU_T>
 CUDA_CSR_Matrix<T, GPU_T>::CUDA_CSR_Matrix(cusparseHandle_t handle, IndexType rows, IndexType cols,
@@ -179,45 +340,61 @@ CUDA_CSR_Matrix<T, GPU_T>::CUDA_CSR_Matrix(cusparseHandle_t handle, IndexType ro
                       CUSPARSE_INDEX_BASE_ZERO, valueType);
 }
 
-// template <typename T, typename GPU_T>
-// void CUDA_CSR_Matrix<T, GPU_T>::sort_ja() {
-//     if (!descr_ || nnz_ == 0) return;
+template <typename T, typename GPU_T>
+void CUDA_CSR_Matrix<T, GPU_T>::sort_ja() {
+    if (!descr_ || nnz_ == 0) return;
 
-//     int64_t rows, cols, nnz;
-//     void *d_offsets = nullptr, *d_cols = nullptr, *d_vals = nullptr;
-//     cusparseIndexType_t off_type, col_type;
-//     cusparseIndexBase_t idx_base;
-//     cudaDataType val_type;
-//     CUSPARSESC(cusparseCsrGet(descr_, &rows, &cols, &nnz,
-//                               &d_offsets, &d_cols, &d_vals,
-//                               &off_type, &col_type, &idx_base, &val_type));
+    int64_t rows, cols, nnz;
+    cusparseIndexType_t off_type, col_type;
+    cusparseIndexBase_t idx_base;
+    cudaDataType val_type;
+    CUSPARSESC(cusparseCsrGet(descr_, &rows, &cols, &nnz,
+                              (void**)&d_row_offsets_, (void**)&d_col_indices_, (void**)&d_values_,
+                              &off_type, &col_type, &idx_base, &val_type));
 
-//     // Временный дескриптор с теми же offsets, но без col/val (они будут перезаписаны)
-//     cusparseSpMatDescr_t sorted_descr;
-//     CUSPARSESC(cusparseCreateCsr(&sorted_descr, rows, cols, 0,
-//                                  (int*)d_offsets, nullptr, nullptr,
-//                                  off_type, col_type, idx_base, val_type));
+    cusparseMatDescr_t legacy_descr;
+    CUSPARSESC(cusparseCreateMatDescr(&legacy_descr));
+    cusparseSetMatType(legacy_descr, CUSPARSE_MATRIX_TYPE_GENERAL);
+    cusparseSetMatIndexBase(legacy_descr, idx_base);
 
-//     size_t bufferSize = 0;
-//     CUSPARSESC(cusparseCsrSort_bufferSize(handle_, rows, cols, nnz,
-//                                           d_offsets, d_cols, d_vals,
-//                                           &bufferSize));
-//     void *dBuffer;
-//     cudaMalloc(&dBuffer, bufferSize);
+    int *d_P = nullptr;
+    cudaMalloc((void**)&d_P, sizeof(int) * nnz_);
 
-//     // Сортировка на месте: указатели col/val после вызова будут указывать на упорядоченные массивы
-//     CUSPARSESC(cusparseCsrSort(handle_, rows, cols, nnz, d_offsets, d_cols, d_vals,
-//                                sorted_descr, dBuffer));
+    // Запуск ядра единичной перестановки
+    int blockSize = 256;
+    int gridSize = (nnz_ + blockSize - 1) / blockSize;
+    identity_permutation_kernel<<<gridSize, blockSize>>>(d_P, nnz_);
+    cudaDeviceSynchronize();
 
-//     // Удаляем старый дескриптор (память не освобождается, так как она управляется пользователем)
-//     cusparseDestroySpMat(descr_);
-//     descr_ = sorted_descr;
+    size_t bufferSize = 0;
+    CUSPARSESC(cusparseXcsrsort_bufferSizeExt(handle_, rows, cols, nnz_,
+                                              d_row_offsets_, d_col_indices_,
+                                              &bufferSize));
+    void *dBuffer = nullptr;
+    cudaMalloc(&dBuffer, bufferSize);
 
-//     cudaFree(dBuffer);
-// }
+    CUSPARSESC(cusparseXcsrsort(handle_, rows, cols, nnz_,
+                                legacy_descr, d_row_offsets_, d_col_indices_,
+                                d_P, dBuffer));
+
+    GPU_T *d_vals_sorted = nullptr;
+    cudaMalloc((void**)&d_vals_sorted, sizeof(GPU_T) * nnz_);
+
+    // Перестановка значений
+    gather_values_kernel<GPU_T><<<gridSize, blockSize>>>(d_values_, d_vals_sorted, d_P, nnz_);
+    cudaDeviceSynchronize();
+
+    CUSPARSESC(cusparseCsrSetPointers(descr_, d_row_offsets_, d_col_indices_, d_vals_sorted));
+
+    cudaFree(d_values_);
+    d_values_ = d_vals_sorted;
+    cudaFree(dBuffer);
+    cudaFree(d_P);
+    cusparseDestroyMatDescr(legacy_descr);
+}
 
 template <typename T, typename GPU_T>
-    void CUDA_CSR_Matrix<T, GPU_T>::show(size_t width) {
+    void CUDA_CSR_Matrix<T, GPU_T>::show(size_t width) const {
         int64_t m64 = n_, n64 = m_, nnz64 = nnz_;
         void *d_row_off = nullptr, *d_col_ind = nullptr, *d_vals = nullptr;
         cusparseIndexType_t rowOffType, colIndType;
@@ -264,7 +441,7 @@ template <typename T, typename GPU_T>
     }
 
     template <typename T, typename GPU_T>
-    void CUDA_CSR_Matrix<T, GPU_T>::show_data(size_t width) {
+    void CUDA_CSR_Matrix<T, GPU_T>::show_data(size_t width) const {
         int64_t m64 = n_, n64 = m_, nnz64 = nnz_;
         void *d_row_off = nullptr, *d_col_ind = nullptr, *d_vals = nullptr;
         cusparseIndexType_t rowOffType, colIndType;
@@ -333,7 +510,7 @@ template <typename T, typename GPU_T = typename std::conditional_t<
                             CUDA_Matrix<T>& C,
                             GPU_T alpha,
                             GPU_T betta,
-                            char op = 'N');
+                            char opA = 'N', char opB = 'N');
     
     template <>
     void optimized_multiply(const CUDA_Matrix<COMPLEX>& A,
@@ -341,7 +518,7 @@ template <typename T, typename GPU_T = typename std::conditional_t<
                             CUDA_Matrix<COMPLEX>& C,
                             cuDoubleComplex alpha,
                             cuDoubleComplex betta,
-                            char op);
+                            char opA, char opB);
 
 template <typename T, typename GPU_T = typename std::conditional_t<
     std::is_same<T, COMPLEX>::value, cuDoubleComplex,

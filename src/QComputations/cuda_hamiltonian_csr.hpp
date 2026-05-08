@@ -7,12 +7,13 @@ namespace QComputations {
 
 class CUDA_CSR_Hamiltonian {
     public:
-        explicit CUDA_CSR_Hamiltonian() = default;
-        CUDA_CSR_Hamiltonian(const CUDA_CSR_Matrix<COMPLEX>& H): H_(H) {}
+        explicit CUDA_CSR_Hamiltonian(cusparseHandle_t handle) : H_(handle) {}
+        // explicit CUDA_CSR_Hamiltonian(const CUDA_CSR_Matrix<COMPLEX>& H): H_(H) {}
         size_t n() const { return H_.n(); }
         size_t size() const { return H_.n(); }
         std::vector<std::shared_ptr<Basis_State>> get_basis() const { return basis_; }
         const std::vector<std::pair<double, CUDA_CSR_Matrix<COMPLEX>>>& get_decoherence() const { return decoherence_; }
+        cusparseHandle_t handle() const { return H_.handle(); }
 
 // #ifdef ENABLE_ONEAPI
 //         void virtual eigen() {
@@ -52,8 +53,8 @@ class CUDA_CSR_Hamiltonian {
         //     return H_EXP_ * state;
         // }
 
-        void show(size_t width = QConfig::instance().width()) const { H_.show(); }
-        CUDA_CSR_Matrix<COMPLEX> get_matrix() const { return H_; }
+        void show(size_t width = QConfig::instance().width()) const { H_.show(width); }
+        const CUDA_CSR_Matrix<COMPLEX>& get_matrix() const { return H_; }
 
         // void write_to_csv_file(const std::string& filename) const { H_.write_to_csv_file(filename); }
     protected:
@@ -81,7 +82,7 @@ class CUDA_CSR_H_by_Operator: public CUDA_CSR_Hamiltonian {
 
 template<typename StateType>
 CUDA_CSR_H_by_Operator<StateType>::CUDA_CSR_H_by_Operator(cusparseHandle_t handle, const State<StateType>& init_state, const Operator<StateType>& H_op,
-                                     const std::vector<std::pair<double, Operator<StateType>>>& decoherence) {
+                                     const std::vector<std::pair<double, Operator<StateType>>>& decoherence): CUDA_CSR_Hamiltonian(handle) {
     std::vector<Operator<StateType>> dec_tmp;
     for (const auto& p: decoherence) {
         dec_tmp.push_back(p.second);
@@ -118,12 +119,12 @@ CUDA_CSR_H_by_Operator<StateType>::CUDA_CSR_H_by_Operator(cusparseHandle_t handl
         // show_vector(ja);
     }
 
-    H_ = CUDA_CSR_Matrix<COMPLEX>(handle, ia.size() - 1, basis_original.size(), vals.size(), vals, ia, ja);
+    H_ = CUDA_CSR_Matrix<COMPLEX>(handle, ia.size() - 1, basis_original.size(), vals.size(), ia, ja, vals);
 
     H_.sort_ja();
 
     for (const auto& p: decoherence) {
-        CUDA_CSR_Matrix<COMPLEX> A(std::move(operator_to_matrix_csr<StateType>(p.second, basis_original)));
+        CUDA_CSR_Matrix<COMPLEX> A(std::move(operator_to_matrix_csr<StateType>(handle, p.second, basis_original)));
         decoherence_.push_back(std::make_pair(p.first, std::move(A)));
     }
 }

@@ -7,6 +7,10 @@
 #include <stack>
 #include "csr_matrix.hpp"
 
+#ifdef __CUDACC__
+#include "cuda_csr_matrix.hpp"
+#endif
+
 namespace QComputations {
 
 namespace {
@@ -350,6 +354,66 @@ inline Matrix<COMPLEX> operator_to_matrix(const Operator<StateType>& op, const B
 }
 
 // !!!!!!!!!!!!!!!!!! REWRITE to CSR_Matrix manipulations vals, ia, ja without copy !!!!!!!!!!!!!!!!!!!!!!
+
+#ifdef __CUDACC__
+template<typename StateType>
+CUDA_CSR_Matrix<COMPLEX> operator_to_matrix_csr(cusparseHandle_t handle, const Operator<StateType>& op, const std::vector<std::shared_ptr<StateType>>& basis) {
+    size_t dim = basis.size();
+    State<StateType> basis_map(basis);
+
+    std::vector<COMPLEX> vals;
+    std::vector<ILP_TYPE> ia({0});
+    std::vector<ILP_TYPE> ja;
+
+    size_t index = 0;
+    for (auto state: basis) {
+        auto res_state = op.run(State<StateType>(state));
+        // std::cout << res_state.to_string() << std::endl;
+        res_state.set_sorted(true);
+
+        // auto res_state_vec = res_state.get_basis();
+        for (auto p: res_state.state_map()) {
+            // std::cout << res_state.to_string() << std::endl;
+            // if (matrix_style == C_STYLE) A[get_index_state_in_basis(*state_res, basis)][col_state] = res_state[index++];
+            // else A(get_index_state_in_basis(*state_res, basis), col_state) = res_state[index++];
+            vals.emplace_back(std::conj(res_state[p.second]));
+            ja.emplace_back(basis_map.get_index(p.first));
+            index++;
+        }
+
+        ia.emplace_back(index);
+    }
+
+    CUDA_CSR_Matrix<COMPLEX> A(handle, ia.size() - 1, basis.size(), vals.size(), ia, ja, vals);
+    A.sort_ja();
+    // std::cout << A.nnz() << std::endl;
+    // if (!A.mkl_matrix()) throw std::runtime_error("operator_to_matrix_csr: MKL handle is null");
+    /*
+    std::function<COMPLEX(size_t i, size_t j)> func = {
+        [&basis, &op](size_t i, size_t j) {
+            auto state_from = get_state_from_basis(basis, j);
+            auto state_to = get_state_from_basis(basis, i);
+            auto res_state = op.run(State<StateType>(*state_from));
+            
+            if (res_state.is_in_state(*state_to)) {
+                return res_state[*state_to];
+            } else {
+                return COMPLEX(0, 0);
+            }
+        }
+    };
+
+    Matrix<COMPLEX> A(C_STYLE, dim, dim, func);
+    */
+
+    return std::move(A);
+}
+
+template<typename StateType>
+inline CUDA_CSR_Matrix<COMPLEX> operator_to_matrix_csr(cusparseHandle_t handle, const Operator<StateType>& op, const BasisType<StateType>& basis) {
+    return std::move(operator_to_matrix_csr(op, sort_basis(basis)));
+}
+#endif
 
 #ifdef ENABLE_ONEAPI
 

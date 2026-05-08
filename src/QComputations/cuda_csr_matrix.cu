@@ -3,21 +3,57 @@
 #include "cuda_csr_matrix.hpp"
 
 namespace QComputations {
-
     template <>
     void optimized_multiply(const CUDA_CSR_Matrix<COMPLEX>& A,
-                            const CUDA_CSR_Matrix<COMPLEX>& B,
-                            CUDA_CSR_Matrix<COMPLEX>& C,
-                            cuDoubleComplex alpha, cuDoubleComplex betta,
-                            char opA, char opB) {
+                                const CUDA_CSR_Matrix<COMPLEX>& B,
+                                CUDA_CSR_Matrix<COMPLEX>& C,
+                                cuDoubleComplex alpha, cuDoubleComplex betta,
+                                char opA, char opB) {
         cusparseHandle_t handle = A.handle();
-        auto opA_cusparse = get_sparse_operation(opA);
-        auto opB_cusparse = get_sparse_operation(opB);
+        cudaStream_t stream = 0;
+
+        static std::unordered_map<cusparseHandle_t, std::pair<void*, size_t>> buf1_cache, buf2_cache;
+
+        auto get_cached_buffer = [&](auto& cache, size_t required) {
+            auto& [ptr, size] = cache[handle];
+            if (ptr && size < required) {
+                std::cout << "HERE1 " << required << std::endl;
+                cudaFree(ptr);
+                ptr = nullptr;
+                size = 0;
+            }
+            if (!ptr) {
+                cudaMalloc(&ptr, required);
+                size = required;
+            }
+            return ptr;
+        };
+
+        if (opA != 'N') {
+            bool is_conjugate = (opA == 'C');
+
+            A.get_transposed(is_conjugate);
+        }
+
+        if (opB != 'N') {
+            bool is_conjugate = (opB == 'C');
+
+            B.get_transposed(is_conjugate);
+        }
+
 
         int64_t C_rows = A.n(), C_cols = B.m();
+        // if (C.n() != C_rows || C.m() != C_cols) {
+        //     // В графе нельзя создавать новые объекты хоста, поэтому изменение C вне графа
+        //     // Вынесем за граф: если размеры не совпадают, пересоздаём C и перезахватываем
+        //     C = CUDA_CSR_Matrix<COMPLEX>(handle, C_rows, C_cols);
+        //     cudaStreamEndCapture(stream, nullptr); // отменить захват
+        //     // Повторный вызов (с новым C)
+        //     optimized_multiply(A, B, C, alpha, betta, opA, opB);
+        //     return;
+        // }
 
-
-        // 1. Извлекаем старые указатели из дескриптора C
+        // Извлечь старые указатели (до захвата)
         int64_t old_rows, old_cols, old_nnz;
         void *d_old_offsets = nullptr, *d_old_cols = nullptr, *d_old_vals = nullptr;
         cusparseIndexType_t off_type, col_type;
@@ -27,65 +63,65 @@ namespace QComputations {
                                 &d_old_offsets, &d_old_cols, &d_old_vals,
                                 &off_type, &col_type, &idx_base, &val_type));
 
-        // 2. Обычная процедура SpGEMM (как в документации)
         cusparseSpGEMMDescr_t spgemmDesc;
         CUSPARSESC(cusparseSpGEMM_createDescr(&spgemmDesc));
 
         size_t bufferSize1 = 0;
-        CUSPARSESC(cusparseSpGEMM_workEstimation(handle, opA_cusparse, opB_cusparse,
-                                                &alpha, A.descr(), B.descr(), &betta,
-                                                C.descr(), CUDA_C_64F, CUSPARSE_SPGEMM_DEFAULT,
+        CUSPARSESC(cusparseSpGEMM_workEstimation(handle, CUSPARSE_OPERATION_NON_TRANSPOSE,
+                                                CUSPARSE_OPERATION_NON_TRANSPOSE,
+                                                &alpha, A.descr(opA), B.descr(opB), &betta,
+                                                C.descr(), CUDA_C_64F, CUSPARSE_SPGEMM_ALG1,
                                                 spgemmDesc, &bufferSize1, nullptr));
-        void* dBuffer1;
-        cudaMalloc(&dBuffer1, bufferSize1);
+        void* dBuffer1 = get_cached_buffer(buf1_cache, bufferSize1);
 
-        CUSPARSESC(cusparseSpGEMM_workEstimation(handle, opA_cusparse, opB_cusparse,
-                                                &alpha, A.descr(), B.descr(), &betta,
-                                                C.descr(), CUDA_C_64F, CUSPARSE_SPGEMM_DEFAULT,
+        CUSPARSESC(cusparseSpGEMM_workEstimation(handle, CUSPARSE_OPERATION_NON_TRANSPOSE,
+                                                CUSPARSE_OPERATION_NON_TRANSPOSE,
+                                                &alpha, A.descr(opA), B.descr(opB), &betta,
+                                                C.descr(), CUDA_C_64F, CUSPARSE_SPGEMM_ALG1,
                                                 spgemmDesc, &bufferSize1, dBuffer1));
 
         size_t bufferSize2 = 0;
-        CUSPARSESC(cusparseSpGEMM_compute(handle, opA_cusparse, opB_cusparse,
-                                        &alpha, A.descr(), B.descr(), &betta,
-                                        C.descr(), CUDA_C_64F, CUSPARSE_SPGEMM_DEFAULT,
+        CUSPARSESC(cusparseSpGEMM_compute(handle, CUSPARSE_OPERATION_NON_TRANSPOSE,
+                                        CUSPARSE_OPERATION_NON_TRANSPOSE,
+                                        &alpha, A.descr(opA), B.descr(opB), &betta,
+                                        C.descr(), CUDA_C_64F, CUSPARSE_SPGEMM_ALG1,
                                         spgemmDesc, &bufferSize2, nullptr));
-        void* dBuffer2;
-        cudaMalloc(&dBuffer2, bufferSize2);
+        void* dBuffer2 = get_cached_buffer(buf2_cache, bufferSize2);
 
-        CUSPARSESC(cusparseSpGEMM_compute(handle, opA_cusparse, opB_cusparse,
-                                        &alpha, A.descr(), B.descr(), &betta,
-                                        C.descr(), CUDA_C_64F, CUSPARSE_SPGEMM_DEFAULT,
+        CUSPARSESC(cusparseSpGEMM_compute(handle, CUSPARSE_OPERATION_NON_TRANSPOSE,
+                                        CUSPARSE_OPERATION_NON_TRANSPOSE,
+                                        &alpha, A.descr(opA), B.descr(opB), &betta,
+                                        C.descr(), CUDA_C_64F, CUSPARSE_SPGEMM_ALG1,
                                         spgemmDesc, &bufferSize2, dBuffer2));
 
         int64_t new_nnz;
         CUSPARSESC(cusparseSpMatGetSize(C.descr(), &C_rows, &C_cols, &new_nnz));
 
-        // 3. Освобождаем старые массивы колонок и значений (offsets сохраняется)
-        if (d_old_cols) cudaFree(d_old_cols);
-        if (d_old_vals) cudaFree(d_old_vals);
+        int *d_new_cols = nullptr;
+        cuDoubleComplex *d_new_vals = nullptr;
 
-        // 4. Выделяем новые col_indices и values
-        int* d_new_cols = nullptr;
-        cuDoubleComplex* d_new_vals = nullptr;
-        if (new_nnz > 0) {
+        if (new_nnz == 0) {
+            if (d_old_cols) cudaFree(d_old_cols);
+            if (d_old_vals) cudaFree(d_old_vals);
+        } else if (d_old_cols && d_old_vals && old_nnz >= new_nnz) {
+            d_new_cols = (int*)d_old_cols;
+            d_new_vals = (cuDoubleComplex*)d_old_vals;
+        } else {
+            if (d_old_cols) cudaFree(d_old_cols);
+            if (d_old_vals) cudaFree(d_old_vals);
             cudaMalloc((void**)&d_new_cols, new_nnz * sizeof(int));
             cudaMalloc((void**)&d_new_vals, new_nnz * sizeof(cuDoubleComplex));
         }
 
-        // 5. Устанавливаем новые указатели в дескриптор
         CUSPARSESC(cusparseCsrSetPointers(C.descr(), (int*)d_old_offsets,
                                         d_new_cols, d_new_vals));
 
-        // 6. Копируем результат
-        CUSPARSESC(cusparseSpGEMM_copy(handle, opA_cusparse, opB_cusparse,
-                                    &alpha, A.descr(), B.descr(), &betta,
-                                    C.descr(), CUDA_C_64F, CUSPARSE_SPGEMM_DEFAULT, spgemmDesc));
+        CUSPARSESC(cusparseSpGEMM_copy(handle, CUSPARSE_OPERATION_NON_TRANSPOSE,
+                                    CUSPARSE_OPERATION_NON_TRANSPOSE,
+                                    &alpha, A.descr(opA), B.descr(opB), &betta,
+                                    C.descr(), CUDA_C_64F, CUSPARSE_SPGEMM_ALG1, spgemmDesc));
 
-        // 7. Очистка временных буферов
-        cudaFree(dBuffer1);
-        cudaFree(dBuffer2);
         CUSPARSESC(cusparseSpGEMM_destroyDescr(spgemmDesc));
-
         C.set_nnz(static_cast<int>(new_nnz));
     }
 
@@ -96,6 +132,23 @@ namespace QComputations {
                             CUDA_Matrix<COMPLEX>& C,
                             cuDoubleComplex alpha, cuDoubleComplex betta,
                             char op) {                             // <-- один параметр op
+        cudaStream_t stream = 0;
+        cusparseHandle_t handle = A.handle();
+        static std::unordered_map<cusparseHandle_t, std::pair<void*, size_t>> bufcache;
+        auto get_cached_buffer = [&](auto& cache, size_t required) {
+            auto& [ptr, size] = cache[handle];
+            if (ptr && size < required) {
+                std::cout << "HERE2 " << required << std::endl;
+                cudaFree(ptr);
+                ptr = nullptr;
+                size = 0;
+            }
+            if (!ptr) {
+                cudaMalloc(&ptr, required);
+                size = required;
+            }
+            return ptr;
+        };
         int A_rows = A.n(), A_cols = A.m();
         int B_rows = B.n(), B_cols = B.m();
 
@@ -126,14 +179,11 @@ namespace QComputations {
         size_t bufferSize;
         cusparseSpMM_bufferSize(spHandle, spTransA, spTransB,
                                 &alpha, A.descr(), B_dn, &betta, C_dn,
-                                CUDA_C_64F, CUSPARSE_SPMM_ALG_DEFAULT, &bufferSize);
-        void* dBuffer;
-        cudaMalloc(&dBuffer, bufferSize);
+                                CUDA_C_64F, CUSPARSE_SPMM_CSR_ALG1, &bufferSize);
+        void* dBuffer = get_cached_buffer(bufcache, bufferSize);
         cusparseSpMM(spHandle, spTransA, spTransB,
                     &alpha, A.descr(), B_dn, &betta, C_dn,
-                    CUDA_C_64F, CUSPARSE_SPMM_ALG_DEFAULT, dBuffer);
-
-        cudaFree(dBuffer);
+                    CUDA_C_64F, CUSPARSE_SPMM_CSR_ALG1, dBuffer);
         cusparseDestroyDnMat(B_dn);
         cusparseDestroyDnMat(C_dn);
     }
@@ -144,7 +194,25 @@ namespace QComputations {
                             const CUDA_CSR_Matrix<COMPLEX>& B,
                             CUDA_Matrix<COMPLEX>& C,
                             cuDoubleComplex alpha, cuDoubleComplex betta,
-                            char op) {                             // <-- один параметр op
+                            char opA, char opB) {                             // <-- один параметр op
+        cudaStream_t stream = 0;
+        cusparseHandle_t handle = B.handle();
+        static std::unordered_map<cusparseHandle_t, std::pair<void*, size_t>> bufcache;
+        auto get_cached_buffer = [&](auto& cache, size_t required) {
+            auto& [ptr, size] = cache[handle];
+            if (ptr && size < required) {
+                std::cout << "HERE3 " << required << std::endl;
+                cudaFree(ptr);
+                ptr = nullptr;
+                size = 0;
+            }
+            if (!ptr) {
+                cudaMalloc(&ptr, required);
+                size = required;
+            }
+            return ptr;
+        };
+
         int A_rows = A.n(), A_cols = A.m(); // column-major
         int B_rows = B.n(), B_cols = B.m();
 
@@ -164,9 +232,15 @@ namespace QComputations {
         // Трюк: C^T = (op(B))^T * A^T
         // spOp для B в SpMM должно быть противоположно op, чтобы получить (op(B))^T
         cusparseOperation_t spOpB;
-        if (op == 'N') spOpB = CUSPARSE_OPERATION_TRANSPOSE;
-        else if (op == 'T') spOpB = CUSPARSE_OPERATION_NON_TRANSPOSE;
-        else if (op == 'C') spOpB = CUSPARSE_OPERATION_CONJUGATE_TRANSPOSE; // если нужно
+        if (opB == 'N') spOpB = CUSPARSE_OPERATION_TRANSPOSE;
+        else if (opB == 'T') spOpB = CUSPARSE_OPERATION_NON_TRANSPOSE;
+        else if (opB == 'C') spOpB = CUSPARSE_OPERATION_CONJUGATE_TRANSPOSE; // если нужно
+        else throw std::invalid_argument("Unsupported op for dense-sparse");
+
+        cusparseOperation_t spOpA;
+        if (opA == 'N') spOpA = CUSPARSE_OPERATION_TRANSPOSE;
+        else if (opA == 'T') spOpA = CUSPARSE_OPERATION_NON_TRANSPOSE;
+        else if (opA == 'C') spOpA = CUSPARSE_OPERATION_CONJUGATE_TRANSPOSE; // если нужно
         else throw std::invalid_argument("Unsupported op for dense-sparse");
 
         CUDA_Matrix<COMPLEX> Ct(blasHandle, B_cols, A_rows);
@@ -177,15 +251,14 @@ namespace QComputations {
                             CUDA_C_64F, CUSPARSE_ORDER_COL);
 
         size_t bufferSize;
-        cusparseSpMM_bufferSize(spHandle, spOpB, CUSPARSE_OPERATION_TRANSPOSE,
+        cusparseSpMM_bufferSize(spHandle, spOpB, spOpA,
                                 &alpha, B.descr(), A_t_dn, &betta, Ct_dn,
-                                CUDA_C_64F, CUSPARSE_SPMM_ALG_DEFAULT, &bufferSize);
-        void* dBuffer;
-        cudaMalloc(&dBuffer, bufferSize);
-        cusparseSpMM(spHandle, spOpB, CUSPARSE_OPERATION_TRANSPOSE,
+                                CUDA_C_64F, CUSPARSE_SPMM_CSR_ALG1, &bufferSize);
+        void* dBuffer = get_cached_buffer(bufcache, bufferSize);
+        cusparseSpMM(spHandle, spOpB, spOpA,
                     &alpha, B.descr(), A_t_dn, &betta, Ct_dn,
-                    CUDA_C_64F, CUSPARSE_SPMM_ALG_DEFAULT, dBuffer);
-        cudaFree(dBuffer);
+                    CUDA_C_64F, CUSPARSE_SPMM_CSR_ALG1, dBuffer);
+        // cudaFree(dBuffer);
         cusparseDestroyDnMat(A_t_dn);
         cusparseDestroyDnMat(Ct_dn);
 
