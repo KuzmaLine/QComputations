@@ -5,7 +5,7 @@
 #include <chrono>
 
 constexpr bool is_python_api = false;
-constexpr int max_photons = 256;
+constexpr int max_photons = 64;
 
 using COMPLEX = std::complex<double>;
 
@@ -39,7 +39,7 @@ int main(int argc, char** argv) {
     // } // ???
     // std::cout << H.size() << std::endl;
 
-    auto time_vec = linspace(0, 100, 1000);
+    auto time_vec = linspace(0, 100, 500);
 
     std::cout << "H size = " << H.size() << " TIME SIZE = " << time_vec.size() << std::endl;
 

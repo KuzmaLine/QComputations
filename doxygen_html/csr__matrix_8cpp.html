@@ -1,0 +1,137 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=9"/>
+<meta name="generator" content="Doxygen 1.9.1"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>QComputations: Файл /home/kuzmaline/Quantum/QComputations/QComputations/src/QComputations/csr_matrix.cpp</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="dynsections.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="resize.js"></script>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr style="height: 56px;">
+  <td id="projectalign" style="padding-left: 0.5em;">
+   <div id="projectname">QComputations
+   &#160;<span id="projectnumber">9c59715</span>
+   </div>
+   <div id="projectbrief">Quantum-mechanical simulation library: time-dependent Hamiltonians, states, matrices; CPU/CUDA/MPI backends</div>
+  </td>
+ </tr>
+ </tbody>
+</table>
+</div>
+<!-- end header part -->
+<!-- Создано системой Doxygen 1.9.1 -->
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+var searchBox = new SearchBox("searchBox", "search",false,'Поиск','.html');
+/* @license-end */
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(function() {
+  initMenu('',true,false,'search.php','Поиск');
+  $(document).ready(function() { init_search(); });
+});
+/* @license-end */</script>
+<div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(document).ready(function(){initNavTree('csr__matrix_8cpp.html',''); initResizable(); });
+/* @license-end */
+</script>
+<div id="doc-content">
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<iframe src="javascript:void(0)" frameborder="0" 
+        name="MSearchResults" id="MSearchResults">
+</iframe>
+</div>
+
+<div class="header">
+  <div class="summary">
+<a href="#namespaces">Пространства имен</a> &#124;
+<a href="#func-members">Функции</a>  </div>
+  <div class="headertitle">
+<div class="title">Файл csr_matrix.cpp</div>  </div>
+</div><!--header-->
+<div class="contents">
+<div class="textblock"><code>#include &quot;<a class="el" href="csr__matrix_8hpp_source.html">csr_matrix.hpp</a>&quot;</code><br />
+<code>#include &lt;mkl_trans.h&gt;</code><br />
+</div><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="namespaces"></a>
+Пространства имен</h2></td></tr>
+<tr class="memitem:namespaceQComputations"><td class="memItemLeft" align="right" valign="top"> &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceQComputations.html">QComputations</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
+Функции</h2></td></tr>
+<tr class="memitem:a71afa020c4b26271745d6a8ee001fb1a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceQComputations.html#a71afa020c4b26271745d6a8ee001fb1a">QComputations::sparse_spmm</a> (const sparse_matrix_t A, const sparse_matrix_t B, sparse_matrix_t *C, char op)</td></tr>
+<tr class="separator:a71afa020c4b26271745d6a8ee001fb1a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8d90fcfdeb0254100c114ad27113f234"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceQComputations.html#a8d90fcfdeb0254100c114ad27113f234">QComputations::sparse_add</a> (const sparse_matrix_t A, const sparse_matrix_t B, sparse_matrix_t *C, double alpha, char op)</td></tr>
+<tr class="separator:a8d90fcfdeb0254100c114ad27113f234"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6c8e3a420a34ec0cd0b883093d52b59f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceQComputations.html#a6c8e3a420a34ec0cd0b883093d52b59f">QComputations::sparse_add</a> (const sparse_matrix_t A, const sparse_matrix_t B, sparse_matrix_t *C, COMPLEX alpha, char op)</td></tr>
+<tr class="separator:a6c8e3a420a34ec0cd0b883093d52b59f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1b0175a12a6b0e4b737d744f18003f30"><td class="memItemLeft" align="right" valign="top">template&lt;&gt; </td></tr>
+<tr class="memitem:a1b0175a12a6b0e4b737d744f18003f30"><td class="memTemplItemLeft" align="right" valign="top">CSR_Matrix&lt; COMPLEX &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceQComputations.html#a1b0175a12a6b0e4b737d744f18003f30">QComputations::sparse_add</a> (const CSR_Matrix&lt; COMPLEX &gt; &amp;A, const CSR_Matrix&lt; COMPLEX &gt; &amp;B, COMPLEX alpha, char op)</td></tr>
+<tr class="separator:a1b0175a12a6b0e4b737d744f18003f30"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a75d9b3eeb39eea1f8e92c2e8b5902ef5"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceQComputations.html#a75d9b3eeb39eea1f8e92c2e8b5902ef5">QComputations::sparse_syrd</a> (const CSR_Matrix&lt; COMPLEX &gt; &amp;A, const Matrix&lt; COMPLEX &gt; &amp;B, Matrix&lt; COMPLEX &gt; &amp;C, COMPLEX alpha, COMPLEX betta, char op)</td></tr>
+<tr class="separator:a75d9b3eeb39eea1f8e92c2e8b5902ef5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aba3f9a8ef89b402f452e5ba0053f9d20"><td class="memItemLeft" align="right" valign="top">template&lt;&gt; </td></tr>
+<tr class="memitem:aba3f9a8ef89b402f452e5ba0053f9d20"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceQComputations.html#aba3f9a8ef89b402f452e5ba0053f9d20">QComputations::optimized_multiply</a> (const CSR_Matrix&lt; COMPLEX &gt; &amp;A, const CSR_Matrix&lt; COMPLEX &gt; &amp;B, CSR_Matrix&lt; COMPLEX &gt; &amp;C, COMPLEX alpha, COMPLEX betta, char op)</td></tr>
+<tr class="separator:aba3f9a8ef89b402f452e5ba0053f9d20"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae537a91c0215fa5c8d5f65b47982ad68"><td class="memItemLeft" align="right" valign="top">template&lt;&gt; </td></tr>
+<tr class="memitem:ae537a91c0215fa5c8d5f65b47982ad68"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceQComputations.html#ae537a91c0215fa5c8d5f65b47982ad68">QComputations::optimized_multiply</a> (const CSR_Matrix&lt; double &gt; &amp;A, const Matrix&lt; double &gt; &amp;B, Matrix&lt; double &gt; &amp;C, double alpha, double betta, char op)</td></tr>
+<tr class="separator:ae537a91c0215fa5c8d5f65b47982ad68"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abdce599dcfb30c1e8c1d991f36463db9"><td class="memItemLeft" align="right" valign="top">template&lt;&gt; </td></tr>
+<tr class="memitem:abdce599dcfb30c1e8c1d991f36463db9"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceQComputations.html#abdce599dcfb30c1e8c1d991f36463db9">QComputations::optimized_multiply</a> (const CSR_Matrix&lt; COMPLEX &gt; &amp;A, const Matrix&lt; COMPLEX &gt; &amp;B, Matrix&lt; COMPLEX &gt; &amp;C, COMPLEX alpha, COMPLEX betta, char op)</td></tr>
+<tr class="separator:abdce599dcfb30c1e8c1d991f36463db9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa61561c1db878f470b80895cbff37134"><td class="memItemLeft" align="right" valign="top">template&lt;&gt; </td></tr>
+<tr class="memitem:aa61561c1db878f470b80895cbff37134"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceQComputations.html#aa61561c1db878f470b80895cbff37134">QComputations::optimized_multiply</a> (const Matrix&lt; COMPLEX &gt; &amp;A, const CSR_Matrix&lt; COMPLEX &gt; &amp;B, Matrix&lt; COMPLEX &gt; &amp;C, COMPLEX alpha, COMPLEX betta, char op)</td></tr>
+<tr class="separator:aa61561c1db878f470b80895cbff37134"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table>
+</div><!-- contents -->
+</div><!-- doc-content -->
+<!-- start footer part -->
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><a class="el" href="dir_68267d1309a1af8e8297ef4c3efbcdba.html">src</a></li><li class="navelem"><a class="el" href="dir_199c3add0de77dd12f192c4717b1a7b5.html">QComputations</a></li><li class="navelem"><a class="el" href="csr__matrix_8cpp.html">csr_matrix.cpp</a></li>
+    <li class="footer">Создано системой <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+  </ul>
+</div>
+</body>
+</html>

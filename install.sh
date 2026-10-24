@@ -35,11 +35,11 @@ sudo chmod +x $1/QComputations/seaborn_plot.py
 #sudo mv ./*.so $2/.
 #cd ..
 
-cd cuda
-cmake -B .
-make -j4 -B
-sudo mv ./*.so $2/.
-cd ..
+#cd cuda
+#cmake -B .
+#make -j4 -B
+#sudo mv ./*.so $2/.
+#cd ..
 
 #cd cpu_cluster
 #cmake -DCMAKE_CXX_COMPILER=mpiicpx -B .
@@ -48,7 +48,7 @@ cd ..
 #cd ..
 
 
-# cd single
-# cmake -DCMAKE_CXX_COMPILER=icpx -B .
-# make -j4 -B
-# sudo mv ./*.so $2/.
+cd single
+cmake -DCMAKE_CXX_COMPILER=icpx -B .
+make -j4 -B
+sudo mv ./*.so $2/.

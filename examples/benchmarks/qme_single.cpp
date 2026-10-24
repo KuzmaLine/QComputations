@@ -6,7 +6,7 @@
 #include <mkl.h>
 
 constexpr bool is_python_api = false;
-constexpr int max_photons = 1;
+constexpr int max_photons = 64;
 
 using COMPLEX = std::complex<double>;
 
@@ -18,25 +18,26 @@ int main(int argc, char** argv) {
     double w = QConfig::instance().w(); // Получить частоту
     QConfig::instance().set_g(0.005); // сила взаимодействия с полем атома
     QConfig::instance().set_max_photons(max_photons);
+    QConfig::instance().set_qme_algorithm(RUNGE_KUTT_4);
 
-    std::vector<size_t> grid_config = {1, 1};
+    std::vector<size_t> grid_config = {2};
 
     TCH_State state(grid_config);
     state.set_n(QConfig::instance().max_photons(), 0);
-    state.set_waveguide(0, 1, 0.01);
-    state.set_leak_for_cavity(0, 0.2);
+    // state.set_waveguide(0, 1, 0.01);
+    state.set_leak_for_cavity(0, 0.1);
     
     H_TCH H(state);
 
-    show_basis(H.get_basis());
+    // show_basis(H.get_basis());
 
-    H.show();
+    // H.show();
     
-    return 0;
+    // return 0;
     
     // std::cout << H.size() << std::endl;
 
-    auto time_vec = linspace(0, 50, 50);
+    auto time_vec = linspace(0, 100, 500);
 
     std::cout << "H size = " << H.size() << " TIME SIZE = " << time_vec.size() << std::endl;
 

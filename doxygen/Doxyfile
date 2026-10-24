@@ -1,0 +1,81 @@
+# ============================================================================
+# QComputations — Doxygen configuration (авто-документация)
+# ----------------------------------------------------------------------------
+# Цель   : C++/CUDA ядро библиотеки  ->  ../src/QComputations
+# Сборка : doxygen          (обёртка: ./generate.sh)
+# Вывод  : HTML (tree view + поиск + call/class-диаграммы через Graphviz)
+# ----------------------------------------------------------------------------
+# Запуск :
+#   cd doxygen && ./generate.sh [single|cluster|cuda|blocked_cuda]
+# ----------------------------------------------------------------------------
+# Места с @...@ подставляются генератором (generate.sh):
+#   @QCOMP_VERSION@       -> git describe (или "dev")
+#   @QCOMP_PREDEFINED@    -> набор feature-макросов для выбранного варианта
+#   @QCOMP_FILE_PATTERNS  -> список расширений (РАЗДЕЛЯЕТСЯ ПРОБЕЛАМИ!)
+# ============================================================================
+
+# ---- Общие ---------------------------------------------------------------
+PROJECT_NAME           = QComputations
+PROJECT_NUMBER         = @QCOMP_VERSION@
+PROJECT_BRIEF          = "Quantum-mechanical simulation library: time-dependent Hamiltonians, states, matrices; CPU/CUDA/MPI backends"
+OUTPUT_LANGUAGE        = Russian     # поменяй на English для англ. подписей UI
+QUIET                  = NO          # YES = тише, NO = прогресс на экран
+WARN                   = YES
+WARN_IF_UNDOCUMENTED  = NO          # включай (YES), когда начнёшь писать @brief
+
+# ---- Исходники -----------------------------------------------------------
+INPUT                  = ../src/QComputations
+RECURSIVE              = YES
+FILE_PATTERNS          = @QCOMP_FILE_PATTERNS@
+EXCLUDE_PATTERNS       = *exprtk.hpp *matplotlibcpp.hpp   # сторонние вендор-хедеры
+EXCLUDE_SYMBOLS        =
+INCLUDE_FILE_PATTERNS  =
+
+# ---- Извлечение ----------------------------------------------------------
+EXTRACT_ALL            = YES        # документировать ВСЁ, даже без @brief -> полный референс
+EXTRACT_PRIVATE        = YES
+EXTRACT_STATIC         = YES
+EXTRACT_LOCAL_CLASSES  = YES
+EXTRACT_ANON_NSPACES   = NO
+HIDE_UNDOC_MEMBERS     = NO
+HIDE_UNDOC_CLASSES     = NO
+HIDE_IN_BODY_DOCS      = NO
+INHERIT_DOCS           = YES        # наследовать доки от базового класса
+INLINE_INHERITED_MEMBERS = YES
+OPTIMIZE_OUTPUT_FOR_C  = YES
+CASE_SENSESITIVE_NAMES = NO
+BUILTIN_STL_SUPPORT    = YES
+TEMPLATE_RELATIONS     = NO
+CLASS_DIAGRAMS         = YES
+DISTRIBUTE_GROUP_DOC   = YES
+
+# ---- Макросы / парсинг ---------------------------------------------------
+MACRO_EXPANSION        = YES
+EXPAND_AS_DEFINED      =
+PREDEFINED             = @QCOMP_PREDEFINED@
+SKIP_FUNCTION_BODIES   = YES        # чистые сигнатуры API; NO -> вставлять тела функций
+HIDE_SCOPE_NAMES       = NO
+HIDE_PROTOTYPES        = NO
+SHOW_INCLUDE_FILES     = YES
+
+# ---- Диаграммы (нужен Graphviz) ------------------------------------------
+HAVE_DOT               = YES
+DOT_MULTI_TARGETS      = NO
+MAX_DOT_GRAPH_NODES    = 64
+GENERATE_TREEVIEW      = YES
+CLASS_GRAPH            = YES
+COLLAB_GRAPH           = YES
+CALLER_GRAPH           = YES
+CALLEE_GRAPH           = YES
+GENERATE_LEGEND        = YES
+DOT_CLEANUP            = YES
+
+# ---- Вывод ---------------------------------------------------------------
+# OUTPUT_DIRECTORY = '..'  =>  HTML попадает в  ../doxygen_html/  (сibling к doxygen/)
+OUTPUT_DIRECTORY       = ..
+GENERATE_HTML          = YES
+HTML_OUTPUT            = doxygen_html
+SEARCHENGINE           = YES
+USE_HYPERLINKS         = YES
+GENERATE_LATEX         = NO        # у проекта уже есть свои LaTeX-доки в doc/
+GENERATE_XML           = NO

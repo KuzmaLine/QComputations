@@ -1,0 +1,33 @@
+# AMPLXE_PERF_STAT
+# hostname : DESKTOP-VU0Q5Q4
+# os release : 6.6.87.2-microsoft-standard-WSL2
+# arch : x86_64
+# cpuid : GenuineIntel,6,158,12
+# cpudesc : Intel(R) Core(TM) i9-9900K CPU @ 3.60GHz
+# total memory : 24578232 kB
+# nrcpus online : 16
+# nrcpus avail : 16
+# sibling cores : 0-15
+# sibling threads : 0-1
+# sibling threads : 2-3
+# sibling threads : 4-5
+# sibling threads : 6-7
+# sibling threads : 8-9
+# sibling threads : 10-11
+# sibling threads : 12-13
+# sibling threads : 14-15
+# process id : 18924
+;;350700456320;0
+;;270232017900;1
+;;602758405698;2
+;;1800796927;3
+;;832156742;4
+;;428;5
+;;0;6
+;;0;7
+;;3216173;8
+;;551282;9
+;;471044496062;10
+;;14381686;11
+;;646824843485;12
+;;664861474884;13

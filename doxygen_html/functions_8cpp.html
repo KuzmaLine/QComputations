@@ -1,0 +1,206 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=9"/>
+<meta name="generator" content="Doxygen 1.9.1"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>QComputations: Файл /home/kuzmaline/Quantum/QComputations/QComputations/src/QComputations/functions.cpp</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="dynsections.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="resize.js"></script>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr style="height: 56px;">
+  <td id="projectalign" style="padding-left: 0.5em;">
+   <div id="projectname">QComputations
+   &#160;<span id="projectnumber">9c59715</span>
+   </div>
+   <div id="projectbrief">Quantum-mechanical simulation library: time-dependent Hamiltonians, states, matrices; CPU/CUDA/MPI backends</div>
+  </td>
+ </tr>
+ </tbody>
+</table>
+</div>
+<!-- end header part -->
+<!-- Создано системой Doxygen 1.9.1 -->
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+var searchBox = new SearchBox("searchBox", "search",false,'Поиск','.html');
+/* @license-end */
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(function() {
+  initMenu('',true,false,'search.php','Поиск');
+  $(document).ready(function() { init_search(); });
+});
+/* @license-end */</script>
+<div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(document).ready(function(){initNavTree('functions_8cpp.html',''); initResizable(); });
+/* @license-end */
+</script>
+<div id="doc-content">
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<iframe src="javascript:void(0)" frameborder="0" 
+        name="MSearchResults" id="MSearchResults">
+</iframe>
+</div>
+
+<div class="header">
+  <div class="summary">
+<a href="#namespaces">Пространства имен</a> &#124;
+<a href="#define-members">Макросы</a> &#124;
+<a href="#func-members">Функции</a>  </div>
+  <div class="headertitle">
+<div class="title">Файл functions.cpp</div>  </div>
+</div><!--header-->
+<div class="contents">
+<div class="textblock"><code>#include &quot;<a class="el" href="functions_8hpp_source.html">functions.hpp</a>&quot;</code><br />
+<code>#include &lt;algorithm&gt;</code><br />
+<code>#include &lt;numeric&gt;</code><br />
+<code>#include &lt;iostream&gt;</code><br />
+<code>#include &quot;<a class="el" href="config_8hpp_source.html">config.hpp</a>&quot;</code><br />
+<code>#include &lt;cassert&gt;</code><br />
+<code>#include &lt;regex&gt;</code><br />
+</div><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="namespaces"></a>
+Пространства имен</h2></td></tr>
+<tr class="memitem:namespaceQComputations"><td class="memItemLeft" align="right" valign="top"> &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceQComputations.html">QComputations</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="define-members"></a>
+Макросы</h2></td></tr>
+<tr class="memitem:a1fa119034fee07a6d5449926cbb7915a"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="functions_8cpp.html#a1fa119034fee07a6d5449926cbb7915a">MKL_Complex16</a>&#160;&#160;&#160;std::complex&lt;double&gt;</td></tr>
+<tr class="separator:a1fa119034fee07a6d5449926cbb7915a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
+Функции</h2></td></tr>
+<tr class="memitem:a9bb2741c1bf3e56468bebf8cda9ff3b0"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceQComputations.html#a9bb2741c1bf3e56468bebf8cda9ff3b0">QComputations::vector_to_string</a> (const std::vector&lt; std::string &gt; &amp;inp)</td></tr>
+<tr class="separator:a9bb2741c1bf3e56468bebf8cda9ff3b0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad9df8d4e24e1358e117324aa1f6967a3"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceQComputations.html#ad9df8d4e24e1358e117324aa1f6967a3">QComputations::is_zero</a> (double a, double eps)</td></tr>
+<tr class="separator:ad9df8d4e24e1358e117324aa1f6967a3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a44c09bd1fc137366788a3bf72230237d"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceQComputations.html#a44c09bd1fc137366788a3bf72230237d">QComputations::is_zero</a> (COMPLEX a, double eps)</td></tr>
+<tr class="separator:a44c09bd1fc137366788a3bf72230237d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad64c75b19f4ec6aca6d1d3d9c19290e3"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceQComputations.html#ad64c75b19f4ec6aca6d1d3d9c19290e3">QComputations::is_digit</a> (char c)</td></tr>
+<tr class="separator:ad64c75b19f4ec6aca6d1d3d9c19290e3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afa7a22c3747a7a688f37d5652163692d"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceQComputations.html#afa7a22c3747a7a688f37d5652163692d">QComputations::make_state_regex_pattern</a> (const std::string &amp;format, bool is_freq_display, bool is_sequence)</td></tr>
+<tr class="separator:afa7a22c3747a7a688f37d5652163692d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8be493fa1f8f0c22a597385a78cc2f39"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceQComputations.html#a8be493fa1f8f0c22a597385a78cc2f39">QComputations::make_rank_map</a> (size_t size, int rank, int world_size, size_t &amp;start_col, size_t &amp;count)</td></tr>
+<tr class="separator:a8be493fa1f8f0c22a597385a78cc2f39"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2fc518e054cfffea44c418be63cdc3e1"><td class="memItemLeft" align="right" valign="top">std::function&lt; double(double)&gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceQComputations.html#a2fc518e054cfffea44c418be63cdc3e1">QComputations::Cubic_Spline_Interpolate</a> (const std::vector&lt; double &gt; &amp;x, const std::vector&lt; double &gt; &amp;f)</td></tr>
+<tr class="separator:a2fc518e054cfffea44c418be63cdc3e1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a02845af8058d09578fd377254f92c75b"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceQComputations.html#a02845af8058d09578fd377254f92c75b">QComputations::Ck_n</a> (size_t k, size_t n)</td></tr>
+<tr class="separator:a02845af8058d09578fd377254f92c75b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a75dd9ff679bc44dd8fce5c8aa21cd59e"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceQComputations.html#a75dd9ff679bc44dd8fce5c8aa21cd59e">QComputations::fsolve</a> (std::function&lt; double(double)&gt; f, double a, double b, double target, double eps)</td></tr>
+<tr class="separator:a75dd9ff679bc44dd8fce5c8aa21cd59e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5ab48ef0baca398187fc49160d3fa9a6"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceQComputations.html#a5ab48ef0baca398187fc49160d3fa9a6">QComputations::fmin</a> (std::function&lt; double(double)&gt; f, double a, double b, double eps)</td></tr>
+<tr class="separator:a5ab48ef0baca398187fc49160d3fa9a6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa088b82859fbb3f907c56765c89ff5a6"><td class="memItemLeft" align="right" valign="top">std::vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceQComputations.html#aa088b82859fbb3f907c56765c89ff5a6">QComputations::FROM_double_TO_vector</a> (double *A, lapack_int n)</td></tr>
+<tr class="separator:aa088b82859fbb3f907c56765c89ff5a6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a940fad2f48da0a16ee610e1511949e3b"><td class="memItemLeft" align="right" valign="top">Matrix&lt; COMPLEX &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceQComputations.html#a940fad2f48da0a16ee610e1511949e3b">QComputations::FROM_lapack_complex_double_TO_Matrix</a> (lapack_complex_double *A, lapack_int n, lapack_int m)</td></tr>
+<tr class="separator:a940fad2f48da0a16ee610e1511949e3b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aeeded565da019516c4723b1673fa35a3"><td class="memItemLeft" align="right" valign="top">std::vector&lt; COMPLEX &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceQComputations.html#aeeded565da019516c4723b1673fa35a3">QComputations::fftshift</a> (const std::vector&lt; COMPLEX &gt; &amp;in)</td></tr>
+<tr class="separator:aeeded565da019516c4723b1673fa35a3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a752e121c69bb4da8fa7f31c165eaa102"><td class="memItemLeft" align="right" valign="top">std::vector&lt; COMPLEX &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceQComputations.html#a752e121c69bb4da8fa7f31c165eaa102">QComputations::fft_forward</a> (const std::vector&lt; COMPLEX &gt; &amp;v)</td></tr>
+<tr class="separator:a752e121c69bb4da8fa7f31c165eaa102"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a788d90fb971b828130d9c20e240491de"><td class="memItemLeft" align="right" valign="top">std::vector&lt; COMPLEX &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceQComputations.html#a788d90fb971b828130d9c20e240491de">QComputations::fft_backward</a> (const std::vector&lt; COMPLEX &gt; &amp;v)</td></tr>
+<tr class="separator:a788d90fb971b828130d9c20e240491de"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac3ae4ee0c3a4d27d5e4851280e61df39"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceQComputations.html#ac3ae4ee0c3a4d27d5e4851280e61df39">QComputations::scalar_product</a> (const std::vector&lt; double &gt; &amp;a, const std::vector&lt; double &gt; &amp;b)</td></tr>
+<tr class="separator:ac3ae4ee0c3a4d27d5e4851280e61df39"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a589f78f0ede6a07862a29bf21f31d13b"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceQComputations.html#a589f78f0ede6a07862a29bf21f31d13b">QComputations::scalar_product</a> (double *a, double *b, ILP_TYPE size)</td></tr>
+<tr class="separator:a589f78f0ede6a07862a29bf21f31d13b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a588c83573e3e87d49d5ce1bf9d3c3548"><td class="memItemLeft" align="right" valign="top">COMPLEX&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceQComputations.html#a588c83573e3e87d49d5ce1bf9d3c3548">QComputations::scalar_product</a> (const std::vector&lt; COMPLEX &gt; &amp;a, const std::vector&lt; COMPLEX &gt; &amp;b)</td></tr>
+<tr class="separator:a588c83573e3e87d49d5ce1bf9d3c3548"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac3b84147ae011660e31ea5e774cc4e59"><td class="memItemLeft" align="right" valign="top">COMPLEX&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceQComputations.html#ac3b84147ae011660e31ea5e774cc4e59">QComputations::scalar_product</a> (COMPLEX *a, COMPLEX *b, ILP_TYPE size)</td></tr>
+<tr class="separator:ac3b84147ae011660e31ea5e774cc4e59"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac3674e334b58f364b76dfd0595e45ceb"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceQComputations.html#ac3674e334b58f364b76dfd0595e45ceb">QComputations::scalar_product</a> (const std::vector&lt; int &gt; &amp;a, const std::vector&lt; int &gt; &amp;b)</td></tr>
+<tr class="separator:ac3674e334b58f364b76dfd0595e45ceb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8ddfe65f86717eb08368a07486752772"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceQComputations.html#a8ddfe65f86717eb08368a07486752772">QComputations::scalar_product</a> (int *a, int *b, ILP_TYPE size)</td></tr>
+<tr class="separator:a8ddfe65f86717eb08368a07486752772"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4646b52187ea2de17ca4537e0a011041"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceQComputations.html#a4646b52187ea2de17ca4537e0a011041">QComputations::and_sum</a> (int *a, int *b, ILP_TYPE size)</td></tr>
+<tr class="separator:a4646b52187ea2de17ca4537e0a011041"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac913735b1ff3b41e9b8a091cd4e3ee7f"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceQComputations.html#ac913735b1ff3b41e9b8a091cd4e3ee7f">QComputations::norm</a> (const std::vector&lt; COMPLEX &gt; &amp;v)</td></tr>
+<tr class="separator:ac913735b1ff3b41e9b8a091cd4e3ee7f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a32fe1b3afe52179582b1ccc23b152d0d"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceQComputations.html#a32fe1b3afe52179582b1ccc23b152d0d">QComputations::off</a> (const Matrix&lt; double &gt; &amp;A)</td></tr>
+<tr class="separator:a32fe1b3afe52179582b1ccc23b152d0d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a56fabf913bea1e0dc6b555c03166114b"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceQComputations.html#a56fabf913bea1e0dc6b555c03166114b">QComputations::get_index_from_state</a> (vec_levels state)</td></tr>
+<tr class="separator:a56fabf913bea1e0dc6b555c03166114b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa9374d280248de373c6d9e0224f45e68"><td class="memItemLeft" align="right" valign="top">std::pair&lt; double, double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceQComputations.html#aa9374d280248de373c6d9e0224f45e68">QComputations::givens</a> (double a, double b, double eps)</td></tr>
+<tr class="separator:aa9374d280248de373c6d9e0224f45e68"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9efb6589570c87d696b1f1efd24b4e02"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceQComputations.html#a9efb6589570c87d696b1f1efd24b4e02">QComputations::tridiagonal_QR</a> (Matrix&lt; double &gt; &amp;T)</td></tr>
+<tr class="separator:a9efb6589570c87d696b1f1efd24b4e02"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a86150974c9b5625c5f19d22ddd9a8f5e"><td class="memItemLeft" align="right" valign="top">Matrix&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceQComputations.html#a86150974c9b5625c5f19d22ddd9a8f5e">QComputations::MGS</a> (const Matrix&lt; COMPLEX &gt; &amp;A, double eps=QConfig::instance().eps())</td></tr>
+<tr class="separator:a86150974c9b5625c5f19d22ddd9a8f5e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3594c724243e53e94ad9ad954e3df3d8"><td class="memItemLeft" align="right" valign="top">std::pair&lt; std::vector&lt; double &gt;, Matrix&lt; double &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceQComputations.html#a3594c724243e53e94ad9ad954e3df3d8">QComputations::jacobi</a> (const Matrix&lt; double &gt; &amp;A, double eps=QConfig::instance().eps())</td></tr>
+<tr class="separator:a3594c724243e53e94ad9ad954e3df3d8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a155e10506f335995dece3e691ff198be"><td class="memItemLeft" align="right" valign="top">std::pair&lt; std::vector&lt; double &gt;, Matrix&lt; COMPLEX &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceQComputations.html#a155e10506f335995dece3e691ff198be">QComputations::Hermit_Lanczos</a> (const Matrix&lt; COMPLEX &gt; &amp;A)</td></tr>
+<tr class="separator:a155e10506f335995dece3e691ff198be"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a27480631b3ad0fd5c80a51dda975485a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceQComputations.html#a27480631b3ad0fd5c80a51dda975485a">QComputations::cblas_MM_double_complex</a> (COMPLEX *A, COMPLEX *B, COMPLEX *C, int n, int k, int m, double alpha, double betta)</td></tr>
+<tr class="separator:a27480631b3ad0fd5c80a51dda975485a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a26969fbefa728faa5fa9268d91199753"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceQComputations.html#a26969fbefa728faa5fa9268d91199753">QComputations::cblas_MM_double</a> (double *A, double *B, double *C, int n, int k, int m, double alpha, double betta)</td></tr>
+<tr class="separator:a26969fbefa728faa5fa9268d91199753"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab2c03dc97c9e926aa37e9a48f76125aa"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceQComputations.html#ab2c03dc97c9e926aa37e9a48f76125aa">QComputations::cblas_MM_int</a> (int *A, int *B, int *C, int n, int k, int m, double alpha, double betta)</td></tr>
+<tr class="separator:ab2c03dc97c9e926aa37e9a48f76125aa"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table>
+<h2 class="groupheader">Макросы</h2>
+<a id="a1fa119034fee07a6d5449926cbb7915a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1fa119034fee07a6d5449926cbb7915a">&#9670;&nbsp;</a></span>MKL_Complex16</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define MKL_Complex16&#160;&#160;&#160;std::complex&lt;double&gt;</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+</div><!-- contents -->
+</div><!-- doc-content -->
+<!-- start footer part -->
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><a class="el" href="dir_68267d1309a1af8e8297ef4c3efbcdba.html">src</a></li><li class="navelem"><a class="el" href="dir_199c3add0de77dd12f192c4717b1a7b5.html">QComputations</a></li><li class="navelem"><a class="el" href="functions_8cpp.html">functions.cpp</a></li>
+    <li class="footer">Создано системой <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+  </ul>
+</div>
+</body>
+</html>

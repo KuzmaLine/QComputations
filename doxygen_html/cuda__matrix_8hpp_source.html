@@ -1,0 +1,272 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=9"/>
+<meta name="generator" content="Doxygen 1.9.1"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>QComputations: Исходный файл /home/kuzmaline/Quantum/QComputations/QComputations/src/QComputations/cuda_matrix.hpp</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="dynsections.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="resize.js"></script>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr style="height: 56px;">
+  <td id="projectalign" style="padding-left: 0.5em;">
+   <div id="projectname">QComputations
+   &#160;<span id="projectnumber">9c59715</span>
+   </div>
+   <div id="projectbrief">Quantum-mechanical simulation library: time-dependent Hamiltonians, states, matrices; CPU/CUDA/MPI backends</div>
+  </td>
+ </tr>
+ </tbody>
+</table>
+</div>
+<!-- end header part -->
+<!-- Создано системой Doxygen 1.9.1 -->
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+var searchBox = new SearchBox("searchBox", "search",false,'Поиск','.html');
+/* @license-end */
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(function() {
+  initMenu('',true,false,'search.php','Поиск');
+  $(document).ready(function() { init_search(); });
+});
+/* @license-end */</script>
+<div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(document).ready(function(){initNavTree('cuda__matrix_8hpp_source.html',''); initResizable(); });
+/* @license-end */
+</script>
+<div id="doc-content">
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<iframe src="javascript:void(0)" frameborder="0" 
+        name="MSearchResults" id="MSearchResults">
+</iframe>
+</div>
+
+<div class="header">
+  <div class="headertitle">
+<div class="title">cuda_matrix.hpp</div>  </div>
+</div><!--header-->
+<div class="contents">
+<a href="cuda__matrix_8hpp.html">См. документацию.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="preprocessor">#ifdef __CUDACC__</span></div>
+<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160; </div>
+<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="preprocessor">#pragma once</span></div>
+<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="preprocessor">#include &lt;iostream&gt;</span></div>
+<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="cuda__functions_8hpp.html">cuda_functions.hpp</a>&quot;</span></div>
+<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="preprocessor">#include &lt;typeinfo&gt;</span></div>
+<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160; </div>
+<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespaceQComputations.html">QComputations</a> {</div>
+<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160; </div>
+<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> T, <span class="keyword">typename</span> GPU_T = <span class="keyword">typename</span> std::conditional_t&lt;</div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;    std::is_same&lt;T, COMPLEX&gt;::value, cuDoubleComplex,</div>
+<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;    <span class="keyword">typename</span> std::conditional_t&lt;std::is_same&lt;T, double&gt;::value, double, <span class="keywordtype">void</span>&gt;&gt;</div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;&gt;</div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="keyword">class </span>CUDA_Matrix {</div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;    <span class="keyword">public</span>:</div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;        <span class="keyword">explicit</span> CUDA_Matrix() = <span class="keywordflow">default</span>;</div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;        <span class="keyword">explicit</span> CUDA_Matrix(cublasHandle_t handle, ILP_TYPE n, ILP_TYPE m): handle_(handle), n_(n), m_(m) {</div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;            CUDA::cudaMalloc(<span class="keyword">reinterpret_cast&lt;</span><span class="keywordtype">void</span>**<span class="keyword">&gt;</span>(&amp;dev_mass_), <span class="keyword">sizeof</span>(GPU_T) * n_ * m_);</div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;        }</div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160; </div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;        <span class="keyword">explicit</span> CUDA_Matrix(cublasHandle_t handle, ILP_TYPE n, ILP_TYPE m, <span class="keyword">const</span> std::vector&lt;T&gt;&amp; matrix): handle_(handle), n_(n), m_(m) {</div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;            CUDA::cudaMalloc(<span class="keyword">reinterpret_cast&lt;</span><span class="keywordtype">void</span>**<span class="keyword">&gt;</span>(&amp;dev_mass_), <span class="keyword">sizeof</span>(GPU_T) * n_ * m_);</div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;            CUDA::cublasSetMatrix(n_, m_, <span class="keyword">sizeof</span>(T), matrix.data(), n_, dev_mass_, m_);</div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;        }</div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160; </div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;        <span class="keyword">explicit</span> CUDA_Matrix(cublasHandle_t handle, ILP_TYPE n, ILP_TYPE m, T default_value): handle_(handle), n_(n), m_(m) {</div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;            CUDA::cudaMalloc(<span class="keyword">reinterpret_cast&lt;</span><span class="keywordtype">void</span>**<span class="keyword">&gt;</span>(&amp;dev_mass_), <span class="keyword">sizeof</span>(GPU_T)*n_*m_);</div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;        }</div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160; </div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;        <span class="keyword">explicit</span> CUDA_Matrix(cublasHandle_t handle, <span class="keyword">const</span> Matrix&lt;T&gt;&amp; matrix): handle_(handle), n_(matrix.n()), m_(matrix.m()) {</div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;            assert(matrix.matrix_style() == <a class="code" href="namespaceQComputations.html#a3735cc336fa84566b661c833e87fee85a65c8f0fb4ded081bbf9708255578e1d2">FORTRAN_STYLE</a>);</div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;            CUDA::cudaMalloc(<span class="keyword">reinterpret_cast&lt;</span><span class="keywordtype">void</span>**<span class="keyword">&gt;</span>(&amp;dev_mass_), <span class="keyword">sizeof</span>(GPU_T)*n_*m_);</div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;            CUDA::cublasSetMatrix(n_, m_, <span class="keyword">sizeof</span>(T), matrix.data(), matrix.LD(), dev_mass_, m_);</div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;        }</div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160; </div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;        CUDA_Matrix(<span class="keyword">const</span> CUDA_Matrix&lt;T&gt;&amp; other): handle_(other.handle_), n_(other.n_), m_(other.m_) {</div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;            CUDA::cudaMalloc(<span class="keyword">reinterpret_cast&lt;</span><span class="keywordtype">void</span>**<span class="keyword">&gt;</span>(&amp;(this-&gt;dev_mass_)), <span class="keyword">sizeof</span>(GPU_T)*n_*m_);</div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;            CUDA::cudaMemcpy(this-&gt;dev_mass_, other.dev_mass_, <span class="keyword">sizeof</span>(GPU_T)*n_*m_, cudaMemcpyDeviceToDevice);</div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;        }</div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160; </div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;        CUDA_Matrix(cublasHandle_t handle, ILP_TYPE n, ILP_TYPE m, std::function&lt;T(ILP_TYPE, ILP_TYPE)&gt; func):handle_(handle), n_(n), m_(m) {</div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;            CUDA::cudaMalloc(<span class="keyword">reinterpret_cast&lt;</span><span class="keywordtype">void</span>**<span class="keyword">&gt;</span>(&amp;dev_mass_), <span class="keyword">sizeof</span>(GPU_T) * n_ * m_);</div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;            Matrix&lt;T&gt; matrix(<a class="code" href="namespaceQComputations.html#a3735cc336fa84566b661c833e87fee85a65c8f0fb4ded081bbf9708255578e1d2">FORTRAN_STYLE</a>, n, m, func);</div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;            CUDA::cublasSetMatrix(n_, m_, <span class="keyword">sizeof</span>(T), matrix.data(), matrix.LD(), dev_mass_, m_);</div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;        }</div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160; </div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;        CUDA_Matrix(CUDA_Matrix&lt;T&gt;&amp;&amp; other) noexcept: handle_(other.handle_), n_(other.n_), m_(other.m_), dev_mass_(other.dev_mass_) {</div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;            other.dev_mass_ = <span class="keyword">nullptr</span>;</div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;        }</div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160; </div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;        CUDA_Matrix&lt;T&gt;&amp; operator=(<span class="keyword">const</span> CUDA_Matrix&lt;T&gt;&amp; A) {</div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;            handle_ = A.handle_;</div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;            n_ = A.n_;</div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;            m_ = A.m_;</div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;            CUDA::cudaMalloc(<span class="keyword">reinterpret_cast&lt;</span><span class="keywordtype">void</span>**<span class="keyword">&gt;</span>(&amp;(dev_mass_)), <span class="keyword">sizeof</span>(GPU_T)*n_*m_);</div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;            CUDA::cudaMemcpy(dev_mass_, A.dev_mass_, <span class="keyword">sizeof</span>(GPU_T)*n_*m_, cudaMemcpyDeviceToDevice);</div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;            <span class="keywordflow">return</span> *<span class="keyword">this</span>;</div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;        }</div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160; </div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;        CUDA_Matrix&lt;T&gt; <a class="code" href="namespaceQComputations.html#a25f38d07622f2d3e0cf083c6f8dfa3dd">operator*</a>(<span class="keyword">const</span> CUDA_Matrix&lt;T&gt;&amp; other) <span class="keyword">const</span>;</div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;        CUDA_Matrix&lt;T&gt; operator+(<span class="keyword">const</span> CUDA_Matrix&lt;T&gt;&amp; other) <span class="keyword">const</span>;</div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;        CUDA_Matrix&lt;T&gt; <a class="code" href="namespaceQComputations.html#adeb55d85f63a226a7bedca4df5ab0150">operator-</a>(<span class="keyword">const</span> CUDA_Matrix&lt;T&gt;&amp; other) <span class="keyword">const</span>;</div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;        CUDA_Matrix&lt;T&gt;&amp; operator*=(<span class="keyword">const</span> CUDA_Matrix&lt;T&gt;&amp; other);</div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;        CUDA_Matrix&lt;T&gt;&amp; operator+=(<span class="keyword">const</span> CUDA_Matrix&lt;T&gt;&amp; other);</div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;        CUDA_Matrix&lt;T&gt;&amp; operator-=(<span class="keyword">const</span> CUDA_Matrix&lt;T&gt;&amp; other);</div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160; </div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;        CUDA_Matrix&lt;T&gt; <a class="code" href="namespaceQComputations.html#a25f38d07622f2d3e0cf083c6f8dfa3dd">operator*</a>(T num) <span class="keyword">const</span>;</div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;        <span class="keywordtype">void</span> operator*=(T num);</div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160; </div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;        ~CUDA_Matrix() {</div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;            CUDA::cudaFree(dev_mass_);</div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;            <span class="comment">//cublasDestroy(&amp;handle_);</span></div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;        }</div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160; </div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;        <span class="keywordtype">void</span> show(<span class="keywordtype">size_t</span> width = <a class="code" href="classQComputations_1_1QConfig.html#ab30cc5424173ddc1bfb394b75adfcc26">QConfig::instance</a>().width())<span class="keyword"> const </span>{</div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;            Matrix&lt;T&gt; tmp(<a class="code" href="namespaceQComputations.html#a3735cc336fa84566b661c833e87fee85a65c8f0fb4ded081bbf9708255578e1d2">FORTRAN_STYLE</a>, n_, m_);</div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;            CUDA::cublasGetMatrix(n_, m_, <span class="keyword">sizeof</span>(GPU_T), dev_mass_, this-&gt;ld(), tmp.data(), tmp.LD());</div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;            tmp.show(width);</div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;        }</div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;        </div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;        Matrix&lt;T&gt; to_cpu()<span class="keyword"> const </span>{</div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;            Matrix&lt;T&gt; tmp(<a class="code" href="namespaceQComputations.html#a3735cc336fa84566b661c833e87fee85a65c8f0fb4ded081bbf9708255578e1d2">FORTRAN_STYLE</a>, n_, m_);</div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;            CUDA::cublasGetMatrix(n_, m_, <span class="keyword">sizeof</span>(GPU_T), dev_mass_, this-&gt;ld(), tmp.data(), tmp.LD());</div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;            <span class="keywordflow">return</span> tmp;</div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;        }</div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160; </div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;        ILP_TYPE n()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> n_; }</div>
+<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;        ILP_TYPE m()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> m_; }</div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;        ILP_TYPE ld()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> n_; } <span class="comment">// FORTRAN STYLE</span></div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;        GPU_T* data() { <span class="keywordflow">return</span> dev_mass_; }</div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;        <span class="keyword">const</span> GPU_T* data()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> dev_mass_; }</div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;        cublasHandle_t handle()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> handle_; }</div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160; </div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;        CUDA_Matrix&lt;T&gt; copy(<span class="keyword">const</span> CUDA_Matrix&lt;T&gt;&amp; A) <span class="keyword">const</span>;</div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160; </div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;        <span class="keywordtype">void</span> write_to_csv_file(<span class="keyword">const</span> std::string&amp; filename)<span class="keyword"> const </span>{ this-&gt;to_cpu().write_to_csv_file(filename); }</div>
+<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;    <span class="keyword">private</span>:</div>
+<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;        cublasHandle_t handle_;</div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;        ILP_TYPE n_;</div>
+<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;        ILP_TYPE m_;</div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;        GPU_T* dev_mass_ = <span class="keyword">nullptr</span>;</div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;};</div>
+<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160; </div>
+<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;<span class="keyword">template</span>&lt;&gt;</div>
+<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;CUDA_Matrix&lt;double&gt; <a class="code" href="namespaceQComputations.html#a25f38d07622f2d3e0cf083c6f8dfa3dd">CUDA_Matrix&lt;double&gt;::operator*</a>(<span class="keyword">const</span> CUDA_Matrix&lt;double&gt;&amp; other) <span class="keyword">const</span>;</div>
+<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160; </div>
+<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;<span class="keyword">template</span>&lt;&gt;</div>
+<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;CUDA_Matrix&lt;COMPLEX&gt; <a class="code" href="namespaceQComputations.html#a25f38d07622f2d3e0cf083c6f8dfa3dd">CUDA_Matrix&lt;COMPLEX&gt;::operator*</a>(<span class="keyword">const</span> CUDA_Matrix&lt;COMPLEX&gt;&amp; other) <span class="keyword">const</span>;</div>
+<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160; </div>
+<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;<span class="keyword">template</span>&lt;&gt;</div>
+<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;CUDA_Matrix&lt;double&gt; CUDA_Matrix&lt;double&gt;::operator+(<span class="keyword">const</span> CUDA_Matrix&lt;double&gt;&amp; other) <span class="keyword">const</span>;</div>
+<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160; </div>
+<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;<span class="keyword">template</span>&lt;&gt;</div>
+<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;CUDA_Matrix&lt;COMPLEX&gt; CUDA_Matrix&lt;COMPLEX&gt;::operator+(<span class="keyword">const</span> CUDA_Matrix&lt;COMPLEX&gt;&amp; other) <span class="keyword">const</span>;</div>
+<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160; </div>
+<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;<span class="keyword">template</span>&lt;&gt;</div>
+<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;CUDA_Matrix&lt;double&gt; <a class="code" href="namespaceQComputations.html#a25f38d07622f2d3e0cf083c6f8dfa3dd">CUDA_Matrix&lt;double&gt;::operator*</a>(<span class="keywordtype">double</span> num) <span class="keyword">const</span>;</div>
+<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160; </div>
+<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;<span class="keyword">template</span>&lt;&gt;</div>
+<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;CUDA_Matrix&lt;COMPLEX&gt; <a class="code" href="namespaceQComputations.html#a25f38d07622f2d3e0cf083c6f8dfa3dd">CUDA_Matrix&lt;COMPLEX&gt;::operator*</a>(<a class="code" href="namespaceQComputations.html#a4d35a1f736afa50465898555ea98704a">COMPLEX</a> num) <span class="keyword">const</span>;</div>
+<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160; </div>
+<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> T, <span class="keyword">typename</span> GPU_T = <span class="keyword">typename</span> std::conditional_t&lt;</div>
+<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;    std::is_same&lt;T, COMPLEX&gt;::value, cuDoubleComplex,</div>
+<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;    <span class="keyword">typename</span> std::conditional_t&lt;std::is_same&lt;T, double&gt;::value, double, <span class="keywordtype">void</span>&gt;&gt;</div>
+<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;&gt;</div>
+<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;<span class="keywordtype">void</span> <a class="code" href="namespaceQComputations.html#af02fab95b03a1b9ec8059e8e3bbe9f26">optimized_add</a>(CUDA_Matrix&lt;T&gt;&amp; A, <span class="keyword">const</span> CUDA_Matrix&lt;T&gt;&amp; B, CUDA_Matrix&lt;T&gt;&amp; C,</div>
+<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;                        GPU_T alpha, GPU_T betta, cublasOperation_t trans_A = CUBLAS_OP_N, cublasOperation_t trans_B = CUBLAS_OP_N);</div>
+<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160; </div>
+<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;<span class="keywordtype">void</span> <a class="code" href="namespaceQComputations.html#af02fab95b03a1b9ec8059e8e3bbe9f26">optimized_add</a>(CUDA_Matrix&lt;COMPLEX&gt;&amp; A, <span class="keyword">const</span> CUDA_Matrix&lt;COMPLEX&gt;&amp; B, CUDA_Matrix&lt;COMPLEX&gt;&amp; C,</div>
+<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;                        cuDoubleComplex alpha, cuDoubleComplex betta, cublasOperation_t trans_A, cublasOperation_t trans_B);</div>
+<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160; </div>
+<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;<span class="keyword">template</span>&lt;&gt;</div>
+<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;<span class="keywordtype">void</span> <a class="code" href="namespaceQComputations.html#af02fab95b03a1b9ec8059e8e3bbe9f26">optimized_add</a>(CUDA_Matrix&lt;double&gt;&amp; A, <span class="keyword">const</span> CUDA_Matrix&lt;double&gt;&amp; B, CUDA_Matrix&lt;double&gt;&amp; C,</div>
+<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;                        <span class="keywordtype">double</span> alpha, <span class="keywordtype">double</span> betta, cublasOperation_t trans_A, cublasOperation_t trans_B);</div>
+<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160; </div>
+<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160; </div>
+<div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> T, <span class="keyword">typename</span> GPU_T = <span class="keyword">typename</span> std::conditional_t&lt;</div>
+<div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;    std::is_same&lt;T, COMPLEX&gt;::value, cuDoubleComplex,</div>
+<div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160;    <span class="keyword">typename</span> std::conditional_t&lt;std::is_same&lt;T, double&gt;::value, double, <span class="keywordtype">void</span>&gt;&gt;</div>
+<div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160;&gt;</div>
+<div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160;<span class="keywordtype">void</span> <a class="code" href="namespaceQComputations.html#aba3f9a8ef89b402f452e5ba0053f9d20">optimized_multiply</a>(<span class="keyword">const</span> CUDA_Matrix&lt;T&gt;&amp; A, <span class="keyword">const</span> CUDA_Matrix&lt;T&gt;&amp; B, CUDA_Matrix&lt;T&gt;&amp; C,</div>
+<div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160;                        GPU_T alpha, GPU_T betta, cublasOperation_t trans_A = CUBLAS_OP_N, cublasOperation_t trans_B = CUBLAS_OP_N);</div>
+<div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160; </div>
+<div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160;<span class="keyword">template</span>&lt;&gt;</div>
+<div class="line"><a name="l00145"></a><span class="lineno">  145</span>&#160;<span class="keywordtype">void</span> <a class="code" href="namespaceQComputations.html#aba3f9a8ef89b402f452e5ba0053f9d20">optimized_multiply</a>(<span class="keyword">const</span> CUDA_Matrix&lt;COMPLEX&gt;&amp; A, <span class="keyword">const</span> CUDA_Matrix&lt;COMPLEX&gt;&amp; B, CUDA_Matrix&lt;COMPLEX&gt;&amp; C,</div>
+<div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160;                        cuDoubleComplex alpha, cuDoubleComplex betta, cublasOperation_t trans_A, cublasOperation_t trans_B);</div>
+<div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160; </div>
+<div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;<span class="keyword">template</span>&lt;&gt;</div>
+<div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;<span class="keywordtype">void</span> <a class="code" href="namespaceQComputations.html#aba3f9a8ef89b402f452e5ba0053f9d20">optimized_multiply</a>(<span class="keyword">const</span> CUDA_Matrix&lt;double&gt;&amp; A, <span class="keyword">const</span> CUDA_Matrix&lt;double&gt;&amp; B, CUDA_Matrix&lt;double&gt;&amp; C,</div>
+<div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160;                        <span class="keywordtype">double</span> alpha, <span class="keywordtype">double</span> betta, cublasOperation_t trans_A, cublasOperation_t trans_B);</div>
+<div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160; </div>
+<div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;std::vector&lt;CUDA_Matrix&lt;COMPLEX&gt;&gt; CUDA_QME_OPT_Runge_Kutt_4(<span class="keyword">const</span> std::vector&lt;double&gt;&amp; x,</div>
+<div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;                                        <span class="keyword">const</span> CUDA_Matrix&lt;COMPLEX&gt;&amp; y0,</div>
+<div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160;                                        std::function&lt;<span class="keywordtype">void</span>(<span class="keywordtype">double</span>, <span class="keyword">const</span> CUDA_Matrix&lt;COMPLEX&gt;&amp;, CUDA_Matrix&lt;COMPLEX&gt;&amp;)&gt; f);</div>
+<div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160; </div>
+<div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160;std::vector&lt;CUDA_Matrix&lt;COMPLEX&gt;&gt; CUDA_QME_OPT_Runge_Kutt_2(<span class="keyword">const</span> std::vector&lt;double&gt;&amp; x,</div>
+<div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;                                        <span class="keyword">const</span> CUDA_Matrix&lt;COMPLEX&gt;&amp; y0,</div>
+<div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160;                                        std::function&lt;<span class="keywordtype">void</span>(<span class="keywordtype">double</span>, <span class="keyword">const</span> CUDA_Matrix&lt;COMPLEX&gt;&amp;, CUDA_Matrix&lt;COMPLEX&gt;&amp;)&gt; f);</div>
+<div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160; </div>
+<div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;std::pair&lt;double*, CUDA_Matrix&lt;COMPLEX&gt;&gt; HermitEigen(<span class="keyword">const</span> CUDA_Matrix&lt;COMPLEX&gt;&amp; A);</div>
+<div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160;}</div>
+<div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160; </div>
+<div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="ttc" id="aclassQComputations_1_1QConfig_html_ab30cc5424173ddc1bfb394b75adfcc26"><div class="ttname"><a href="classQComputations_1_1QConfig.html#ab30cc5424173ddc1bfb394b75adfcc26">QComputations::QConfig::instance</a></div><div class="ttdeci">static QConfig &amp; instance()</div><div class="ttdef"><b>Definition:</b> config.hpp:43</div></div>
+<div class="ttc" id="acuda__functions_8hpp_html"><div class="ttname"><a href="cuda__functions_8hpp.html">cuda_functions.hpp</a></div></div>
+<div class="ttc" id="anamespaceQComputations_html"><div class="ttname"><a href="namespaceQComputations.html">QComputations</a></div><div class="ttdef"><b>Definition:</b> additional_operators.cpp:5</div></div>
+<div class="ttc" id="anamespaceQComputations_html_a25f38d07622f2d3e0cf083c6f8dfa3dd"><div class="ttname"><a href="namespaceQComputations.html#a25f38d07622f2d3e0cf083c6f8dfa3dd">QComputations::operator*</a></div><div class="ttdeci">Matrix&lt; COMPLEX &gt; operator*(const Matrix&lt; COMPLEX &gt; &amp;A, const Matrix&lt; double &gt; &amp;B)</div><div class="ttdef"><b>Definition:</b> additional_operators.cpp:18</div></div>
+<div class="ttc" id="anamespaceQComputations_html_a3735cc336fa84566b661c833e87fee85a65c8f0fb4ded081bbf9708255578e1d2"><div class="ttname"><a href="namespaceQComputations.html#a3735cc336fa84566b661c833e87fee85a65c8f0fb4ded081bbf9708255578e1d2">QComputations::FORTRAN_STYLE</a></div><div class="ttdeci">@ FORTRAN_STYLE</div><div class="ttdef"><b>Definition:</b> matrix.hpp:48</div></div>
+<div class="ttc" id="anamespaceQComputations_html_a4d35a1f736afa50465898555ea98704a"><div class="ttname"><a href="namespaceQComputations.html#a4d35a1f736afa50465898555ea98704a">QComputations::COMPLEX</a></div><div class="ttdeci">std::complex&lt; double &gt; COMPLEX</div><div class="ttdef"><b>Definition:</b> dynamic.hpp:27</div></div>
+<div class="ttc" id="anamespaceQComputations_html_aba3f9a8ef89b402f452e5ba0053f9d20"><div class="ttname"><a href="namespaceQComputations.html#aba3f9a8ef89b402f452e5ba0053f9d20">QComputations::optimized_multiply</a></div><div class="ttdeci">void optimized_multiply(const CSR_Matrix&lt; COMPLEX &gt; &amp;A, const CSR_Matrix&lt; COMPLEX &gt; &amp;B, CSR_Matrix&lt; COMPLEX &gt; &amp;C, COMPLEX alpha, COMPLEX betta, char op)</div><div class="ttdef"><b>Definition:</b> csr_matrix.cpp:282</div></div>
+<div class="ttc" id="anamespaceQComputations_html_adeb55d85f63a226a7bedca4df5ab0150"><div class="ttname"><a href="namespaceQComputations.html#adeb55d85f63a226a7bedca4df5ab0150">QComputations::operator-</a></div><div class="ttdeci">std::vector&lt; T &gt; operator-(const std::vector&lt; T &gt; &amp;a, const std::vector&lt; T &gt; &amp;b)</div><div class="ttdef"><b>Definition:</b> additional_operators.hpp:89</div></div>
+<div class="ttc" id="anamespaceQComputations_html_af02fab95b03a1b9ec8059e8e3bbe9f26"><div class="ttname"><a href="namespaceQComputations.html#af02fab95b03a1b9ec8059e8e3bbe9f26">QComputations::optimized_add</a></div><div class="ttdeci">void optimized_add(const CSR_Matrix&lt; T &gt; &amp;A, const CSR_Matrix&lt; T &gt; &amp;B, CSR_Matrix&lt; T &gt; &amp;C)</div></div>
+</div><!-- fragment --></div><!-- contents -->
+</div><!-- doc-content -->
+<!-- start footer part -->
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><a class="el" href="dir_68267d1309a1af8e8297ef4c3efbcdba.html">src</a></li><li class="navelem"><a class="el" href="dir_199c3add0de77dd12f192c4717b1a7b5.html">QComputations</a></li><li class="navelem"><a class="el" href="cuda__matrix_8hpp.html">cuda_matrix.hpp</a></li>
+    <li class="footer">Создано системой <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+  </ul>
+</div>
+</body>
+</html>

@@ -1,0 +1,2447 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=9"/>
+<meta name="generator" content="Doxygen 1.9.1"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>QComputations: Шаблон класса QComputations::Matrix&lt; T &gt;</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="dynsections.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="resize.js"></script>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr style="height: 56px;">
+  <td id="projectalign" style="padding-left: 0.5em;">
+   <div id="projectname">QComputations
+   &#160;<span id="projectnumber">9c59715</span>
+   </div>
+   <div id="projectbrief">Quantum-mechanical simulation library: time-dependent Hamiltonians, states, matrices; CPU/CUDA/MPI backends</div>
+  </td>
+ </tr>
+ </tbody>
+</table>
+</div>
+<!-- end header part -->
+<!-- Создано системой Doxygen 1.9.1 -->
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+var searchBox = new SearchBox("searchBox", "search",false,'Поиск','.html');
+/* @license-end */
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(function() {
+  initMenu('',true,false,'search.php','Поиск');
+  $(document).ready(function() { init_search(); });
+});
+/* @license-end */</script>
+<div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(document).ready(function(){initNavTree('classQComputations_1_1Matrix.html',''); initResizable(); });
+/* @license-end */
+</script>
+<div id="doc-content">
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<iframe src="javascript:void(0)" frameborder="0" 
+        name="MSearchResults" id="MSearchResults">
+</iframe>
+</div>
+
+<div class="header">
+  <div class="summary">
+<a href="#pub-methods">Открытые члены</a> &#124;
+<a href="#pri-methods">Закрытые члены</a> &#124;
+<a href="#pri-attribs">Закрытые данные</a>  </div>
+  <div class="headertitle">
+<div class="title">Шаблон класса QComputations::Matrix&lt; T &gt;</div>  </div>
+</div><!--header-->
+<div class="contents">
+
+<p><code>#include &lt;<a class="el" href="matrix_8hpp_source.html">matrix.hpp</a>&gt;</code></p>
+<table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
+Открытые члены</h2></td></tr>
+<tr class="memitem:a78d7a9f9958d6187b62607e27ace9c70"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQComputations_1_1Matrix.html#a78d7a9f9958d6187b62607e27ace9c70">Matrix</a> ()=default</td></tr>
+<tr class="separator:a78d7a9f9958d6187b62607e27ace9c70"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a889c258bdf8eb575f566d4e4f6912dd4"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQComputations_1_1Matrix.html#a889c258bdf8eb575f566d4e4f6912dd4">Matrix</a> (<a class="el" href="namespaceQComputations.html#a3735cc336fa84566b661c833e87fee85">MATRIX_STYLE</a> <a class="el" href="classQComputations_1_1Matrix.html#aecef6511557e44bc1544a1361804fb3a">matrix_style</a>, size_t <a class="el" href="classQComputations_1_1Matrix.html#af8d31e7f14524386612dfda621b1356f">n</a>, size_t <a class="el" href="classQComputations_1_1Matrix.html#ac2da6d77e27cb5dfcc2b0ed4e619fe13">m</a>)</td></tr>
+<tr class="separator:a889c258bdf8eb575f566d4e4f6912dd4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae86a644f8163b26f2f27d0ebde3b3494"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQComputations_1_1Matrix.html#ae86a644f8163b26f2f27d0ebde3b3494">Matrix</a> (<a class="el" href="namespaceQComputations.html#a3735cc336fa84566b661c833e87fee85">MATRIX_STYLE</a> <a class="el" href="classQComputations_1_1Matrix.html#aecef6511557e44bc1544a1361804fb3a">matrix_style</a>, size_t <a class="el" href="classQComputations_1_1Matrix.html#af8d31e7f14524386612dfda621b1356f">n</a>, size_t <a class="el" href="classQComputations_1_1Matrix.html#ac2da6d77e27cb5dfcc2b0ed4e619fe13">m</a>, const T &amp;init_val)</td></tr>
+<tr class="separator:ae86a644f8163b26f2f27d0ebde3b3494"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab70e6703b8092adeaf40d535cdcefe08"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQComputations_1_1Matrix.html#ab70e6703b8092adeaf40d535cdcefe08">Matrix</a> (const <a class="el" href="classQComputations_1_1Matrix.html">Matrix</a>&lt; T &gt; &amp;A)</td></tr>
+<tr class="separator:ab70e6703b8092adeaf40d535cdcefe08"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acebc9ab40cf8dce5afc7f5289a642173"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQComputations_1_1Matrix.html#acebc9ab40cf8dce5afc7f5289a642173">Matrix</a> (<a class="el" href="namespaceQComputations.html#a3735cc336fa84566b661c833e87fee85">MATRIX_STYLE</a> <a class="el" href="classQComputations_1_1Matrix.html#aecef6511557e44bc1544a1361804fb3a">matrix_style</a>, const std::vector&lt; T &gt; &amp;mass, size_t <a class="el" href="classQComputations_1_1Matrix.html#af8d31e7f14524386612dfda621b1356f">n</a>, size_t <a class="el" href="classQComputations_1_1Matrix.html#ac2da6d77e27cb5dfcc2b0ed4e619fe13">m</a>)</td></tr>
+<tr class="separator:acebc9ab40cf8dce5afc7f5289a642173"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1167f3446c54a9af168eaf632fb8a8b3"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQComputations_1_1Matrix.html#a1167f3446c54a9af168eaf632fb8a8b3">Matrix</a> (const std::vector&lt; T &gt; &amp;mass)</td></tr>
+<tr class="separator:a1167f3446c54a9af168eaf632fb8a8b3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae404ca4036fc4dd4f689fedcabdc068c"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQComputations_1_1Matrix.html#ae404ca4036fc4dd4f689fedcabdc068c">Matrix</a> (<a class="el" href="namespaceQComputations.html#a3735cc336fa84566b661c833e87fee85">MATRIX_STYLE</a> <a class="el" href="classQComputations_1_1Matrix.html#aecef6511557e44bc1544a1361804fb3a">matrix_style</a>, size_t <a class="el" href="classQComputations_1_1Matrix.html#af8d31e7f14524386612dfda621b1356f">n</a>, size_t <a class="el" href="classQComputations_1_1Matrix.html#ac2da6d77e27cb5dfcc2b0ed4e619fe13">m</a>, std::function&lt; T(size_t, size_t)&gt; func)</td></tr>
+<tr class="separator:ae404ca4036fc4dd4f689fedcabdc068c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acaa8ba66b94178baa048a0f78c2102c5"><td class="memTemplParams" colspan="2">template&lt;typename V &gt; </td></tr>
+<tr class="memitem:acaa8ba66b94178baa048a0f78c2102c5"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classQComputations_1_1Matrix.html#acaa8ba66b94178baa048a0f78c2102c5">Matrix</a> (const <a class="el" href="classQComputations_1_1Matrix.html">Matrix</a>&lt; V &gt; &amp;A)</td></tr>
+<tr class="separator:acaa8ba66b94178baa048a0f78c2102c5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1d238140a949dfdc877ef8008aecc947"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQComputations_1_1Matrix.html#a1d238140a949dfdc877ef8008aecc947">Matrix</a> (const std::vector&lt; std::vector&lt; T &gt;&gt; &amp;A, <a class="el" href="namespaceQComputations.html#a3735cc336fa84566b661c833e87fee85">MATRIX_STYLE</a> <a class="el" href="classQComputations_1_1Matrix.html#aecef6511557e44bc1544a1361804fb3a">matrix_style</a>)</td></tr>
+<tr class="separator:a1d238140a949dfdc877ef8008aecc947"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a306dc75b14c695c8ff5961e778d28474"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classQComputations_1_1Matrix.html">Matrix</a>&lt; T &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQComputations_1_1Matrix.html#a306dc75b14c695c8ff5961e778d28474">operator=</a> (const <a class="el" href="classQComputations_1_1Matrix.html">Matrix</a>&lt; T &gt; &amp;A)</td></tr>
+<tr class="separator:a306dc75b14c695c8ff5961e778d28474"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7dd1d143ef3430b0c1f2a6a1cce06107"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQComputations_1_1Matrix.html#a7dd1d143ef3430b0c1f2a6a1cce06107">modify_row</a> (size_t <a class="el" href="classQComputations_1_1Matrix.html#a120b9c0711f3885d014432597b7b12bb">index</a>, const std::vector&lt; T &gt; &amp;v)</td></tr>
+<tr class="separator:a7dd1d143ef3430b0c1f2a6a1cce06107"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a31d09d1ffeb66099a979ae5ab53d1300"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQComputations_1_1Matrix.html#a31d09d1ffeb66099a979ae5ab53d1300">modify_col</a> (size_t <a class="el" href="classQComputations_1_1Matrix.html#a120b9c0711f3885d014432597b7b12bb">index</a>, const std::vector&lt; T &gt; &amp;v)</td></tr>
+<tr class="separator:a31d09d1ffeb66099a979ae5ab53d1300"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a988608fc8281ccd0de1c868518c4824e"><td class="memItemLeft" align="right" valign="top">std::vector&lt; T &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQComputations_1_1Matrix.html#a988608fc8281ccd0de1c868518c4824e">row</a> (size_t <a class="el" href="classQComputations_1_1Matrix.html#a120b9c0711f3885d014432597b7b12bb">index</a>) const</td></tr>
+<tr class="separator:a988608fc8281ccd0de1c868518c4824e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aca011641f4b13aa5eaf0289c6a4d841e"><td class="memItemLeft" align="right" valign="top">std::vector&lt; T &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQComputations_1_1Matrix.html#aca011641f4b13aa5eaf0289c6a4d841e">col</a> (size_t <a class="el" href="classQComputations_1_1Matrix.html#a120b9c0711f3885d014432597b7b12bb">index</a>) const</td></tr>
+<tr class="separator:aca011641f4b13aa5eaf0289c6a4d841e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af8d31e7f14524386612dfda621b1356f"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQComputations_1_1Matrix.html#af8d31e7f14524386612dfda621b1356f">n</a> () const</td></tr>
+<tr class="separator:af8d31e7f14524386612dfda621b1356f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa250556133a2db90513defbf64d624bc"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQComputations_1_1Matrix.html#aa250556133a2db90513defbf64d624bc">size</a> () const</td></tr>
+<tr class="separator:aa250556133a2db90513defbf64d624bc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac2da6d77e27cb5dfcc2b0ed4e619fe13"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQComputations_1_1Matrix.html#ac2da6d77e27cb5dfcc2b0ed4e619fe13">m</a> () const</td></tr>
+<tr class="separator:ac2da6d77e27cb5dfcc2b0ed4e619fe13"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0c557bf01dae593c488fe726f4a805d8"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQComputations_1_1Matrix.html#a0c557bf01dae593c488fe726f4a805d8">add_rows</a> (size_t <a class="el" href="classQComputations_1_1Matrix.html#af8d31e7f14524386612dfda621b1356f">n</a>)</td></tr>
+<tr class="separator:a0c557bf01dae593c488fe726f4a805d8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acea2fd79d420a90eb03efacaae73c506"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQComputations_1_1Matrix.html#acea2fd79d420a90eb03efacaae73c506">add_cols</a> (size_t <a class="el" href="classQComputations_1_1Matrix.html#ac2da6d77e27cb5dfcc2b0ed4e619fe13">m</a>)</td></tr>
+<tr class="separator:acea2fd79d420a90eb03efacaae73c506"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7bbb0dfa9d2575d3109e3bbbe6987ed5"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQComputations_1_1Matrix.html#a7bbb0dfa9d2575d3109e3bbbe6987ed5">remove_rows</a> (size_t <a class="el" href="classQComputations_1_1Matrix.html#af8d31e7f14524386612dfda621b1356f">n</a>)</td></tr>
+<tr class="separator:a7bbb0dfa9d2575d3109e3bbbe6987ed5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a46d5d34c1f546f7f4cd7daf948c9af1c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQComputations_1_1Matrix.html#a46d5d34c1f546f7f4cd7daf948c9af1c">remove_cols</a> (size_t <a class="el" href="classQComputations_1_1Matrix.html#ac2da6d77e27cb5dfcc2b0ed4e619fe13">m</a>)</td></tr>
+<tr class="separator:a46d5d34c1f546f7f4cd7daf948c9af1c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abb69ee7cecbccfa4a657a8bc554db7f2"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQComputations_1_1Matrix.html#abb69ee7cecbccfa4a657a8bc554db7f2">expand</a> (size_t <a class="el" href="classQComputations_1_1Matrix.html#af8d31e7f14524386612dfda621b1356f">n</a>)</td></tr>
+<tr class="separator:abb69ee7cecbccfa4a657a8bc554db7f2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af4aefcbba1ff2b75c1ba6fa833b4ef24"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQComputations_1_1Matrix.html#af4aefcbba1ff2b75c1ba6fa833b4ef24">reduce</a> (size_t <a class="el" href="classQComputations_1_1Matrix.html#af8d31e7f14524386612dfda621b1356f">n</a>)</td></tr>
+<tr class="separator:af4aefcbba1ff2b75c1ba6fa833b4ef24"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aac232b563899010d5d42af3ce0aa6835"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classQComputations_1_1Matrix.html">Matrix</a>&lt; T &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQComputations_1_1Matrix.html#aac232b563899010d5d42af3ce0aa6835">operator*</a> (const <a class="el" href="classQComputations_1_1Matrix.html">Matrix</a>&lt; T &gt; &amp;A) const</td></tr>
+<tr class="separator:aac232b563899010d5d42af3ce0aa6835"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa3f97d922a811512dbf82ce6c4abc5a9"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classQComputations_1_1Matrix.html">Matrix</a>&lt; T &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQComputations_1_1Matrix.html#aa3f97d922a811512dbf82ce6c4abc5a9">operator+</a> (const <a class="el" href="classQComputations_1_1Matrix.html">Matrix</a>&lt; T &gt; &amp;A) const</td></tr>
+<tr class="separator:aa3f97d922a811512dbf82ce6c4abc5a9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a12c30e5d6ad757635241a02842799641"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classQComputations_1_1Matrix.html">Matrix</a>&lt; T &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQComputations_1_1Matrix.html#a12c30e5d6ad757635241a02842799641">operator-</a> (const <a class="el" href="classQComputations_1_1Matrix.html">Matrix</a>&lt; T &gt; &amp;A) const</td></tr>
+<tr class="separator:a12c30e5d6ad757635241a02842799641"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a756a0c3e58dbaa25053a1269b77e6f44"><td class="memItemLeft" align="right" valign="top">std::vector&lt; T &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQComputations_1_1Matrix.html#a756a0c3e58dbaa25053a1269b77e6f44">operator*</a> (const std::vector&lt; T &gt; &amp;v) const</td></tr>
+<tr class="separator:a756a0c3e58dbaa25053a1269b77e6f44"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae82b6b2d451f63f883950d4848becab8"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classQComputations_1_1Matrix.html">Matrix</a>&lt; T &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQComputations_1_1Matrix.html#ae82b6b2d451f63f883950d4848becab8">operator*</a> (const T &amp;num) const</td></tr>
+<tr class="separator:ae82b6b2d451f63f883950d4848becab8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac24196a78c44c93a90803ad6c5900453"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classQComputations_1_1Matrix.html">Matrix</a>&lt; T &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQComputations_1_1Matrix.html#ac24196a78c44c93a90803ad6c5900453">operator*=</a> (T num)</td></tr>
+<tr class="separator:ac24196a78c44c93a90803ad6c5900453"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a188aa0c3ed83c7ccfec4d15d7d18b23e"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classQComputations_1_1Matrix.html">Matrix</a>&lt; T &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQComputations_1_1Matrix.html#a188aa0c3ed83c7ccfec4d15d7d18b23e">operator+</a> (const T &amp;num) const</td></tr>
+<tr class="separator:a188aa0c3ed83c7ccfec4d15d7d18b23e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a23278531d7bb7a0ec4bda8caf5a2427d"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classQComputations_1_1Matrix.html">Matrix</a>&lt; T &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQComputations_1_1Matrix.html#a23278531d7bb7a0ec4bda8caf5a2427d">operator-</a> (const T &amp;num) const</td></tr>
+<tr class="separator:a23278531d7bb7a0ec4bda8caf5a2427d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ade0e9d5408805b49c4a8989b229aa686"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classQComputations_1_1Matrix.html">Matrix</a>&lt; T &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQComputations_1_1Matrix.html#ade0e9d5408805b49c4a8989b229aa686">operator/</a> (const T &amp;num) const</td></tr>
+<tr class="separator:ade0e9d5408805b49c4a8989b229aa686"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afb257271d97803ac5dba5fbea813809f"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classQComputations_1_1Matrix.html">Matrix</a>&lt; T &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQComputations_1_1Matrix.html#afb257271d97803ac5dba5fbea813809f">operator/=</a> (T num)</td></tr>
+<tr class="separator:afb257271d97803ac5dba5fbea813809f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aabdca9d5fd3cd35a40c7f0a1d914814b"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classQComputations_1_1Matrix.html">Matrix</a>&lt; T &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQComputations_1_1Matrix.html#aabdca9d5fd3cd35a40c7f0a1d914814b">operator+=</a> (const <a class="el" href="classQComputations_1_1Matrix.html">Matrix</a>&lt; T &gt; &amp;A)</td></tr>
+<tr class="separator:aabdca9d5fd3cd35a40c7f0a1d914814b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aeacfba3f75e83af6a560d485fbe36514"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classQComputations_1_1Matrix.html">Matrix</a>&lt; T &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQComputations_1_1Matrix.html#aeacfba3f75e83af6a560d485fbe36514">operator-=</a> (const <a class="el" href="classQComputations_1_1Matrix.html">Matrix</a>&lt; T &gt; &amp;A)</td></tr>
+<tr class="separator:aeacfba3f75e83af6a560d485fbe36514"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a24d415282d9d0ff0520d3130b864e255"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classQComputations_1_1Matrix.html">Matrix</a>&lt; T &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQComputations_1_1Matrix.html#a24d415282d9d0ff0520d3130b864e255">operator*=</a> (const <a class="el" href="classQComputations_1_1Matrix.html">Matrix</a>&lt; T &gt; &amp;A)</td></tr>
+<tr class="separator:a24d415282d9d0ff0520d3130b864e255"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a99653fe37f843b10cb042d9663dc8b66"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQComputations_1_1Matrix.html#a99653fe37f843b10cb042d9663dc8b66">operator==</a> (const <a class="el" href="classQComputations_1_1Matrix.html">Matrix</a>&lt; T &gt; &amp;A) const</td></tr>
+<tr class="separator:a99653fe37f843b10cb042d9663dc8b66"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aaef781c468abfeac7b0f12f336f960f9"><td class="memItemLeft" align="right" valign="top">std::vector&lt; T &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQComputations_1_1Matrix.html#aaef781c468abfeac7b0f12f336f960f9">get_mass</a> ()</td></tr>
+<tr class="separator:aaef781c468abfeac7b0f12f336f960f9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a225c7f35e0ce42225e9ec9e006f2449a"><td class="memItemLeft" align="right" valign="top">std::vector&lt; T &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQComputations_1_1Matrix.html#a225c7f35e0ce42225e9ec9e006f2449a">get_mass</a> () const</td></tr>
+<tr class="separator:a225c7f35e0ce42225e9ec9e006f2449a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac9c79133ba3612191bb70e5cee0b8b3f"><td class="memItemLeft" align="right" valign="top">T *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQComputations_1_1Matrix.html#ac9c79133ba3612191bb70e5cee0b8b3f">data</a> ()</td></tr>
+<tr class="separator:ac9c79133ba3612191bb70e5cee0b8b3f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a49ab1de22bfab7652b8430e60bc34911"><td class="memItemLeft" align="right" valign="top">const T *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQComputations_1_1Matrix.html#a49ab1de22bfab7652b8430e60bc34911">data</a> () const</td></tr>
+<tr class="separator:a49ab1de22bfab7652b8430e60bc34911"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a028c075ef9333c4a7e7eb90903681c02"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classQComputations_1_1Matrix.html">Matrix</a>&lt; T &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQComputations_1_1Matrix.html#a028c075ef9333c4a7e7eb90903681c02">transpose</a> () const</td></tr>
+<tr class="separator:a028c075ef9333c4a7e7eb90903681c02"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adebed0435cdd7c263c597759374f95df"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classQComputations_1_1Matrix.html">Matrix</a>&lt; T &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQComputations_1_1Matrix.html#adebed0435cdd7c263c597759374f95df">hermit</a> () const</td></tr>
+<tr class="separator:adebed0435cdd7c263c597759374f95df"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a795c6736b58778ba961d232bb1c71197"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQComputations_1_1Matrix.html#a795c6736b58778ba961d232bb1c71197">determinant</a> () const</td></tr>
+<tr class="separator:a795c6736b58778ba961d232bb1c71197"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a399f497b377d8768284fdf1b222c3820"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQComputations_1_1Matrix.html#a399f497b377d8768284fdf1b222c3820">show</a> (size_t width=<a class="el" href="classQComputations_1_1QConfig.html#ab30cc5424173ddc1bfb394b75adfcc26">QConfig::instance</a>().width()) const</td></tr>
+<tr class="separator:a399f497b377d8768284fdf1b222c3820"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a292c31901ffdbf92681c6993056f80d6"><td class="memItemLeft" align="right" valign="top">T *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQComputations_1_1Matrix.html#a292c31901ffdbf92681c6993056f80d6">operator[]</a> (size_t index_row)</td></tr>
+<tr class="separator:a292c31901ffdbf92681c6993056f80d6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af6f609bbc5602b08e458f8fb02ac7cc2"><td class="memItemLeft" align="right" valign="top">const T *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQComputations_1_1Matrix.html#af6f609bbc5602b08e458f8fb02ac7cc2">operator[]</a> (size_t index_row) const</td></tr>
+<tr class="separator:af6f609bbc5602b08e458f8fb02ac7cc2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5ced23ccddcfb3f5c8d628c8974ea35e"><td class="memItemLeft" align="right" valign="top">T &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQComputations_1_1Matrix.html#a5ced23ccddcfb3f5c8d628c8974ea35e">operator()</a> (size_t index_row, size_t index_col)</td></tr>
+<tr class="separator:a5ced23ccddcfb3f5c8d628c8974ea35e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aae98788055814945d83f93fdb6f46db0"><td class="memItemLeft" align="right" valign="top">const T&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQComputations_1_1Matrix.html#aae98788055814945d83f93fdb6f46db0">operator()</a> (size_t index_row, size_t index_col) const</td></tr>
+<tr class="separator:aae98788055814945d83f93fdb6f46db0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5bf9537a2d9b470fbb1deca6d7180b71"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQComputations_1_1Matrix.html#a5bf9537a2d9b470fbb1deca6d7180b71">LD</a> () const</td></tr>
+<tr class="separator:a5bf9537a2d9b470fbb1deca6d7180b71"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aec0c145c6ec86d5377f80d504cdc6305"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQComputations_1_1Matrix.html#aec0c145c6ec86d5377f80d504cdc6305">is_c_style</a> () const</td></tr>
+<tr class="separator:aec0c145c6ec86d5377f80d504cdc6305"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0bdd6dd2d210494482315f2fafe5023f"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceQComputations.html#a3735cc336fa84566b661c833e87fee85">MATRIX_STYLE</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQComputations_1_1Matrix.html#a0bdd6dd2d210494482315f2fafe5023f">get_matrix_style</a> () const</td></tr>
+<tr class="separator:a0bdd6dd2d210494482315f2fafe5023f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aecef6511557e44bc1544a1361804fb3a"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceQComputations.html#a3735cc336fa84566b661c833e87fee85">MATRIX_STYLE</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQComputations_1_1Matrix.html#aecef6511557e44bc1544a1361804fb3a">matrix_style</a> () const</td></tr>
+<tr class="separator:aecef6511557e44bc1544a1361804fb3a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad173ebcfd8db2697ece0a5677b18ca69"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQComputations_1_1Matrix.html#ad173ebcfd8db2697ece0a5677b18ca69">to_fortran_style</a> ()</td></tr>
+<tr class="separator:ad173ebcfd8db2697ece0a5677b18ca69"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac3d780fb26640622820e412914049c50"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQComputations_1_1Matrix.html#ac3d780fb26640622820e412914049c50">to_c_style</a> ()</td></tr>
+<tr class="separator:ac3d780fb26640622820e412914049c50"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac374a62af568276db3018664301cd347"><td class="memItemLeft" align="right" valign="top">std::vector&lt; std::vector&lt; T &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQComputations_1_1Matrix.html#ac374a62af568276db3018664301cd347">to_vector_of_vectors</a> () const</td></tr>
+<tr class="separator:ac374a62af568276db3018664301cd347"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa049c16ff8e96425ec778b71d1aeb9af"><td class="memItemLeft" align="right" valign="top">lapack_complex_double *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQComputations_1_1Matrix.html#aa049c16ff8e96425ec778b71d1aeb9af">to_upper_lapack</a> () const</td></tr>
+<tr class="separator:aa049c16ff8e96425ec778b71d1aeb9af"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8672531a8fe9de4cde47ea79543f2356"><td class="memItemLeft" align="right" valign="top">lapack_complex_double *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQComputations_1_1Matrix.html#a8672531a8fe9de4cde47ea79543f2356">to_lapack</a> () const</td></tr>
+<tr class="separator:a8672531a8fe9de4cde47ea79543f2356"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a52202b91caf2ce9592f296e3d3586246"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classQComputations_1_1Matrix.html">Matrix</a>&lt; T &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQComputations_1_1Matrix.html#a52202b91caf2ce9592f296e3d3586246">submatrix</a> (size_t <a class="el" href="classQComputations_1_1Matrix.html#af8d31e7f14524386612dfda621b1356f">n</a>, size_t <a class="el" href="classQComputations_1_1Matrix.html#ac2da6d77e27cb5dfcc2b0ed4e619fe13">m</a>, size_t row_index, size_t col_index) const</td></tr>
+<tr class="separator:a52202b91caf2ce9592f296e3d3586246"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a120b9c0711f3885d014432597b7b12bb"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQComputations_1_1Matrix.html#a120b9c0711f3885d014432597b7b12bb">index</a> (size_t i, size_t j) const</td></tr>
+<tr class="separator:a120b9c0711f3885d014432597b7b12bb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6ce103e7b6d1f46e2166ac9c74843c6d"><td class="memItemLeft" align="right" valign="top">T &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQComputations_1_1Matrix.html#a6ce103e7b6d1f46e2166ac9c74843c6d">elem</a> (size_t i, size_t j)</td></tr>
+<tr class="separator:a6ce103e7b6d1f46e2166ac9c74843c6d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7ead62e913e0ed33fd0d2890c7d39229"><td class="memItemLeft" align="right" valign="top">const T&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQComputations_1_1Matrix.html#a7ead62e913e0ed33fd0d2890c7d39229">elem</a> (size_t i, size_t j) const</td></tr>
+<tr class="separator:a7ead62e913e0ed33fd0d2890c7d39229"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a987133273433626d6dbc9de90210f9d7"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQComputations_1_1Matrix.html#a987133273433626d6dbc9de90210f9d7">write_to_csv_file</a> (const std::string &amp;filename) const</td></tr>
+<tr class="separator:a987133273433626d6dbc9de90210f9d7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a905208a4a69c8d84a61411622f402738"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classQComputations_1_1Matrix.html">Matrix</a>&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQComputations_1_1Matrix.html#a905208a4a69c8d84a61411622f402738">operator*</a> (const <a class="el" href="classQComputations_1_1Matrix.html">Matrix</a>&lt; double &gt; &amp;A) const</td></tr>
+<tr class="separator:a905208a4a69c8d84a61411622f402738"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abf2e11a1d49e6af658d8c68669937813"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classQComputations_1_1Matrix.html">Matrix</a>&lt; double &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQComputations_1_1Matrix.html#abf2e11a1d49e6af658d8c68669937813">operator*=</a> (const <a class="el" href="classQComputations_1_1Matrix.html">Matrix</a>&lt; double &gt; &amp;A)</td></tr>
+<tr class="separator:abf2e11a1d49e6af658d8c68669937813"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2f8175da623abba45ea6dc6988f30676"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classQComputations_1_1Matrix.html">Matrix</a>&lt; int &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQComputations_1_1Matrix.html#a2f8175da623abba45ea6dc6988f30676">operator*</a> (const <a class="el" href="classQComputations_1_1Matrix.html">Matrix</a>&lt; int &gt; &amp;A) const</td></tr>
+<tr class="separator:a2f8175da623abba45ea6dc6988f30676"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a69c1e0fe7f3148f36408ffc377e83718"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classQComputations_1_1Matrix.html">Matrix</a>&lt; <a class="el" href="namespaceQComputations.html#a4d35a1f736afa50465898555ea98704a">COMPLEX</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQComputations_1_1Matrix.html#a69c1e0fe7f3148f36408ffc377e83718">operator*</a> (const <a class="el" href="classQComputations_1_1Matrix.html">Matrix</a>&lt; <a class="el" href="namespaceQComputations.html#a4d35a1f736afa50465898555ea98704a">COMPLEX</a> &gt; &amp;A) const</td></tr>
+<tr class="separator:a69c1e0fe7f3148f36408ffc377e83718"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac08d1e0a21faf83748790674ff4bc4af"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classQComputations_1_1Matrix.html">Matrix</a>&lt; <a class="el" href="namespaceQComputations.html#a4d35a1f736afa50465898555ea98704a">COMPLEX</a> &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQComputations_1_1Matrix.html#ac08d1e0a21faf83748790674ff4bc4af">operator*=</a> (const <a class="el" href="classQComputations_1_1Matrix.html">Matrix</a>&lt; <a class="el" href="namespaceQComputations.html#a4d35a1f736afa50465898555ea98704a">COMPLEX</a> &gt; &amp;A)</td></tr>
+<tr class="separator:ac08d1e0a21faf83748790674ff4bc4af"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acfa119d9471a8fa207b29db2321970e9"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classQComputations_1_1Matrix.html">Matrix</a>&lt; double &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQComputations_1_1Matrix.html#acfa119d9471a8fa207b29db2321970e9">operator+=</a> (const <a class="el" href="classQComputations_1_1Matrix.html">Matrix</a>&lt; double &gt; &amp;other)</td></tr>
+<tr class="separator:acfa119d9471a8fa207b29db2321970e9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab85a28056f5797ac3aa916582c16bb40"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classQComputations_1_1Matrix.html">Matrix</a>&lt; <a class="el" href="namespaceQComputations.html#a4d35a1f736afa50465898555ea98704a">COMPLEX</a> &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQComputations_1_1Matrix.html#ab85a28056f5797ac3aa916582c16bb40">operator+=</a> (const <a class="el" href="classQComputations_1_1Matrix.html">Matrix</a>&lt; <a class="el" href="namespaceQComputations.html#a4d35a1f736afa50465898555ea98704a">COMPLEX</a> &gt; &amp;other)</td></tr>
+<tr class="separator:ab85a28056f5797ac3aa916582c16bb40"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2eaddeba77aa7d941eee75fb05f0aabd"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classQComputations_1_1Matrix.html">Matrix</a>&lt; double &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQComputations_1_1Matrix.html#a2eaddeba77aa7d941eee75fb05f0aabd">operator-=</a> (const <a class="el" href="classQComputations_1_1Matrix.html">Matrix</a>&lt; double &gt; &amp;other)</td></tr>
+<tr class="separator:a2eaddeba77aa7d941eee75fb05f0aabd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac37c6ce7bf925f80b2f1821f4065512b"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classQComputations_1_1Matrix.html">Matrix</a>&lt; <a class="el" href="namespaceQComputations.html#a4d35a1f736afa50465898555ea98704a">COMPLEX</a> &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQComputations_1_1Matrix.html#ac37c6ce7bf925f80b2f1821f4065512b">operator-=</a> (const <a class="el" href="classQComputations_1_1Matrix.html">Matrix</a>&lt; <a class="el" href="namespaceQComputations.html#a4d35a1f736afa50465898555ea98704a">COMPLEX</a> &gt; &amp;other)</td></tr>
+<tr class="separator:ac37c6ce7bf925f80b2f1821f4065512b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a08e21ea3657e3ac5465ee29761ba75bd"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classQComputations_1_1Matrix.html">Matrix</a>&lt; double &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQComputations_1_1Matrix.html#a08e21ea3657e3ac5465ee29761ba75bd">operator*=</a> (double num)</td></tr>
+<tr class="separator:a08e21ea3657e3ac5465ee29761ba75bd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a00b0245e1d729a9e068798818fce7414"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classQComputations_1_1Matrix.html">Matrix</a>&lt; <a class="el" href="namespaceQComputations.html#a4d35a1f736afa50465898555ea98704a">COMPLEX</a> &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQComputations_1_1Matrix.html#a00b0245e1d729a9e068798818fce7414">operator*=</a> (<a class="el" href="namespaceQComputations.html#a4d35a1f736afa50465898555ea98704a">COMPLEX</a> num)</td></tr>
+<tr class="separator:a00b0245e1d729a9e068798818fce7414"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a052ef808f7803621dabc01479d60f4b8"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classQComputations_1_1Matrix.html">Matrix</a>&lt; double &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQComputations_1_1Matrix.html#a052ef808f7803621dabc01479d60f4b8">operator/=</a> (double num)</td></tr>
+<tr class="separator:a052ef808f7803621dabc01479d60f4b8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5ecdd64ef1a3081cb823c7f6dce2b824"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classQComputations_1_1Matrix.html">Matrix</a>&lt; <a class="el" href="namespaceQComputations.html#a4d35a1f736afa50465898555ea98704a">COMPLEX</a> &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQComputations_1_1Matrix.html#a5ecdd64ef1a3081cb823c7f6dce2b824">operator/=</a> (<a class="el" href="namespaceQComputations.html#a4d35a1f736afa50465898555ea98704a">COMPLEX</a> num)</td></tr>
+<tr class="separator:a5ecdd64ef1a3081cb823c7f6dce2b824"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aaf272a3973a489030163fef2b97f4283"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQComputations_1_1Matrix.html#aaf272a3973a489030163fef2b97f4283">write_to_csv_file</a> (const std::string &amp;filename) const</td></tr>
+<tr class="separator:aaf272a3973a489030163fef2b97f4283"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aacd777da9733fcb5f4b4b2262ee657cf"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQComputations_1_1Matrix.html#aacd777da9733fcb5f4b4b2262ee657cf">write_to_csv_file</a> (const std::string &amp;filename) const</td></tr>
+<tr class="separator:aacd777da9733fcb5f4b4b2262ee657cf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5ac681a7d6dcfeab7bd6434e661bd069"><td class="memItemLeft" align="right" valign="top">lapack_complex_double *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQComputations_1_1Matrix.html#a5ac681a7d6dcfeab7bd6434e661bd069">to_upper_lapack</a> () const</td></tr>
+<tr class="separator:a5ac681a7d6dcfeab7bd6434e661bd069"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af5e18714f207894a7f351235a0648b41"><td class="memItemLeft" align="right" valign="top">lapack_complex_double *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQComputations_1_1Matrix.html#af5e18714f207894a7f351235a0648b41">to_lapack</a> () const</td></tr>
+<tr class="separator:af5e18714f207894a7f351235a0648b41"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac08d1e0a21faf83748790674ff4bc4af"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classQComputations_1_1Matrix.html">Matrix</a>&lt; <a class="el" href="namespaceQComputations.html#a4d35a1f736afa50465898555ea98704a">COMPLEX</a> &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQComputations_1_1Matrix.html#ac08d1e0a21faf83748790674ff4bc4af">operator*=</a> (const <a class="el" href="classQComputations_1_1Matrix.html">Matrix</a>&lt; <a class="el" href="namespaceQComputations.html#a4d35a1f736afa50465898555ea98704a">COMPLEX</a> &gt; &amp;A)</td></tr>
+<tr class="separator:ac08d1e0a21faf83748790674ff4bc4af"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abf2e11a1d49e6af658d8c68669937813"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classQComputations_1_1Matrix.html">Matrix</a>&lt; double &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQComputations_1_1Matrix.html#abf2e11a1d49e6af658d8c68669937813">operator*=</a> (const <a class="el" href="classQComputations_1_1Matrix.html">Matrix</a>&lt; double &gt; &amp;A)</td></tr>
+<tr class="separator:abf2e11a1d49e6af658d8c68669937813"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5ac681a7d6dcfeab7bd6434e661bd069"><td class="memItemLeft" align="right" valign="top">lapack_complex_double *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQComputations_1_1Matrix.html#a5ac681a7d6dcfeab7bd6434e661bd069">to_upper_lapack</a> () const</td></tr>
+<tr class="separator:a5ac681a7d6dcfeab7bd6434e661bd069"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af5e18714f207894a7f351235a0648b41"><td class="memItemLeft" align="right" valign="top">lapack_complex_double *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQComputations_1_1Matrix.html#af5e18714f207894a7f351235a0648b41">to_lapack</a> () const</td></tr>
+<tr class="separator:af5e18714f207894a7f351235a0648b41"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-methods"></a>
+Закрытые члены</h2></td></tr>
+<tr class="memitem:aa01af61ef235ec32e87820ca42e44165"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQComputations_1_1Matrix.html#aa01af61ef235ec32e87820ca42e44165">get_index</a> (size_t i, size_t j) const</td></tr>
+<tr class="separator:aa01af61ef235ec32e87820ca42e44165"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-attribs"></a>
+Закрытые данные</h2></td></tr>
+<tr class="memitem:ada301f6633f8b50bd06b7b37e697c734"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQComputations_1_1Matrix.html#ada301f6633f8b50bd06b7b37e697c734">n_</a></td></tr>
+<tr class="separator:ada301f6633f8b50bd06b7b37e697c734"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa585010daaf5376094024bb2f063eba0"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQComputations_1_1Matrix.html#aa585010daaf5376094024bb2f063eba0">m_</a></td></tr>
+<tr class="separator:aa585010daaf5376094024bb2f063eba0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a891c76625024a9d3b4785b13e17d3d44"><td class="memItemLeft" align="right" valign="top">std::vector&lt; T &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQComputations_1_1Matrix.html#a891c76625024a9d3b4785b13e17d3d44">mass_</a></td></tr>
+<tr class="separator:a891c76625024a9d3b4785b13e17d3d44"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad4c9ee2733cbda396c7cc8a4e4c0b50a"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceQComputations.html#a3735cc336fa84566b661c833e87fee85">MATRIX_STYLE</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQComputations_1_1Matrix.html#ad4c9ee2733cbda396c7cc8a4e4c0b50a">matrix_style_</a></td></tr>
+<tr class="separator:ad4c9ee2733cbda396c7cc8a4e4c0b50a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table>
+<h2 class="groupheader">Конструктор(ы)</h2>
+<a id="a78d7a9f9958d6187b62607e27ace9c70"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a78d7a9f9958d6187b62607e27ace9c70">&#9670;&nbsp;</a></span>Matrix() <span class="overload">[1/9]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classQComputations_1_1Matrix.html">QComputations::Matrix</a>&lt; T &gt;::<a class="el" href="classQComputations_1_1Matrix.html">Matrix</a> </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">default</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a889c258bdf8eb575f566d4e4f6912dd4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a889c258bdf8eb575f566d4e4f6912dd4">&#9670;&nbsp;</a></span>Matrix() <span class="overload">[2/9]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classQComputations_1_1Matrix.html">QComputations::Matrix</a>&lt; T &gt;::<a class="el" href="classQComputations_1_1Matrix.html">Matrix</a> </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="namespaceQComputations.html#a3735cc336fa84566b661c833e87fee85">MATRIX_STYLE</a>&#160;</td>
+          <td class="paramname"><em>matrix_style</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>n</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>m</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">explicit</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="ae86a644f8163b26f2f27d0ebde3b3494"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae86a644f8163b26f2f27d0ebde3b3494">&#9670;&nbsp;</a></span>Matrix() <span class="overload">[3/9]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classQComputations_1_1Matrix.html">QComputations::Matrix</a>&lt; T &gt;::<a class="el" href="classQComputations_1_1Matrix.html">Matrix</a> </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="namespaceQComputations.html#a3735cc336fa84566b661c833e87fee85">MATRIX_STYLE</a>&#160;</td>
+          <td class="paramname"><em>matrix_style</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>n</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>m</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const T &amp;&#160;</td>
+          <td class="paramname"><em>init_val</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">explicit</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="ab70e6703b8092adeaf40d535cdcefe08"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab70e6703b8092adeaf40d535cdcefe08">&#9670;&nbsp;</a></span>Matrix() <span class="overload">[4/9]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classQComputations_1_1Matrix.html">QComputations::Matrix</a>&lt; T &gt;::<a class="el" href="classQComputations_1_1Matrix.html">Matrix</a> </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="classQComputations_1_1Matrix.html">Matrix</a>&lt; T &gt; &amp;&#160;</td>
+          <td class="paramname"><em>A</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">explicit</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="acebc9ab40cf8dce5afc7f5289a642173"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acebc9ab40cf8dce5afc7f5289a642173">&#9670;&nbsp;</a></span>Matrix() <span class="overload">[5/9]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classQComputations_1_1Matrix.html">QComputations::Matrix</a>&lt; T &gt;::<a class="el" href="classQComputations_1_1Matrix.html">Matrix</a> </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="namespaceQComputations.html#a3735cc336fa84566b661c833e87fee85">MATRIX_STYLE</a>&#160;</td>
+          <td class="paramname"><em>matrix_style</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::vector&lt; T &gt; &amp;&#160;</td>
+          <td class="paramname"><em>mass</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>n</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>m</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">explicit</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a1167f3446c54a9af168eaf632fb8a8b3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1167f3446c54a9af168eaf632fb8a8b3">&#9670;&nbsp;</a></span>Matrix() <span class="overload">[6/9]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classQComputations_1_1Matrix.html">QComputations::Matrix</a>&lt; T &gt;::<a class="el" href="classQComputations_1_1Matrix.html">Matrix</a> </td>
+          <td>(</td>
+          <td class="paramtype">const std::vector&lt; T &gt; &amp;&#160;</td>
+          <td class="paramname"><em>mass</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">explicit</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="ae404ca4036fc4dd4f689fedcabdc068c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae404ca4036fc4dd4f689fedcabdc068c">&#9670;&nbsp;</a></span>Matrix() <span class="overload">[7/9]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classQComputations_1_1Matrix.html">QComputations::Matrix</a>&lt; T &gt;::<a class="el" href="classQComputations_1_1Matrix.html">Matrix</a> </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="namespaceQComputations.html#a3735cc336fa84566b661c833e87fee85">MATRIX_STYLE</a>&#160;</td>
+          <td class="paramname"><em>matrix_style</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>n</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>m</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::function&lt; T(size_t, size_t)&gt;&#160;</td>
+          <td class="paramname"><em>func</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">explicit</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="acaa8ba66b94178baa048a0f78c2102c5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acaa8ba66b94178baa048a0f78c2102c5">&#9670;&nbsp;</a></span>Matrix() <span class="overload">[8/9]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T &gt; </div>
+<div class="memtemplate">
+template&lt;typename V &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classQComputations_1_1Matrix.html">QComputations::Matrix</a>&lt; T &gt;::<a class="el" href="classQComputations_1_1Matrix.html">Matrix</a> </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="classQComputations_1_1Matrix.html">Matrix</a>&lt; V &gt; &amp;&#160;</td>
+          <td class="paramname"><em>A</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a1d238140a949dfdc877ef8008aecc947"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1d238140a949dfdc877ef8008aecc947">&#9670;&nbsp;</a></span>Matrix() <span class="overload">[9/9]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classQComputations_1_1Matrix.html">QComputations::Matrix</a>&lt; T &gt;::<a class="el" href="classQComputations_1_1Matrix.html">Matrix</a> </td>
+          <td>(</td>
+          <td class="paramtype">const std::vector&lt; std::vector&lt; T &gt;&gt; &amp;&#160;</td>
+          <td class="paramname"><em>A</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="namespaceQComputations.html#a3735cc336fa84566b661c833e87fee85">MATRIX_STYLE</a>&#160;</td>
+          <td class="paramname"><em>matrix_style</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">explicit</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<h2 class="groupheader">Методы</h2>
+<a id="acea2fd79d420a90eb03efacaae73c506"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acea2fd79d420a90eb03efacaae73c506">&#9670;&nbsp;</a></span>add_cols()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classQComputations_1_1Matrix.html">QComputations::Matrix</a>&lt; T &gt;::add_cols </td>
+          <td>(</td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>m</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a0c557bf01dae593c488fe726f4a805d8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0c557bf01dae593c488fe726f4a805d8">&#9670;&nbsp;</a></span>add_rows()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classQComputations_1_1Matrix.html">QComputations::Matrix</a>&lt; T &gt;::add_rows </td>
+          <td>(</td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>n</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="aca011641f4b13aa5eaf0289c6a4d841e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aca011641f4b13aa5eaf0289c6a4d841e">&#9670;&nbsp;</a></span>col()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">std::vector&lt; T &gt; <a class="el" href="classQComputations_1_1Matrix.html">QComputations::Matrix</a>&lt; T &gt;::col </td>
+          <td>(</td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>index</em></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="ac9c79133ba3612191bb70e5cee0b8b3f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac9c79133ba3612191bb70e5cee0b8b3f">&#9670;&nbsp;</a></span>data() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">T* <a class="el" href="classQComputations_1_1Matrix.html">QComputations::Matrix</a>&lt; T &gt;::data </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a49ab1de22bfab7652b8430e60bc34911"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a49ab1de22bfab7652b8430e60bc34911">&#9670;&nbsp;</a></span>data() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const T* <a class="el" href="classQComputations_1_1Matrix.html">QComputations::Matrix</a>&lt; T &gt;::data </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a795c6736b58778ba961d232bb1c71197"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a795c6736b58778ba961d232bb1c71197">&#9670;&nbsp;</a></span>determinant()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">double <a class="el" href="classQComputations_1_1Matrix.html">QComputations::Matrix</a>&lt; T &gt;::determinant </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a6ce103e7b6d1f46e2166ac9c74843c6d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6ce103e7b6d1f46e2166ac9c74843c6d">&#9670;&nbsp;</a></span>elem() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">T&amp; <a class="el" href="classQComputations_1_1Matrix.html">QComputations::Matrix</a>&lt; T &gt;::elem </td>
+          <td>(</td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>i</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>j</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a7ead62e913e0ed33fd0d2890c7d39229"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7ead62e913e0ed33fd0d2890c7d39229">&#9670;&nbsp;</a></span>elem() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const T <a class="el" href="classQComputations_1_1Matrix.html">QComputations::Matrix</a>&lt; T &gt;::elem </td>
+          <td>(</td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>i</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>j</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="abb69ee7cecbccfa4a657a8bc554db7f2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abb69ee7cecbccfa4a657a8bc554db7f2">&#9670;&nbsp;</a></span>expand()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classQComputations_1_1Matrix.html">QComputations::Matrix</a>&lt; T &gt;::expand </td>
+          <td>(</td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>n</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="aa01af61ef235ec32e87820ca42e44165"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa01af61ef235ec32e87820ca42e44165">&#9670;&nbsp;</a></span>get_index()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">size_t <a class="el" href="classQComputations_1_1Matrix.html">QComputations::Matrix</a>&lt; T &gt;::get_index </td>
+          <td>(</td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>i</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>j</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="aaef781c468abfeac7b0f12f336f960f9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aaef781c468abfeac7b0f12f336f960f9">&#9670;&nbsp;</a></span>get_mass() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::vector&lt;T&gt;&amp; <a class="el" href="classQComputations_1_1Matrix.html">QComputations::Matrix</a>&lt; T &gt;::get_mass </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a225c7f35e0ce42225e9ec9e006f2449a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a225c7f35e0ce42225e9ec9e006f2449a">&#9670;&nbsp;</a></span>get_mass() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::vector&lt;T&gt; <a class="el" href="classQComputations_1_1Matrix.html">QComputations::Matrix</a>&lt; T &gt;::get_mass </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a0bdd6dd2d210494482315f2fafe5023f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0bdd6dd2d210494482315f2fafe5023f">&#9670;&nbsp;</a></span>get_matrix_style()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="namespaceQComputations.html#a3735cc336fa84566b661c833e87fee85">MATRIX_STYLE</a> <a class="el" href="classQComputations_1_1Matrix.html">QComputations::Matrix</a>&lt; T &gt;::get_matrix_style </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="adebed0435cdd7c263c597759374f95df"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#adebed0435cdd7c263c597759374f95df">&#9670;&nbsp;</a></span>hermit()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classQComputations_1_1Matrix.html">Matrix</a>&lt; T &gt; <a class="el" href="classQComputations_1_1Matrix.html">QComputations::Matrix</a>&lt; T &gt;::hermit</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a120b9c0711f3885d014432597b7b12bb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a120b9c0711f3885d014432597b7b12bb">&#9670;&nbsp;</a></span>index()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">size_t <a class="el" href="classQComputations_1_1Matrix.html">QComputations::Matrix</a>&lt; T &gt;::index </td>
+          <td>(</td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>i</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>j</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="aec0c145c6ec86d5377f80d504cdc6305"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aec0c145c6ec86d5377f80d504cdc6305">&#9670;&nbsp;</a></span>is_c_style()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool <a class="el" href="classQComputations_1_1Matrix.html">QComputations::Matrix</a>&lt; T &gt;::is_c_style </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a5bf9537a2d9b470fbb1deca6d7180b71"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5bf9537a2d9b470fbb1deca6d7180b71">&#9670;&nbsp;</a></span>LD()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">size_t <a class="el" href="classQComputations_1_1Matrix.html">QComputations::Matrix</a>&lt; T &gt;::LD </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="ac2da6d77e27cb5dfcc2b0ed4e619fe13"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac2da6d77e27cb5dfcc2b0ed4e619fe13">&#9670;&nbsp;</a></span>m()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">size_t <a class="el" href="classQComputations_1_1Matrix.html">QComputations::Matrix</a>&lt; T &gt;::m </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="aecef6511557e44bc1544a1361804fb3a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aecef6511557e44bc1544a1361804fb3a">&#9670;&nbsp;</a></span>matrix_style()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="namespaceQComputations.html#a3735cc336fa84566b661c833e87fee85">MATRIX_STYLE</a> <a class="el" href="classQComputations_1_1Matrix.html">QComputations::Matrix</a>&lt; T &gt;::matrix_style </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a31d09d1ffeb66099a979ae5ab53d1300"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a31d09d1ffeb66099a979ae5ab53d1300">&#9670;&nbsp;</a></span>modify_col()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classQComputations_1_1Matrix.html">QComputations::Matrix</a>&lt; T &gt;::modify_col </td>
+          <td>(</td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>index</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::vector&lt; T &gt; &amp;&#160;</td>
+          <td class="paramname"><em>v</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a7dd1d143ef3430b0c1f2a6a1cce06107"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7dd1d143ef3430b0c1f2a6a1cce06107">&#9670;&nbsp;</a></span>modify_row()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classQComputations_1_1Matrix.html">QComputations::Matrix</a>&lt; T &gt;::modify_row </td>
+          <td>(</td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>index</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::vector&lt; T &gt; &amp;&#160;</td>
+          <td class="paramname"><em>v</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="af8d31e7f14524386612dfda621b1356f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af8d31e7f14524386612dfda621b1356f">&#9670;&nbsp;</a></span>n()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">size_t <a class="el" href="classQComputations_1_1Matrix.html">QComputations::Matrix</a>&lt; T &gt;::n </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a5ced23ccddcfb3f5c8d628c8974ea35e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5ced23ccddcfb3f5c8d628c8974ea35e">&#9670;&nbsp;</a></span>operator()() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">T&amp; <a class="el" href="classQComputations_1_1Matrix.html">QComputations::Matrix</a>&lt; T &gt;::operator() </td>
+          <td>(</td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>index_row</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>index_col</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="aae98788055814945d83f93fdb6f46db0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aae98788055814945d83f93fdb6f46db0">&#9670;&nbsp;</a></span>operator()() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const T <a class="el" href="classQComputations_1_1Matrix.html">QComputations::Matrix</a>&lt; T &gt;::operator() </td>
+          <td>(</td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>index_row</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>index_col</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a69c1e0fe7f3148f36408ffc377e83718"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a69c1e0fe7f3148f36408ffc377e83718">&#9670;&nbsp;</a></span>operator*() <span class="overload">[1/6]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classQComputations_1_1Matrix.html">Matrix</a>&lt; <a class="el" href="namespaceQComputations.html#a4d35a1f736afa50465898555ea98704a">COMPLEX</a> &gt; <a class="el" href="classQComputations_1_1Matrix.html">QComputations::Matrix</a>&lt; <a class="el" href="namespaceQComputations.html#a4d35a1f736afa50465898555ea98704a">COMPLEX</a> &gt;::operator* </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="classQComputations_1_1Matrix.html">Matrix</a>&lt; <a class="el" href="namespaceQComputations.html#a4d35a1f736afa50465898555ea98704a">COMPLEX</a> &gt; &amp;&#160;</td>
+          <td class="paramname"><em>A</em></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a905208a4a69c8d84a61411622f402738"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a905208a4a69c8d84a61411622f402738">&#9670;&nbsp;</a></span>operator*() <span class="overload">[2/6]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classQComputations_1_1Matrix.html">Matrix</a>&lt; double &gt; <a class="el" href="classQComputations_1_1Matrix.html">QComputations::Matrix</a>&lt; double &gt;::operator* </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="classQComputations_1_1Matrix.html">Matrix</a>&lt; double &gt; &amp;&#160;</td>
+          <td class="paramname"><em>A</em></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a2f8175da623abba45ea6dc6988f30676"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2f8175da623abba45ea6dc6988f30676">&#9670;&nbsp;</a></span>operator*() <span class="overload">[3/6]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classQComputations_1_1Matrix.html">Matrix</a>&lt; int &gt; <a class="el" href="classQComputations_1_1Matrix.html">QComputations::Matrix</a>&lt; int &gt;::operator* </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="classQComputations_1_1Matrix.html">Matrix</a>&lt; int &gt; &amp;&#160;</td>
+          <td class="paramname"><em>A</em></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="aac232b563899010d5d42af3ce0aa6835"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aac232b563899010d5d42af3ce0aa6835">&#9670;&nbsp;</a></span>operator*() <span class="overload">[4/6]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classQComputations_1_1Matrix.html">Matrix</a>&lt;T&gt; <a class="el" href="classQComputations_1_1Matrix.html">QComputations::Matrix</a>&lt; T &gt;::operator* </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="classQComputations_1_1Matrix.html">Matrix</a>&lt; T &gt; &amp;&#160;</td>
+          <td class="paramname"><em>A</em></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a756a0c3e58dbaa25053a1269b77e6f44"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a756a0c3e58dbaa25053a1269b77e6f44">&#9670;&nbsp;</a></span>operator*() <span class="overload">[5/6]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">std::vector&lt; T &gt; <a class="el" href="classQComputations_1_1Matrix.html">QComputations::Matrix</a>&lt; T &gt;::operator* </td>
+          <td>(</td>
+          <td class="paramtype">const std::vector&lt; T &gt; &amp;&#160;</td>
+          <td class="paramname"><em>v</em></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="ae82b6b2d451f63f883950d4848becab8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae82b6b2d451f63f883950d4848becab8">&#9670;&nbsp;</a></span>operator*() <span class="overload">[6/6]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classQComputations_1_1Matrix.html">Matrix</a>&lt; T &gt; <a class="el" href="classQComputations_1_1Matrix.html">QComputations::Matrix</a>&lt; T &gt;::operator* </td>
+          <td>(</td>
+          <td class="paramtype">const T &amp;&#160;</td>
+          <td class="paramname"><em>num</em></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a00b0245e1d729a9e068798818fce7414"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a00b0245e1d729a9e068798818fce7414">&#9670;&nbsp;</a></span>operator*=() <span class="overload">[1/8]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classQComputations_1_1Matrix.html">Matrix</a>&lt; <a class="el" href="namespaceQComputations.html#a4d35a1f736afa50465898555ea98704a">COMPLEX</a> &gt; &amp; <a class="el" href="classQComputations_1_1Matrix.html">QComputations::Matrix</a>&lt; <a class="el" href="namespaceQComputations.html#a4d35a1f736afa50465898555ea98704a">COMPLEX</a> &gt;::operator*= </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="namespaceQComputations.html#a4d35a1f736afa50465898555ea98704a">COMPLEX</a>&#160;</td>
+          <td class="paramname"><em>num</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="ac08d1e0a21faf83748790674ff4bc4af"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac08d1e0a21faf83748790674ff4bc4af">&#9670;&nbsp;</a></span>operator*=() <span class="overload">[2/8]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classQComputations_1_1Matrix.html">Matrix</a>&lt; <a class="el" href="namespaceQComputations.html#a4d35a1f736afa50465898555ea98704a">COMPLEX</a> &gt; &amp; <a class="el" href="classQComputations_1_1Matrix.html">QComputations::Matrix</a>&lt; <a class="el" href="namespaceQComputations.html#a4d35a1f736afa50465898555ea98704a">COMPLEX</a> &gt;::operator*= </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="classQComputations_1_1Matrix.html">Matrix</a>&lt; <a class="el" href="namespaceQComputations.html#a4d35a1f736afa50465898555ea98704a">COMPLEX</a> &gt; &amp;&#160;</td>
+          <td class="paramname"><em>A</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="ac08d1e0a21faf83748790674ff4bc4af"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac08d1e0a21faf83748790674ff4bc4af">&#9670;&nbsp;</a></span>operator*=() <span class="overload">[3/8]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classQComputations_1_1Matrix.html">Matrix</a>&lt; <a class="el" href="namespaceQComputations.html#a4d35a1f736afa50465898555ea98704a">COMPLEX</a> &gt; &amp; <a class="el" href="classQComputations_1_1Matrix.html">QComputations::Matrix</a>&lt; <a class="el" href="namespaceQComputations.html#a4d35a1f736afa50465898555ea98704a">COMPLEX</a> &gt;::operator*= </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="classQComputations_1_1Matrix.html">Matrix</a>&lt; <a class="el" href="namespaceQComputations.html#a4d35a1f736afa50465898555ea98704a">COMPLEX</a> &gt; &amp;&#160;</td>
+          <td class="paramname"><em>A</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="abf2e11a1d49e6af658d8c68669937813"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abf2e11a1d49e6af658d8c68669937813">&#9670;&nbsp;</a></span>operator*=() <span class="overload">[4/8]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classQComputations_1_1Matrix.html">Matrix</a>&lt; double &gt; &amp; <a class="el" href="classQComputations_1_1Matrix.html">QComputations::Matrix</a>&lt; double &gt;::operator*= </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="classQComputations_1_1Matrix.html">Matrix</a>&lt; double &gt; &amp;&#160;</td>
+          <td class="paramname"><em>A</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="abf2e11a1d49e6af658d8c68669937813"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abf2e11a1d49e6af658d8c68669937813">&#9670;&nbsp;</a></span>operator*=() <span class="overload">[5/8]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classQComputations_1_1Matrix.html">Matrix</a>&lt; double &gt; &amp; <a class="el" href="classQComputations_1_1Matrix.html">QComputations::Matrix</a>&lt; double &gt;::operator*= </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="classQComputations_1_1Matrix.html">Matrix</a>&lt; double &gt; &amp;&#160;</td>
+          <td class="paramname"><em>A</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a24d415282d9d0ff0520d3130b864e255"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a24d415282d9d0ff0520d3130b864e255">&#9670;&nbsp;</a></span>operator*=() <span class="overload">[6/8]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classQComputations_1_1Matrix.html">Matrix</a>&lt;T&gt;&amp; <a class="el" href="classQComputations_1_1Matrix.html">QComputations::Matrix</a>&lt; T &gt;::operator*= </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="classQComputations_1_1Matrix.html">Matrix</a>&lt; T &gt; &amp;&#160;</td>
+          <td class="paramname"><em>A</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a08e21ea3657e3ac5465ee29761ba75bd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a08e21ea3657e3ac5465ee29761ba75bd">&#9670;&nbsp;</a></span>operator*=() <span class="overload">[7/8]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classQComputations_1_1Matrix.html">Matrix</a>&lt; double &gt; &amp; <a class="el" href="classQComputations_1_1Matrix.html">QComputations::Matrix</a>&lt; double &gt;::operator*= </td>
+          <td>(</td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>num</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="ac24196a78c44c93a90803ad6c5900453"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac24196a78c44c93a90803ad6c5900453">&#9670;&nbsp;</a></span>operator*=() <span class="overload">[8/8]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classQComputations_1_1Matrix.html">Matrix</a>&lt;T&gt;&amp; <a class="el" href="classQComputations_1_1Matrix.html">QComputations::Matrix</a>&lt; T &gt;::operator*= </td>
+          <td>(</td>
+          <td class="paramtype">T&#160;</td>
+          <td class="paramname"><em>num</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="aa3f97d922a811512dbf82ce6c4abc5a9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa3f97d922a811512dbf82ce6c4abc5a9">&#9670;&nbsp;</a></span>operator+() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classQComputations_1_1Matrix.html">Matrix</a>&lt; T &gt; <a class="el" href="classQComputations_1_1Matrix.html">QComputations::Matrix</a>&lt; T &gt;::operator+ </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="classQComputations_1_1Matrix.html">Matrix</a>&lt; T &gt; &amp;&#160;</td>
+          <td class="paramname"><em>A</em></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a188aa0c3ed83c7ccfec4d15d7d18b23e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a188aa0c3ed83c7ccfec4d15d7d18b23e">&#9670;&nbsp;</a></span>operator+() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classQComputations_1_1Matrix.html">Matrix</a>&lt; T &gt; <a class="el" href="classQComputations_1_1Matrix.html">QComputations::Matrix</a>&lt; T &gt;::operator+ </td>
+          <td>(</td>
+          <td class="paramtype">const T &amp;&#160;</td>
+          <td class="paramname"><em>num</em></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="ab85a28056f5797ac3aa916582c16bb40"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab85a28056f5797ac3aa916582c16bb40">&#9670;&nbsp;</a></span>operator+=() <span class="overload">[1/3]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classQComputations_1_1Matrix.html">Matrix</a>&lt; <a class="el" href="namespaceQComputations.html#a4d35a1f736afa50465898555ea98704a">COMPLEX</a> &gt; &amp; <a class="el" href="classQComputations_1_1Matrix.html">QComputations::Matrix</a>&lt; <a class="el" href="namespaceQComputations.html#a4d35a1f736afa50465898555ea98704a">COMPLEX</a> &gt;::operator+= </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="classQComputations_1_1Matrix.html">Matrix</a>&lt; <a class="el" href="namespaceQComputations.html#a4d35a1f736afa50465898555ea98704a">COMPLEX</a> &gt; &amp;&#160;</td>
+          <td class="paramname"><em>other</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="acfa119d9471a8fa207b29db2321970e9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acfa119d9471a8fa207b29db2321970e9">&#9670;&nbsp;</a></span>operator+=() <span class="overload">[2/3]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classQComputations_1_1Matrix.html">Matrix</a>&lt; double &gt; &amp; <a class="el" href="classQComputations_1_1Matrix.html">QComputations::Matrix</a>&lt; double &gt;::operator+= </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="classQComputations_1_1Matrix.html">Matrix</a>&lt; double &gt; &amp;&#160;</td>
+          <td class="paramname"><em>other</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="aabdca9d5fd3cd35a40c7f0a1d914814b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aabdca9d5fd3cd35a40c7f0a1d914814b">&#9670;&nbsp;</a></span>operator+=() <span class="overload">[3/3]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classQComputations_1_1Matrix.html">Matrix</a>&lt; T &gt; &amp; <a class="el" href="classQComputations_1_1Matrix.html">QComputations::Matrix</a>&lt; T &gt;::operator+= </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="classQComputations_1_1Matrix.html">Matrix</a>&lt; T &gt; &amp;&#160;</td>
+          <td class="paramname"><em>A</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a12c30e5d6ad757635241a02842799641"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a12c30e5d6ad757635241a02842799641">&#9670;&nbsp;</a></span>operator-() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classQComputations_1_1Matrix.html">Matrix</a>&lt; T &gt; <a class="el" href="classQComputations_1_1Matrix.html">QComputations::Matrix</a>&lt; T &gt;::operator- </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="classQComputations_1_1Matrix.html">Matrix</a>&lt; T &gt; &amp;&#160;</td>
+          <td class="paramname"><em>A</em></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a23278531d7bb7a0ec4bda8caf5a2427d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a23278531d7bb7a0ec4bda8caf5a2427d">&#9670;&nbsp;</a></span>operator-() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classQComputations_1_1Matrix.html">Matrix</a>&lt; T &gt; <a class="el" href="classQComputations_1_1Matrix.html">QComputations::Matrix</a>&lt; T &gt;::operator- </td>
+          <td>(</td>
+          <td class="paramtype">const T &amp;&#160;</td>
+          <td class="paramname"><em>num</em></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="ac37c6ce7bf925f80b2f1821f4065512b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac37c6ce7bf925f80b2f1821f4065512b">&#9670;&nbsp;</a></span>operator-=() <span class="overload">[1/3]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classQComputations_1_1Matrix.html">Matrix</a>&lt; <a class="el" href="namespaceQComputations.html#a4d35a1f736afa50465898555ea98704a">COMPLEX</a> &gt; &amp; <a class="el" href="classQComputations_1_1Matrix.html">QComputations::Matrix</a>&lt; <a class="el" href="namespaceQComputations.html#a4d35a1f736afa50465898555ea98704a">COMPLEX</a> &gt;::operator-= </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="classQComputations_1_1Matrix.html">Matrix</a>&lt; <a class="el" href="namespaceQComputations.html#a4d35a1f736afa50465898555ea98704a">COMPLEX</a> &gt; &amp;&#160;</td>
+          <td class="paramname"><em>other</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a2eaddeba77aa7d941eee75fb05f0aabd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2eaddeba77aa7d941eee75fb05f0aabd">&#9670;&nbsp;</a></span>operator-=() <span class="overload">[2/3]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classQComputations_1_1Matrix.html">Matrix</a>&lt; double &gt; &amp; <a class="el" href="classQComputations_1_1Matrix.html">QComputations::Matrix</a>&lt; double &gt;::operator-= </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="classQComputations_1_1Matrix.html">Matrix</a>&lt; double &gt; &amp;&#160;</td>
+          <td class="paramname"><em>other</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="aeacfba3f75e83af6a560d485fbe36514"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aeacfba3f75e83af6a560d485fbe36514">&#9670;&nbsp;</a></span>operator-=() <span class="overload">[3/3]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classQComputations_1_1Matrix.html">Matrix</a>&lt; T &gt; &amp; <a class="el" href="classQComputations_1_1Matrix.html">QComputations::Matrix</a>&lt; T &gt;::operator-= </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="classQComputations_1_1Matrix.html">Matrix</a>&lt; T &gt; &amp;&#160;</td>
+          <td class="paramname"><em>A</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="ade0e9d5408805b49c4a8989b229aa686"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ade0e9d5408805b49c4a8989b229aa686">&#9670;&nbsp;</a></span>operator/()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classQComputations_1_1Matrix.html">Matrix</a>&lt; T &gt; <a class="el" href="classQComputations_1_1Matrix.html">QComputations::Matrix</a>&lt; T &gt;::operator/ </td>
+          <td>(</td>
+          <td class="paramtype">const T &amp;&#160;</td>
+          <td class="paramname"><em>num</em></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a5ecdd64ef1a3081cb823c7f6dce2b824"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5ecdd64ef1a3081cb823c7f6dce2b824">&#9670;&nbsp;</a></span>operator/=() <span class="overload">[1/3]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classQComputations_1_1Matrix.html">Matrix</a>&lt; <a class="el" href="namespaceQComputations.html#a4d35a1f736afa50465898555ea98704a">COMPLEX</a> &gt; &amp; <a class="el" href="classQComputations_1_1Matrix.html">QComputations::Matrix</a>&lt; <a class="el" href="namespaceQComputations.html#a4d35a1f736afa50465898555ea98704a">COMPLEX</a> &gt;::operator/= </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="namespaceQComputations.html#a4d35a1f736afa50465898555ea98704a">COMPLEX</a>&#160;</td>
+          <td class="paramname"><em>num</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a052ef808f7803621dabc01479d60f4b8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a052ef808f7803621dabc01479d60f4b8">&#9670;&nbsp;</a></span>operator/=() <span class="overload">[2/3]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classQComputations_1_1Matrix.html">Matrix</a>&lt; double &gt; &amp; <a class="el" href="classQComputations_1_1Matrix.html">QComputations::Matrix</a>&lt; double &gt;::operator/= </td>
+          <td>(</td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>num</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="afb257271d97803ac5dba5fbea813809f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afb257271d97803ac5dba5fbea813809f">&#9670;&nbsp;</a></span>operator/=() <span class="overload">[3/3]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classQComputations_1_1Matrix.html">Matrix</a>&lt;T&gt;&amp; <a class="el" href="classQComputations_1_1Matrix.html">QComputations::Matrix</a>&lt; T &gt;::operator/= </td>
+          <td>(</td>
+          <td class="paramtype">T&#160;</td>
+          <td class="paramname"><em>num</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a306dc75b14c695c8ff5961e778d28474"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a306dc75b14c695c8ff5961e778d28474">&#9670;&nbsp;</a></span>operator=()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classQComputations_1_1Matrix.html">Matrix</a>&lt; T &gt; &amp; <a class="el" href="classQComputations_1_1Matrix.html">QComputations::Matrix</a>&lt; T &gt;::operator= </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="classQComputations_1_1Matrix.html">Matrix</a>&lt; T &gt; &amp;&#160;</td>
+          <td class="paramname"><em>A</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a99653fe37f843b10cb042d9663dc8b66"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a99653fe37f843b10cb042d9663dc8b66">&#9670;&nbsp;</a></span>operator==()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">bool <a class="el" href="classQComputations_1_1Matrix.html">QComputations::Matrix</a>&lt; T &gt;::operator== </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="classQComputations_1_1Matrix.html">Matrix</a>&lt; T &gt; &amp;&#160;</td>
+          <td class="paramname"><em>A</em></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a292c31901ffdbf92681c6993056f80d6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a292c31901ffdbf92681c6993056f80d6">&#9670;&nbsp;</a></span>operator[]() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">T* <a class="el" href="classQComputations_1_1Matrix.html">QComputations::Matrix</a>&lt; T &gt;::operator[] </td>
+          <td>(</td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>index_row</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="af6f609bbc5602b08e458f8fb02ac7cc2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af6f609bbc5602b08e458f8fb02ac7cc2">&#9670;&nbsp;</a></span>operator[]() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const T* <a class="el" href="classQComputations_1_1Matrix.html">QComputations::Matrix</a>&lt; T &gt;::operator[] </td>
+          <td>(</td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>index_row</em></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="af4aefcbba1ff2b75c1ba6fa833b4ef24"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af4aefcbba1ff2b75c1ba6fa833b4ef24">&#9670;&nbsp;</a></span>reduce()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classQComputations_1_1Matrix.html">QComputations::Matrix</a>&lt; T &gt;::reduce </td>
+          <td>(</td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>n</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a46d5d34c1f546f7f4cd7daf948c9af1c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a46d5d34c1f546f7f4cd7daf948c9af1c">&#9670;&nbsp;</a></span>remove_cols()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classQComputations_1_1Matrix.html">QComputations::Matrix</a>&lt; T &gt;::remove_cols </td>
+          <td>(</td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>m</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a7bbb0dfa9d2575d3109e3bbbe6987ed5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7bbb0dfa9d2575d3109e3bbbe6987ed5">&#9670;&nbsp;</a></span>remove_rows()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classQComputations_1_1Matrix.html">QComputations::Matrix</a>&lt; T &gt;::remove_rows </td>
+          <td>(</td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>n</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a988608fc8281ccd0de1c868518c4824e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a988608fc8281ccd0de1c868518c4824e">&#9670;&nbsp;</a></span>row()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">std::vector&lt; T &gt; <a class="el" href="classQComputations_1_1Matrix.html">QComputations::Matrix</a>&lt; T &gt;::row </td>
+          <td>(</td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>index</em></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a399f497b377d8768284fdf1b222c3820"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a399f497b377d8768284fdf1b222c3820">&#9670;&nbsp;</a></span>show()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classQComputations_1_1Matrix.html">QComputations::Matrix</a>&lt; T &gt;::show </td>
+          <td>(</td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>width</em> = <code><a class="el" href="classQComputations_1_1QConfig.html#ab30cc5424173ddc1bfb394b75adfcc26">QConfig::instance</a>().width()</code></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="aa250556133a2db90513defbf64d624bc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa250556133a2db90513defbf64d624bc">&#9670;&nbsp;</a></span>size()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">size_t <a class="el" href="classQComputations_1_1Matrix.html">QComputations::Matrix</a>&lt; T &gt;::size </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a52202b91caf2ce9592f296e3d3586246"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a52202b91caf2ce9592f296e3d3586246">&#9670;&nbsp;</a></span>submatrix()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classQComputations_1_1Matrix.html">Matrix</a>&lt; T &gt; <a class="el" href="classQComputations_1_1Matrix.html">QComputations::Matrix</a>&lt; T &gt;::submatrix </td>
+          <td>(</td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>n</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>m</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>row_index</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>col_index</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="ac3d780fb26640622820e412914049c50"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac3d780fb26640622820e412914049c50">&#9670;&nbsp;</a></span>to_c_style()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classQComputations_1_1Matrix.html">QComputations::Matrix</a>&lt; T &gt;::to_c_style</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="ad173ebcfd8db2697ece0a5677b18ca69"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad173ebcfd8db2697ece0a5677b18ca69">&#9670;&nbsp;</a></span>to_fortran_style()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classQComputations_1_1Matrix.html">QComputations::Matrix</a>&lt; T &gt;::to_fortran_style</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="af5e18714f207894a7f351235a0648b41"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af5e18714f207894a7f351235a0648b41">&#9670;&nbsp;</a></span>to_lapack() <span class="overload">[1/3]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">lapack_complex_double * <a class="el" href="classQComputations_1_1Matrix.html">QComputations::Matrix</a>&lt; <a class="el" href="namespaceQComputations.html#a4d35a1f736afa50465898555ea98704a">COMPLEX</a> &gt;::to_lapack </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a8672531a8fe9de4cde47ea79543f2356"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8672531a8fe9de4cde47ea79543f2356">&#9670;&nbsp;</a></span>to_lapack() <span class="overload">[2/3]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">lapack_complex_double* <a class="el" href="classQComputations_1_1Matrix.html">QComputations::Matrix</a>&lt; T &gt;::to_lapack </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="af5e18714f207894a7f351235a0648b41"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af5e18714f207894a7f351235a0648b41">&#9670;&nbsp;</a></span>to_lapack() <span class="overload">[3/3]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">lapack_complex_double * <a class="el" href="classQComputations_1_1Matrix.html">QComputations::Matrix</a>&lt; <a class="el" href="namespaceQComputations.html#a4d35a1f736afa50465898555ea98704a">COMPLEX</a> &gt;::to_lapack </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a5ac681a7d6dcfeab7bd6434e661bd069"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5ac681a7d6dcfeab7bd6434e661bd069">&#9670;&nbsp;</a></span>to_upper_lapack() <span class="overload">[1/3]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">lapack_complex_double * <a class="el" href="classQComputations_1_1Matrix.html">QComputations::Matrix</a>&lt; <a class="el" href="namespaceQComputations.html#a4d35a1f736afa50465898555ea98704a">COMPLEX</a> &gt;::to_upper_lapack </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="aa049c16ff8e96425ec778b71d1aeb9af"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa049c16ff8e96425ec778b71d1aeb9af">&#9670;&nbsp;</a></span>to_upper_lapack() <span class="overload">[2/3]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">lapack_complex_double* <a class="el" href="classQComputations_1_1Matrix.html">QComputations::Matrix</a>&lt; T &gt;::to_upper_lapack </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a5ac681a7d6dcfeab7bd6434e661bd069"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5ac681a7d6dcfeab7bd6434e661bd069">&#9670;&nbsp;</a></span>to_upper_lapack() <span class="overload">[3/3]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">lapack_complex_double * <a class="el" href="classQComputations_1_1Matrix.html">QComputations::Matrix</a>&lt; <a class="el" href="namespaceQComputations.html#a4d35a1f736afa50465898555ea98704a">COMPLEX</a> &gt;::to_upper_lapack </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="ac374a62af568276db3018664301cd347"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac374a62af568276db3018664301cd347">&#9670;&nbsp;</a></span>to_vector_of_vectors()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::vector&lt;std::vector&lt;T&gt; &gt; <a class="el" href="classQComputations_1_1Matrix.html">QComputations::Matrix</a>&lt; T &gt;::to_vector_of_vectors </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a028c075ef9333c4a7e7eb90903681c02"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a028c075ef9333c4a7e7eb90903681c02">&#9670;&nbsp;</a></span>transpose()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classQComputations_1_1Matrix.html">Matrix</a>&lt; T &gt; <a class="el" href="classQComputations_1_1Matrix.html">QComputations::Matrix</a>&lt; T &gt;::transpose</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="aaf272a3973a489030163fef2b97f4283"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aaf272a3973a489030163fef2b97f4283">&#9670;&nbsp;</a></span>write_to_csv_file() <span class="overload">[1/3]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classQComputations_1_1Matrix.html">QComputations::Matrix</a>&lt; double &gt;::write_to_csv_file </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>filename</em></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="aacd777da9733fcb5f4b4b2262ee657cf"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aacd777da9733fcb5f4b4b2262ee657cf">&#9670;&nbsp;</a></span>write_to_csv_file() <span class="overload">[2/3]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classQComputations_1_1Matrix.html">QComputations::Matrix</a>&lt; <a class="el" href="namespaceQComputations.html#a4d35a1f736afa50465898555ea98704a">COMPLEX</a> &gt;::write_to_csv_file </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>filename</em></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a987133273433626d6dbc9de90210f9d7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a987133273433626d6dbc9de90210f9d7">&#9670;&nbsp;</a></span>write_to_csv_file() <span class="overload">[3/3]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classQComputations_1_1Matrix.html">QComputations::Matrix</a>&lt; T &gt;::write_to_csv_file </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>filename</em></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<h2 class="groupheader">Поля</h2>
+<a id="aa585010daaf5376094024bb2f063eba0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa585010daaf5376094024bb2f063eba0">&#9670;&nbsp;</a></span>m_</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">size_t <a class="el" href="classQComputations_1_1Matrix.html">QComputations::Matrix</a>&lt; T &gt;::m_</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a891c76625024a9d3b4785b13e17d3d44"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a891c76625024a9d3b4785b13e17d3d44">&#9670;&nbsp;</a></span>mass_</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::vector&lt;T&gt; <a class="el" href="classQComputations_1_1Matrix.html">QComputations::Matrix</a>&lt; T &gt;::mass_</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="ad4c9ee2733cbda396c7cc8a4e4c0b50a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad4c9ee2733cbda396c7cc8a4e4c0b50a">&#9670;&nbsp;</a></span>matrix_style_</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="namespaceQComputations.html#a3735cc336fa84566b661c833e87fee85">MATRIX_STYLE</a> <a class="el" href="classQComputations_1_1Matrix.html">QComputations::Matrix</a>&lt; T &gt;::matrix_style_</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="ada301f6633f8b50bd06b7b37e697c734"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ada301f6633f8b50bd06b7b37e697c734">&#9670;&nbsp;</a></span>n_</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">size_t <a class="el" href="classQComputations_1_1Matrix.html">QComputations::Matrix</a>&lt; T &gt;::n_</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<hr/>Объявления и описания членов класса находятся в файле:<ul>
+<li>/home/kuzmaline/Quantum/QComputations/QComputations/src/QComputations/<a class="el" href="matrix_8hpp_source.html">matrix.hpp</a></li>
+</ul>
+</div><!-- contents -->
+</div><!-- doc-content -->
+<!-- start footer part -->
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><a class="el" href="namespaceQComputations.html">QComputations</a></li><li class="navelem"><a class="el" href="classQComputations_1_1Matrix.html">Matrix</a></li>
+    <li class="footer">Создано системой <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+  </ul>
+</div>
+</body>
+</html>

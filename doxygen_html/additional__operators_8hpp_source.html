@@ -1,0 +1,291 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=9"/>
+<meta name="generator" content="Doxygen 1.9.1"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>QComputations: Исходный файл /home/kuzmaline/Quantum/QComputations/QComputations/src/QComputations/additional_operators.hpp</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="dynsections.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="resize.js"></script>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr style="height: 56px;">
+  <td id="projectalign" style="padding-left: 0.5em;">
+   <div id="projectname">QComputations
+   &#160;<span id="projectnumber">9c59715</span>
+   </div>
+   <div id="projectbrief">Quantum-mechanical simulation library: time-dependent Hamiltonians, states, matrices; CPU/CUDA/MPI backends</div>
+  </td>
+ </tr>
+ </tbody>
+</table>
+</div>
+<!-- end header part -->
+<!-- Создано системой Doxygen 1.9.1 -->
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+var searchBox = new SearchBox("searchBox", "search",false,'Поиск','.html');
+/* @license-end */
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(function() {
+  initMenu('',true,false,'search.php','Поиск');
+  $(document).ready(function() { init_search(); });
+});
+/* @license-end */</script>
+<div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(document).ready(function(){initNavTree('additional__operators_8hpp_source.html',''); initResizable(); });
+/* @license-end */
+</script>
+<div id="doc-content">
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<iframe src="javascript:void(0)" frameborder="0" 
+        name="MSearchResults" id="MSearchResults">
+</iframe>
+</div>
+
+<div class="header">
+  <div class="headertitle">
+<div class="title">additional_operators.hpp</div>  </div>
+</div><!--header-->
+<div class="contents">
+<a href="additional__operators_8hpp.html">См. документацию.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="preprocessor">#pragma once</span></div>
+<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="preprocessor">#include &lt;vector&gt;</span></div>
+<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="preprocessor">#include &lt;complex&gt;</span></div>
+<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="preprocessor">#include &lt;iomanip&gt;</span></div>
+<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="preprocessor">#include &lt;map&gt;</span></div>
+<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="preprocessor">#include &lt;iostream&gt;</span></div>
+<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="state_8hpp.html">state.hpp</a>&quot;</span></div>
+<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160; </div>
+<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="preprocessor">#ifdef ENABLE_ONEAPI</span></div>
+<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160; </div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="preprocessor">#include &lt;mkl_blas.h&gt;</span></div>
+<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160; </div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160; </div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="keyword">namespace </span>{</div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;    <span class="keyword">using</span> <a class="code" href="namespaceQComputations.html#a4d35a1f736afa50465898555ea98704a">COMPLEX</a> = std::complex&lt;double&gt;;</div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;    <span class="keyword">using</span> E_LEVEL = int;</div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;    <span class="keyword">using</span> vec_levels = std::vector&lt;E_LEVEL&gt;;</div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;}</div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160; </div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespaceQComputations.html">QComputations</a> {</div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160; </div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;<span class="comment">// Additional operators for vector, Matrix, States and so on</span></div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160; </div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;Matrix&lt;COMPLEX&gt; <a class="code" href="namespaceQComputations.html#a25f38d07622f2d3e0cf083c6f8dfa3dd">operator* </a>(<span class="keyword">const</span> Matrix&lt;COMPLEX&gt;&amp; A, <span class="keyword">const</span> Matrix&lt;double&gt;&amp; B);</div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160; </div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160; </div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;<span class="comment">// vector * num</span></div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;<span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</div>
+<div class="line"><a name="l00031"></a><span class="lineno"><a class="line" href="namespaceQComputations.html#a6e90d0dbdb849a317b123c92e4c394fa">   31</a></span>&#160;std::vector&lt;T&gt; <a class="code" href="namespaceQComputations.html#a25f38d07622f2d3e0cf083c6f8dfa3dd">operator*</a>(<span class="keyword">const</span> std::vector&lt;T&gt;&amp; v, T num) {</div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;    std::vector&lt;T&gt; answer(v.size());</div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160; </div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;    <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> i = 0; i &lt; v.size(); i++) {</div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;        answer[i] = v[i] * num;</div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;    }</div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160; </div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;    <span class="keywordflow">return</span> answer;</div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;}</div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160; </div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;<span class="comment">// std::cout &lt;&lt; vector</span></div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;<span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</div>
+<div class="line"><a name="l00043"></a><span class="lineno"><a class="line" href="namespaceQComputations.html#aef74ee0d533e056f45b75c3ab825ec42">   43</a></span>&#160;std::ostream&amp; <a class="code" href="namespaceQComputations.html#aef74ee0d533e056f45b75c3ab825ec42">operator&lt;&lt;</a>(std::ostream&amp; out, <span class="keyword">const</span> std::vector&lt;T&gt;&amp; v) {</div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;    <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>&amp; val: v) {</div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;        out &lt;&lt; val &lt;&lt; <span class="stringliteral">&quot; &quot;</span>;</div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;    }</div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160; </div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;    <span class="keywordflow">return</span> out;</div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;}</div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160; </div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;<span class="comment">// num * vector</span></div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;<span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</div>
+<div class="line"><a name="l00053"></a><span class="lineno"><a class="line" href="namespaceQComputations.html#a8c70b6c9f559f4c80de2895bed5012c0">   53</a></span>&#160;std::vector&lt;T&gt; <a class="code" href="namespaceQComputations.html#a25f38d07622f2d3e0cf083c6f8dfa3dd">operator*</a>(T num, <span class="keyword">const</span> std::vector&lt;T&gt;&amp; v) { <span class="keywordflow">return</span> v * num; }</div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160; </div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;<span class="comment">// a[i] * b[i] -&gt; vector</span></div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;<span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</div>
+<div class="line"><a name="l00057"></a><span class="lineno"><a class="line" href="namespaceQComputations.html#a37092aa04c0949706536ddcf22c3388c">   57</a></span>&#160;std::vector&lt;T&gt; <a class="code" href="namespaceQComputations.html#a25f38d07622f2d3e0cf083c6f8dfa3dd">operator*</a>(<span class="keyword">const</span> std::vector&lt;T&gt;&amp; a, <span class="keyword">const</span> std::vector&lt;T&gt;&amp; b) {</div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;    std::vector&lt;T&gt; answer(a.size());</div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160; </div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;    <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> i = 0; i &lt; a.size(); i++) {</div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;        answer[i] = a[i] * b[i];</div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;    }</div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160; </div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;    <span class="keywordflow">return</span> answer;</div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;}</div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160; </div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;<span class="comment">//   -------------------------------------- &lt;a|b&gt; ------------------------</span></div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;<a class="code" href="namespaceQComputations.html#a4d35a1f736afa50465898555ea98704a">COMPLEX</a> <a class="code" href="namespaceQComputations.html#a2ecc5878c0ce85c36445c18191530733">operator | </a>(<span class="keyword">const</span> std::vector&lt;COMPLEX&gt;&amp; a, <span class="keyword">const</span> std::vector&lt;COMPLEX&gt;&amp; b);</div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160; </div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;<span class="comment">// vector / num</span></div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;<span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</div>
+<div class="line"><a name="l00072"></a><span class="lineno"><a class="line" href="namespaceQComputations.html#ab2c9808289c3904821583340f767630d">   72</a></span>&#160;std::vector&lt;T&gt; <a class="code" href="namespaceQComputations.html#ab2c9808289c3904821583340f767630d">operator/</a>(<span class="keyword">const</span> std::vector&lt;T&gt;&amp; v, T num) {</div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;    std::vector&lt;T&gt; answer(v.size());</div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160; </div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;    <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> i = 0; i &lt; v.size(); i++) {</div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;        answer[i] = v[i] / num;</div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;    }</div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160; </div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;    <span class="keywordflow">return</span> answer;</div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;}</div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160; </div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;<span class="comment">/*</span></div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;<span class="comment">template&lt;typename T&gt;</span></div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;<span class="comment">std::vector&lt;T&gt; operator/(T num, const std::vector&lt;T&gt;&amp; v) { return v * num; }</span></div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;<span class="comment">*/</span></div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160; </div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;<span class="comment">// vector - vector</span></div>
+<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;<span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</div>
+<div class="line"><a name="l00089"></a><span class="lineno"><a class="line" href="namespaceQComputations.html#adeb55d85f63a226a7bedca4df5ab0150">   89</a></span>&#160;std::vector&lt;T&gt; <a class="code" href="namespaceQComputations.html#adeb55d85f63a226a7bedca4df5ab0150">operator-</a>(<span class="keyword">const</span> std::vector&lt;T&gt;&amp; a, <span class="keyword">const</span> std::vector&lt;T&gt;&amp; b) {</div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;    <span class="keywordtype">size_t</span> m = a.size();</div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;    std::vector&lt;T&gt; res(m);</div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160; </div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;    <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> i = 0; i &lt; m; i++) {</div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;        res[i] = a[i] - b[i];</div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;    }</div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160; </div>
+<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;    <span class="keywordflow">return</span> res;</div>
+<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;}</div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160; </div>
+<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;} <span class="comment">// namespace QComputations</span></div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160; </div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;<span class="comment">// hash functions for Cavity_State and State (cavity_state.hpp and state.hpp)</span></div>
+<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160; </div>
+<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;<span class="keyword">template</span>&lt;&gt;</div>
+<div class="line"><a name="l00105"></a><span class="lineno"><a class="line" href="structstd_1_1hash_3_01std_1_1vector_3_01COMPLEX_01_4_01_4.html">  105</a></span>&#160;<span class="keyword">struct </span>std::hash&lt;std::vector&lt;COMPLEX&gt;&gt; {</div>
+<div class="line"><a name="l00106"></a><span class="lineno"><a class="line" href="structstd_1_1hash_3_01std_1_1vector_3_01COMPLEX_01_4_01_4.html#ad2a471264439c719cb233696a59932f5">  106</a></span>&#160;    <span class="keywordtype">size_t</span> <a class="code" href="structstd_1_1hash_3_01std_1_1vector_3_01COMPLEX_01_4_01_4.html#ad2a471264439c719cb233696a59932f5">operator()</a>(<span class="keyword">const</span> std::vector&lt;COMPLEX&gt;&amp; v)<span class="keyword"> const </span>{</div>
+<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;        std::hash&lt;double&gt; real_hash, imag_hash;</div>
+<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;        <span class="keywordtype">size_t</span> h = 0;</div>
+<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;        <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>&amp; c : v) {</div>
+<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;            h ^= real_hash(c.real()) + 0x9e3779b9 + (h &lt;&lt; 6) + (h &gt;&gt; 2);</div>
+<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;            h ^= imag_hash(c.imag()) + 0x9e3779b9 + (h &lt;&lt; 6) + (h &gt;&gt; 2);</div>
+<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;        }</div>
+<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;        <span class="keywordflow">return</span> h;</div>
+<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;    }</div>
+<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160; </div>
+<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;};</div>
+<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160; </div>
+<div class="line"><a name="l00118"></a><span class="lineno"><a class="line" href="structstd_1_1hash_3_01std_1_1vector_3_01int_01_4_01_4.html">  118</a></span>&#160;<span class="keyword">template</span>&lt;&gt; <span class="keyword">struct </span>std::hash&lt;std::vector&lt;int&gt;&gt; {</div>
+<div class="line"><a name="l00119"></a><span class="lineno"><a class="line" href="structstd_1_1hash_3_01std_1_1vector_3_01int_01_4_01_4.html#a5cdb60d203434892d38ffd36afb0cd0d">  119</a></span>&#160;    <span class="keywordtype">size_t</span> <a class="code" href="structstd_1_1hash_3_01std_1_1vector_3_01int_01_4_01_4.html#a5cdb60d203434892d38ffd36afb0cd0d">operator()</a>(<span class="keyword">const</span> std::vector&lt;int&gt;&amp; vec)<span class="keyword"> const </span>{</div>
+<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;        <span class="keywordtype">size_t</span> hash = 0;</div>
+<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;        <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>&amp; val : vec) {</div>
+<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;            hash ^= std::hash&lt;int&gt;()(val) + 0x9e3779b9 + (hash &lt;&lt; 6) + (hash &gt;&gt; 2);</div>
+<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;        }</div>
+<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;        <span class="keywordflow">return</span> hash;</div>
+<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;    }</div>
+<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;};</div>
+<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160; </div>
+<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;<span class="keyword">template</span> &lt;&gt;</div>
+<div class="line"><a name="l00129"></a><span class="lineno"><a class="line" href="structstd_1_1hash_3_01std_1_1map_3_01int_00_01std_1_1vector_3_01int_01_4_01_4_01_4.html">  129</a></span>&#160;<span class="keyword">struct </span>std::hash&lt;std::map&lt;int, std::vector&lt;int&gt;&gt;&gt; {</div>
+<div class="line"><a name="l00130"></a><span class="lineno"><a class="line" href="structstd_1_1hash_3_01std_1_1map_3_01int_00_01std_1_1vector_3_01int_01_4_01_4_01_4.html#a5c8677a3a2504b5e9eabc30787c203ba">  130</a></span>&#160;  std::size_t <a class="code" href="structstd_1_1hash_3_01std_1_1map_3_01int_00_01std_1_1vector_3_01int_01_4_01_4_01_4.html#a5c8677a3a2504b5e9eabc30787c203ba">operator()</a>(<span class="keyword">const</span> std::map&lt;<span class="keywordtype">int</span>, std::vector&lt;int&gt;&gt;&amp; m)<span class="keyword"> const </span>{</div>
+<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;    std::size_t seed = m.size();</div>
+<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;    <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>&amp; kv : m) {</div>
+<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;      std::size_t key_hash = std::hash&lt;int&gt;()(kv.first);</div>
+<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;      std::size_t val_hash = std::hash&lt;std::vector&lt;int&gt;&gt;()(kv.second);</div>
+<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;      seed ^= key_hash + 0x9e3779b9 + (seed &lt;&lt; 6) + (seed &gt;&gt; 2);</div>
+<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;      seed ^= val_hash + 0x9e3779b9 + (seed &lt;&lt; 6) + (seed &gt;&gt; 2);</div>
+<div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;    }</div>
+<div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;    <span class="keywordflow">return</span> seed;</div>
+<div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160;  }</div>
+<div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160;};</div>
+<div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160; </div>
+<div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160;<span class="comment">//bool operator()(const QComputations::Basis_State* a, const QComputations::Basis_State* b) {</span></div>
+<div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160;<span class="comment">//    return (a-&gt;Basis_State::operator&lt;(*b));</span></div>
+<div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160;<span class="comment">//}</span></div>
+<div class="line"><a name="l00145"></a><span class="lineno">  145</span>&#160; </div>
+<div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160;<span class="comment">/*</span></div>
+<div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160;<span class="comment">template&lt;&gt;</span></div>
+<div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;<span class="comment">struct std::hash&lt;QComputations::Cavity_State&gt; {</span></div>
+<div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;<span class="comment">    size_t operator()(const QComputations::Cavity_State&amp; state) const {</span></div>
+<div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160;<span class="comment">        return state.hash();</span></div>
+<div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;<span class="comment">    }</span></div>
+<div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;<span class="comment">};</span></div>
+<div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160;<span class="comment">template&lt;&gt;</span></div>
+<div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160;<span class="comment">struct std::hash&lt;std::pair&lt;QComputations::Cavity_State, QComputations::Cavity_State&gt;&gt; {</span></div>
+<div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160;<span class="comment">    size_t operator()(const std::pair&lt;QComputations::Cavity_State, QComputations::Cavity_State&gt;&amp; p) const {</span></div>
+<div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;<span class="comment">        std::hash&lt;QComputations::Cavity_State&gt; state_hash;</span></div>
+<div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160;<span class="comment">        size_t h1 = state_hash(p.first);</span></div>
+<div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160;<span class="comment">        size_t h2 = state_hash(p.second);</span></div>
+<div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;<span class="comment">        return h1 ^ (h2 &lt;&lt; 1);</span></div>
+<div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160;<span class="comment">    }</span></div>
+<div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;<span class="comment">};</span></div>
+<div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160;<span class="comment">template&lt;&gt;</span></div>
+<div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160;<span class="comment">struct std::hash&lt;QComputations::State&gt; {</span></div>
+<div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;<span class="comment">    size_t operator()(const QComputations::State&amp; state) const {</span></div>
+<div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;<span class="comment">        return state.hash();</span></div>
+<div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160;<span class="comment">    }</span></div>
+<div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160;<span class="comment">};</span></div>
+<div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160;<span class="comment">template&lt;&gt;</span></div>
+<div class="line"><a name="l00173"></a><span class="lineno">  173</span>&#160;<span class="comment">struct std::hash&lt;std::pair&lt;QComputations::State, QComputations::State&gt;&gt; {</span></div>
+<div class="line"><a name="l00174"></a><span class="lineno">  174</span>&#160;<span class="comment">    size_t operator()(const std::pair&lt;QComputations::State, QComputations::State&gt;&amp; p) const {</span></div>
+<div class="line"><a name="l00175"></a><span class="lineno">  175</span>&#160;<span class="comment">        std::hash&lt;QComputations::State&gt; state_hash;</span></div>
+<div class="line"><a name="l00176"></a><span class="lineno">  176</span>&#160;<span class="comment">        size_t h1 = state_hash(p.first);</span></div>
+<div class="line"><a name="l00177"></a><span class="lineno">  177</span>&#160;<span class="comment">        size_t h2 = state_hash(p.second);</span></div>
+<div class="line"><a name="l00178"></a><span class="lineno">  178</span>&#160;<span class="comment">        return h1 ^ (h2 &lt;&lt; 1);</span></div>
+<div class="line"><a name="l00179"></a><span class="lineno">  179</span>&#160;<span class="comment">    }</span></div>
+<div class="line"><a name="l00180"></a><span class="lineno">  180</span>&#160;<span class="comment">};</span></div>
+<div class="line"><a name="l00181"></a><span class="lineno">  181</span>&#160;<span class="comment">*/</span></div>
+<div class="ttc" id="anamespaceQComputations_html"><div class="ttname"><a href="namespaceQComputations.html">QComputations</a></div><div class="ttdef"><b>Definition:</b> additional_operators.cpp:5</div></div>
+<div class="ttc" id="anamespaceQComputations_html_a25f38d07622f2d3e0cf083c6f8dfa3dd"><div class="ttname"><a href="namespaceQComputations.html#a25f38d07622f2d3e0cf083c6f8dfa3dd">QComputations::operator*</a></div><div class="ttdeci">Matrix&lt; COMPLEX &gt; operator*(const Matrix&lt; COMPLEX &gt; &amp;A, const Matrix&lt; double &gt; &amp;B)</div><div class="ttdef"><b>Definition:</b> additional_operators.cpp:18</div></div>
+<div class="ttc" id="anamespaceQComputations_html_a2ecc5878c0ce85c36445c18191530733"><div class="ttname"><a href="namespaceQComputations.html#a2ecc5878c0ce85c36445c18191530733">QComputations::operator|</a></div><div class="ttdeci">COMPLEX operator|(const std::vector&lt; COMPLEX &gt; &amp;a, const std::vector&lt; COMPLEX &gt; &amp;b)</div><div class="ttdef"><b>Definition:</b> additional_operators.cpp:8</div></div>
+<div class="ttc" id="anamespaceQComputations_html_a4d35a1f736afa50465898555ea98704a"><div class="ttname"><a href="namespaceQComputations.html#a4d35a1f736afa50465898555ea98704a">QComputations::COMPLEX</a></div><div class="ttdeci">std::complex&lt; double &gt; COMPLEX</div><div class="ttdef"><b>Definition:</b> dynamic.hpp:27</div></div>
+<div class="ttc" id="anamespaceQComputations_html_ab2c9808289c3904821583340f767630d"><div class="ttname"><a href="namespaceQComputations.html#ab2c9808289c3904821583340f767630d">QComputations::operator/</a></div><div class="ttdeci">std::vector&lt; T &gt; operator/(const std::vector&lt; T &gt; &amp;v, T num)</div><div class="ttdef"><b>Definition:</b> additional_operators.hpp:72</div></div>
+<div class="ttc" id="anamespaceQComputations_html_adeb55d85f63a226a7bedca4df5ab0150"><div class="ttname"><a href="namespaceQComputations.html#adeb55d85f63a226a7bedca4df5ab0150">QComputations::operator-</a></div><div class="ttdeci">std::vector&lt; T &gt; operator-(const std::vector&lt; T &gt; &amp;a, const std::vector&lt; T &gt; &amp;b)</div><div class="ttdef"><b>Definition:</b> additional_operators.hpp:89</div></div>
+<div class="ttc" id="anamespaceQComputations_html_aef74ee0d533e056f45b75c3ab825ec42"><div class="ttname"><a href="namespaceQComputations.html#aef74ee0d533e056f45b75c3ab825ec42">QComputations::operator&lt;&lt;</a></div><div class="ttdeci">std::ostream &amp; operator&lt;&lt;(std::ostream &amp;out, const std::vector&lt; T &gt; &amp;v)</div><div class="ttdef"><b>Definition:</b> additional_operators.hpp:43</div></div>
+<div class="ttc" id="astate_8hpp_html"><div class="ttname"><a href="state_8hpp.html">state.hpp</a></div></div>
+<div class="ttc" id="astructstd_1_1hash_3_01std_1_1map_3_01int_00_01std_1_1vector_3_01int_01_4_01_4_01_4_html_a5c8677a3a2504b5e9eabc30787c203ba"><div class="ttname"><a href="structstd_1_1hash_3_01std_1_1map_3_01int_00_01std_1_1vector_3_01int_01_4_01_4_01_4.html#a5c8677a3a2504b5e9eabc30787c203ba">std::hash&lt; std::map&lt; int, std::vector&lt; int &gt; &gt; &gt;::operator()</a></div><div class="ttdeci">std::size_t operator()(const std::map&lt; int, std::vector&lt; int &gt;&gt; &amp;m) const</div><div class="ttdef"><b>Definition:</b> additional_operators.hpp:130</div></div>
+<div class="ttc" id="astructstd_1_1hash_3_01std_1_1vector_3_01COMPLEX_01_4_01_4_html_ad2a471264439c719cb233696a59932f5"><div class="ttname"><a href="structstd_1_1hash_3_01std_1_1vector_3_01COMPLEX_01_4_01_4.html#ad2a471264439c719cb233696a59932f5">std::hash&lt; std::vector&lt; COMPLEX &gt; &gt;::operator()</a></div><div class="ttdeci">size_t operator()(const std::vector&lt; COMPLEX &gt; &amp;v) const</div><div class="ttdef"><b>Definition:</b> additional_operators.hpp:106</div></div>
+<div class="ttc" id="astructstd_1_1hash_3_01std_1_1vector_3_01int_01_4_01_4_html_a5cdb60d203434892d38ffd36afb0cd0d"><div class="ttname"><a href="structstd_1_1hash_3_01std_1_1vector_3_01int_01_4_01_4.html#a5cdb60d203434892d38ffd36afb0cd0d">std::hash&lt; std::vector&lt; int &gt; &gt;::operator()</a></div><div class="ttdeci">size_t operator()(const std::vector&lt; int &gt; &amp;vec) const</div><div class="ttdef"><b>Definition:</b> additional_operators.hpp:119</div></div>
+</div><!-- fragment --></div><!-- contents -->
+</div><!-- doc-content -->
+<!-- start footer part -->
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><a class="el" href="dir_68267d1309a1af8e8297ef4c3efbcdba.html">src</a></li><li class="navelem"><a class="el" href="dir_199c3add0de77dd12f192c4717b1a7b5.html">QComputations</a></li><li class="navelem"><a class="el" href="additional__operators_8hpp.html">additional_operators.hpp</a></li>
+    <li class="footer">Создано системой <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+  </ul>
+</div>
+</body>
+</html>

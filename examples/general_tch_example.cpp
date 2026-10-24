@@ -21,7 +21,7 @@ False - генерируются CSV файлы в папку general_tch_exampl
 #include <chrono>
 
 constexpr bool is_python_api = false;
-constexpr int max_photons = 2;
+constexpr int max_photons = 1;
 
 using COMPLEX = std::complex<double>;
 
@@ -43,18 +43,22 @@ int main(int argc, char** argv) {
     
     H_TCH H(state);
 
-    //show_basis(H.get_basis());
+    show_basis(H.get_basis());
 
-    //H.show();
+    H.show();
     std::cout << H.size() << std::endl;
 
-    auto time_vec = linspace(0, 1000, 1000);
+    auto time_vec = linspace(0, 100, 1000);
 
     auto probs = schrodinger(State<Basis_State>(state), H, time_vec);
     // auto probs = quantum_master_equation(State<Basis_State>(state), H, time_vec);
 
-    make_probs_files(H, probs, time_vec, H.get_basis(), "general_tch_plots/CSV_FILES");
+    // make_probs_files(H, probs, time_vec, H.get_basis(), "general_tch_plots/CSV_FILES");
     //}
+    std::cout << std::fixed << std::setprecision(10);
+    show_basis(H.get_basis());
+    probs = std::move(probs.transpose());
+    probs.show();
 
     return 0;
 }
