@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">QComputations
-   &#160;<span id="projectnumber">9c59715</span>
+   &#160;<span id="projectnumber">7c98336</span>
    </div>
    <div id="projectbrief">Quantum-mechanical simulation library: time-dependent Hamiltonians, states, matrices; CPU/CUDA/MPI backends</div>
   </td>
@@ -138,16 +138,22 @@ $(document).ready(function(){initNavTree('namespaceQComputations.html',''); init
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQComputations_1_1Operator.html">Operator</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structQComputations_1_1State__Comparator.html">State_Comparator</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Сторонний компаратор указателей на состояния для упорядоченных контейнеров.  <a href="structQComputations_1_1State__Comparator.html#details">Подробнее...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structQComputations_1_1State__Hash.html">State_Hash</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Хеширующий функтор для <code>shared_ptr&lt;StateType&gt;</code>.  <a href="structQComputations_1_1State__Hash.html#details">Подробнее...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structQComputations_1_1State__Equal.html">State_Equal</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Функтор сравнения на равенство указателей на состояния.  <a href="structQComputations_1_1State__Equal.html#details">Подробнее...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQComputations_1_1Basis__State.html">Basis_State</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Абстрактное базовое состояние: конфигурация кудитов в дискретных значениях.  <a href="classQComputations_1_1Basis__State.html#details">Подробнее...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQComputations_1_1TCH__State.html">TCH_State</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Состояния TCH: решётка полостей с атомами, фотонами, волноводами и связями между уровнями. Модель Тависа-Каммингса-Хаббарда  <a href="classQComputations_1_1TCH__State.html#details">Подробнее...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQComputations_1_1State.html">State</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Суперпозиция: набор комплексных амплитуд, привязанных к элементам базиса.  <a href="classQComputations_1_1State.html#details">Подробнее...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQComputations_1_1X__State.html">X_State</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -164,6 +170,7 @@ $(document).ready(function(){initNavTree('namespaceQComputations.html',''); init
 <tr class="separator:aeb03b25f212b155f7c1fa31915e16a03"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2c959a6d55da1ef4d086555a62b6ca31"><td class="memTemplParams" colspan="2">template&lt;typename StateType &gt; </td></tr>
 <tr class="memitem:a2c959a6d55da1ef4d086555a62b6ca31"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceQComputations.html#a2c959a6d55da1ef4d086555a62b6ca31">BasisType</a> = std::unordered_set&lt; std::shared_ptr&lt; StateType &gt;, <a class="el" href="structQComputations_1_1State__Hash.html">State_Hash</a>, <a class="el" href="structQComputations_1_1State__Equal.html">State_Equal</a> &gt;</td></tr>
+<tr class="memdesc:a2c959a6d55da1ef4d086555a62b6ca31"><td class="mdescLeft">&#160;</td><td class="mdescRight">Псевдоним типа «базис» — множество указателей на состояния.  <a href="namespaceQComputations.html#a2c959a6d55da1ef4d086555a62b6ca31">Подробнее...</a><br /></td></tr>
 <tr class="separator:a2c959a6d55da1ef4d086555a62b6ca31"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aba7f1d1455eebb546c4a42e459cb6514"><td class="memTemplParams" colspan="2">template&lt;typename StateType &gt; </td></tr>
 <tr class="memitem:aba7f1d1455eebb546c4a42e459cb6514"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceQComputations.html#aba7f1d1455eebb546c4a42e459cb6514">StateBasisMap</a> = std::unordered_map&lt; std::shared_ptr&lt; StateType &gt;, size_t, <a class="el" href="structQComputations_1_1State__Hash.html">State_Hash</a>, <a class="el" href="structQComputations_1_1State__Equal.html">State_Equal</a> &gt;</td></tr>
@@ -562,12 +569,14 @@ $(document).ready(function(){initNavTree('namespaceQComputations.html',''); init
 <tr class="separator:a7160f5e280505b6b29c4407678f7da30"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa7a90d863516e3f09ed0644b39e93b15"><td class="memTemplParams" colspan="2">template&lt;typename StateType &gt; </td></tr>
 <tr class="memitem:aa7a90d863516e3f09ed0644b39e93b15"><td class="memTemplItemLeft" align="right" valign="top">std::vector&lt; std::shared_ptr&lt; StateType &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceQComputations.html#aa7a90d863516e3f09ed0644b39e93b15">sort_basis</a> (const <a class="el" href="namespaceQComputations.html#a2c959a6d55da1ef4d086555a62b6ca31">BasisType</a>&lt; StateType &gt; &amp;basis)</td></tr>
+<tr class="memdesc:aa7a90d863516e3f09ed0644b39e93b15"><td class="mdescLeft">&#160;</td><td class="mdescRight">Возвращает отсортированную копию базиса в виде вектора.  <a href="namespaceQComputations.html#aa7a90d863516e3f09ed0644b39e93b15">Подробнее...</a><br /></td></tr>
 <tr class="separator:aa7a90d863516e3f09ed0644b39e93b15"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abcfdbccfc30fec82f4e63018f80cbb58"><td class="memTemplParams" colspan="2">template&lt;typename StateType &gt; </td></tr>
 <tr class="memitem:abcfdbccfc30fec82f4e63018f80cbb58"><td class="memTemplItemLeft" align="right" valign="top">size_t&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceQComputations.html#abcfdbccfc30fec82f4e63018f80cbb58">get_index_state_in_basis</a> (const StateType &amp;state, const <a class="el" href="namespaceQComputations.html#a2c959a6d55da1ef4d086555a62b6ca31">BasisType</a>&lt; StateType &gt; &amp;basis)</td></tr>
 <tr class="separator:abcfdbccfc30fec82f4e63018f80cbb58"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af1c4df867103f3f999d3b3fa52085689"><td class="memTemplParams" colspan="2">template&lt;typename StateType &gt; </td></tr>
 <tr class="memitem:af1c4df867103f3f999d3b3fa52085689"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="namespaceQComputations.html#a4d35a1f736afa50465898555ea98704a">COMPLEX</a>&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceQComputations.html#af1c4df867103f3f999d3b3fa52085689">scalar_product</a> (const <a class="el" href="classQComputations_1_1State.html">State</a>&lt; StateType &gt; &amp;a, const <a class="el" href="classQComputations_1_1State.html">State</a>&lt; StateType &gt; &amp;b)</td></tr>
+<tr class="memdesc:af1c4df867103f3f999d3b3fa52085689"><td class="mdescLeft">&#160;</td><td class="mdescRight">Скалярное произведение двух суперпозиций.  <a href="namespaceQComputations.html#af1c4df867103f3f999d3b3fa52085689">Подробнее...</a><br /></td></tr>
 <tr class="separator:af1c4df867103f3f999d3b3fa52085689"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a254bd93a0484ec3c5e3d160333ee5792"><td class="memTemplParams" colspan="2">template&lt;typename StateTypeFrom , typename StateTypeTo &gt; </td></tr>
 <tr class="memitem:a254bd93a0484ec3c5e3d160333ee5792"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="classQComputations_1_1State.html">State</a>&lt; StateTypeTo &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceQComputations.html#a254bd93a0484ec3c5e3d160333ee5792">fft_forward</a> (const <a class="el" href="classQComputations_1_1State.html">State</a>&lt; StateTypeFrom &gt; &amp;state_from)</td></tr>
@@ -594,6 +603,14 @@ template&lt;typename StateType &gt; </div>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Псевдоним типа «базис» — множество указателей на состояния. </p>
+<p>Хеш и сравнение задаются <a class="el" href="structQComputations_1_1State__Hash.html">State_Hash</a> и <a class="el" href="structQComputations_1_1State__Equal.html">State_Equal</a>. </p><dl class="tparams"><dt>Параметры шаблона</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">StateType</td><td>тип элементов базиса. </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
@@ -4919,6 +4936,23 @@ template&lt;typename StateType &gt; </div>
       </table>
 </div><div class="memdoc">
 
+<p>Скалярное произведение двух суперпозиций. </p>
+<p>Вычисляет <img class="formulaInl" alt="$ \langle a|b \rangle = \sum_i a_i^* b_i $" src="form_0.png"/> по общему базису; перебор идёт по более компактному из двух состояний.</p>
+<dl class="tparams"><dt>Параметры шаблона</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">StateType</td><td>тип базового состояния. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="params"><dt>Аргументы</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">a</td><td>первый вектор состояния. </td></tr>
+    <tr><td class="paramname">b</td><td>второй вектор состояния. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Возвращает</dt><dd>Скалярное произведение. </dd></dl>
+
 </div>
 </div>
 <a id="a588c83573e3e87d49d5ce1bf9d3c3548"></a>
@@ -5476,6 +5510,16 @@ template&lt;typename StateType &gt; </div>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Возвращает отсортированную копию базиса в виде вектора. </p>
+<p>Сортировка выполняется <a class="el" href="structQComputations_1_1State__Comparator.html">State_Comparator</a> (нисходящий порядок).</p>
+<dl class="params"><dt>Аргументы</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">basis</td><td>исходный базис (множество указателей). </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Возвращает</dt><dd>Вектор указателей, упорядоченный компаратором. </dd></dl>
 
 </div>
 </div>

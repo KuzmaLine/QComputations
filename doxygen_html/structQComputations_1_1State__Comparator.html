@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">QComputations
-   &#160;<span id="projectnumber">9c59715</span>
+   &#160;<span id="projectnumber">7c98336</span>
    </div>
    <div id="projectbrief">Quantum-mechanical simulation library: time-dependent Hamiltonians, states, matrices; CPU/CUDA/MPI backends</div>
   </td>
@@ -90,6 +90,9 @@ $(document).ready(function(){initNavTree('structQComputations_1_1State__Comparat
 </div><!--header-->
 <div class="contents">
 
+<p>Сторонний компаратор указателей на состояния для упорядоченных контейнеров.  
+ <a href="structQComputations_1_1State__Comparator.html#details">Подробнее...</a></p>
+
 <p><code>#include &lt;<a class="el" href="state_8hpp_source.html">state.hpp</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
@@ -98,7 +101,16 @@ $(document).ready(function(){initNavTree('structQComputations_1_1State__Comparat
 <tr class="memitem:a6de8a9290940a23473c352dd85b3369a"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structQComputations_1_1State__Comparator.html#a6de8a9290940a23473c352dd85b3369a">operator()</a> (const std::shared_ptr&lt; StateType &gt; a, const std::shared_ptr&lt; StateType &gt; b) const</td></tr>
 <tr class="separator:a6de8a9290940a23473c352dd85b3369a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<h2 class="groupheader">Методы</h2>
+<a name="details" id="details"></a><h2 class="groupheader">Подробное описание</h2>
+<div class="textblock"><p>Сторонний компаратор указателей на состояния для упорядоченных контейнеров. </p>
+<p>Сравнивает объекты через виртуальный <code>operator&lt;</code> базового состояния; порядок обратный (<code>*b</code> &lt; *a), что даёт «нисходящий» порядок.</p>
+<dl class="tparams"><dt>Параметры шаблона</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">StateType</td><td>тип состояния, производный от <a class="el" href="classQComputations_1_1Basis__State.html">Basis_State</a>. </td></tr>
+  </table>
+  </dd>
+</dl>
+</div><h2 class="groupheader">Методы</h2>
 <a id="a6de8a9290940a23473c352dd85b3369a"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a6de8a9290940a23473c352dd85b3369a">&#9670;&nbsp;</a></span>operator()()</h2>
 

@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">QComputations
-   &#160;<span id="projectnumber">9c59715</span>
+   &#160;<span id="projectnumber">7c98336</span>
    </div>
    <div id="projectbrief">Quantum-mechanical simulation library: time-dependent Hamiltonians, states, matrices; CPU/CUDA/MPI backends</div>
   </td>
@@ -90,6 +90,9 @@ $(document).ready(function(){initNavTree('structQComputations_1_1State__Hash.htm
 </div><!--header-->
 <div class="contents">
 
+<p>Хеширующий функтор для <code>shared_ptr&lt;StateType&gt;</code>.  
+ <a href="structQComputations_1_1State__Hash.html#details">Подробнее...</a></p>
+
 <p><code>#include &lt;<a class="el" href="state_8hpp_source.html">state.hpp</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
@@ -98,7 +101,10 @@ $(document).ready(function(){initNavTree('structQComputations_1_1State__Hash.htm
 <tr class="memitem:ab15aa15f49ee0f4020358c06a2f02e86"><td class="memTemplItemLeft" align="right" valign="top">size_t&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structQComputations_1_1State__Hash.html#ab15aa15f49ee0f4020358c06a2f02e86">operator()</a> (const std::shared_ptr&lt; StateType &gt; &amp;a) const</td></tr>
 <tr class="separator:ab15aa15f49ee0f4020358c06a2f02e86"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<h2 class="groupheader">Методы</h2>
+<a name="details" id="details"></a><h2 class="groupheader">Подробное описание</h2>
+<div class="textblock"><p>Хеширующий функтор для <code>shared_ptr&lt;StateType&gt;</code>. </p>
+<p>Использует строковое представление состояния (<code>to_string</code>) как ключ хэша, что позволяет хранить состояния в <code>unordered_set</code> / <code>unordered_map</code>. </p>
+</div><h2 class="groupheader">Методы</h2>
 <a id="ab15aa15f49ee0f4020358c06a2f02e86"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ab15aa15f49ee0f4020358c06a2f02e86">&#9670;&nbsp;</a></span>operator()()</h2>
 

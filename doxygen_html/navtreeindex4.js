@@ -1,6 +1,5 @@
 var NAVTREEINDEX4 =
 {
-"namespaceQComputations_1_1matlab.html":[0,0,0,1],
 "namespaceQComputations_1_1matrix.html":[0,0,0,2],
 "namespaceQComputations_1_1matrix.html#a07b43e24164822dcfdba5faa0c35ce4e":[0,0,0,2,1],
 "namespaceQComputations_1_1matrix.html#ac0777d9da274942f5e363d67f552c12f":[0,0,0,2,0],
@@ -131,5 +130,6 @@ var NAVTREEINDEX4 =
 "wave__func__state_8hpp.html#a254bd93a0484ec3c5e3d160333ee5792":[2,0,0,0,42,3],
 "wave__func__state_8hpp.html#a9c89ec85bc92e5278254b4d93bfed507":[2,0,0,0,42,5],
 "wave__func__state_8hpp.html#ac545ccf3b9126a670bbb65963d7916e6":[2,0,0,0,42,4],
-"wave__func__state_8hpp_source.html":[2,0,0,0,42]
+"wave__func__state_8hpp_source.html":[2,0,0,0,42],
+"":[0,0,1]
 };

@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">QComputations
-   &#160;<span id="projectnumber">9c59715</span>
+   &#160;<span id="projectnumber">7c98336</span>
    </div>
    <div id="projectbrief">Quantum-mechanical simulation library: time-dependent Hamiltonians, states, matrices; CPU/CUDA/MPI backends</div>
   </td>
@@ -92,6 +92,9 @@ $(document).ready(function(){initNavTree('classQComputations_1_1TCH__State.html'
 </div><!--header-->
 <div class="contents">
 
+<p>Состояния TCH: решётка полостей с атомами, фотонами, волноводами и связями между уровнями. Модель Тависа-Каммингса-Хаббарда  
+ <a href="classQComputations_1_1TCH__State.html#details">Подробнее...</a></p>
+
 <p><code>#include &lt;<a class="el" href="state_8hpp_source.html">state.hpp</a>&gt;</code></p>
 <div class="dynheader">
 Граф наследования:QComputations::TCH_State:</div>
@@ -99,7 +102,7 @@ $(document).ready(function(){initNavTree('classQComputations_1_1TCH__State.html'
  <div class="center">
   <img src="classQComputations_1_1TCH__State.png" usemap="#QComputations::TCH_5FState_map" alt=""/>
   <map id="QComputations::TCH_5FState_map" name="QComputations::TCH_5FState_map">
-<area href="classQComputations_1_1Basis__State.html" alt="QComputations::Basis_State" shape="rect" coords="0,0,168,24"/>
+<area href="classQComputations_1_1Basis__State.html" title="Абстрактное базовое состояние: конфигурация кудитов в дискретных значениях." alt="QComputations::Basis_State" shape="rect" coords="0,0,168,24"/>
   </map>
 </div></div>
 <table class="memberdecls">
@@ -154,8 +157,10 @@ $(document).ready(function(){initNavTree('classQComputations_1_1TCH__State.html'
 <tr class="memitem:aac3955082735cf013000c06316ce89dc"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQComputations_1_1TCH__State.html#aac3955082735cf013000c06316ce89dc">m</a> (CavityId id) const</td></tr>
 <tr class="separator:aac3955082735cf013000c06316ce89dc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6efa70f1b1209470dbd568f8ed409069"><td class="memItemLeft" align="right" valign="top">ValType&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQComputations_1_1TCH__State.html#a6efa70f1b1209470dbd568f8ed409069">n</a> (CavityId id, int level_from=0, int level_to=1) const</td></tr>
+<tr class="memdesc:a6efa70f1b1209470dbd568f8ed409069"><td class="mdescLeft">&#160;</td><td class="mdescRight">Количество фотонов в полости между уровнями.  <a href="classQComputations_1_1TCH__State.html#a6efa70f1b1209470dbd568f8ed409069">Подробнее...</a><br /></td></tr>
 <tr class="separator:a6efa70f1b1209470dbd568f8ed409069"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad777e319470af8ce919233ca79e081de"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQComputations_1_1TCH__State.html#ad777e319470af8ce919233ca79e081de">set_n</a> (ValType <a class="el" href="classQComputations_1_1TCH__State.html#a6efa70f1b1209470dbd568f8ed409069">n</a>, CavityId id, int level_from=0, int level_to=1)</td></tr>
+<tr class="memdesc:ad777e319470af8ce919233ca79e081de"><td class="mdescLeft">&#160;</td><td class="mdescRight">Устанавливает число фотонов в полости.  <a href="classQComputations_1_1TCH__State.html#ad777e319470af8ce919233ca79e081de">Подробнее...</a><br /></td></tr>
 <tr class="separator:ad777e319470af8ce919233ca79e081de"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a73b008ea202b81e27f7ee272d53544a7"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQComputations_1_1TCH__State.html#a73b008ea202b81e27f7ee272d53544a7">ph_types_count</a> () const</td></tr>
 <tr class="separator:a73b008ea202b81e27f7ee272d53544a7"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -164,6 +169,7 @@ $(document).ready(function(){initNavTree('classQComputations_1_1TCH__State.html'
 <tr class="memitem:ab24a35101cb6e5e06da61683636b8017"><td class="memItemLeft" align="right" valign="top">ValType&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQComputations_1_1TCH__State.html#ab24a35101cb6e5e06da61683636b8017">get_atom</a> (size_t atom_index=0, CavityId id=0) const</td></tr>
 <tr class="separator:ab24a35101cb6e5e06da61683636b8017"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abd0fbcbb3a36dffbb00e7b2802625c99"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classQComputations_1_1TCH__State.html">TCH_State</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQComputations_1_1TCH__State.html#abd0fbcbb3a36dffbb00e7b2802625c99">get_state_in_cavity</a> (CavityId cavity_id) const</td></tr>
+<tr class="memdesc:abd0fbcbb3a36dffbb00e7b2802625c99"><td class="mdescLeft">&#160;</td><td class="mdescRight">Выделяет состояние отдельной полости (под-систему).  <a href="classQComputations_1_1TCH__State.html#abd0fbcbb3a36dffbb00e7b2802625c99">Подробнее...</a><br /></td></tr>
 <tr class="separator:abd0fbcbb3a36dffbb00e7b2802625c99"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa7286fe52c6907790230aac50ea27a18"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classQComputations_1_1TCH__State.html">TCH_State</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQComputations_1_1TCH__State.html#aa7286fe52c6907790230aac50ea27a18">operator[]</a> (CavityId cavity_id) const</td></tr>
 <tr class="separator:aa7286fe52c6907790230aac50ea27a18"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -190,6 +196,7 @@ $(document).ready(function(){initNavTree('classQComputations_1_1TCH__State.html'
 <tr class="memitem:ac254d8fbd540cfa96b4a731307c46637"><td class="memItemLeft" align="right" valign="top">std::set&lt; CavityId &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQComputations_1_1TCH__State.html#ac254d8fbd540cfa96b4a731307c46637">get_cavities_with_gain</a> () const</td></tr>
 <tr class="separator:ac254d8fbd540cfa96b4a731307c46637"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5a5635aadbc130d96182d440862255e6"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceQComputations.html#a4d35a1f736afa50465898555ea98704a">COMPLEX</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQComputations_1_1TCH__State.html#a5a5635aadbc130d96182d440862255e6">get_gamma</a> (CavityId from_id, CavityId to_id) const</td></tr>
+<tr class="memdesc:a5a5635aadbc130d96182d440862255e6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Амплитуда связи (гамма) между двумя полостями через волновод.  <a href="classQComputations_1_1TCH__State.html#a5a5635aadbc130d96182d440862255e6">Подробнее...</a><br /></td></tr>
 <tr class="separator:a5a5635aadbc130d96182d440862255e6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa56a61c26f3a8ce59c6b0c56cf26098b"><td class="memItemLeft" align="right" valign="top">std::set&lt; CavityId &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQComputations_1_1TCH__State.html#aa56a61c26f3a8ce59c6b0c56cf26098b">get_cavities_with_atoms</a> () const</td></tr>
 <tr class="separator:aa56a61c26f3a8ce59c6b0c56cf26098b"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -225,10 +232,13 @@ $(document).ready(function(){initNavTree('classQComputations_1_1TCH__State.html'
 <tr class="memitem:afc1cd8dab6be0519fbe05bf46f0d082a inherit pub_methods_classQComputations_1_1Basis__State"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQComputations_1_1Basis__State.html#afc1cd8dab6be0519fbe05bf46f0d082a">set_state</a> (const std::string &amp;str_state)</td></tr>
 <tr class="separator:afc1cd8dab6be0519fbe05bf46f0d082a inherit pub_methods_classQComputations_1_1Basis__State"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a31429c055334bffa886749bb10623a1e inherit pub_methods_classQComputations_1_1Basis__State"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQComputations_1_1Basis__State.html#a31429c055334bffa886749bb10623a1e">set_qudit</a> (ValType val, size_t qudit_index=0, size_t group_id=0)</td></tr>
+<tr class="memdesc:a31429c055334bffa886749bb10623a1e inherit pub_methods_classQComputations_1_1Basis__State"><td class="mdescLeft">&#160;</td><td class="mdescRight">Устанавливает значение кудита.  <a href="classQComputations_1_1Basis__State.html#a31429c055334bffa886749bb10623a1e">Подробнее...</a><br /></td></tr>
 <tr class="separator:a31429c055334bffa886749bb10623a1e inherit pub_methods_classQComputations_1_1Basis__State"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afb3305bd1ee2aa01243cc216ec4ddaec inherit pub_methods_classQComputations_1_1Basis__State"><td class="memItemLeft" align="right" valign="top">ValType&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQComputations_1_1Basis__State.html#afb3305bd1ee2aa01243cc216ec4ddaec">get_qudit</a> (size_t qudit_index=0, size_t group_id=0) const</td></tr>
+<tr class="memdesc:afb3305bd1ee2aa01243cc216ec4ddaec inherit pub_methods_classQComputations_1_1Basis__State"><td class="mdescLeft">&#160;</td><td class="mdescRight">Возвращает значение кудита.  <a href="classQComputations_1_1Basis__State.html#afb3305bd1ee2aa01243cc216ec4ddaec">Подробнее...</a><br /></td></tr>
 <tr class="separator:afb3305bd1ee2aa01243cc216ec4ddaec inherit pub_methods_classQComputations_1_1Basis__State"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6b3cb3d6ce1f11e8e42a01acc3567af1 inherit pub_methods_classQComputations_1_1Basis__State"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQComputations_1_1Basis__State.html#a6b3cb3d6ce1f11e8e42a01acc3567af1">append_qudit</a> (ValType init_val=0, ValType max_val=1)</td></tr>
+<tr class="memdesc:a6b3cb3d6ce1f11e8e42a01acc3567af1 inherit pub_methods_classQComputations_1_1Basis__State"><td class="mdescLeft">&#160;</td><td class="mdescRight">Добавляет кудит к состоянию в его последнюю группу.  <a href="classQComputations_1_1Basis__State.html#a6b3cb3d6ce1f11e8e42a01acc3567af1">Подробнее...</a><br /></td></tr>
 <tr class="separator:a6b3cb3d6ce1f11e8e42a01acc3567af1 inherit pub_methods_classQComputations_1_1Basis__State"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab4830c198c0e0aeaa035d3a6245871a3 inherit pub_methods_classQComputations_1_1Basis__State"><td class="memItemLeft" align="right" valign="top">std::vector&lt; ValType &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQComputations_1_1Basis__State.html#ab4830c198c0e0aeaa035d3a6245871a3">qudits</a> () const</td></tr>
 <tr class="separator:ab4830c198c0e0aeaa035d3a6245871a3 inherit pub_methods_classQComputations_1_1Basis__State"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -278,6 +288,7 @@ $(document).ready(function(){initNavTree('classQComputations_1_1TCH__State.html'
 <tr class="memdesc:ae3831b9a05759c2d5dce94deaf310d42 inherit pub_methods_classQComputations_1_1Basis__State"><td class="mdescLeft">&#160;</td><td class="mdescRight">!!!  <a href="classQComputations_1_1Basis__State.html#ae3831b9a05759c2d5dce94deaf310d42">Подробнее...</a><br /></td></tr>
 <tr class="separator:ae3831b9a05759c2d5dce94deaf310d42 inherit pub_methods_classQComputations_1_1Basis__State"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a00564b92245c4c9f5c925628598a0e7c inherit pub_methods_classQComputations_1_1Basis__State"><td class="memItemLeft" align="right" valign="top">virtual std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQComputations_1_1Basis__State.html#a00564b92245c4c9f5c925628598a0e7c">to_string</a> () const</td></tr>
+<tr class="memdesc:a00564b92245c4c9f5c925628598a0e7c inherit pub_methods_classQComputations_1_1Basis__State"><td class="mdescLeft">&#160;</td><td class="mdescRight">Строковое представление состояния (используется как ключ хэша).  <a href="classQComputations_1_1Basis__State.html#a00564b92245c4c9f5c925628598a0e7c">Подробнее...</a><br /></td></tr>
 <tr class="separator:a00564b92245c4c9f5c925628598a0e7c inherit pub_methods_classQComputations_1_1Basis__State"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a279b0ab67b2c740c91e2c539cfac9553 inherit pub_methods_classQComputations_1_1Basis__State"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQComputations_1_1Basis__State.html#a279b0ab67b2c740c91e2c539cfac9553">operator==</a> (const <a class="el" href="classQComputations_1_1Basis__State.html">Basis_State</a> &amp;other) const</td></tr>
 <tr class="separator:a279b0ab67b2c740c91e2c539cfac9553 inherit pub_methods_classQComputations_1_1Basis__State"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -296,6 +307,7 @@ $(document).ready(function(){initNavTree('classQComputations_1_1TCH__State.html'
 <tr class="memitem:af26531067a998ac2bf1f0d8be197bbdb inherit pub_methods_classQComputations_1_1Basis__State"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQComputations_1_1Basis__State.html#af26531067a998ac2bf1f0d8be197bbdb">clear</a> ()</td></tr>
 <tr class="separator:af26531067a998ac2bf1f0d8be197bbdb inherit pub_methods_classQComputations_1_1Basis__State"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4cbde3422f57d47f332fb643a1ed8484 inherit pub_methods_classQComputations_1_1Basis__State"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQComputations_1_1Basis__State.html#a4cbde3422f57d47f332fb643a1ed8484">set_zero</a> ()</td></tr>
+<tr class="memdesc:a4cbde3422f57d47f332fb643a1ed8484 inherit pub_methods_classQComputations_1_1Basis__State"><td class="mdescLeft">&#160;</td><td class="mdescRight">Обнуляет все кудиты состояния (значимый, сбрасывает кэш хэша).  <a href="classQComputations_1_1Basis__State.html#a4cbde3422f57d47f332fb643a1ed8484">Подробнее...</a><br /></td></tr>
 <tr class="separator:a4cbde3422f57d47f332fb643a1ed8484 inherit pub_methods_classQComputations_1_1Basis__State"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac7f676cc2f4cac898d09cd2edb5e9286 inherit pub_methods_classQComputations_1_1Basis__State"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQComputations_1_1Basis__State.html#ac7f676cc2f4cac898d09cd2edb5e9286">is_all_qudits_zero</a> () const</td></tr>
 <tr class="separator:ac7f676cc2f4cac898d09cd2edb5e9286 inherit pub_methods_classQComputations_1_1Basis__State"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -348,7 +360,18 @@ $(document).ready(function(){initNavTree('classQComputations_1_1TCH__State.html'
 <tr class="memitem:a989de2a6139df1e6e233a546890a5b95 inherit pro_attribs_classQComputations_1_1Basis__State"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQComputations_1_1Basis__State.html#a989de2a6139df1e6e233a546890a5b95">hash_cached_</a> = false</td></tr>
 <tr class="separator:a989de2a6139df1e6e233a546890a5b95 inherit pro_attribs_classQComputations_1_1Basis__State"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<h2 class="groupheader">Определения типов</h2>
+<a name="details" id="details"></a><h2 class="groupheader">Подробное описание</h2>
+<div class="textblock"><p>Состояния TCH: решётка полостей с атомами, фотонами, волноводами и связями между уровнями. Модель Тависа-Каммингса-Хаббарда </p>
+<p>Наследует <a class="el" href="classQComputations_1_1Basis__State.html">Basis_State</a>. Каждая группа (group) базового состояния соответствует отдельной полости (cavity); внутри полости — фотоны частотных уровней и атомы.</p>
+<p>Основные группы методов:</p><ul>
+<li>геометрия решётки: <a class="el" href="classQComputations_1_1TCH__State.html#a279fcb80fde790a2265d5bba018a87fe">x_size</a>, <a class="el" href="classQComputations_1_1TCH__State.html#ae86bd3e76d19fc63e187d999f308d86f">y_size</a>, <a class="el" href="classQComputations_1_1TCH__State.html#a25bff5b45da721688bf5d764946aabe1">z_size</a>, <a class="el" href="classQComputations_1_1TCH__State.html#a64694a94c910382935f8ab5432e7b73c">reshape</a>;</li>
+<li>фотоны/атомы: <a class="el" href="classQComputations_1_1TCH__State.html#a6efa70f1b1209470dbd568f8ed409069">n</a>, <a class="el" href="classQComputations_1_1TCH__State.html#ad777e319470af8ce919233ca79e081de">set_n</a>, <a class="el" href="classQComputations_1_1TCH__State.html#aac3955082735cf013000c06316ce89dc">m</a>, <a class="el" href="classQComputations_1_1TCH__State.html#ad7eeefa933b4bb892efecaf9571f15f6">set_atom</a>, <a class="el" href="classQComputations_1_1TCH__State.html#ab24a35101cb6e5e06da61683636b8017">get_atom</a>;</li>
+<li>частотные уровни: <a class="el" href="classQComputations_1_1TCH__State.html#a82380016639beadca3c6a03ca543cfce">w</a>, <a class="el" href="classQComputations_1_1TCH__State.html#abd1222f66fcf81ab27b86b19392a81dc">set_w</a>, <a class="el" href="classQComputations_1_1TCH__State.html#a462a3c19133801bca04bc893d6a09a6a">freqs_count</a>;</li>
+<li>связи и потери: <a class="el" href="classQComputations_1_1TCH__State.html#aebd3899ffcf8aee89d57f3f9f682aab5">set_g_level</a>, <a class="el" href="classQComputations_1_1TCH__State.html#ad52d49e629c52d2e624e88a268273f81">g</a>, <a class="el" href="classQComputations_1_1TCH__State.html#a122d15c5ae55683909dd800681f7a576">set_move</a>, <a class="el" href="classQComputations_1_1TCH__State.html#aee537e6fd6bfa4db2e5554058ee190f3">is_move</a>, <a class="el" href="classQComputations_1_1TCH__State.html#a5a5635aadbc130d96182d440862255e6">get_gamma</a>, <a class="el" href="classQComputations_1_1TCH__State.html#ac9968ceca8b296792cee287e9b396f15">set_waveguide</a>;</li>
+<li>амплитуды leak/gain: <a class="el" href="classQComputations_1_1TCH__State.html#a0e334a3a84feb2b73670182be146c982">get_leak_gamma</a>, <a class="el" href="classQComputations_1_1TCH__State.html#a16920c804c023817c3867cc49334c04a">get_gain_gamma</a>.</li>
+</ul>
+<dl class="section note"><dt>Заметки</dt><dd>Поля <code>freq_levels_</code>, <code>g_</code>, <code>is_move_</code>, <code>waveguides_</code> и др. — приватные; доступ только через публичные методы. </dd></dl>
+</div><h2 class="groupheader">Определения типов</h2>
 <a id="a5271fee6a8219997016e766511e2143b"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a5271fee6a8219997016e766511e2143b">&#9670;&nbsp;</a></span>AtomId</h2>
 
@@ -833,6 +856,15 @@ $(document).ready(function(){initNavTree('classQComputations_1_1TCH__State.html'
 </table>
 </div><div class="memdoc">
 
+<p>Амплитуда связи (гамма) между двумя полостями через волновод. </p>
+<dl class="params"><dt>Аргументы</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">from_id,to_id</td><td>идентификаторы полостей. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Возвращает</dt><dd>Комплексная амплитуда; при <code>from_id</code> &gt; to_id возвращается сопряжённая. </dd></dl>
+
 </div>
 </div>
 <a id="ad9d5f50fbb9fca0e5a6e4577365908f8"></a>
@@ -1005,6 +1037,15 @@ $(document).ready(function(){initNavTree('classQComputations_1_1TCH__State.html'
 </table>
 </div><div class="memdoc">
 
+<p>Выделяет состояние отдельной полости (под-систему). </p>
+<dl class="params"><dt>Аргументы</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">cavity_id</td><td>идентификатор полости. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Возвращает</dt><dd>Состояние TCH, содержащее только указанную полость. </dd></dl>
+
 </div>
 </div>
 <a id="a067921601e8d14f56d2ffa7626e7b26c"></a>
@@ -1173,6 +1214,16 @@ $(document).ready(function(){initNavTree('classQComputations_1_1TCH__State.html'
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>Количество фотонов в полости между уровнями. </p>
+<dl class="params"><dt>Аргументы</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">id</td><td>идентификатор полости. </td></tr>
+    <tr><td class="paramname">level_from,level_to</td><td>пара уровней. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Возвращает</dt><dd>Число фотонов (значение кудита). </dd></dl>
 
 </div>
 </div>
@@ -1516,6 +1567,16 @@ $(document).ready(function(){initNavTree('classQComputations_1_1TCH__State.html'
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>Устанавливает число фотонов в полости. </p>
+<dl class="params"><dt>Аргументы</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">n</td><td>количество фотонов. </td></tr>
+    <tr><td class="paramname">id</td><td>идентификатор полости. </td></tr>
+    <tr><td class="paramname">level_from,level_to</td><td>пара уровней. </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>

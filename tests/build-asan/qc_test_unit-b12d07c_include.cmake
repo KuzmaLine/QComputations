@@ -1,0 +1,5 @@
+if(EXISTS "/home/kuzmaline/Quantum/QComputations/QComputations/tests/build-asan/qc_test_unit-b12d07c_tests.cmake")
+  include("/home/kuzmaline/Quantum/QComputations/QComputations/tests/build-asan/qc_test_unit-b12d07c_tests.cmake")
+else()
+  add_test(qc_test_unit_NOT_BUILT-b12d07c qc_test_unit_NOT_BUILT-b12d07c)
+endif()

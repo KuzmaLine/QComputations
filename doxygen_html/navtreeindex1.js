@@ -1,6 +1,5 @@
 var NAVTREEINDEX1 =
 {
-"classQComputations_1_1Matrix.html#a5ac681a7d6dcfeab7bd6434e661bd069":[1,0,0,11,77],
 "classQComputations_1_1Matrix.html#a5ac681a7d6dcfeab7bd6434e661bd069":[1,0,0,11,79],
 "classQComputations_1_1Matrix.html#a5bf9537a2d9b470fbb1deca6d7180b71":[1,0,0,11,25],
 "classQComputations_1_1Matrix.html#a5ced23ccddcfb3f5c8d628c8974ea35e":[1,0,0,11,31],
@@ -249,5 +248,6 @@ var NAVTREEINDEX1 =
 "classQComputations_1_1TCH__State.html#a82380016639beadca3c6a03ca543cfce":[1,0,0,17,43],
 "classQComputations_1_1TCH__State.html#a88f9f9c6e314496dfb005be0c596d018":[1,0,0,17,10],
 "classQComputations_1_1TCH__State.html#a941b04b554480e633c683c7bb1252c2a":[1,0,0,17,2],
-"classQComputations_1_1TCH__State.html#a9604b8bdafd0151a00cbb7220119362a":[1,0,0,17,55]
+"classQComputations_1_1TCH__State.html#a9604b8bdafd0151a00cbb7220119362a":[1,0,0,17,55],
+"classQComputations_1_1TCH__State.html#a9e456d78ecb0c268f643da741c3934fc":[1,0,0,17,53]
 };

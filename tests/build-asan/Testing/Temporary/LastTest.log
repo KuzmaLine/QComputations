@@ -1,0 +1,50 @@
+Start testing: Oct 26 03:05 MSK
+----------------------------------------------------------
+1/3 Testing: unit.State: clone/swap/erase/итераторы
+1/3 Test: unit.State: clone/swap/erase/итераторы
+Command: "/home/kuzmaline/Quantum/QComputations/QComputations/tests/build-asan/qc_test_unit" "State: clone/swap/erase/итераторы" "--order decl"
+Directory: /home/kuzmaline/Quantum/QComputations/QComputations/tests/build-asan
+"unit.State: clone/swap/erase/итераторы" start time: Oct 26 03:05 MSK
+Output:
+----------------------------------------------------------
+Filters: "State: clone/swap/erase/итераторы"
+Randomness seeded to: 3788631878
+===============================================================================
+All tests passed (25 assertions in 1 test case)
+
+<end of output>
+Test time =   0.02 sec
+----------------------------------------------------------
+Test Passed.
+"unit.State: clone/swap/erase/итераторы" end time: Oct 26 03:05 MSK
+"unit.State: clone/swap/erase/итераторы" time elapsed: 00:00:00
+----------------------------------------------------------
+
+2/3 Testing: unit.State: числовые инварианты
+2/3 Test: unit.State: числовые инварианты
+Command: "/home/kuzmaline/Quantum/QComputations/QComputations/tests/build-asan/qc_test_unit" "State: числовые инварианты" "--order decl"
+Directory: /home/kuzmaline/Quantum/QComputations/QComputations/tests/build-asan
+"unit.State: числовые инварианты" start time: Oct 26 03:05 MSK
+Output:
+----------------------------------------------------------
+Filters: "State: числовые инварианты"
+Randomness seeded to: 1238627250
+===============================================================================
+All tests passed (9 assertions in 1 test case)
+
+<end of output>
+Test time =   0.02 sec
+----------------------------------------------------------
+Test Passed.
+"unit.State: числовые инварианты" end time: Oct 26 03:05 MSK
+"unit.State: числовые инварианты" time elapsed: 00:00:00
+----------------------------------------------------------
+
+End testing: Oct 26 03:05 MSK
+
+numeric =   0.02 sec*proc
+
+state =   0.04 sec*proc
+
+unit =   0.04 sec*proc
+

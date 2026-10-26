@@ -1,6 +1,5 @@
 var NAVTREEINDEX2 =
 {
-"classQComputations_1_1TCH__State.html#a9e456d78ecb0c268f643da741c3934fc":[1,0,0,17,53],
 "classQComputations_1_1TCH__State.html#a9e7de8efb5c7cfde44cef0ecf2c92e32":[1,0,0,17,36],
 "classQComputations_1_1TCH__State.html#aa56a61c26f3a8ce59c6b0c56cf26098b":[1,0,0,17,12],
 "classQComputations_1_1TCH__State.html#aa7286fe52c6907790230aac50ea27a18":[1,0,0,17,30],
@@ -249,5 +248,6 @@ var NAVTREEINDEX2 =
 "functions_func_z.html":[1,3,1,24],
 "functions_func_~.html":[1,3,1,25],
 "functions_g.html":[1,3,0,6],
-"functions_h.html":[1,3,0,7]
+"functions_h.html":[1,3,0,7],
+"functions_i.html":[1,3,0,8]
 };

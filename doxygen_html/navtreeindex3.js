@@ -1,6 +1,5 @@
 var NAVTREEINDEX3 =
 {
-"functions_i.html":[1,3,0,8],
 "functions_j.html":[1,3,0,9],
 "functions_l.html":[1,3,0,10],
 "functions_m.html":[1,3,0,11],
@@ -249,5 +248,6 @@ var NAVTREEINDEX3 =
 "namespaceQComputations_1_1functions__testing.html":[0,0,0,0],
 "namespaceQComputations_1_1functions__testing.html#a8822e5c258a12e9fe477fcc4e33adc89":[0,0,0,0,0],
 "namespaceQComputations_1_1functions__testing.html#ab664b92a70c1ee085084773a1287a2b3":[0,0,0,0,1],
-"namespaceQComputations_1_1functions__testing.html#ab8721c834c4ce4bc5a3f0f5203a21977":[0,0,0,0,2]
+"namespaceQComputations_1_1functions__testing.html#ab8721c834c4ce4bc5a3f0f5203a21977":[0,0,0,0,2],
+"namespaceQComputations_1_1matlab.html":[0,0,0,1]
 };

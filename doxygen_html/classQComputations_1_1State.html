@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">QComputations
-   &#160;<span id="projectnumber">9c59715</span>
+   &#160;<span id="projectnumber">7c98336</span>
    </div>
    <div id="projectbrief">Quantum-mechanical simulation library: time-dependent Hamiltonians, states, matrices; CPU/CUDA/MPI backends</div>
   </td>
@@ -91,6 +91,9 @@ $(document).ready(function(){initNavTree('classQComputations_1_1State.html','');
 </div><!--header-->
 <div class="contents">
 
+<p>Суперпозиция: набор комплексных амплитуд, привязанных к элементам базиса.  
+ <a href="classQComputations_1_1State.html#details">Подробнее...</a></p>
+
 <p><code>#include &lt;<a class="el" href="state_8hpp_source.html">state.hpp</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
@@ -154,6 +157,7 @@ $(document).ready(function(){initNavTree('classQComputations_1_1State.html','');
 <tr class="memitem:aa9592002ad3c6e83c7e8f89d9de35ec2"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQComputations_1_1State.html#aa9592002ad3c6e83c7e8f89d9de35ec2">insert</a> (const StateType &amp;state, const <a class="el" href="namespaceQComputations.html#a4d35a1f736afa50465898555ea98704a">COMPLEX</a> &amp;amplitude=<a class="el" href="namespaceQComputations.html#a4d35a1f736afa50465898555ea98704a">COMPLEX</a>(0, 0))</td></tr>
 <tr class="separator:aa9592002ad3c6e83c7e8f89d9de35ec2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af1ce72e50239ae2da2fde5d26795ea12"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQComputations_1_1State.html#af1ce72e50239ae2da2fde5d26795ea12">insert</a> (const std::shared_ptr&lt; StateType &gt; &amp;state, const <a class="el" href="namespaceQComputations.html#a4d35a1f736afa50465898555ea98704a">COMPLEX</a> &amp;amplitude=<a class="el" href="namespaceQComputations.html#a4d35a1f736afa50465898555ea98704a">COMPLEX</a>(0, 0))</td></tr>
+<tr class="memdesc:af1ce72e50239ae2da2fde5d26795ea12"><td class="mdescLeft">&#160;</td><td class="mdescRight">Добавляет состояние в суперпозицию с заданной амплитудой.  <a href="classQComputations_1_1State.html#af1ce72e50239ae2da2fde5d26795ea12">Подробнее...</a><br /></td></tr>
 <tr class="separator:af1ce72e50239ae2da2fde5d26795ea12"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a711cdf231892a15515ad1bb7f47d80ee"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQComputations_1_1State.html#a711cdf231892a15515ad1bb7f47d80ee">set_all</a> (<a class="el" href="namespaceQComputations.html#a4d35a1f736afa50465898555ea98704a">COMPLEX</a> a)</td></tr>
 <tr class="separator:a711cdf231892a15515ad1bb7f47d80ee"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -172,12 +176,14 @@ $(document).ready(function(){initNavTree('classQComputations_1_1State.html','');
 <tr class="memitem:ae1dc50374ebfdd7569868647c82db5c8"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQComputations_1_1State.html#ae1dc50374ebfdd7569868647c82db5c8">set_vector</a> (const std::vector&lt; <a class="el" href="namespaceQComputations.html#a4d35a1f736afa50465898555ea98704a">COMPLEX</a> &gt; &amp;v)</td></tr>
 <tr class="separator:ae1dc50374ebfdd7569868647c82db5c8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acd88ae257e503ddd5d34acd0bce725b7"><td class="memItemLeft" align="right" valign="top">std::vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQComputations_1_1State.html#acd88ae257e503ddd5d34acd0bce725b7">to_probs</a> () const</td></tr>
+<tr class="memdesc:acd88ae257e503ddd5d34acd0bce725b7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Вероятности (модуль амплитуды в квадрате) по отсортированному базису.  <a href="classQComputations_1_1State.html#acd88ae257e503ddd5d34acd0bce725b7">Подробнее...</a><br /></td></tr>
 <tr class="separator:acd88ae257e503ddd5d34acd0bce725b7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9eeb8f04b34d55450ff5f5d5f00fe85f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQComputations_1_1State.html#a9eeb8f04b34d55450ff5f5d5f00fe85f">init_state_by_func</a> (const std::function&lt; <a class="el" href="namespaceQComputations.html#a4d35a1f736afa50465898555ea98704a">COMPLEX</a>(const StateType &amp;)&gt; &amp;func)</td></tr>
 <tr class="separator:a9eeb8f04b34d55450ff5f5d5f00fe85f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8736e16ff28cb08c27db6b8c1c112583"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQComputations_1_1State.html#a8736e16ff28cb08c27db6b8c1c112583">to_string</a> () const</td></tr>
 <tr class="separator:a8736e16ff28cb08c27db6b8c1c112583"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac5bcf4e3adc161120bc15daf7b601913"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classQComputations_1_1State.html">State</a>&lt; StateType &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQComputations_1_1State.html#ac5bcf4e3adc161120bc15daf7b601913">fit_to_basis</a> (const <a class="el" href="namespaceQComputations.html#a2c959a6d55da1ef4d086555a62b6ca31">BasisType</a>&lt; StateType &gt; &amp;basis) const</td></tr>
+<tr class="memdesc:ac5bcf4e3adc161120bc15daf7b601913"><td class="mdescLeft">&#160;</td><td class="mdescRight">Переносит амплитуды в новый базис.  <a href="classQComputations_1_1State.html#ac5bcf4e3adc161120bc15daf7b601913">Подробнее...</a><br /></td></tr>
 <tr class="separator:ac5bcf4e3adc161120bc15daf7b601913"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a86c49aa3280621c8cd3626c84a3725b9"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQComputations_1_1State.html#a86c49aa3280621c8cd3626c84a3725b9">get_index</a> (const StateType &amp;state) const</td></tr>
 <tr class="separator:a86c49aa3280621c8cd3626c84a3725b9"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -190,6 +196,7 @@ $(document).ready(function(){initNavTree('classQComputations_1_1State.html','');
 <tr class="memitem:a4bd14666af623e4bebf7f3f83a8d9623"><td class="memItemLeft" align="right" valign="top">std::vector&lt; size_t &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQComputations_1_1State.html#a4bd14666af623e4bebf7f3f83a8d9623">fit_indexes_to_basis</a> (const std::vector&lt; std::shared_ptr&lt; StateType &gt;&gt; &amp;basis_vector) const</td></tr>
 <tr class="separator:a4bd14666af623e4bebf7f3f83a8d9623"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aeedffd2cbb59d67c8bba6708948aaf9a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQComputations_1_1State.html#aeedffd2cbb59d67c8bba6708948aaf9a">sort</a> () const</td></tr>
+<tr class="memdesc:aeedffd2cbb59d67c8bba6708948aaf9a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Ленивая сортировка базиса и согласование массивов.  <a href="classQComputations_1_1State.html#aeedffd2cbb59d67c8bba6708948aaf9a">Подробнее...</a><br /></td></tr>
 <tr class="separator:aeedffd2cbb59d67c8bba6708948aaf9a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a097b49ddf9ee654bf63ed83d548c6402"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQComputations_1_1State.html#a097b49ddf9ee654bf63ed83d548c6402">clear</a> ()</td></tr>
 <tr class="separator:a097b49ddf9ee654bf63ed83d548c6402"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -205,7 +212,24 @@ $(document).ready(function(){initNavTree('classQComputations_1_1State.html','');
 <tr class="memitem:ae19b3a45517dbbf0a7327ebfe4fdf70e"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQComputations_1_1State.html#ae19b3a45517dbbf0a7327ebfe4fdf70e">is_sorted_</a> = false</td></tr>
 <tr class="separator:ae19b3a45517dbbf0a7327ebfe4fdf70e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<h2 class="groupheader">Конструктор(ы)</h2>
+<a name="details" id="details"></a><h2 class="groupheader">Подробное описание</h2>
+<div class="textblock"><h3>template&lt;typename StateType&gt;<br />
+class QComputations::State&lt; StateType &gt;</h3>
+
+<p>Суперпозиция: набор комплексных амплитуд, привязанных к элементам базиса. </p>
+<p><code>State&lt;StateType&gt;</code> хранит:</p><ul>
+<li><code>state_vec_</code> — вектор амплитуд (COMPLEX),</li>
+<li><code>state_map_</code> — соответствие «состояние → индекс амплитуды»,</li>
+<li><code>sorted_basis_</code> — упорядоченная копия базиса (лениво пересчитывается методом <a class="el" href="classQComputations_1_1State.html#aeedffd2cbb59d67c8bba6708948aaf9a">sort</a> при первом обращении, требующем сортировки).</li>
+</ul>
+<p>Сложение/вычитание согласуют базисы автоматически (новые состояния добавляются, а флаг <code>is_sorted_</code> сбрасывается).</p>
+<dl class="tparams"><dt>Параметры шаблона</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">StateType</td><td>тип базового состояния; должен быть копируемым и сравнимым (производный от <a class="el" href="classQComputations_1_1Basis__State.html">Basis_State</a>). </td></tr>
+  </table>
+  </dd>
+</dl>
+</div><h2 class="groupheader">Конструктор(ы)</h2>
 <a id="a584115f7b9a3afca9acc2a2e9f760eda"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a584115f7b9a3afca9acc2a2e9f760eda">&#9670;&nbsp;</a></span>State() <span class="overload">[1/8]</span></h2>
 
@@ -567,6 +591,15 @@ template&lt;typename StateType &gt; </div>
 </table>
 </div><div class="memdoc">
 
+<p>Переносит амплитуды в новый базис. </p>
+<p>Каждому элементу целевого базиса присваивается амплитуда из текущего состояния, если совпадает; иначе 0. </p><dl class="params"><dt>Аргументы</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">basis</td><td>целевой базис. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Возвращает</dt><dd>Новое состояние в базисе <code>basis</code>. </dd></dl>
+
 </div>
 </div>
 <a id="a24d36545636e259c2d28656e7b262d91"></a>
@@ -863,6 +896,15 @@ template&lt;typename StateType &gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>Добавляет состояние в суперпозицию с заданной амплитудой. </p>
+<p>Если состояние уже присутствует — амплитуда обновляется (если != 0); иначе состояние добавляется, а флаг сортировки сбрасывается. </p><dl class="params"><dt>Аргументы</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">state</td><td>указатель на базовое состояние. </td></tr>
+    <tr><td class="paramname">amplitude</td><td>амплитуда (по умолчанию 0). </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
@@ -1530,6 +1572,9 @@ template&lt;typename StateType &gt; </div>
 </table>
 </div><div class="memdoc">
 
+<p>Ленивая сортировка базиса и согласование массивов. </p>
+<p>Пересчитывает <code>sorted_basis_</code>, <code>state_vec_</code> и <code>state_map_</code> в каноническом порядке (по <a class="el" href="structQComputations_1_1State__Comparator.html">State_Comparator</a>). Вызывается автоматически методами, возвращающими отсортированные представления. </p>
+
 </div>
 </div>
 <a id="a7337ee2ad8251f6477c1e5e730a8837f"></a>
@@ -1583,6 +1628,9 @@ template&lt;typename StateType &gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>Вероятности (модуль амплитуды в квадрате) по отсортированному базису. </p>
+<dl class="section return"><dt>Возвращает</dt><dd>Вектор вероятностей; индексы соответствуют <a class="el" href="classQComputations_1_1State.html#a52d372fb4f7cb093dbc7786eee3b6644">get_basis</a>. </dd></dl>
 
 </div>
 </div>

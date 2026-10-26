@@ -1,6 +1,5 @@
 var NAVTREEINDEX0 =
 {
-"":[0,0,1],
 "additional__operators_8cpp.html":[2,0,0,0,0],
 "additional__operators_8cpp.html#a1fa119034fee07a6d5449926cbb7915a":[2,0,0,0,0,0],
 "additional__operators_8cpp.html#a25f38d07622f2d3e0cf083c6f8dfa3dd":[2,0,0,0,0,1],
@@ -249,5 +248,6 @@ var NAVTREEINDEX0 =
 "classQComputations_1_1Matrix.html#a399f497b377d8768284fdf1b222c3820":[1,0,0,11,69],
 "classQComputations_1_1Matrix.html#a46d5d34c1f546f7f4cd7daf948c9af1c":[1,0,0,11,66],
 "classQComputations_1_1Matrix.html#a49ab1de22bfab7652b8430e60bc34911":[1,0,0,11,13],
-"classQComputations_1_1Matrix.html#a52202b91caf2ce9592f296e3d3586246":[1,0,0,11,71]
+"classQComputations_1_1Matrix.html#a52202b91caf2ce9592f296e3d3586246":[1,0,0,11,71],
+"classQComputations_1_1Matrix.html#a5ac681a7d6dcfeab7bd6434e661bd069":[1,0,0,11,77]
 };

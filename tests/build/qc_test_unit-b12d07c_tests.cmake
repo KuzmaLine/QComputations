@@ -1,0 +1,7 @@
+add_test( [==[unit.State: clone/swap/erase/итераторы]==] /home/kuzmaline/Quantum/QComputations/QComputations/tests/build/qc_test_unit [==[State: clone/swap/erase/итераторы]==]   [==[--order decl]==] )
+set_tests_properties( [==[unit.State: clone/swap/erase/итераторы]==] PROPERTIES WORKING_DIRECTORY /home/kuzmaline/Quantum/QComputations/QComputations/tests/build LABELS unit SKIP_RETURN_CODE 4)
+set_tests_properties( [==[unit.State: clone/swap/erase/итераторы]==] PROPERTIES LABELS [==[state;unit]==])
+add_test( [==[unit.State: числовые инварианты]==] /home/kuzmaline/Quantum/QComputations/QComputations/tests/build/qc_test_unit [==[State: числовые инварианты]==]   [==[--order decl]==] )
+set_tests_properties( [==[unit.State: числовые инварианты]==] PROPERTIES WORKING_DIRECTORY /home/kuzmaline/Quantum/QComputations/QComputations/tests/build LABELS unit SKIP_RETURN_CODE 4)
+set_tests_properties( [==[unit.State: числовые инварианты]==] PROPERTIES LABELS [==[numeric;state;unit]==])
+include("/home/kuzmaline/Quantum/QComputations/QComputations/tests/build/qc_test_unit-b12d07c_test-list.cmake")

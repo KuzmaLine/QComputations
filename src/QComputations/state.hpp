@@ -11,10 +11,30 @@
 #include <memory>
 #include <unordered_map>
 #include <unordered_set>
+#include <utility>
+#include <cstddef>
+#include <iterator>
 
 /* modified: 
     State<StateType> */
 
+/**
+ * \file state.hpp
+ * \brief Описание базовых квантовых состояний и их суперпозиция + TCH_State.
+ *
+ * Файл задаёт три уровня абстракции:
+ *  - @ref QComputations::Basis_State — базовое состояние: конфигурация кудитов;
+ *  - @ref QComputations::TCH_State — состояние TCH-системы (Тавис-Каммингс-Хаббард)
+ *  - @ref QComputations::State — суперпозиция: комплексные амплитуды над базисом.
+ *
+ * Также определены хэш/сравнители для unordered-контейнеров (@ref
+ * QComputations::State_Hash, @ref QComputations::State_Equal) и вспомогательные
+ * псевдонимы типов (@ref QComputations::BasisType, @ref QComputations::StateBasisMap).
+ *
+ * \warning Конфигурация и константы среды (h, w, длина волноводов и т.п.) берутся
+ * из @c QConfig::instance(); поведение при включённом @c ENABLE_ONEAPI различается
+ * (оптимизированный нормализатор и др.).
+ */
 namespace QComputations {
 
 #ifdef ENABLE_ONEAPI
@@ -59,6 +79,14 @@ namespace {
 
 std::vector<std::vector<CavityId>> update_neighbours(size_t x_size, size_t y_size, size_t z_size = 1);
 
+/**
+ * \brief Сторонний компаратор указателей на состояния для упорядоченных контейнеров.
+ *
+ * Сравнивает объекты через виртуальный @c operator< базового состояния;
+ * порядок обратный (@c *b < *a), что даёт «нисходящий» порядок.
+ *
+ * \tparam StateType тип состояния, производный от @ref Basis_State.
+ */
 struct State_Comparator {
     template<typename StateType>
     bool operator()(const std::shared_ptr<StateType> a, const std::shared_ptr<StateType> b) const {
@@ -70,6 +98,12 @@ struct State_Comparator {
 //     // using BasisType = std::set<std::shared_ptr<StateType>, State_Comparator>;
 //     using BasisType = std::unordered_set<std::shared_ptr<StateType>>;
 
+/**
+ * \brief Хеширующий функтор для @c shared_ptr<StateType>.
+ *
+ * Использует строковое представление состояния (@c to_string) как ключ хэша,
+ * что позволяет хранить состояния в @c unordered_set / @c unordered_map.
+ */
 struct State_Hash {
     template<typename StateType>
     size_t operator()(const std::shared_ptr<StateType>& a) const {
@@ -78,6 +112,11 @@ struct State_Hash {
     }
 };
 
+/**
+ * \brief Функтор сравнения на равенство указателей на состояния.
+ *
+ * Равенство объектов определяется виртуальным @c operator==.
+ */
 struct State_Equal {
     template<typename StateType>
     bool operator()(const std::shared_ptr<StateType>& a, 
@@ -86,6 +125,12 @@ struct State_Equal {
     }
 };
 
+/**
+ * \brief Псевдоним типа «базис» — множество указателей на состояния.
+ *
+ * Хеш и сравнение задаются @ref State_Hash и @ref State_Equal.
+ * \tparam StateType тип элементов базиса.
+ */
 template<typename StateType>
 using BasisType = std::unordered_set<std::shared_ptr<StateType>, 
                                      State_Hash, State_Equal>;
@@ -95,12 +140,37 @@ using StateBasisMap = std::unordered_map<std::shared_ptr<StateType>, size_t, Sta
 
 
 template<typename StateType>
+/**
+ * \brief Возвращает отсортированную копию базиса в виде вектора.
+ *
+ * Сортировка выполняется @ref State_Comparator (нисходящий порядок).
+ *
+ * \param basis исходный базис (множество указателей).
+ * \return Вектор указателей, упорядоченный компаратором.
+ */
 std::vector<std::shared_ptr<StateType>> sort_basis(const BasisType<StateType>& basis) {
     std::vector<std::shared_ptr<StateType>> res(basis.begin(), basis.end());
     std::sort(res.begin(), res.end(), State_Comparator());
     return res;
 }
 
+/**
+ * \brief Базовое состояние: конфигурация кудитов в дискретных значениях.
+ *
+ * @c Basis_State хранит:
+ *  - значения кудитов (@c qudits_),
+ *  - максимумы значений каждого кудита (@c max_vals_),
+ *  - разбиение на группы: хранятся **индексы конца** групп
+ *    (см. @ref get_group_end), что упрощает индексацию.
+ *
+ * Класс содержит виртуальные методы (@c to_string, @c group_to_string,
+ * @c operator==, @c operator<), которые переопределяются производными
+ * (например, @ref TCH_State). Хеш кэшируется и сбрасывается любым изменением
+ * состояния (@c hash_cached_).
+ *
+ * \note Все изменяющие методы сбрасывают кэш хэша; вызов @c hash() после
+ *       изменений пересчитывает значение.
+ */
 class Basis_State {
     public:
         // инициализация пустого состояния
@@ -142,9 +212,28 @@ class Basis_State {
         explicit Basis_State(const std::string& qudits, const std::vector<ValType>& max_vals); // !!!!!
 
         void set_state(const std::string& str_state); // !!!!
+/**
+ * \brief Устанавливает значение кудита.
+ *
+ * \param val новое значение; должно быть <= максимальному для кудита
+ *            (иначе срабатывает @c assert).
+ * \param qudit_index индекс кудита внутри группы.
+ * \param group_id номер группы.
+ */
         inline void set_qudit(ValType val, size_t qudit_index = 0, size_t group_id = 0) { assert(val <= (*max_vals_)[qudit_index]);
                                     qudits_[this->get_group_start(group_id) + qudit_index] = val; hash_cached_ = false;}
+/**
+ * \brief Возвращает значение кудита.
+ * \param qudit_index индекс внутри группы.
+ * \param group_id идентификатор группы.
+ * \return Текущее значение кудита.
+ */
         inline ValType get_qudit(size_t qudit_index = 0, size_t group_id = 0) const { return qudits_[this->get_group_start(group_id) + qudit_index]; }
+/**
+ * \brief Добавляет кудит к состоянию в его последнюю группу.
+ * \param init_val Начальное значение.
+ * \param max_val Максимальное значение.
+ */
         inline void append_qudit(ValType init_val = 0, ValType max_val = 1) { groups_->emplace_back(qudits_.size());
                                                                     qudits_.emplace_back(init_val);
                                                                     max_vals_->emplace_back(max_val);
@@ -169,11 +258,11 @@ class Basis_State {
         inline std::vector<size_t> get_groups() const { return *groups_; }
         // inline std::vector<size_t> get_groups() const { return groups_; }
 
-        size_t get_group_id(size_t qudit_index) const { 
-            size_t res = 0; 
-            while (get_group_end(res) > qudit_index) { 
-                res++; 
-            } 
+        size_t get_group_id(size_t qudit_index) const {
+            size_t res = 0;
+            while (get_group_end(res) > qudit_index) {
+                res++;
+            }
 
             return res;
         }
@@ -193,6 +282,12 @@ class Basis_State {
         void reset_cache() { hash_cached_ = false; }
 
         virtual std::string group_to_string(size_t group_id) const; // !!!
+/**
+ * \brief Строковое представление состояния (используется как ключ хэша).
+ *
+ * Производные переопределяют формат вывода.
+ * \return Детерминированная строка, однозначно описывающая состояние.
+ */
         virtual std::string to_string() const; // !!!!
         inline virtual bool operator==(const Basis_State& other) const { return qudits_ == other.qudits_; }
         inline virtual bool operator<(const Basis_State& other) const { return this->to_string() > other.to_string(); }
@@ -210,6 +305,9 @@ class Basis_State {
 
         // inline void clear() { qudits_.resize(0); max_vals_.resize(0); groups_.resize(0); }
         inline void clear() { qudits_.resize(0); max_vals_->resize(0); groups_->resize(0); hash_cached_ = false; }
+/**
+ * \brief Обнуляет все кудиты состояния (значимый, сбрасывает кэш хэша).
+ */
         inline void set_zero() { qudits_ = std::vector<ValType>(qudits_.size(), 0); hash_cached_ = false;}
         // Переписать
         inline bool is_all_qudits_zero() const { if (qudits_ == std::vector<ValType>(qudits_.size(), 0)) return true; return false;}
@@ -242,6 +340,26 @@ size_t get_index_state_in_basis(const StateType& state, const BasisType<StateTyp
     return 0;
 }
 
+/**
+ * \brief Состояния TCH: решётка полостей с атомами,
+ *        фотонами, волноводами и связями между уровнями.
+ *        Модель Тависа-Каммингса-Хаббарда
+ *
+ * Наследует @ref Basis_State. Каждая группа (group) базового состояния
+ * соответствует отдельной полости (cavity); внутри полости — фотоны
+ * частотных уровней и атомы.
+ *
+ * Основные группы методов:
+ *  - геометрия решётки: @ref x_size, @ref y_size, @ref z_size, @ref reshape;
+ *  - фотоны/атомы: @ref n, @ref set_n, @ref m, @ref set_atom, @ref get_atom;
+ *  - частотные уровни: @ref w, @ref set_w, @ref freqs_count;
+ *  - связи и потери: @ref set_g_level, @ref g, @ref set_move, @ref is_move,
+ *    @ref get_gamma, @ref set_waveguide;
+ *  - амплитуды leak/gain: @ref get_leak_gamma, @ref get_gain_gamma.
+ *
+ * \note Поля @c freq_levels_, @c g_, @c is_move_, @c waveguides_ и др. —
+ *       приватные; доступ только через публичные методы.
+ */
 class TCH_State: public Basis_State {
     using E_LEVEL = int;
     //using CavityId = size_t;
@@ -324,6 +442,12 @@ class TCH_State: public Basis_State {
         size_t cavity_atoms_count(CavityId id) const { return this->get_group_size(id) - this->ph_types_count(); }
         //size_t cavity_size(CavityId id) const { return cavity_atoms_count(id) + 1; }
         size_t m(CavityId id) const { return cavity_atoms_count(id); }
+/**
+ * \brief Количество фотонов в полости между уровнями.
+ * \param id идентификатор полости.
+ * \param level_from,level_to пара уровней.
+ * \return Число фотонов (значение кудита).
+ */
         ValType n(CavityId id, int level_from = 0, int level_to = 1) const { 
             auto levels_count = freq_levels_.size();
             assert(level_from != level_to);
@@ -336,6 +460,12 @@ class TCH_State: public Basis_State {
             return this->get_qudit(sum_of_arithmetic_progression(levels_count - 1, levels_count - level_from, level_from) + level_to - level_from - 1, id);
         }
 
+/**
+ * \brief Устанавливает число фотонов в полости.
+ * \param n количество фотонов.
+ * \param id идентификатор полости.
+ * \param level_from,level_to пара уровней.
+ */
         void set_n(ValType n, CavityId id, int level_from = 0, int level_to = 1) { 
             auto levels_count = freq_levels_.size();
             assert(level_from != level_to);
@@ -359,6 +489,11 @@ class TCH_State: public Basis_State {
         }
 
         // Return state vector from cavity
+/**
+ * \brief Выделяет состояние отдельной полости (под-систему).
+ * \param cavity_id идентификатор полости.
+ * \return Состояние TCH, содержащее только указанную полость.
+ */
         TCH_State get_state_in_cavity(CavityId cavity_id) const { return TCH_State(this->get_group(cavity_id)); }
         TCH_State operator[](CavityId cavity_id) const { return TCH_State(this->get_group(cavity_id)); }
 
@@ -388,6 +523,11 @@ class TCH_State: public Basis_State {
         std::set<CavityId> get_cavities_with_gain() const;
 
         // Matrix<COMPLEX> get_gamma() const { return gamma_; }
+/**
+ * \brief Амплитуда связи (гамма) между двумя полостями через волновод.
+ * \param from_id, to_id идентификаторы полостей.
+ * \return Комплексная амплитуда; при @c from_id > to_id возвращается сопряжённая.
+ */
         COMPLEX get_gamma(CavityId from_id, CavityId to_id) const {
             bool is_conj = false;
             if (from_id > to_id) {
@@ -463,6 +603,21 @@ class TCH_State: public Basis_State {
 // ------------------------------ State ---------------------------------
 
 template<typename StateType>
+/**
+ * \brief Суперпозиция: набор комплексных амплитуд, привязанных к элементам базиса.
+ *
+ * @c State<StateType> хранит:
+ *  - @c state_vec_ — вектор амплитуд (COMPLEX),
+ *  - @c state_map_ — соответствие «состояние → индекс амплитуды»,
+ *  - @c sorted_basis_ — упорядоченная копия базиса (лениво пересчитывается
+ *    методом @ref sort при первом обращении, требующем сортировки).
+ *
+ * Сложение/вычитание согласуют базисы автоматически (новые состояния
+ * добавляются, а флаг @c is_sorted_ сбрасывается).
+ *
+ * \tparam StateType тип базового состояния; должен быть копируемым и
+ *         сравнимым (производный от @ref Basis_State).
+ */
 class State {
     public:
         explicit State() = default;
@@ -559,6 +714,34 @@ class State {
             return res;
         }
         */
+
+        /**
+         * \brief Независимая (глубокая) копия суперпозиции в виде @c shared_ptr.
+         *
+         * Вектор амплитуд и карта «состояние -> индекс» пересоздаются;
+         * объекты базисных состояний по-прежнему разделяются через
+         * @c shared_ptr (безопасно: базисные состояния неизменяемы извне).
+         * \return Указатель на новую, независимую от вызывающего
+         *         @c State<StateType>.
+         */
+        std::shared_ptr<State<StateType>> clone() const {
+            return std::make_shared<State<StateType>>(*this);
+        }
+
+        /**
+         * \brief Поменял местами содержимое с другим состоянием.
+         *
+         * Обменивает @c state_vec_, @c state_map_, @c sorted_basis_ и
+         * @c is_sorted_. Оба состояния остаются валидными после вызова;
+         * сложность — линейная по сумме размеров карт.
+         * \param other второе состояние, с которым происходит обмен.
+         */
+        void swap(State<StateType>& other) {
+            std::swap(state_vec_, other.state_vec_);
+            std::swap(state_map_, other.state_map_);
+            std::swap(sorted_basis_, other.sorted_basis_);
+            std::swap(is_sorted_, other.is_sorted_);
+        }
 
         // Работает не типично. Возвращает other, если this не пустое
         State<StateType> operator*(const State<StateType>& other) const { 
@@ -659,6 +842,14 @@ class State {
             insert(st_pt, amplitude);
         }
 
+/**
+ * \brief Добавляет состояние в суперпозицию с заданной амплитудой.
+ *
+ * Если состояние уже присутствует — амплитуда обновляется (если != 0);
+ * иначе состояние добавляется, а флаг сортировки сбрасывается.
+ * \param state указатель на базовое состояние.
+ * \param amplitude амплитуда (по умолчанию 0).
+ */
         void insert(const std::shared_ptr<StateType>& state, const COMPLEX& amplitude = COMPLEX(0, 0)) {
             if (!is_in_state(state)) {
                 // state_components_.insert(state);
@@ -670,6 +861,44 @@ class State {
                     state_vec_[state_map_[state]] = amplitude;
                 }
             }
+        }
+
+        /**
+         * \brief Удаляет базисное состояние из суперпозиции.
+         *
+         * Если состояния в суперпозиции нет — ничего не делает. Индексы
+         * амплитуд, стоявшие выше удалённого, сдвигаются, а отсортированная
+         * копия базиса сбрасывается (@c is_sorted_ = false) и будет
+         * пересчитана при следующем обращении, требующем сортировки.
+         * \param state указатель на удаляемое базисное состояние; поиск
+         *               идёт по значению (хеш/равенство), а не по указателю.
+         * \return 1, если состояние было удалено; 0, если его не было.
+         */
+        size_t erase(const std::shared_ptr<StateType>& state) {
+            auto it = state_map_.find(state);
+            if (it == state_map_.end()) return 0;
+
+            size_t index = it->second;
+            state_map_.erase(it);
+            state_vec_.erase(state_vec_.begin() + index);
+            for (auto& p : state_map_) {
+                if (p.second >= index) p.second -= 1;
+            }
+            sorted_basis_.clear();
+            is_sorted_ = false;
+            return 1;
+        }
+
+        /**
+         * \brief Удобная перегрузка удаления по значению состояния.
+         *
+         * Состояние копируется во временный @c shared_ptr и удаляется по
+         * значению (по совпадению хеша/равенства).
+         * \param state базисное состояние.
+         * \return 1, если состояние было удалено; 0, если его не было.
+         */
+        size_t erase(const StateType& state) {
+            return erase(std::make_shared<StateType>(state));
         }
 
         // void set_state_components(const BasisType<StateType>& st) { state_components_ = st; is_sorted_ = false; }
@@ -691,6 +920,10 @@ class State {
         inline std::vector<COMPLEX> vector() const { this->sort(); return state_vec_;}
         inline void set_vector(const std::vector<COMPLEX>& v) { state_vec_ = v; }
 
+/**
+ * \brief Вероятности (модуль амплитуды в квадрате) по отсортированному базису.
+ * \return Вектор вероятностей; индексы соответствуют @ref get_basis.
+ */
         std::vector<double> to_probs() const {
             if (!is_sorted_) this->sort();
             std::vector<double> res(state_vec_.size());
@@ -734,6 +967,14 @@ class State {
             return res;
         }
 
+/**
+ * \brief Переносит амплитуды в новый базис.
+ *
+ * Каждому элементу целевого базиса присваивается амплитуда из текущего
+ * состояния, если совпадает; иначе 0.
+ * \param basis целевой базис.
+ * \return Новое состояние в базисе @c basis.
+ */
         State<StateType> fit_to_basis(const BasisType<StateType>& basis) const {
             State<StateType> res;
             std::vector<std::shared_ptr<StateType>> basis_vector(basis.begin(), basis.end());
@@ -848,6 +1089,13 @@ class State {
         //     return res;
         // }
 
+/**
+ * \brief Ленивая сортировка базиса и согласование массивов.
+ *
+ * Пересчитывает @c sorted_basis_, @c state_vec_ и @c state_map_ в
+ * каноническом порядке (по @ref State_Comparator). Вызывается автоматически
+ * методами, возвращающими отсортированные представления.
+ */
         void sort() const {
             if (is_sorted_) return;
             sorted_basis_.clear();
@@ -867,6 +1115,66 @@ class State {
             state_vec_ = new_state_vec;
             is_sorted_ = true;
         }
+
+        /**
+         * \brief Итератор по парам «базисное состояние -> амплитуда».
+         *
+         * Итерация идёт в отсортированном порядке (по @ref State_Comparator,
+         * нисходящему); при создании @c begin()/@c end() вызывается @c sort(),
+         * поэтому порядок детерминирован. Значение итератора — копия пары:
+         * @c shared_ptr на базисное состояние и комплексная амплитуда.
+         * Итерация не изменяет итерируемое состояние (кроме ленивой
+         * сортировки, которую выполняет @c sort()).
+         */
+        class const_iterator {
+            public:
+                using iterator_category = std::forward_iterator_tag;
+                using value_type = std::pair<std::shared_ptr<StateType>, COMPLEX>;
+                using difference_type = std::ptrdiff_t;
+                using reference = value_type;
+                using pointer = const value_type*;
+
+                const_iterator() = default;
+                const_iterator(const State* parent, size_t index) : parent_(parent), index_(index) {}
+
+                value_type operator*() const {
+                    return { parent_->sorted_basis_[index_], parent_->state_vec_[index_] };
+                }
+
+                const_iterator& operator++() { ++index_; return *this; }
+                const_iterator operator++(int) { auto tmp = *this; ++index_; return tmp; }
+
+                bool operator==(const const_iterator& o) const { return parent_ == o.parent_ && index_ == o.index_; }
+                bool operator!=(const const_iterator& o) const { return !(*this == o); }
+
+            private:
+                const State* parent_ = nullptr;
+                size_t index_ = 0;
+        };
+
+        /**
+         * \brief Начало итерации по парам (состояние, амплитуда) в отсортированном порядке.
+         * \return Итератор на первую пару.
+         */
+        const_iterator begin() const { this->sort(); return const_iterator(this, 0); }
+
+        /**
+         * \brief Конец итерации.
+         * \return Итератор за последнюю пару.
+         */
+        const_iterator end() const { this->sort(); return const_iterator(this, state_vec_.size()); }
+
+        /**
+         * \brief Начало итерации (const-псевдоним).
+         * \return Итератор на первую пару.
+         */
+        const_iterator cbegin() const { return begin(); }
+
+        /**
+         * \brief Конец итерации (const-псевдоним).
+         * \return Итератор за последнюю пару.
+         */
+        const_iterator cend() const { return end(); }
 
         void clear() {
             state_vec_.clear();
@@ -892,6 +1200,17 @@ class State {
 
 // <a|b>
 template<typename StateType>
+/**
+ * \brief Скалярное произведение двух суперпозиций.
+ *
+ * Вычисляет \f$ \langle a|b \rangle = \sum_i a_i^* b_i \f$ по общему базису;
+ * перебор идёт по более компактному из двух состояний.
+ *
+ * \tparam StateType тип базового состояния.
+ * \param a первый вектор состояния.
+ * \param b второй вектор состояния.
+ * \return Скалярное произведение.
+ */
 COMPLEX scalar_product(const State<StateType>& a, const State<StateType>& b) {
     // auto a_map = a.state_map();
     // auto b_map = b.state_map();
@@ -914,6 +1233,21 @@ COMPLEX scalar_product(const State<StateType>& a, const State<StateType>& b) {
     }
 
     return res;
+}
+
+
+
+/**
+ * \brief Поменял местами два состояния (свободная ADL-перегрузка).
+ *
+ * Позволяет использовать @c std::swap() и неопределённый @c swap() для
+ * @c State<StateType> через механизм обнаружения имён по аргументам (ADL).
+ * \param a первое состояние.
+ * \param b второе состояние.
+ */
+template<typename StateType>
+void swap(State<StateType>& a, State<StateType>& b) {
+    a.swap(b);
 }
 
 } // namespace QComputations

@@ -9,14 +9,14 @@
 #   cd doxygen && ./generate.sh [single|cluster|cuda|blocked_cuda]
 # ----------------------------------------------------------------------------
 # Места с @...@ подставляются генератором (generate.sh):
-#   9c59715       -> git describe (или "dev")
+#   7c98336       -> git describe (или "dev")
 #   ENABLE_ONEAPI    -> набор feature-макросов для выбранного варианта
 #   @QCOMP_FILE_PATTERNS  -> список расширений (РАЗДЕЛЯЕТСЯ ПРОБЕЛАМИ!)
 # ============================================================================
 
 # ---- Общие ---------------------------------------------------------------
 PROJECT_NAME           = QComputations
-PROJECT_NUMBER         = 9c59715
+PROJECT_NUMBER         = 7c98336
 PROJECT_BRIEF          = "Quantum-mechanical simulation library: time-dependent Hamiltonians, states, matrices; CPU/CUDA/MPI backends"
 OUTPUT_LANGUAGE        = Russian     # поменяй на English для англ. подписей UI
 QUIET                  = NO          # YES = тише, NO = прогресс на экран

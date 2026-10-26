@@ -59,11 +59,11 @@ var NAVTREE =
 
 var NAVTREEINDEX =
 [
-"",
+"additional__operators_8cpp.html",
 "classQComputations_1_1Matrix.html#a5ac681a7d6dcfeab7bd6434e661bd069",
-"classQComputations_1_1TCH__State.html#a9e456d78ecb0c268f643da741c3934fc",
-"functions_i.html",
-"namespaceQComputations_1_1matlab.html"
+"classQComputations_1_1TCH__State.html#a9e7de8efb5c7cfde44cef0ecf2c92e32",
+"functions_j.html",
+"namespaceQComputations_1_1matrix.html"
 ];
 
 var SYNCONMSG = 'нажмите на выключить для синхронизации панелей';
